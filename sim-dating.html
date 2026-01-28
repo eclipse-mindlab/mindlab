@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>썸 진전시키기 - 이클립스 마인드랩</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 540px; margin: 0 auto; }
+    
+    .header { margin-bottom: 32px; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:hover { color: #a78bfa; }
+
+    .header-content { text-align: center; }
+    .header-category { font-size: 12px; color: #f472b6; margin-bottom: 8px; }
+    .header h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #71717a; }
+    
+    .progress { display: flex; gap: 8px; margin-bottom: 24px; }
+    
+    .progress-bar {
+      height: 4px;
+      flex: 1;
+      border-radius: 4px;
+      background: #27272a;
+      transition: background 0.3s;
+    }
+    
+    .progress-bar.completed { background: #f472b6; }
+    .progress-bar.current { background: rgba(244, 114, 182, 0.5); }
+    
+    .scenario-card {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stage-label {
+      font-size: 11px;
+      color: #71717a;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .context {
+      font-size: 13px;
+      color: #a1a1aa;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 8px;
+    }
+    
+    .situation { font-size: 17px; line-height: 1.8; }
+    
+    .choices { display: flex; flex-direction: column; gap: 12px; }
+    
+    .choice-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.6;
+    }
+    
+    .choice-btn:hover {
+      background: #27272a;
+      border-color: #3f3f46;
+    }
+    
+    .result-section { display: none; }
+    .result-section.show { display: block; }
+    
+    .selected-choice {
+      padding: 16px;
+      background: #18181b;
+      border: 2px solid #3f3f46;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .selected-header { font-size: 13px; color: #71717a; margin-bottom: 8px; }
+    .selected-text { color: #d4d4d8; line-height: 1.6; }
+    
+    .outcome-card {
+      padding: 16px;
+      background: rgba(24, 24, 27, 0.5);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .outcome-label { font-size: 13px; color: #71717a; margin-bottom: 8px; }
+    .outcome-text { color: #d4d4d8; line-height: 1.8; }
+    
+    .principle-card {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), #18181b);
+      border: 1px solid rgba(244, 114, 182, 0.3);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .principle-icon { font-size: 20px; }
+    .principle-label {
+      font-size: 11px;
+      color: #f472b6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .principle-name { color: #fff; font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+    .principle-explanation { color: #a1a1aa; line-height: 1.8; font-size: 14px; }
+
+    .evaluation-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .evaluation-card.positive {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .evaluation-card.neutral {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .evaluation-card.negative {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    .evaluation-icon { font-size: 18px; flex-shrink: 0; }
+    .evaluation-text { font-size: 14px; line-height: 1.7; }
+
+    .evaluation-card.positive .evaluation-text { color: #4ade80; }
+    .evaluation-card.neutral .evaluation-text { color: #fbbf24; }
+    .evaluation-card.negative .evaluation-text { color: #f87171; }
+
+    .other-choices-section { margin-bottom: 16px; }
+
+    .other-choices-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #27272a;
+      border-radius: 10px;
+      color: #71717a;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .other-choices-toggle:hover {
+      border-color: #3f3f46;
+      color: #a1a1aa;
+    }
+
+    .other-choices-toggle.open {
+      border-color: #3f3f46;
+      background: #18181b;
+    }
+
+    .other-choices-toggle.open svg { transform: rotate(180deg); }
+
+    .other-choices-content {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .other-choices-content.hidden { display: none; }
+
+    .other-choice-card {
+      background: #131316;
+      border: 1px solid #1f1f23;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .other-choice-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .eval-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .eval-badge.positive { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .eval-badge.neutral { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .eval-badge.negative { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+
+    .other-choice-text { font-size: 14px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.6; }
+
+    .other-choice-outcome {
+      font-size: 13px;
+      color: #71717a;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #18181b;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .other-choice-eval {
+      font-size: 12px;
+      color: #a1a1aa;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      background: rgba(39, 39, 42, 0.5);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+
+    .other-choice-principle { font-size: 12px; color: #71717a; }
+    .other-choice-principle strong { color: #f472b6; }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      background: #ec4899;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .next-btn:hover { background: #db2777; }
+    
+    .final-screen { display: none; padding: 20px 0; }
+    .final-screen.show { display: block; }
+
+    .clear-card {
+      background: linear-gradient(135deg, #1f1f23, #18181b);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .clear-icon { font-size: 56px; margin-bottom: 16px; }
+    .clear-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .clear-subtitle { font-size: 14px; color: #71717a; margin-bottom: 20px; }
+
+    .clear-exp {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(244, 114, 182, 0.2);
+      border-radius: 20px;
+      color: #f472b6;
+      font-weight: 600;
+    }
+
+    .principles-collected {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .principles-title { font-size: 14px; color: #71717a; margin-bottom: 16px; }
+
+    .principle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .principle-item:last-child { margin-bottom: 0; }
+    .principle-item-icon { font-size: 20px; flex-shrink: 0; }
+    .principle-item-content { flex: 1; }
+    .principle-item-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .principle-item-desc { font-size: 12px; color: #71717a; line-height: 1.5; }
+
+    .share-section { margin-bottom: 24px; }
+    .share-label { font-size: 14px; color: #71717a; margin-bottom: 12px; text-align: center; }
+    .share-buttons { display: flex; gap: 10px; justify-content: center; }
+    
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .share-btn:hover { background: #3f3f46; }
+    .share-btn.success { background: #166534; border-color: #22c55e; }
+
+    .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+    
+    .home-btn {
+      width: 100%;
+      padding: 16px;
+      background: #ec4899;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .home-btn:hover { background: #db2777; }
+
+    .restart-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid #3f3f46;
+      border-radius: 12px;
+      color: #a1a1aa;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .restart-btn:hover { background: #27272a; color: #fff; }
+
+    .install-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .install-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .install-btn.hidden { display: none; }
+
+    .promo-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #27272a;
+    }
+
+    .book-promo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #1a1520 0%, #18181b 100%);
+      border: 1px solid #2d2438;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .book-promo:hover {
+      border-color: #f472b6;
+      transform: translateY(-2px);
+    }
+
+    .book-promo-images { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .book-promo-img {
+      width: 48px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .book-promo-text { flex: 1; }
+    .book-promo-series { font-size: 11px; color: #f472b6; margin-bottom: 2px; }
+    .book-promo-title { font-size: 14px; font-weight: 500; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+      <div class="header-content">
+        <div class="header-category">심리 · 연애</div>
+        <h1>썸 진전시키기</h1>
+        <p>카톡만 하는 관계, 어떻게 진전시킬까?</p>
+      </div>
+    </div>
+    
+    <div class="progress" id="progress"></div>
+    
+    <div id="game-screen">
+      <div class="scenario-card">
+        <div class="stage-label" id="stage-label">Stage 1</div>
+        <div class="context" id="context"></div>
+        <div class="situation" id="situation"></div>
+      </div>
+      
+      <div class="choices" id="choices"></div>
+      
+      <div class="result-section" id="result-section">
+        <div class="selected-choice">
+          <div class="selected-header">선택한 답변</div>
+          <div class="selected-text" id="selected-text"></div>
+        </div>
+        
+        <div class="outcome-card">
+          <div class="outcome-label">상대방의 반응</div>
+          <div class="outcome-text" id="outcome-text"></div>
+        </div>
+        
+        <div class="principle-card">
+          <div class="principle-header">
+            <span class="principle-icon">💡</span>
+            <span class="principle-label">발견한 원칙</span>
+          </div>
+          <div class="principle-name" id="principle-name"></div>
+          <div class="principle-explanation" id="principle-explanation"></div>
+        </div>
+
+        <div class="evaluation-card" id="evaluation-card">
+          <div class="evaluation-icon" id="evaluation-icon">⚠️</div>
+          <div class="evaluation-text" id="evaluation-text"></div>
+        </div>
+
+        <div class="other-choices-section">
+          <button class="other-choices-toggle" id="other-toggle">
+            <span>다른 선택은?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="other-choices-content hidden" id="other-choices-content"></div>
+        </div>
+        
+        <button class="next-btn" id="next-btn">다음 상황</button>
+      </div>
+    </div>
+    
+    <div class="final-screen" id="final-screen">
+      <div class="clear-card">
+        <div class="clear-icon">💕</div>
+        <div class="clear-title">시뮬레이션 완료!</div>
+        <div class="clear-subtitle">썸 진전시키기 상황을 클리어했습니다</div>
+        <div class="clear-exp">+30 EXP 획득!</div>
+      </div>
+
+      <div class="principles-collected">
+        <div class="principles-title">🔓 발견한 원칙들</div>
+        <div id="principles-list"></div>
+      </div>
+
+      <div class="share-section">
+        <div class="share-label">친구에게 공유하기</div>
+        <div class="share-buttons">
+          <button class="share-btn" id="native-share-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            공유하기
+          </button>
+          <button class="share-btn" id="copy-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            링크 복사
+          </button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="index.html" class="home-btn">탐험 지도로 돌아가기</a>
+        <button class="restart-btn" id="restart-btn">다시 해보기</button>
+        <button class="install-btn hidden" id="installBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          앱으로 설치하고 계속 탐험하기
+        </button>
+      </div>
+
+      <div class="promo-section">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-promo">
+          <div class="book-promo-images">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="book-promo-img">
+            <img src="book-psychology.png" alt="훔친 심리학 편" class="book-promo-img">
+          </div>
+          <div class="book-promo-text">
+            <div class="book-promo-series">세계척학전집 시리즈</div>
+            <div class="book-promo-title">더 깊은 원칙들이 궁금하다면</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SITE_URL = 'https://eclipse-mindlab.github.io/mindlab/';
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    const SIM_ID = 'dating_progress';
+
+    const stages = [
+      {
+        id: 1,
+        context: "3개월째 카톡만 하는 사람이 있다. 서로 호감은 있는 것 같은데, 만남으로 이어지질 않는다. 오늘도 일상 대화가 오가는 중.",
+        situation: "상대가 \"오늘 진짜 피곤하다 ㅠㅠ\"라고 카톡을 보냈다. 뭐라고 답할까?",
+        choices: [
+          {
+            text: "\"힘들었겠다 ㅠㅠ 푹 쉬어!\"",
+            outcome: "\"응 고마워~\" 답장이 온다. 대화가 거기서 끝난다. 언제나 그랬듯이.",
+            principle: "공감형 종결",
+            principleDesc: "공감만 하면 대화가 끝난다. 안전하지만, 관계가 진전되지 않는다.",
+            evaluation: "neutral",
+            evalText: "나쁘진 않지만, 3개월째 같은 패턴이 반복된다.",
+            nextStage: "stage2_passive"
+          },
+          {
+            text: "\"뭐가 그렇게 힘들었어? 얘기해봐\"",
+            outcome: "상대가 오늘 있었던 일을 풀어놓기 시작한다. 대화가 길어진다.",
+            principle: "질문형 연장",
+            principleDesc: "질문은 대화를 연장한다. 상대에게 관심을 표현하는 가장 자연스러운 방법.",
+            evaluation: "positive",
+            evalText: "대화가 깊어지고 있다. 관계 진전의 첫걸음.",
+            nextStage: "stage2_question"
+          },
+          {
+            text: "\"그럼 맛있는 거 먹으러 가자. 기분 전환 ㅋㅋ\"",
+            outcome: "\"ㅋㅋㅋ 갑자기?\" 상대가 놀라면서도 웃는 이모티콘을 보낸다. \"언제?\"",
+            principle: "행동 제안",
+            principleDesc: "말 대신 행동을 제안하면 관계가 움직인다. 용기가 필요하지만 효과적이다.",
+            evaluation: "positive",
+            evalText: "드디어 만남으로 이어질 수 있는 기회가 생겼다!",
+            nextStage: "stage2_action"
+          }
+        ]
+      },
+      
+      // Stage 2 - 소극적 경로
+      {
+        id: "stage2_passive",
+        context: "일주일 후. 또 비슷한 대화가 오간다. 이번엔 상대가 \"주말에 뭐해?\"라고 물었다.",
+        situation: "이건 기회일 수도 있다. 뭐라고 답할까?",
+        choices: [
+          {
+            text: "\"아직 모르겠어~ 너는?\"",
+            outcome: "\"나도 아직~\" 서로 떠보기만 하다가 대화가 흐지부지된다. 주말은 각자 보냈다.",
+            principle: "상호 떠보기",
+            principleDesc: "서로 먼저 말하길 기다리면 아무 일도 일어나지 않는다.",
+            evaluation: "negative",
+            evalText: "또 기회를 놓쳤다. 누군가는 먼저 움직여야 한다.",
+            nextStage: "stage3_missed"
+          },
+          {
+            text: "\"특별한 거 없는데, 혹시 뭐 하고 싶은 거 있어?\"",
+            outcome: "\"음... 요즘 날씨 좋은데 어디 가고 싶긴 해\" 힌트를 준다.",
+            principle: "열린 질문",
+            principleDesc: "상대가 원하는 걸 물으면, 상대가 답을 줄 수 있다.",
+            evaluation: "positive",
+            evalText: "상대가 힌트를 줬다. 이제 네가 제안할 차례다.",
+            nextStage: "stage3_hint"
+          },
+          {
+            text: "\"나 토요일에 XX 가려고 하는데 같이 갈래?\"",
+            outcome: "잠시 답이 없다가... \"오 좋아! 몇 시에?\" 성공이다.",
+            principle: "구체적 제안",
+            principleDesc: "구체적인 계획을 제시하면 상대는 Yes/No만 하면 된다. 결정 비용을 낮춰준다.",
+            evaluation: "positive",
+            evalText: "드디어! 3개월 만에 첫 만남이 잡혔다.",
+            nextStage: "stage3_date_set"
+          }
+        ]
+      },
+      
+      // Stage 2 - 질문형 경로
+      {
+        id: "stage2_question",
+        context: "상대가 오늘 있었던 힘든 일을 털어놨다. 직장 상사 때문에 스트레스 받은 이야기. 대화가 30분째 이어지고 있다.",
+        situation: "상대가 \"아 말하고 나니까 좀 나아진다 ㅎㅎ 고마워\"라고 한다.",
+        choices: [
+          {
+            text: "\"언제든 얘기해~ 힘들면 연락해\"",
+            outcome: "\"응 고마워 ㅎㅎ\" 따뜻한 분위기로 대화가 끝난다. 좋은 사람으로 각인됐다. 하지만 여전히 '좋은 친구'다.",
+            principle: "안전 지대",
+            principleDesc: "편안한 관계는 좋지만, 거기서 멈추면 연인이 아닌 친구로 굳어진다.",
+            evaluation: "neutral",
+            evalText: "관계는 좋아졌지만, 친구 이상으로 갈 수 있을까?",
+            nextStage: "stage3_friendzone"
+          },
+          {
+            text: "\"직접 만나서 얘기했으면 더 좋았을 텐데 ㅎㅎ\"",
+            outcome: "\"...그러게 ㅎㅎ\" 상대가 살짝 설렌 듯한 반응이다.",
+            principle: "암시적 제안",
+            principleDesc: "직접 만남을 원한다는 신호를 보낸다. 상대가 받아들일지는 반응을 봐야 한다.",
+            evaluation: "positive",
+            evalText: "만나고 싶다는 뉘앙스를 전달했다. 상대 반응이 긍정적이다.",
+            nextStage: "stage3_signal"
+          },
+          {
+            text: "\"다음에 이런 날 있으면 내가 맛있는 거 사줄게. 스트레스 해소용 ㅋㅋ\"",
+            outcome: "\"ㅋㅋㅋ 진짜? 약속이다?\" 상대가 기대하는 분위기.",
+            principle: "미래 약속",
+            principleDesc: "다음을 기약하면 관계에 연속성이 생긴다. 약속은 기대감을 만든다.",
+            evaluation: "positive",
+            evalText: "약속이 잡혔다! 다음 만남의 명분이 생겼다.",
+            nextStage: "stage3_promise"
+          }
+        ]
+      },
+      
+      // Stage 2 - 행동 제안 경로
+      {
+        id: "stage2_action",
+        context: "\"언제?\"라고 물어봤다. 만남이 성사될 것 같다!",
+        situation: "언제로 할까?",
+        choices: [
+          {
+            text: "\"이번 주 토요일 어때? 저녁에 시간 돼?\"",
+            outcome: "\"토요일... 괜찮아! 어디서 만날까?\" 바로 약속이 잡혔다.",
+            principle: "즉시 구체화",
+            principleDesc: "기회가 왔을 때 바로 구체화한다. 미루면 흐지부지된다.",
+            evaluation: "positive",
+            evalText: "완벽하다! 구체적인 날짜와 시간이 정해졌다.",
+            nextStage: "stage3_perfect"
+          },
+          {
+            text: "\"다음 주 중에 시간 될 때~\"",
+            outcome: "\"ㅇㅇ 알겠어~\" 대화가 끝났다. 일주일 후, 서로 '시간 될 때'를 기다리다 흐지부지됐다.",
+            principle: "모호한 미래",
+            principleDesc: "'언제 시간 될 때'는 영원히 오지 않을 수 있다. 구체적인 날짜가 중요하다.",
+            evaluation: "negative",
+            evalText: "아깝다... 기회가 왔는데 흐릿하게 넘겼다.",
+            nextStage: "stage3_vague"
+          },
+          {
+            text: "\"오늘 어때? ㅋㅋ 농담 아님\"",
+            outcome: "\"ㅋㅋㅋㅋ 진짜?\" 놀라면서도 \"...잠깐, 진짜 가능한데?\"",
+            principle: "즉흥성",
+            principleDesc: "예상치 못한 제안은 흥분을 만든다. 리스크가 있지만 강렬한 인상을 남긴다.",
+            evaluation: "positive",
+            evalText: "대담하다! 상대가 신선하게 받아들인 것 같다.",
+            nextStage: "stage3_spontaneous"
+          }
+        ]
+      },
+
+      // Stage 3들
+      {
+        id: "stage3_missed",
+        context: "또 기회를 놓쳤다. 한 달 후, 상대의 인스타에 다른 사람과 찍은 사진이 올라왔다.",
+        situation: "마음이 복잡하다. 어떻게 할까?",
+        choices: [
+          {
+            text: "\"요즘 뭐해? 오랜만에 연락하네 ㅎㅎ\"",
+            outcome: "\"응 ㅎㅎ 요즘 좀 바빴어~\" 예전만큼 적극적이지 않다. 타이밍을 놓친 것 같다.",
+            principle: "타이밍의 중요성",
+            principleDesc: "기회는 무한하지 않다. 망설이는 사이 상황은 바뀐다.",
+            evaluation: "negative",
+            evalText: "늦었을 수도 있다. 하지만 시도는 해볼 가치가 있다.",
+            nextStage: "end"
+          },
+          {
+            text: "(그냥 넘어간다. 인연이 아니었나보다.)",
+            outcome: "SNS를 보며 씁쓸해한다. '그때 말했으면 달라졌을까?' 영원히 알 수 없다.",
+            principle: "후회",
+            principleDesc: "하지 않은 것에 대한 후회는 오래 간다. 실패해도 시도한 것이 낫다.",
+            evaluation: "negative",
+            evalText: "끝났다. 다음엔 용기를 내보자.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_hint",
+        context: "상대가 \"어디 가고 싶긴 해\"라고 힌트를 줬다.",
+        situation: "이 힌트를 어떻게 활용할까?",
+        choices: [
+          {
+            text: "\"어디 가고 싶은데? 나도 요즘 어디 가고 싶었어\"",
+            outcome: "\"음... 바다? 아니면 산? ㅎㅎ\" 대화가 이어진다. 하지만 여전히 구체적인 계획은 없다.",
+            principle: "끝없는 대화",
+            principleDesc: "대화만 계속되면 에너지만 소모된다. 결론을 향해 가야 한다.",
+            evaluation: "neutral",
+            evalText: "대화는 좋지만, 이제 행동으로 옮겨야 할 때다.",
+            nextStage: "end"
+          },
+          {
+            text: "\"그럼 이번 주말에 XX 가자! 내가 맛집 찾아볼게\"",
+            outcome: "\"오 좋아! 기대된다 ㅎㅎ\" 상대가 신나는 반응이다. 약속 성사!",
+            principle: "주도권",
+            principleDesc: "힌트를 받으면 내가 리드한다. 상대는 따라올 준비가 되어 있다.",
+            evaluation: "positive",
+            evalText: "완벽한 흐름! 힌트를 캐치해서 행동으로 연결했다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_date_set",
+        context: "드디어 첫 만남이 잡혔다! 토요일 저녁으로.",
+        situation: "만남 전에 뭘 준비할까?",
+        choices: [
+          {
+            text: "장소만 정하고, 자연스럽게 만나자",
+            outcome: "만남 당일, 편안한 분위기로 시작됐다. 자연스러움이 오히려 좋았다.",
+            principle: "자연스러움",
+            principleDesc: "과하게 준비하면 긴장된다. 적당한 여유가 좋은 분위기를 만든다.",
+            evaluation: "positive",
+            evalText: "좋은 시작이다! 첫 만남은 성공적.",
+            nextStage: "end"
+          },
+          {
+            text: "맛집, 동선, 플랜 B까지 완벽하게 준비",
+            outcome: "준비는 완벽했지만, 약간 경직된 분위기. 그래도 상대는 \"준비 많이 했네 ㅎㅎ\" 고마워한다.",
+            principle: "정성",
+            principleDesc: "준비는 진심을 보여준다. 다만 너무 과하면 부담이 될 수 있다.",
+            evaluation: "neutral",
+            evalText: "정성은 전해졌다. 다음엔 조금 더 여유롭게.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_friendzone",
+        context: "2주 후. 상대가 \"요즘 고민 있는데 들어줄 수 있어?\"라고 한다. 또 상담이다.",
+        situation: "계속 상담역으로 남을 건가?",
+        choices: [
+          {
+            text: "\"응 말해봐~ 무슨 고민이야?\"",
+            outcome: "1시간 동안 상담을 해줬다. 고마워한다. 하지만 여전히 '좋은 친구'다.",
+            principle: "고착화",
+            principleDesc: "한 번 굳어진 역할은 바꾸기 어렵다. 초반에 포지셔닝이 중요하다.",
+            evaluation: "negative",
+            evalText: "좋은 친구로 완전히 고정된 것 같다...",
+            nextStage: "end"
+          },
+          {
+            text: "\"고민 얘기는 만나서 하자 ㅎㅎ 밥 먹으면서\"",
+            outcome: "\"...그래 ㅎㅎ 그러자\" 드디어 만남이 잡혔다.",
+            principle: "역할 전환",
+            principleDesc: "상담역에서 벗어나려면 상황을 바꿔야 한다. 만남은 관계를 다르게 만든다.",
+            evaluation: "positive",
+            evalText: "잘했다! 온라인 상담역에서 벗어날 기회다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_signal",
+        context: "\"직접 만나서 얘기했으면 더 좋았을 텐데\"에 상대가 \"그러게 ㅎㅎ\"라고 했다.",
+        situation: "여기서 어떻게 이어갈까?",
+        choices: [
+          {
+            text: "\"다음엔 진짜 만나자 ㅎㅎ\"",
+            outcome: "\"ㅇㅇ 그러자~\" 약속 같은 약속이 됐다. 언젠간... 아마도...",
+            principle: "모호한 합의",
+            principleDesc: "구체적이지 않은 약속은 약속이 아니다.",
+            evaluation: "neutral",
+            evalText: "방향은 맞지만, 좀 더 구체적으로 밀어붙여야 한다.",
+            nextStage: "end"
+          },
+          {
+            text: "\"그럼 이번 주에 만날까? 진지하게 ㅎㅎ\"",
+            outcome: "\"ㅋㅋㅋ 갑자기 진지해졌네. 좋아, 언제?\" 성공!",
+            principle: "전환점 활용",
+            principleDesc: "분위기가 무르익었을 때 한 발 더 나간다. 타이밍을 놓치지 않는다.",
+            evaluation: "positive",
+            evalText: "완벽한 타이밍! 만남이 성사됐다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_promise",
+        context: "\"맛있는 거 사줄게\" 약속에 상대가 \"진짜? 약속이다?\"라고 했다.",
+        situation: "약속을 구체화할 차례다.",
+        choices: [
+          {
+            text: "\"응 ㅋㅋ 다음에 힘들 때 연락해~\"",
+            outcome: "\"ㅇㅇ 고마워~\" 약속은 했지만... '다음에'는 언제일까?",
+            principle: "불확실한 약속",
+            principleDesc: "조건부 약속은 실현되기 어렵다. 날짜를 정해야 약속이다.",
+            evaluation: "neutral",
+            evalText: "아쉽다. 약속을 구체화했어야 했다.",
+            nextStage: "end"
+          },
+          {
+            text: "\"그럼 다음 주 금요일 어때? 퇴근하고 맛있는 거 먹자\"",
+            outcome: "\"좋아! 금요일 저녁이다~\" 날짜가 잡혔다!",
+            principle: "약속 구체화",
+            principleDesc: "약속에 날짜와 시간을 붙이면 현실이 된다.",
+            evaluation: "positive",
+            evalText: "완벽! 금요일 저녁, 첫 만남이 확정됐다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_perfect",
+        context: "토요일 저녁으로 약속이 잡혔다. 장소도 정했다.",
+        situation: "만남 전, 뭔가 더 할 게 있을까?",
+        choices: [
+          {
+            text: "약속 전날 \"내일 기대된다 ㅎㅎ\" 메시지 보내기",
+            outcome: "\"나도! ㅎㅎ\" 상대도 기대하고 있다. 설레는 분위기가 이어진다.",
+            principle: "기대감 유지",
+            principleDesc: "만남 전 가벼운 메시지는 기대감을 유지시킨다.",
+            evaluation: "positive",
+            evalText: "좋은 분위기 유지! 만남이 더 기대된다.",
+            nextStage: "end"
+          },
+          {
+            text: "당일까지 연락 안 하고 만남에 집중",
+            outcome: "당일 만났다. 어색하진 않았지만, 조금 김빠진 느낌? 괜찮긴 했다.",
+            principle: "거리두기",
+            principleDesc: "적당한 거리두기는 좋지만, 너무 멀면 관심이 식을 수 있다.",
+            evaluation: "neutral",
+            evalText: "나쁘진 않지만, 조금 아쉽다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_vague",
+        context: "\"다음 주 중에 시간 될 때\" 이후 일주일이 지났다. 서로 연락이 뜸해졌다.",
+        situation: "이대로 흐지부지될 것 같다. 어떻게 할까?",
+        choices: [
+          {
+            text: "\"저번에 얘기한 거 아직 유효해? ㅎㅎ 이번 주 토요일 어때?\"",
+            outcome: "\"아 맞다 ㅋㅋ 토요일 괜찮아!\" 아직 늦지 않았다.",
+            principle: "재점화",
+            principleDesc: "흐지부지된 약속도 되살릴 수 있다. 용기가 필요할 뿐.",
+            evaluation: "positive",
+            evalText: "잘 살렸다! 포기하지 않은 게 주효했다.",
+            nextStage: "end"
+          },
+          {
+            text: "(그냥 둔다. 상대도 연락 안 하는 거 보면 별로인가보다.)",
+            outcome: "그렇게 연락이 끊겼다. 가끔 '그때 말할걸' 후회한다.",
+            principle: "소극적 포기",
+            principleDesc: "상대 탓으로 돌리며 포기하면 편하지만, 후회가 남는다.",
+            evaluation: "negative",
+            evalText: "아쉽게 끝났다. 한 번만 더 시도했으면...",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_spontaneous",
+        context: "\"오늘 어때?\"에 상대가 \"진짜 가능한데?\"라고 했다.",
+        situation: "진짜 오늘 만나게 생겼다!",
+        choices: [
+          {
+            text: "\"ㅋㅋㅋ 진짜로! 7시에 XX역 어때?\"",
+            outcome: "\"오케이! ㅋㅋㅋ 진짜 가는 거다?\" 두 시간 후, 실제로 만났다. 최고의 첫 만남이었다.",
+            principle: "결단력",
+            principleDesc: "말한 대로 행동한다. 즉흥성과 결단력이 강렬한 인상을 남긴다.",
+            evaluation: "positive",
+            evalText: "완벽! 말 → 행동 → 결과. 이상적인 흐름이다.",
+            nextStage: "end"
+          },
+          {
+            text: "\"ㅋㅋㅋ 농담인데~ 다음에 진짜 가자\"",
+            outcome: "\"뭐야 ㅋㅋㅋ\" 상대가 살짝 실망한 것 같다. 분위기가 김빠졌다.",
+            principle: "번복",
+            principleDesc: "말을 번복하면 신뢰가 깎인다. 던진 말엔 책임을 져야 한다.",
+            evaluation: "negative",
+            evalText: "아쉽다... 좋은 기회였는데.",
+            nextStage: "end"
+          }
+        ]
+      }
+    ];
+
+    let currentStageId = 1;
+    let collectedPrinciples = [];
+    let stageHistory = [];
+
+    function getStageById(id) {
+      return stages.find(s => s.id === id);
+    }
+
+    function init() {
+      renderProgress();
+      renderStage();
+      
+      document.getElementById('next-btn').addEventListener('click', nextStage);
+      document.getElementById('restart-btn').addEventListener('click', restart);
+      document.getElementById('native-share-btn').addEventListener('click', nativeShare);
+      document.getElementById('copy-btn').addEventListener('click', copyLink);
+      document.getElementById('other-toggle').addEventListener('click', toggleOtherChoices);
+    }
+
+    function toggleOtherChoices() {
+      const content = document.getElementById('other-choices-content');
+      const toggle = document.getElementById('other-toggle');
+      content.classList.toggle('hidden');
+      toggle.classList.toggle('open');
+    }
+
+    function renderProgress() {
+      const totalStages = 3;
+      const currentCount = stageHistory.length;
+      
+      const progressEl = document.getElementById('progress');
+      progressEl.innerHTML = Array(totalStages).fill(0).map((_, idx) => {
+        let className = 'progress-bar';
+        if (idx < currentCount) className += ' completed';
+        else if (idx === currentCount) className += ' current';
+        return `<div class="${className}"></div>`;
+      }).join('');
+    }
+
+    function renderStage() {
+      const stage = getStageById(currentStageId);
+      if (!stage) return;
+      
+      document.getElementById('stage-label').textContent = `Stage ${stageHistory.length + 1}`;
+      document.getElementById('context').textContent = stage.context;
+      document.getElementById('situation').textContent = stage.situation;
+      
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = stage.choices.map((choice, idx) => `
+        <button class="choice-btn" data-index="${idx}">${choice.text}</button>
+      `).join('');
+      
+      choicesEl.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleChoice(parseInt(btn.dataset.index)));
+      });
+      
+      document.getElementById('choices').classList.remove('hidden');
+      document.getElementById('result-section').classList.remove('show');
+    }
+
+    function handleChoice(index) {
+      const stage = getStageById(currentStageId);
+      const choice = stage.choices[index];
+      
+      stageHistory.push({
+        stageId: currentStageId,
+        choiceIndex: index,
+        principle: choice.principle
+      });
+      
+      if (!collectedPrinciples.find(p => p.name === choice.principle)) {
+        collectedPrinciples.push({
+          name: choice.principle,
+          desc: choice.principleDesc
+        });
+      }
+      
+      document.getElementById('choices').classList.add('hidden');
+      document.getElementById('result-section').classList.add('show');
+      
+      document.getElementById('selected-text').textContent = choice.text;
+      document.getElementById('outcome-text').textContent = choice.outcome;
+      document.getElementById('principle-name').textContent = choice.principle;
+      document.getElementById('principle-explanation').textContent = choice.principleDesc;
+      
+      const evalCard = document.getElementById('evaluation-card');
+      const evalIcon = document.getElementById('evaluation-icon');
+      const evalText = document.getElementById('evaluation-text');
+      
+      evalCard.className = 'evaluation-card ' + choice.evaluation;
+      evalText.textContent = choice.evalText;
+      
+      if (choice.evaluation === 'positive') evalIcon.textContent = '✓';
+      else if (choice.evaluation === 'neutral') evalIcon.textContent = '⚠️';
+      else evalIcon.textContent = '✗';
+      
+      const otherChoices = stage.choices.filter((_, i) => i !== index);
+      const otherContent = document.getElementById('other-choices-content');
+      otherContent.innerHTML = otherChoices.map(c => {
+        let evalBadge = '';
+        if (c.evaluation === 'positive') evalBadge = '<span class="eval-badge positive">✓ 효과적</span>';
+        else if (c.evaluation === 'neutral') evalBadge = '<span class="eval-badge neutral">⚠️ 상황에 따라</span>';
+        else evalBadge = '<span class="eval-badge negative">✗ 리스크</span>';
+        
+        return `
+          <div class="other-choice-card">
+            <div class="other-choice-header">${evalBadge}</div>
+            <div class="other-choice-text">${c.text}</div>
+            <div class="other-choice-outcome">${c.outcome}</div>
+            <div class="other-choice-eval">${c.evalText}</div>
+            <div class="other-choice-principle"><strong>${c.principle}</strong>: ${c.principleDesc}</div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('other-choices-content').classList.add('hidden');
+      document.getElementById('other-toggle').classList.remove('open');
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (choice.nextStage === 'end') {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음 상황';
+      }
+      
+      currentStageId = choice.nextStage;
+      renderProgress();
+    }
+
+    function nextStage() {
+      if (currentStageId === 'end') {
+        showFinalScreen();
+      } else {
+        renderStage();
+      }
+    }
+
+    function showFinalScreen() {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('final-screen').classList.add('show');
+      
+      const principlesList = document.getElementById('principles-list');
+      principlesList.innerHTML = collectedPrinciples.map(p => `
+        <div class="principle-item">
+          <div class="principle-item-icon">💡</div>
+          <div class="principle-item-content">
+            <div class="principle-item-name">${p.name}</div>
+            <div class="principle-item-desc">${p.desc}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      saveProgress();
+      showInstallButton();
+    }
+
+    function saveProgress() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const profile = JSON.parse(saved);
+        
+        if (!profile.completedSims) profile.completedSims = [];
+        if (!profile.principles) profile.principles = [];
+        
+        const isFirstTime = !profile.completedSims.includes(SIM_ID);
+        
+        if (isFirstTime) {
+          profile.completedSims.push(SIM_ID);
+          profile.exp = (profile.exp || 0) + 30;
+          
+          const expNeeded = (profile.level || 1) * 100;
+          while (profile.exp >= expNeeded) {
+            profile.exp -= expNeeded;
+            profile.level = (profile.level || 1) + 1;
+          }
+        }
+        
+        collectedPrinciples.forEach(p => {
+          if (!profile.principles.find(existing => existing.name === p.name)) {
+            profile.principles.push(p);
+          }
+        });
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      }
+    }
+
+    function getShareText() {
+      return `💕 이클립스 마인드랩
+
+[썸 진전시키기] 클리어!
+
+발견한 원칙 ${collectedPrinciples.length}개:
+${collectedPrinciples.map(p => '• ' + p.name).join('\n')}
+
+당신의 썸은 어떻게 될까요?`;
+    }
+
+    function nativeShare() {
+      if (navigator.share) {
+        navigator.share({
+          title: '썸 진전시키기 - 이클립스 마인드랩',
+          text: getShareText(),
+          url: SITE_URL
+        }).catch(() => {});
+      } else {
+        copyLink();
+      }
+    }
+
+    function copyLink() {
+      const text = getShareText() + '\n' + SITE_URL;
+      const btn = document.getElementById('copy-btn');
+      
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('success');
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 복사 완료!`;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 링크 복사`;
+        }, 2000);
+      });
+    }
+
+    function restart() {
+      currentStageId = 1;
+      collectedPrinciples = [];
+      stageHistory = [];
+      
+      document.getElementById('final-screen').classList.remove('show');
+      document.getElementById('game-screen').classList.remove('hidden');
+      
+      renderProgress();
+      renderStage();
+    }
+
+    // PWA
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function showInstallButton() {
+      if (deferredPrompt && installBtn) {
+        installBtn.classList.remove('hidden');
+      }
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    init();
+  </script>
+</body>
+</html>
