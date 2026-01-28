@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이클립스 마인드랩</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="마인드랩">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <!-- SEO -->
+  <meta name="description" content="심리, 철학, 사회의 숨겨진 원칙들을 발견하세요. 이클립스 마인드랩에서 지적 탐험을 시작하세요.">
+  <meta property="og:title" content="이클립스 마인드랩">
+  <meta property="og:description" content="심리, 철학, 사회의 숨겨진 원칙들을 발견하세요">
+  <meta property="og:image" content="icon-512.png">
+  <meta property="og:type" content="website">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { width: 36px; height: 36px; border-radius: 50%; }
+    .brand-text { font-size: 18px; font-weight: 600; color: #a78bfa; }
+
+    .header-links { display: flex; gap: 12px; }
+    .header-link { color: #71717a; text-decoration: none; font-size: 13px; }
+    .header-link:hover { color: #a78bfa; }
+
+    .profile-card {
+      background: linear-gradient(135deg, #18181b 0%, #1f1f23 100%);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #27272a;
+    }
+
+    .profile-top { display: flex; gap: 16px; margin-bottom: 16px; }
+
+    .tier-badge { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .tier-badge img { width: 100%; height: 100%; object-fit: cover; }
+
+    .profile-info { flex: 1; }
+    .profile-name { font-size: 20px; font-weight: 600; margin-bottom: 2px; }
+    .profile-title { font-size: 13px; color: #a78bfa; margin-bottom: 8px; }
+
+    .level-info { display: flex; align-items: center; gap: 8px; }
+    .level-text { font-size: 12px; color: #71717a; }
+    .level-num { color: #fff; font-weight: 600; }
+    .exp-bar { flex: 1; height: 6px; background: #27272a; border-radius: 3px; overflow: hidden; }
+    .exp-fill { height: 100%; background: linear-gradient(90deg, #a78bfa, #c084fc); border-radius: 3px; }
+    .exp-text { font-size: 11px; color: #71717a; }
+
+    .journey-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #27272a; }
+    .journey-title { font-size: 13px; color: #71717a; margin-bottom: 12px; }
+    .journey-stats { display: flex; gap: 16px; }
+    .journey-stat { flex: 1; text-align: center; padding: 12px; background: #1f1f23; border-radius: 10px; }
+    .journey-stat-value { font-size: 20px; font-weight: 700; }
+    .journey-stat-label { font-size: 11px; color: #71717a; }
+
+    .map-section { margin-bottom: 24px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .section-title .icon { font-size: 20px; }
+    .section-progress { font-size: 13px; color: #71717a; }
+
+    .category-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .sim-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .sim-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .sim-item:hover { background: #27272a; }
+    .sim-item.locked { opacity: 0.5; pointer-events: none; }
+    .sim-item.completed { border-left: 3px solid #4ade80; }
+
+    .sim-status { width: 24px; text-align: center; font-size: 14px; }
+    .sim-info { flex: 1; }
+    .sim-title { font-size: 14px; font-weight: 500; }
+    .sim-desc { font-size: 12px; color: #71717a; }
+    .sim-reward { font-size: 11px; color: #a78bfa; }
+
+    .principles-section {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .principles-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .principles-count { font-size: 13px; color: #a78bfa; }
+    .principles-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .principle-tag { padding: 6px 12px; background: #27272a; border-radius: 20px; font-size: 12px; color: #a1a1aa; }
+    .principles-empty { font-size: 13px; color: #52525b; text-align: center; padding: 16px; width: 100%; }
+
+    .tier-section { background: #18181b; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .tier-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .tier-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .tier-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; opacity: 0.3; }
+    .tier-icon.active { opacity: 1; box-shadow: 0 0 12px rgba(167, 139, 250, 0.5); }
+    .tier-icon.completed { opacity: 0.7; }
+    .tier-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .tier-name { font-size: 10px; color: #52525b; }
+    .tier-item.active .tier-name { color: #a78bfa; font-weight: 600; }
+
+    .book-section { margin-bottom: 24px; }
+    
+    .book-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(135deg, #1a1520 0%, #18181b 100%);
+      border: 1px solid #2d2438;
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    
+    .book-card:hover {
+      border-color: #a78bfa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(167, 139, 250, 0.15);
+    }
+    
+    .book-images {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    
+    .book-img {
+      width: 56px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    
+    .book-info { flex: 1; }
+    .book-series { font-size: 11px; color: #a78bfa; margin-bottom: 4px; }
+    .book-main-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .book-desc { font-size: 12px; color: #71717a; }
+
+    .footer { text-align: center; padding: 24px 0; border-top: 1px solid #27272a; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
+    .footer-link { display: flex; align-items: center; gap: 6px; color: #71717a; text-decoration: none; font-size: 13px; }
+    .footer-link:hover { color: #a78bfa; }
+    .footer-copy { font-size: 11px; color: #52525b; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 20px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: #18181b; border-radius: 20px;
+      padding: 32px 24px; max-width: 360px; width: 100%; text-align: center;
+    }
+    .modal-logo { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 16px; }
+    .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .modal-desc { font-size: 14px; color: #71717a; margin-bottom: 24px; line-height: 1.6; }
+    .modal-input {
+      width: 100%; padding: 14px 16px;
+      background: #27272a; border: 1px solid #3f3f46; border-radius: 12px;
+      color: #fff; font-size: 16px; margin-bottom: 16px; text-align: center;
+    }
+    .modal-input:focus { outline: none; border-color: #7c3aed; }
+    .modal-btn {
+      width: 100%; padding: 14px;
+      background: #7c3aed; border: none; border-radius: 12px;
+      color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    }
+    .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="modal-overlay" id="nameModal">
+    <div class="modal">
+      <img src="logo.png" alt="이클립스" class="modal-logo">
+      <div class="modal-title">이클립스 마인드랩</div>
+      <div class="modal-desc">지적 탐험을 시작하세요.<br>심리, 철학, 사회의 숨겨진 원칙들을 발견합니다.</div>
+      <input type="text" class="modal-input" id="nameInput" placeholder="탐험가 이름" maxlength="12">
+      <button class="modal-btn" id="startBtn" disabled>탐험 시작</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <img src="logo.png" alt="이클립스" class="brand-logo">
+        <span class="brand-text">이클립스 마인드랩</span>
+      </div>
+      <div class="header-links">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="header-link">유튜브</a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="header-link">책</a>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="tier-badge">
+          <img src="tier-ruby.png" alt="티어" id="tierImage">
+        </div>
+        <div class="profile-info">
+          <div class="profile-name" id="profileName">탐험가</div>
+          <div class="profile-title" id="profileTitle">🌱 초보 탐험가</div>
+          <div class="level-info">
+            <span class="level-text">Lv.<span class="level-num" id="levelNum">1</span></span>
+            <div class="exp-bar">
+              <div class="exp-fill" id="expFill" style="width: 0%"></div>
+            </div>
+            <span class="exp-text" id="expText">0/100</span>
+          </div>
+        </div>
+      </div>
+      <div class="journey-section">
+        <div class="journey-title">탐험 현황</div>
+        <div class="journey-stats">
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statCleared">0</div>
+            <div class="journey-stat-label">클리어</div>
+          </div>
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statPrinciples">0</div>
+            <div class="journey-stat-label">발견한 원칙</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">🧠</span> 심리</div>
+        <div class="section-progress" id="psychProgress">0/5</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list" id="psychList"></div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">💭</span> 철학</div>
+        <div class="section-progress">0/2</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list">
+          <div class="sim-item locked">
+            <div class="sim-status">🔒</div>
+            <div class="sim-info">
+              <div class="sim-title">트롤리 딜레마</div>
+              <div class="sim-desc">Coming Soon</div>
+            </div>
+          </div>
+          <div class="sim-item locked">
+            <div class="sim-status">🔒</div>
+            <div class="sim-info">
+              <div class="sim-title">경험 기계</div>
+              <div class="sim-desc">Coming Soon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">🔬</span> 사회</div>
+        <div class="section-progress">0/2</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list">
+          <div class="sim-item locked">
+            <div class="sim-status">🔒</div>
+            <div class="sim-info">
+              <div class="sim-title">죄수의 딜레마</div>
+              <div class="sim-desc">Coming Soon</div>
+            </div>
+          </div>
+          <div class="sim-item locked">
+            <div class="sim-status">🔒</div>
+            <div class="sim-info">
+              <div class="sim-title">방관자 효과</div>
+              <div class="sim-desc">Coming Soon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principles-section">
+      <div class="principles-header">
+        <div class="section-title"><span class="icon">💡</span> 발견한 원칙</div>
+        <div class="principles-count" id="principlesCount">0개</div>
+      </div>
+      <div class="principles-list" id="principlesList">
+        <div class="principles-empty">시뮬레이션을 클리어하면 원칙들이 여기에 모입니다</div>
+      </div>
+    </div>
+
+    <div class="tier-section">
+      <div class="section-title">티어 진행도</div>
+      <div class="tier-progress">
+        <div class="tier-item active" data-tier="ruby">
+          <div class="tier-icon active"><img src="tier-ruby.png"></div>
+          <span class="tier-name">루비</span>
+        </div>
+        <div class="tier-item" data-tier="amethyst">
+          <div class="tier-icon"><img src="tier-amethyst.png"></div>
+          <span class="tier-name">자수정</span>
+        </div>
+        <div class="tier-item" data-tier="sapphire">
+          <div class="tier-icon"><img src="tier-sapphire.png"></div>
+          <span class="tier-name">사파이어</span>
+        </div>
+        <div class="tier-item" data-tier="emerald">
+          <div class="tier-icon"><img src="tier-emerald.png"></div>
+          <span class="tier-name">에메랄드</span>
+        </div>
+        <div class="tier-item" data-tier="obsidian">
+          <div class="tier-icon"><img src="tier-obsidian.png"></div>
+          <span class="tier-name">옵시디언</span>
+        </div>
+        <div class="tier-item" data-tier="gold">
+          <div class="tier-icon"><img src="tier-gold.png"></div>
+          <span class="tier-name">골드</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="book-section">
+      <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-card">
+        <div class="book-images">
+          <img src="book-philosophy.png" alt="훔친 철학 편" class="book-img">
+          <img src="book-psychology.png" alt="훔친 심리학 편" class="book-img">
+        </div>
+        <div class="book-info">
+          <div class="book-series">세계척학전집 시리즈</div>
+          <div class="book-main-title">훔친 철학 편 · 훔친 심리학 편</div>
+          <div class="book-desc">시뮬레이터 속 원칙들의 더 깊은 이야기</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer">
+      <div class="footer-links">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="footer-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/>
+            <path fill="#09090b" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          유튜브
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="footer-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          책
+        </a>
+      </div>
+      <div class="footer-copy">© 이클립스 마인드랩</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    const CURRENT_VERSION = 5;
+
+    const TIERS = [
+      { name: '루비', key: 'ruby', minLevel: 1 },
+      { name: '자수정', key: 'amethyst', minLevel: 6 },
+      { name: '사파이어', key: 'sapphire', minLevel: 11 },
+      { name: '에메랄드', key: 'emerald', minLevel: 16 },
+      { name: '옵시디언', key: 'obsidian', minLevel: 21 },
+      { name: '골드', key: 'gold', minLevel: 26 }
+    ];
+
+    const TITLES = [
+      { minLevel: 1, title: '🌱 초보 탐험가' },
+      { minLevel: 5, title: '🌿 호기심 많은 관찰자' },
+      { minLevel: 10, title: '🌳 깊이 있는 사색가' },
+      { minLevel: 20, title: '🌟 통찰의 대가' }
+    ];
+
+    const SIMULATIONS = {
+      psych: [
+        { id: 'idea_thief', title: '아이디어 도둑 동료', desc: '네 아이디어를 가로챈 동료', url: 'sim-idea-thief.html' },
+        { id: 'money_friend', title: '돈 안 갚는 친구', desc: '3개월째 30만원을 안 갚는 친구', url: null },
+        { id: 'dating_progress', title: '썸 진전시키기', desc: '카톡만 하는 관계, 어떻게?', url: null },
+        { id: 'free_rider', title: '무임승차 팀원', desc: '일 안 하는 팀원', url: null },
+        { id: 'parent_nagging', title: '부모님 잔소리', desc: '진로에 대한 끝없는 잔소리', url: null }
+      ]
+    };
+
+    let profile = {
+      version: CURRENT_VERSION,
+      name: '',
+      level: 1,
+      exp: 0,
+      completedSims: [],
+      principles: []
+    };
+
+    function loadProfile() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        let p = JSON.parse(saved);
+        if (!p.version || p.version < CURRENT_VERSION) {
+          p = migrateProfile(p);
+        }
+        profile = p;
+        return true;
+      }
+      return false;
+    }
+
+    function migrateProfile(old) {
+      const migrated = {
+        version: CURRENT_VERSION,
+        name: old.name || '',
+        level: old.level || 1,
+        exp: old.exp || 0,
+        completedSims: old.completedSims || old.completedTests || [],
+        principles: old.principles || []
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
+
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+
+    function getTier(level) {
+      for (let i = TIERS.length - 1; i >= 0; i--) {
+        if (level >= TIERS[i].minLevel) return TIERS[i];
+      }
+      return TIERS[0];
+    }
+
+    function getTitle(level) {
+      for (let i = TITLES.length - 1; i >= 0; i--) {
+        if (level >= TITLES[i].minLevel) return TITLES[i].title;
+      }
+      return TITLES[0].title;
+    }
+
+    function updateUI() {
+      const tier = getTier(profile.level);
+      const title = getTitle(profile.level);
+      const expNeeded = profile.level * 100;
+      const expPercent = (profile.exp / expNeeded) * 100;
+
+      document.getElementById('profileName').textContent = profile.name || '탐험가';
+      document.getElementById('profileTitle').textContent = title;
+      document.getElementById('tierImage').src = 'tier-' + tier.key + '.png';
+      document.getElementById('levelNum').textContent = profile.level;
+      document.getElementById('expFill').style.width = expPercent + '%';
+      document.getElementById('expText').textContent = profile.exp + '/' + expNeeded;
+      
+      document.getElementById('statCleared').textContent = profile.completedSims.length;
+      document.getElementById('statPrinciples').textContent = profile.principles.length;
+
+      // 심리 시뮬레이션 목록
+      const psychList = document.getElementById('psychList');
+      const completedPsych = SIMULATIONS.psych.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('psychProgress').textContent = `${completedPsych}/${SIMULATIONS.psych.length}`;
+      
+      psychList.innerHTML = SIMULATIONS.psych.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const isLocked = !sim.url;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">Coming Soon</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 발견한 원칙
+      const principlesList = document.getElementById('principlesList');
+      document.getElementById('principlesCount').textContent = profile.principles.length + '개';
+      
+      if (profile.principles.length > 0) {
+        principlesList.innerHTML = profile.principles.map(p => 
+          `<span class="principle-tag">${p.name}</span>`
+        ).join('');
+      } else {
+        principlesList.innerHTML = '<div class="principles-empty">시뮬레이션을 클리어하면 원칙들이 여기에 모입니다</div>';
+      }
+
+      // 티어 진행도
+      TIERS.forEach(t => {
+        const item = document.querySelector(`.tier-item[data-tier="${t.key}"]`);
+        if (!item) return;
+        const icon = item.querySelector('.tier-icon');
+        item.classList.remove('active');
+        icon.classList.remove('active', 'completed');
+        if (t.key === tier.key) {
+          item.classList.add('active');
+          icon.classList.add('active');
+        } else if (profile.level >= t.minLevel) {
+          icon.classList.add('completed');
+        }
+      });
+    }
+
+    function init() {
+      const nameInput = document.getElementById('nameInput');
+      const startBtn = document.getElementById('startBtn');
+      const nameModal = document.getElementById('nameModal');
+
+      if (loadProfile() && profile.name) {
+        nameModal.classList.add('hidden');
+        updateUI();
+      }
+
+      nameInput.addEventListener('input', () => {
+        startBtn.disabled = nameInput.value.trim().length < 2;
+      });
+
+      startBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim();
+        if (name.length >= 2) {
+          profile.name = name;
+          saveProfile();
+          nameModal.classList.add('hidden');
+          updateUI();
+        }
+      });
+    }
+
+    init();
+    
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>
