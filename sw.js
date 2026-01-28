@@ -1,19 +1,19 @@
-const CACHE_NAME = 'mindlab-v1';
+const CACHE_NAME = 'mindlab-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/sim-idea-thief.html',
-  '/logo.png',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/tier-ruby.png',
-  '/tier-amethyst.png',
-  '/tier-sapphire.png',
-  '/tier-emerald.png',
-  '/tier-obsidian.png',
-  '/tier-gold.png',
-  '/book-philosophy.png',
-  '/book-psychology.png'
+  './',
+  './index.html',
+  './sim-idea-thief.html',
+  './logo.png',
+  './icon-192.png',
+  './icon-512.png',
+  './tier-ruby.png',
+  './tier-amethyst.png',
+  './tier-sapphire.png',
+  './tier-emerald.png',
+  './tier-obsidian.png',
+  './tier-gold.png',
+  './book-philosophy.png',
+  './book-psychology.png'
 ];
 
 // 설치
