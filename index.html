@@ -1215,19 +1215,27 @@
           saveProfile();
         } catch (error) {
           console.error('구글 연동 실패:', error);
+          console.log('에러 코드:', error.code);
           
           if (error.code === 'auth/credential-already-in-use') {
             // 이미 다른 계정에 연결된 구글 계정
+            console.log('credential-already-in-use 감지됨');
+            
             const loadExisting = confirm('이 구글 계정에 기존 프로필이 있습니다.\n\n기존 프로필을 불러올까요?\n(현재 프로필은 삭제됩니다)');
+            
+            console.log('사용자 선택:', loadExisting);
             
             if (loadExisting) {
               try {
                 // 구글 계정으로 로그인 (기존 익명 계정 대체)
                 const provider = new GoogleAuthProvider();
                 const result = await signInWithPopup(auth, provider);
+                console.log('구글 로그인 성공:', result.user.uid);
                 
                 // 기존 구글 계정의 프로필 불러오기
                 const cloudProfile = await loadFromCloud();
+                console.log('클라우드 프로필:', cloudProfile);
+                
                 if (cloudProfile) {
                   profile = cloudProfile;
                   localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
