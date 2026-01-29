@@ -735,7 +735,7 @@
     // Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     // Firebase 설정
     const firebaseConfig = {
@@ -1111,17 +1111,73 @@
 
       nameInput.addEventListener('input', () => {
         startBtn.disabled = nameInput.value.trim().length < 2;
+        // 에러 메시지 초기화
+        const errorMsg = document.getElementById('nameError');
+        if (errorMsg) errorMsg.style.display = 'none';
       });
 
-      startBtn.addEventListener('click', () => {
+      startBtn.addEventListener('click', async () => {
         const name = nameInput.value.trim();
-        if (name.length >= 2) {
+        if (name.length < 2) return;
+        
+        // 버튼 비활성화 (중복 클릭 방지)
+        startBtn.disabled = true;
+        startBtn.textContent = '확인 중...';
+        
+        try {
+          // 닉네임 중복 체크
+          const isDuplicate = await checkNicknameDuplicate(name);
+          
+          if (isDuplicate) {
+            // 중복인 경우
+            let errorMsg = document.getElementById('nameError');
+            if (!errorMsg) {
+              errorMsg = document.createElement('div');
+              errorMsg.id = 'nameError';
+              errorMsg.style.cssText = 'color: #ef4444; font-size: 13px; margin-top: 8px; text-align: center;';
+              nameInput.parentNode.insertBefore(errorMsg, nameInput.nextSibling);
+            }
+            errorMsg.textContent = '이미 사용 중인 닉네임입니다.';
+            errorMsg.style.display = 'block';
+            startBtn.disabled = false;
+            startBtn.textContent = '탐험 시작';
+            return;
+          }
+          
+          // 중복 아니면 저장
+          profile.name = name;
+          saveProfile();
+          nameModal.classList.add('hidden');
+          updateUI();
+        } catch (error) {
+          console.error('닉네임 체크 실패:', error);
+          // 에러 시 그냥 진행 (오프라인 등)
           profile.name = name;
           saveProfile();
           nameModal.classList.add('hidden');
           updateUI();
         }
       });
+
+      // 닉네임 중복 체크 함수
+      async function checkNicknameDuplicate(name) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('name', '==', name));
+        const querySnapshot = await getDocs(q);
+        
+        // 현재 유저의 uid
+        const currentUid = auth.currentUser?.uid;
+        
+        // 다른 유저가 사용 중인지 확인
+        let isDuplicate = false;
+        querySnapshot.forEach((doc) => {
+          if (doc.id !== currentUid) {
+            isDuplicate = true;
+          }
+        });
+        
+        return isDuplicate;
+      }
 
       // 구글 연동 버튼
       // 이미 구글 연동됐는지 확인
@@ -1159,10 +1215,52 @@
           saveProfile();
         } catch (error) {
           console.error('구글 연동 실패:', error);
+          console.log('에러 코드:', error.code);
+          console.log('에러 메시지:', error.message);
           
-          if (error.code === 'auth/credential-already-in-use') {
+          // credential-already-in-use 체크 (code 또는 message로)
+          const isAlreadyInUse = error.code === 'auth/credential-already-in-use' || 
+                                 (error.message && error.message.includes('credential-already-in-use'));
+          
+          if (isAlreadyInUse) {
             // 이미 다른 계정에 연결된 구글 계정
-            alert('이 구글 계정은 이미 다른 프로필과 연동되어 있습니다.');
+            console.log('credential-already-in-use 감지됨');
+            
+            // 팝업이 완전히 닫힌 후 confirm 표시 (딜레이 필요)
+            setTimeout(async () => {
+              const loadExisting = confirm('이 구글 계정에 기존 프로필이 있습니다.\n\n기존 프로필을 불러올까요?\n(현재 프로필은 삭제됩니다)');
+              
+              console.log('사용자 선택:', loadExisting);
+              
+              if (loadExisting) {
+                try {
+                  // 구글 계정으로 로그인 (기존 익명 계정 대체)
+                  const provider = new GoogleAuthProvider();
+                  const result = await signInWithPopup(auth, provider);
+                  console.log('구글 로그인 성공:', result.user.uid);
+                  
+                  // 기존 구글 계정의 프로필 불러오기
+                  const cloudProfile = await loadFromCloud();
+                  console.log('클라우드 프로필:', cloudProfile);
+                  
+                  if (cloudProfile) {
+                    profile = cloudProfile;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                  }
+                  
+                  // UI 업데이트
+                  googleSyncBtn.classList.add('synced');
+                  googleSyncBtn.title = '구글 연동됨';
+                  nameModal.classList.add('hidden');
+                  updateUI();
+                  
+                  alert('기존 프로필을 불러왔습니다!');
+                } catch (signInError) {
+                  console.error('구글 로그인 실패:', signInError);
+                  alert('프로필 불러오기에 실패했습니다.');
+                }
+              }
+            }, 500);
           } else if (error.code === 'auth/popup-closed-by-user') {
             // 사용자가 팝업 닫음
             console.log('로그인 취소됨');
