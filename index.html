@@ -734,7 +734,7 @@
   <script type="module">
     // Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithRedirect, getRedirectResult } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     // Firebase 설정
@@ -1062,6 +1062,28 @@
       // 로컬 프로필 먼저 로드
       loadProfile();
 
+      // 리다이렉트 결과 확인 (기존 구글 프로필 불러오기)
+      try {
+        const redirectResult = await getRedirectResult(auth);
+        if (redirectResult && localStorage.getItem('eclipse_mindlab_load_existing')) {
+          console.log('리다이렉트 로그인 성공:', redirectResult.user.uid);
+          localStorage.removeItem('eclipse_mindlab_load_existing');
+          
+          // 기존 구글 계정의 프로필 불러오기
+          const cloudProfile = await loadFromCloud();
+          console.log('클라우드 프로필:', cloudProfile);
+          
+          if (cloudProfile) {
+            profile = cloudProfile;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+            alert('기존 프로필을 불러왔습니다!');
+          }
+        }
+      } catch (redirectError) {
+        console.log('리다이렉트 결과 없음 또는 에러:', redirectError);
+        localStorage.removeItem('eclipse_mindlab_load_existing');
+      }
+
       // Firebase 익명 로그인 시도
       try {
         await new Promise((resolve) => {
@@ -1234,29 +1256,15 @@
               
               if (loadExisting) {
                 try {
-                  // 구글 계정으로 로그인 (기존 익명 계정 대체)
+                  // 리다이렉트 전에 플래그 저장
+                  localStorage.setItem('eclipse_mindlab_load_existing', 'true');
+                  
+                  // 구글 계정으로 로그인 (리다이렉트 방식)
                   const provider = new GoogleAuthProvider();
-                  const result = await signInWithPopup(auth, provider);
-                  console.log('구글 로그인 성공:', result.user.uid);
-                  
-                  // 기존 구글 계정의 프로필 불러오기
-                  const cloudProfile = await loadFromCloud();
-                  console.log('클라우드 프로필:', cloudProfile);
-                  
-                  if (cloudProfile) {
-                    profile = cloudProfile;
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-                  }
-                  
-                  // UI 업데이트
-                  googleSyncBtn.classList.add('synced');
-                  googleSyncBtn.title = '구글 연동됨';
-                  nameModal.classList.add('hidden');
-                  updateUI();
-                  
-                  alert('기존 프로필을 불러왔습니다!');
+                  await signInWithRedirect(auth, provider);
                 } catch (signInError) {
                   console.error('구글 로그인 실패:', signInError);
+                  localStorage.removeItem('eclipse_mindlab_load_existing');
                   alert('프로필 불러오기에 실패했습니다.');
                 }
               }
