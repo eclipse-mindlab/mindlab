@@ -114,6 +114,31 @@
 
     .install-btn.hidden { display: none; }
 
+    .daily-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(124, 58, 237, 0.1));
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 14px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .daily-banner:hover {
+      border-color: #a78bfa;
+      transform: translateY(-2px);
+    }
+
+    .daily-icon { font-size: 28px; }
+    .daily-content { flex: 1; }
+    .daily-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .daily-desc { font-size: 12px; color: #a78bfa; }
+    .daily-arrow { font-size: 18px; color: #71717a; }
+
     .map-section { margin-bottom: 24px; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -311,6 +336,15 @@
         앱으로 설치하기
       </button>
     </div>
+
+    <a href="daily.html" class="daily-banner">
+      <div class="daily-icon">🤔</div>
+      <div class="daily-content">
+        <div class="daily-title">오늘의 딜레마</div>
+        <div class="daily-desc">매일 새로운 질문에 답하고 +10 EXP</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
 
     <div class="map-section">
       <div class="section-header">

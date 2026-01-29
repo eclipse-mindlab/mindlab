@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 딜레마 - 이클립스 마인드랩</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 540px; margin: 0 auto; }
+    
+    .header { margin-bottom: 24px; }
+    
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    
+    .back-btn:hover { color: #a78bfa; }
+    
+    .header-content { text-align: center; }
+    
+    .date-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(167, 139, 250, 0.2);
+      border-radius: 20px;
+      font-size: 13px;
+      color: #a78bfa;
+      margin-bottom: 12px;
+    }
+    
+    .header h1 { font-size: 24px; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #71717a; }
+    
+    .streak-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .streak-icon { font-size: 20px; }
+    .streak-text { font-size: 14px; color: #fbbf24; }
+    .streak-num { font-weight: 700; }
+    
+    .dilemma-card {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .dilemma-category {
+      font-size: 11px;
+      color: #a78bfa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    
+    .dilemma-situation {
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    
+    .dilemma-question {
+      font-size: 15px;
+      color: #d4d4d8;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 8px;
+    }
+    
+    .choices { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    
+    .choice-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      background: #18181b;
+      border: 2px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.5;
+    }
+    
+    .choice-btn:hover {
+      border-color: #a78bfa;
+      background: #1f1f23;
+    }
+    
+    .choice-btn.selected {
+      border-color: #a78bfa;
+      background: rgba(167, 139, 250, 0.1);
+    }
+    
+    .choice-btn.revealed { cursor: default; }
+    
+    .choice-btn.revealed:hover {
+      border-color: #27272a;
+      background: #18181b;
+    }
+    
+    .choice-btn.selected.revealed {
+      border-color: #a78bfa;
+      background: rgba(167, 139, 250, 0.1);
+    }
+    
+    .choice-content { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .choice-text { flex: 1; }
+    
+    .choice-stats {
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .choice-stats.show { display: flex; }
+    
+    .stat-percent {
+      font-size: 18px;
+      font-weight: 700;
+      color: #a78bfa;
+    }
+    
+    .stat-bar {
+      width: 60px;
+      height: 4px;
+      background: #27272a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .stat-fill {
+      height: 100%;
+      background: #a78bfa;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    
+    .result-section {
+      display: none;
+      margin-top: 24px;
+    }
+    
+    .result-section.show { display: block; }
+    
+    .result-card {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), #18181b);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .result-icon { font-size: 20px; }
+    .result-label { font-size: 12px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .result-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .result-desc { font-size: 14px; color: #a1a1aa; line-height: 1.8; margin-bottom: 12px; }
+    
+    .result-source {
+      font-size: 12px;
+      color: #71717a;
+      padding: 10px 12px;
+      background: #1f1f23;
+      border-radius: 8px;
+      border-left: 2px solid #a78bfa;
+    }
+    
+    .already-done {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .already-icon { font-size: 48px; margin-bottom: 16px; }
+    .already-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .already-desc { font-size: 14px; color: #71717a; margin-bottom: 8px; }
+    .already-choice { font-size: 14px; color: #a78bfa; margin-bottom: 24px; }
+    
+    .tomorrow-timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #18181b;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #71717a;
+    }
+    
+    .timer-num { color: #fff; font-weight: 600; font-family: monospace; }
+    
+    .share-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #27272a;
+    }
+    
+    .share-label { font-size: 14px; color: #71717a; margin-bottom: 12px; text-align: center; }
+    
+    .share-buttons { display: flex; gap: 10px; justify-content: center; }
+    
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .share-btn:hover { background: #3f3f46; }
+    .share-btn.success { background: #166534; border-color: #22c55e; }
+    
+    .home-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      background: #7c3aed;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    .home-btn:hover { background: #6d28d9; }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+      <div class="header-content">
+        <div class="date-badge" id="dateDisplay"></div>
+        <h1>오늘의 딜레마</h1>
+        <p>당신의 선택은?</p>
+      </div>
+    </div>
+    
+    <div class="streak-card" id="streakCard">
+      <span class="streak-icon">🔥</span>
+      <span class="streak-text"><span class="streak-num" id="streakNum">0</span>일 연속 참여 중!</span>
+    </div>
+    
+    <div id="mainContent">
+      <div class="dilemma-card">
+        <div class="dilemma-category" id="dilemmaCategory">심리</div>
+        <div class="dilemma-situation" id="dilemmaSituation"></div>
+        <div class="dilemma-question" id="dilemmaQuestion"></div>
+      </div>
+      
+      <div class="choices" id="choices"></div>
+      
+      <div class="result-section" id="resultSection">
+        <div class="result-card">
+          <div class="result-header">
+            <span class="result-icon">💡</span>
+            <span class="result-label">연구 결과</span>
+          </div>
+          <div class="result-title" id="resultTitle"></div>
+          <div class="result-desc" id="resultDesc"></div>
+          <div class="result-source" id="resultSource"></div>
+        </div>
+        
+        <div class="share-section">
+          <div class="share-label">친구에게 물어보기</div>
+          <div class="share-buttons">
+            <button class="share-btn" id="shareBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
+              공유하기
+            </button>
+            <button class="share-btn" id="copyBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              링크 복사
+            </button>
+          </div>
+        </div>
+        
+        <a href="index.html" class="home-btn">탐험 지도로 돌아가기</a>
+      </div>
+    </div>
+    
+    <div class="already-done hidden" id="alreadyDone">
+      <div class="already-icon">✅</div>
+      <div class="already-title">오늘의 딜레마 완료!</div>
+      <div class="already-desc">당신의 선택:</div>
+      <div class="already-choice" id="alreadyChoice"></div>
+      <div class="tomorrow-timer">
+        <span>다음 딜레마까지</span>
+        <span class="timer-num" id="timerDisplay">--:--:--</span>
+      </div>
+      <a href="index.html" class="home-btn" style="margin-top: 24px;">탐험 지도로 돌아가기</a>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_daily';
+    const PROFILE_KEY = 'eclipse_mindlab_profile';
+    
+    // 실제 연구 기반 딜레마들
+    const dilemmas = [
+      {
+        category: '철학 · 윤리',
+        situation: '폭주하는 트롤리가 5명을 향해 달려가고 있다. 당신 앞에 레버가 있다. 당기면 트롤리가 다른 선로로 바뀌지만, 그 선로에는 1명이 있다.',
+        question: '레버를 당겨 1명을 희생시키고 5명을 구할 것인가?',
+        choices: [
+          { text: '레버를 당긴다 (1명 희생, 5명 구함)', percent: 85 },
+          { text: '레버를 당기지 않는다 (개입하지 않음)', percent: 15 }
+        ],
+        principle: '이중효과 원칙',
+        explanation: '대부분의 사람들(약 85%)이 레버를 당기겠다고 답한다. 하지만 같은 결과라도 "다리에서 뚱뚱한 사람을 밀어서 트롤리를 멈추는" 상황에서는 오직 10%만 그렇게 하겠다고 답한다. 직접적 해침과 간접적 해침을 우리의 도덕 직관이 다르게 처리한다.',
+        source: 'Judith Jarvis Thomson, 1985 / Joshua Greene의 fMRI 연구, 2001'
+      },
+      {
+        category: '심리 · 행동경제학',
+        situation: '당신은 실험 참가자다. 10만원이 주어졌고, 모르는 상대방에게 원하는 만큼 나눠줄 수 있다. 상대방이 제안을 거절하면 둘 다 아무것도 못 받는다. 상대방이 "나에게 1만원만 주겠다"고 제안했다.',
+        question: '불공정한 제안(1만원)을 받아들일 것인가?',
+        choices: [
+          { text: '거절한다 (둘 다 0원)', percent: 50 },
+          { text: '받아들인다 (1만원이라도)', percent: 50 }
+        ],
+        principle: '최후통첩 게임',
+        explanation: '경제학적으로 합리적인 선택은 1원이라도 받는 것이다. 하지만 실제로는 약 50%가 불공정한 제안을 거절한다. 인간은 손해를 보더라도 불공정함에 대한 처벌 본능이 있다.',
+        source: 'Güth, Schmittberger & Schwarze, 1982 / 크로스컬처 연구 다수'
+      },
+      {
+        category: '심리 · 사회',
+        situation: '지하철에서 한 남성이 갑자기 쓰러졌다. 주변에 약 30명의 승객이 있다.',
+        question: '당신은 즉시 도움을 줄 것인가?',
+        choices: [
+          { text: '바로 달려가서 돕는다', percent: 31 },
+          { text: '누군가 먼저 움직이면 돕는다', percent: 69 }
+        ],
+        principle: '방관자 효과',
+        explanation: '혼자 있을 때는 85%가 돕지만, 여러 명이 있으면 31%로 떨어진다. "누군가 하겠지"라는 책임 분산이 발생한다. 이를 극복하려면 특정 사람을 지목하는 것이 효과적이다.',
+        source: 'Darley & Latané, 1968 (Kitty Genovese 사건 후 연구)'
+      },
+      {
+        category: '심리 · 인지편향',
+        situation: '당신은 콘서트 티켓을 20만원에 샀다. 콘서트 당일, 친한 친구의 깜짝 생일파티가 같은 시간에 잡혔다. 티켓은 환불 불가다.',
+        question: '어디로 갈 것인가?',
+        choices: [
+          { text: '콘서트에 간다 (20만원이 아깝다)', percent: 54 },
+          { text: '생일파티에 간다 (친구가 중요하다)', percent: 46 }
+        ],
+        principle: '매몰비용 오류',
+        explanation: '합리적 선택은 "지금부터 뭐가 더 좋을까"만 고려하는 것이다. 이미 쓴 20만원은 어떤 선택을 해도 돌아오지 않는다. 하지만 우리는 과거 투자에 영향받아 결정한다.',
+        source: 'Arkes & Blumer, 1985 / Kahneman & Tversky의 전망이론'
+      },
+      {
+        category: '철학 · 존재',
+        situation: '완벽한 가상현실 기계가 있다. 들어가면 원하는 모든 경험을 실제처럼 느낄 수 있다. 성공, 사랑, 행복... 무엇이든. 단, 한 번 들어가면 평생 나올 수 없고, 그것이 가짜라는 사실도 잊게 된다.',
+        question: '경험 기계에 들어갈 것인가?',
+        choices: [
+          { text: '들어간다 (행복이 중요하다)', percent: 13 },
+          { text: '들어가지 않는다 (진짜 삶이 중요하다)', percent: 87 }
+        ],
+        principle: '경험 기계 논증',
+        explanation: '놀랍게도 87%가 거부한다. 이는 쾌락주의에 대한 반박 근거로 사용된다. 인간은 단순한 행복만 원하지 않고, 진정성(authenticity)과 실제 성취를 원한다.',
+        source: 'Robert Nozick, Anarchy, State, and Utopia, 1974'
+      },
+      {
+        category: '심리 · 도덕',
+        situation: '친구가 "내 새 옷 어때?"라고 물었다. 솔직히 별로다.',
+        question: '어떻게 대답할 것인가?',
+        choices: [
+          { text: '솔직하게 말한다 ("음... 다른 게 더 어울릴 것 같아")', percent: 32 },
+          { text: '거짓말한다 ("좋아 보여!")', percent: 68 }
+        ],
+        principle: '사회적 거짓말',
+        explanation: '연구에 따르면 사람들은 하루 평균 1-2회 거짓말을 한다. 대부분은 관계를 유지하기 위한 "사회적 거짓말"이다. 완전한 정직이 항상 최선은 아니라는 암묵적 합의가 있다.',
+        source: 'DePaulo et al., 1996 / Bella DePaulo의 거짓말 연구'
+      },
+      {
+        category: '심리 · 행동경제학',
+        situation: '로또에 당첨됐다. 1억원을 지금 받거나, 1년 후 1억 2천만원을 받을 수 있다.',
+        question: '어떤 것을 선택할 것인가?',
+        choices: [
+          { text: '지금 1억원', percent: 64 },
+          { text: '1년 후 1억 2천만원', percent: 36 }
+        ],
+        principle: '현재 편향',
+        explanation: '연 20% 수익률은 매우 좋은 조건이다. 하지만 대부분은 지금 받기를 원한다. 인간은 미래보다 현재를 과대평가하는 경향이 있다. 이것이 저축이 어려운 이유다.',
+        source: 'Thaler, 1981 / Frederick, Loewenstein & O\'Donoghue, 2002'
+      },
+      {
+        category: '심리 · 복종',
+        situation: '권위 있는 과학자가 당신에게 실험 참가자에게 전기충격을 주라고 지시한다. 참가자가 고통스러워하며 그만해달라고 애원한다. (실제로는 연기)',
+        question: '최대 강도(치명적 수준)까지 충격을 줄 것인가?',
+        choices: [
+          { text: '거부한다', percent: 35 },
+          { text: '지시에 따른다', percent: 65 }
+        ],
+        principle: '권위에 대한 복종',
+        explanation: '밀그램 실험에서 65%가 치명적 수준까지 충격을 주었다. 대부분의 사람들은 자신은 그러지 않을 것이라 예측하지만, 권위의 압력 앞에서 복종한다.',
+        source: 'Stanley Milgram, 1963 (예일대 실험)'
+      },
+      {
+        category: '심리 · 인지편향',
+        situation: '동전 던지기에서 앞면이 5번 연속 나왔다.',
+        question: '다음에 뭐가 나올 것 같은가?',
+        choices: [
+          { text: '뒷면 (이제 뒷면 나올 때 됐다)', percent: 72 },
+          { text: '여전히 50:50이다', percent: 28 }
+        ],
+        principle: '도박사의 오류',
+        explanation: '동전은 기억이 없다. 이전 결과와 상관없이 다음도 50:50이다. 하지만 우리 뇌는 "균형"을 기대하여 뒷면이 나올 것 같다고 느낀다. 카지노가 돈을 버는 원리다.',
+        source: 'Tversky & Kahneman, 1971 / 확률 판단 연구'
+      },
+      {
+        category: '심리 · 사회',
+        situation: '실험에서 당신은 7명의 그룹에 속해있다. 명백히 답이 A인 문제에서, 다른 6명(실험 협조자)이 모두 B라고 답한다.',
+        question: '당신은 어떻게 답할 것인가?',
+        choices: [
+          { text: 'A (내 눈을 믿는다)', percent: 63 },
+          { text: 'B (다수를 따른다)', percent: 37 }
+        ],
+        principle: '동조 효과',
+        explanation: '애쉬 실험에서 37%가 명백히 틀린 다수의 의견에 동조했다. 혼자일 때는 거의 모두가 맞추지만, 그룹 압력 앞에서 자신의 인식마저 의심한다.',
+        source: 'Solomon Asch, 1951 (동조 실험)'
+      },
+      {
+        category: '철학 · 윤리',
+        situation: '당신은 의사다. 5명의 환자가 각각 다른 장기가 필요해 죽어가고 있다. 건강한 사람 1명을 죽여 장기를 얻으면 5명을 살릴 수 있다.',
+        question: '건강한 사람을 죽일 것인가?',
+        choices: [
+          { text: '죽인다 (5명을 살린다)', percent: 4 },
+          { text: '죽이지 않는다', percent: 96 }
+        ],
+        principle: '도덕적 직관의 비일관성',
+        explanation: '트롤리 문제에서는 85%가 1명을 희생시키지만, 이 상황에서는 96%가 거부한다. 결과는 같지만 "직접 죽이는 것"과 "방향을 바꾸는 것"을 다르게 인식한다.',
+        source: 'Judith Jarvis Thomson / Joshua Greene의 도덕심리학 연구'
+      },
+      {
+        category: '심리 · 손실회피',
+        situation: 'A: 확실히 90만원 받기 vs B: 90% 확률로 100만원 받기 (10% 확률로 0원)',
+        question: '어떤 것을 선택할 것인가?',
+        choices: [
+          { text: 'A: 확실한 90만원', percent: 86 },
+          { text: 'B: 90% 확률로 100만원', percent: 14 }
+        ],
+        principle: '확실성 효과',
+        explanation: '기대값은 B가 90만원으로 같다. 하지만 86%가 확실한 A를 선택한다. 이득 상황에서는 위험을 회피한다. 반대로 손실 상황에서는 위험을 추구한다.',
+        source: 'Kahneman & Tversky, 1979 (전망이론)'
+      },
+      {
+        category: '심리 · 인지',
+        situation: '"야구 방망이와 공의 가격은 합쳐서 1,100원이다. 방망이는 공보다 1,000원 비싸다. 공의 가격은?"',
+        question: '답은?',
+        choices: [
+          { text: '100원', percent: 58 },
+          { text: '50원', percent: 42 }
+        ],
+        principle: '인지적 구두쇠',
+        explanation: '정답은 50원이다 (공 50원 + 방망이 1,050원 = 1,100원). 하지만 직관적으로 100원이라고 답하는 사람이 58%다. 우리의 뇌는 깊이 생각하기를 싫어한다.',
+        source: 'Frederick, 2005 (인지반응검사 CRT)'
+      },
+      {
+        category: '심리 · 협력',
+        situation: '죄수의 딜레마: 당신과 동료가 따로 심문받고 있다. 둘 다 묵비권을 행사하면 각각 1년, 둘 다 자백하면 각각 5년, 한 명만 자백하면 그 사람은 석방되고 상대는 10년형.',
+        question: '당신은 어떻게 할 것인가?',
+        choices: [
+          { text: '묵비권 (협력)', percent: 37 },
+          { text: '자백 (배신)', percent: 63 }
+        ],
+        principle: '죄수의 딜레마',
+        explanation: '개인적으로 합리적인 선택(자백)이 집단적으로는 최악의 결과를 낳는다. 하지만 반복 게임에서는 "눈에는 눈" 전략이 가장 효과적이라는 것이 밝혀졌다.',
+        source: 'Axelrod, 1984 / 게임이론 토너먼트'
+      },
+      {
+        category: '심리 · 정체성',
+        situation: '테세우스의 배: 오래된 배를 수리하면서 나무 판자를 하나씩 교체했다. 모든 판자가 교체되었을 때, 이것은 원래의 배인가?',
+        question: '어떻게 생각하는가?',
+        choices: [
+          { text: '같은 배다 (연속성이 유지됐다)', percent: 56 },
+          { text: '다른 배다 (구성요소가 전부 바뀌었다)', percent: 44 }
+        ],
+        principle: '정체성의 역설',
+        explanation: '인간의 세포도 7-10년마다 거의 다 교체된다. 그렇다면 10년 전의 "나"와 지금의 "나"는 같은 존재인가? 정체성은 물질이 아닌 패턴과 연속성에 있다는 견해가 있다.',
+        source: '플루타르코스의 기록 / Derek Parfit의 정체성 철학'
+      },
+      {
+        category: '심리 · 판단',
+        situation: '린다는 31세, 독신이고, 매우 똑똑하고 직설적이다. 철학을 전공했고, 학생 시절 차별과 사회정의 문제에 관심이 많았다.',
+        question: '무엇이 더 가능성 있는가?',
+        choices: [
+          { text: '린다는 은행원이다', percent: 15 },
+          { text: '린다는 은행원이면서 페미니스트 운동에 참여한다', percent: 85 }
+        ],
+        principle: '결합 오류',
+        explanation: '논리적으로 "은행원"이 "은행원 + 페미니스트"보다 확률이 높다 (후자는 전자의 부분집합). 하지만 85%가 더 구체적인 설명을 더 그럴듯하게 느낀다.',
+        source: 'Tversky & Kahneman, 1983 (린다 문제)'
+      },
+      {
+        category: '심리 · 도덕',
+        situation: '자율주행차가 브레이크 고장으로 5명의 보행자를 치게 생겼다. 핸들을 꺾으면 1명의 보행자만 친다.',
+        question: '자율주행차는 어떻게 프로그래밍되어야 하는가?',
+        choices: [
+          { text: '핸들을 꺾어야 한다 (1명 희생)', percent: 76 },
+          { text: '핸들을 꺾지 말아야 한다', percent: 24 }
+        ],
+        principle: '기계 윤리',
+        explanation: '흥미롭게도, 사람들은 차가 소수를 희생시키길 원하지만, 그런 차를 사고 싶어하지는 않는다. 도덕적 판단과 개인적 선택의 괴리가 존재한다.',
+        source: 'MIT Moral Machine 프로젝트, 2018'
+      },
+      {
+        category: '심리 · 후회',
+        situation: 'A씨는 매일 같은 길로 출근하다 사고를 당했다. B씨는 그날만 다른 길로 갔다가 사고를 당했다.',
+        question: '누가 더 후회할 것 같은가?',
+        choices: [
+          { text: 'A씨 (일상적 선택)', percent: 8 },
+          { text: 'B씨 (예외적 선택)', percent: 92 }
+        ],
+        principle: '작위/부작위 편향',
+        explanation: '92%가 B씨가 더 후회할 것이라 답한다. 객관적으로 결과는 같지만, "평소와 다르게 행동한 것"에 대한 후회가 더 크다. 이 때문에 사람들은 변화를 꺼린다.',
+        source: 'Kahneman & Miller, 1986 / 반사실적 사고 연구'
+      },
+      {
+        category: '심리 · 자기인식',
+        situation: '운전 실력에 대해 스스로 평가해달라.',
+        question: '당신의 운전 실력은?',
+        choices: [
+          { text: '평균 이상', percent: 93 },
+          { text: '평균 또는 평균 이하', percent: 7 }
+        ],
+        principle: '우월성 착각',
+        explanation: '논리적으로 50%만 평균 이상일 수 있다. 하지만 93%가 자신을 평균 이상이라고 평가한다. 이를 "레이크 워비건 효과"라고도 한다.',
+        source: 'Svenson, 1981 / Dunning-Kruger 효과 연구'
+      },
+      {
+        category: '철학 · 자유의지',
+        situation: '뇌과학 연구에 따르면, 우리가 "결정했다"고 느끼기 0.5초 전에 뇌가 이미 결정을 내린다.',
+        question: '자유의지는 존재하는가?',
+        choices: [
+          { text: '존재한다 (뇌의 결정도 내 결정이다)', percent: 58 },
+          { text: '존재하지 않는다 (환상이다)', percent: 42 }
+        ],
+        principle: '리벳 실험',
+        explanation: '벤자민 리벳의 실험은 "자유의지"에 대한 근본적 의문을 제기했다. 하지만 "거부권"은 의식적으로 행사할 수 있다는 반론도 있다.',
+        source: 'Benjamin Libet, 1983 / 후속 뇌과학 연구 다수'
+      },
+      {
+        category: '심리 · 소유',
+        situation: '실험 참가자에게 머그컵을 주었다. 잠시 후, 얼마에 팔 의향이 있는지 물었다.',
+        question: '소유자는 비소유자보다 몇 배 높은 가격을 부를까?',
+        choices: [
+          { text: '비슷한 가격', percent: 22 },
+          { text: '2배 이상', percent: 78 }
+        ],
+        principle: '소유 효과',
+        explanation: '정답은 2배 이상이다. 실험에서 소유자는 평균 $7.12, 비소유자는 $2.87를 제시했다. 소유한 것을 과대평가하는 경향이 있다.',
+        source: 'Kahneman, Knetsch & Thaler, 1990'
+      },
+      {
+        category: '심리 · 기억',
+        situation: '차가운 물에 손을 담그는 실험. A: 60초간 14°C 물 / B: 60초간 14°C 물 + 30초간 15°C 물',
+        question: '다시 한다면 어떤 것을 선택할까?',
+        choices: [
+          { text: 'A (더 짧다)', percent: 31 },
+          { text: 'B (끝이 덜 고통스럽다)', percent: 69 }
+        ],
+        principle: '피크엔드 법칙',
+        explanation: 'B가 객관적으로 더 오래 고통받지만, 69%가 B를 선택한다. 우리의 기억은 경험의 총합이 아니라 "절정"과 "끝"에 의해 결정된다.',
+        source: 'Kahneman et al., 1993'
+      },
+      {
+        category: '심리 · 도덕',
+        situation: '당신의 개가 도로에서 차에 치여 죽었다. 당신은 개를 요리해서 먹기로 했다. 아무도 보지 않았고, 개는 이미 죽어있었다.',
+        question: '이것은 도덕적으로 잘못인가?',
+        choices: [
+          { text: '잘못이다', percent: 73 },
+          { text: '잘못이 아니다', percent: 27 }
+        ],
+        principle: '도덕적 당혹감',
+        explanation: '73%가 "잘못"이라고 답하지만, 왜 잘못인지 논리적으로 설명하기 어려워한다. 피해자가 없는데도 "역겹다"는 감정이 도덕 판단에 영향을 미친다.',
+        source: 'Jonathan Haidt, 2001 (도덕 당혹 연구)'
+      },
+      {
+        category: '심리 · 프레이밍',
+        situation: '600명이 죽을 질병이 퍼지고 있다. 프로그램 A: 200명을 확실히 살린다. 프로그램 B: 1/3 확률로 600명 모두 생존, 2/3 확률로 전원 사망.',
+        question: '어떤 프로그램을 선택할 것인가?',
+        choices: [
+          { text: 'A (확실히 200명)', percent: 72 },
+          { text: 'B (도박)', percent: 28 }
+        ],
+        principle: '프레이밍 효과',
+        explanation: '"200명 살린다"와 "400명 죽는다"는 같은 말이지만, 전자로 표현하면 72%가 확실한 선택을, 후자로 표현하면 22%만 확실한 선택을 한다.',
+        source: 'Tversky & Kahneman, 1981 (아시아 질병 문제)'
+      },
+      {
+        category: '심리 · 신뢰',
+        situation: '신뢰 게임: 당신에게 10만원이 주어졌다. 모르는 상대에게 원하는 만큼 보낼 수 있고, 보낸 금액은 3배가 되어 상대에게 전달된다. 상대는 받은 돈 중 원하는 만큼 돌려보낼 수 있다.',
+        question: '얼마를 보낼 것인가?',
+        choices: [
+          { text: '절반 이상 (5만원+)', percent: 52 },
+          { text: '절반 미만', percent: 48 }
+        ],
+        principle: '신뢰와 호혜성',
+        explanation: '경제학적으로 합리적인 선택은 0원을 보내는 것이다 (상대가 돌려줄 의무가 없으므로). 하지만 평균적으로 52%를 보내고, 받은 사람은 평균 33%를 돌려보낸다.',
+        source: 'Berg, Dickhaut & McCabe, 1995'
+      },
+      {
+        category: '심리 · 확증편향',
+        situation: '카드 4장이 있다: [A] [K] [4] [7]. "모음 뒤에는 짝수가 있다"는 규칙을 검증하려면 어떤 카드를 뒤집어야 할까?',
+        question: '어떤 카드를 선택할 것인가?',
+        choices: [
+          { text: 'A와 4', percent: 79 },
+          { text: 'A와 7', percent: 21 }
+        ],
+        principle: '확증편향',
+        explanation: '정답은 A와 7이다. A 뒤에 홀수가 있거나, 7 앞에 모음이 있으면 규칙이 깨진다. 하지만 79%가 규칙을 "확인"하려 하고, "반증"하려 하지 않는다.',
+        source: 'Wason, 1966 (선택과제)'
+      },
+      {
+        category: '심리 · 후회',
+        situation: '주식 A를 갖고 있다가 B로 바꿨는데, A가 올랐다. vs 주식 A를 그대로 뒀는데, B가 올랐다.',
+        question: '누가 더 후회할까?',
+        choices: [
+          { text: '바꾼 사람', percent: 92 },
+          { text: '안 바꾼 사람', percent: 8 }
+        ],
+        principle: '작위 편향',
+        explanation: '결과적 손실은 같지만, "행동해서 손해 본 것"이 "아무것도 안 해서 손해 본 것"보다 더 후회된다. 이 때문에 사람들은 현상 유지를 선호한다.',
+        source: 'Kahneman & Tversky, 1982'
+      },
+      {
+        category: '심리 · 편향',
+        situation: '성격 테스트 결과: "당신은 다른 사람에게 인정받고 싶은 욕구가 있고, 자기비판적인 경향이 있습니다. 사용하지 않는 잠재력을 가지고 있습니다..."',
+        question: '이 설명이 당신에게 맞다고 느끼는가?',
+        choices: [
+          { text: '꽤 맞다', percent: 85 },
+          { text: '별로 안 맞다', percent: 15 }
+        ],
+        principle: '바넘 효과',
+        explanation: '위의 설명은 거의 모든 사람에게 해당된다. 하지만 85%가 "나에게 특별히 맞다"고 느낀다. 점술, MBTI 등이 작동하는 원리다.',
+        source: 'Forer, 1949 / 후속 연구 다수'
+      },
+      {
+        category: '심리 · 선택',
+        situation: '잼 시식 코너. A 매장: 24종류 / B 매장: 6종류',
+        question: '어디서 더 많이 구매할까?',
+        choices: [
+          { text: 'A (선택지가 많은 곳)', percent: 34 },
+          { text: 'B (선택지가 적은 곳)', percent: 66 }
+        ],
+        principle: '선택 과부하',
+        explanation: '24종류 매장에서는 3%만 구매했고, 6종류 매장에서는 30%가 구매했다. 선택지가 많으면 오히려 선택을 포기한다.',
+        source: 'Iyengar & Lepper, 2000 (잼 연구)'
+      }
+    ];
+
+    let selectedChoice = null;
+    let dailyData = {
+      lastDate: null,
+      streak: 0,
+      history: {}
+    };
+
+    function loadDailyData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        dailyData = JSON.parse(saved);
+      }
+    }
+
+    function saveDailyData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dailyData));
+    }
+
+    function getTodayString() {
+      const today = new Date();
+      return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    }
+
+    function getDayOfYear() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start;
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function getTodayDilemma() {
+      const dayOfYear = getDayOfYear();
+      return dilemmas[dayOfYear % dilemmas.length];
+    }
+
+    function formatDate() {
+      const today = new Date();
+      const month = today.getMonth() + 1;
+      const date = today.getDate();
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const day = days[today.getDay()];
+      return `${month}월 ${date}일 (${day})`;
+    }
+
+    function updateStreak() {
+      const today = getTodayString();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayString = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      
+      // 오늘 이미 했으면 streak 유지
+      if (dailyData.lastDate === today) {
+        // 그대로 유지
+      } else if (dailyData.lastDate === yesterdayString) {
+        // 어제 했으면 streak 유지 (오늘 하면 +1 될 예정)
+      } else {
+        // 어제도 안 했으면 streak 리셋
+        dailyData.streak = 0;
+        saveDailyData();
+      }
+    }
+
+    function getTimeUntilMidnight() {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0);
+      return midnight - now;
+    }
+
+    function formatTime(ms) {
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      const timerDisplay = document.getElementById('timerDisplay');
+      setInterval(() => {
+        timerDisplay.textContent = formatTime(getTimeUntilMidnight());
+      }, 1000);
+    }
+
+    function init() {
+      loadDailyData();
+      updateStreak();
+      
+      document.getElementById('dateDisplay').textContent = formatDate();
+      
+      // streak 표시
+      const streakCard = document.getElementById('streakCard');
+      if (dailyData.streak > 0) {
+        document.getElementById('streakNum').textContent = dailyData.streak;
+        streakCard.style.display = 'flex';
+      } else {
+        streakCard.style.display = 'none';
+      }
+      
+      const today = getTodayString();
+      
+      // 오늘 이미 했는지 확인
+      if (dailyData.history[today] !== undefined) {
+        showAlreadyDone(dailyData.history[today]);
+        return;
+      }
+      
+      const dilemma = getTodayDilemma();
+      renderDilemma(dilemma);
+    }
+
+    function showAlreadyDone(choiceIndex) {
+      const dilemma = getTodayDilemma();
+      document.getElementById('mainContent').classList.add('hidden');
+      document.getElementById('alreadyDone').classList.remove('hidden');
+      document.getElementById('alreadyChoice').textContent = `"${dilemma.choices[choiceIndex].text}"`;
+      startTimer();
+    }
+
+    function renderDilemma(dilemma) {
+      document.getElementById('dilemmaCategory').textContent = dilemma.category;
+      document.getElementById('dilemmaSituation').textContent = dilemma.situation;
+      document.getElementById('dilemmaQuestion').textContent = dilemma.question;
+      
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = dilemma.choices.map((choice, idx) => `
+        <button class="choice-btn" data-index="${idx}">
+          <div class="choice-content">
+            <span class="choice-text">${choice.text}</span>
+            <div class="choice-stats">
+              <span class="stat-percent">${choice.percent}%</span>
+              <div class="stat-bar">
+                <div class="stat-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </button>
+      `).join('');
+      
+      choicesEl.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleChoice(parseInt(btn.dataset.index)));
+      });
+    }
+
+    function handleChoice(index) {
+      if (selectedChoice !== null) return;
+      
+      const today = getTodayString();
+      
+      // 이미 오늘 했으면 무시
+      if (dailyData.history[today] !== undefined) return;
+      
+      selectedChoice = index;
+      const dilemma = getTodayDilemma();
+      
+      // streak 계산 - 어제 했으면 +1, 아니면 1로 리셋
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayString = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      
+      if (dailyData.lastDate === yesterdayString) {
+        dailyData.streak += 1;
+      } else if (dailyData.lastDate !== today) {
+        dailyData.streak = 1;
+      }
+      
+      // 저장
+      dailyData.history[today] = index;
+      dailyData.lastDate = today;
+      saveDailyData();
+      
+      // 프로필에도 EXP 추가
+      const profileSaved = localStorage.getItem(PROFILE_KEY);
+      if (profileSaved) {
+        const profile = JSON.parse(profileSaved);
+        profile.exp = (profile.exp || 0) + 10;
+        const expNeeded = (profile.level || 1) * 100;
+        while (profile.exp >= expNeeded) {
+          profile.exp -= expNeeded;
+          profile.level = (profile.level || 1) + 1;
+        }
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+      }
+      
+      // UI 업데이트
+      const streakCard = document.getElementById('streakCard');
+      document.getElementById('streakNum').textContent = dailyData.streak;
+      streakCard.style.display = 'flex';
+      
+      const buttons = document.querySelectorAll('.choice-btn');
+      buttons.forEach((btn, idx) => {
+        btn.classList.add('revealed');
+        if (idx === index) btn.classList.add('selected');
+        
+        const stats = btn.querySelector('.choice-stats');
+        stats.classList.add('show');
+        
+        const fill = btn.querySelector('.stat-fill');
+        setTimeout(() => {
+          fill.style.width = dilemma.choices[idx].percent + '%';
+        }, 100);
+      });
+      
+      // 결과 표시
+      setTimeout(() => {
+        document.getElementById('resultTitle').textContent = dilemma.principle;
+        document.getElementById('resultDesc').textContent = dilemma.explanation;
+        document.getElementById('resultSource').textContent = '📚 ' + dilemma.source;
+        document.getElementById('resultSection').classList.add('show');
+      }, 800);
+      
+      // 공유 버튼 이벤트
+      document.getElementById('shareBtn').addEventListener('click', nativeShare);
+      document.getElementById('copyBtn').addEventListener('click', copyLink);
+    }
+
+    function getShareText() {
+      const dilemma = getTodayDilemma();
+      return `🤔 오늘의 딜레마
+
+${dilemma.question}
+
+A: ${dilemma.choices[0].text}
+B: ${dilemma.choices[1].text}
+
+당신의 선택은?`;
+    }
+
+    function nativeShare() {
+      if (navigator.share) {
+        navigator.share({
+          title: '오늘의 딜레마 - 이클립스 마인드랩',
+          text: getShareText(),
+          url: 'https://eclipse-mindlab.github.io/mindlab/daily.html'
+        }).catch(() => {});
+      } else {
+        copyLink();
+      }
+    }
+
+    function copyLink() {
+      const text = getShareText() + '\n\nhttps://eclipse-mindlab.github.io/mindlab/daily.html';
+      const btn = document.getElementById('copyBtn');
+      
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('success');
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 복사됨!`;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 링크 복사`;
+        }, 2000);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
