@@ -119,6 +119,33 @@
 
     .install-btn.hidden { display: none; }
 
+    .share-app-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .share-app-btn:hover {
+      background: #3f3f46;
+    }
+
+    .share-app-btn.success {
+      background: #166534;
+      border-color: #22c55e;
+    }
+
     .daily-banner {
       display: flex;
       align-items: center;
@@ -339,6 +366,15 @@
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
         앱으로 설치하기
+      </button>
+
+      <button class="share-app-btn" id="shareAppBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        친구에게 공유하기
       </button>
     </div>
 
@@ -736,6 +772,46 @@
     window.addEventListener('appinstalled', () => {
       installBtn.classList.add('hidden');
       deferredPrompt = null;
+    });
+
+    // 앱 공유 기능
+    const shareAppBtn = document.getElementById('shareAppBtn');
+    shareAppBtn.addEventListener('click', () => {
+      const shareText = `🧠 이클립스 마인드랩
+
+당신의 도덕 성향을 알아보세요!
+매일 새로운 딜레마에 답하고, 나와 비슷한 철학자를 찾아보세요.
+
+심리 시뮬레이터 | 오늘의 딜레마 | 원칙 발견`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: '이클립스 마인드랩',
+          text: shareText,
+          url: 'https://eclipse-mindlab.github.io/mindlab/'
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(shareText + '\n\nhttps://eclipse-mindlab.github.io/mindlab/').then(() => {
+          shareAppBtn.classList.add('success');
+          shareAppBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            복사 완료!
+          `;
+          setTimeout(() => {
+            shareAppBtn.classList.remove('success');
+            shareAppBtn.innerHTML = `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              친구에게 공유하기
+            `;
+          }, 2000);
+        });
+      }
     });
     
     // Service Worker 등록
