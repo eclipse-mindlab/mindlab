@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나를 읽어봐 - 이클립스 마인드랩</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <!-- SEO -->
+  <meta name="description" content="내 선택을 친구가 맞출 수 있을까? 도전장을 만들어 공유하세요.">
+  <meta property="og:title" content="나를 읽어봐 - 이클립스 마인드랩">
+  <meta property="og:description" content="내 선택을 친구가 맞출 수 있을까?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #18181b;
+      border: 1px solid #27272a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* 인트로 화면 */
+    .intro-screen {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .intro-icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+    }
+
+    .intro-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .intro-desc {
+      font-size: 16px;
+      color: #a1a1aa;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .intro-steps {
+      text-align: left;
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+
+    .intro-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+    }
+
+    .intro-step:not(:last-child) {
+      border-bottom: 1px solid #27272a;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 14px;
+      color: #d4d4d8;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    }
+
+    /* 질문 화면 */
+    .question-screen {
+      display: none;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: #27272a;
+      border-radius: 2px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .question-num {
+      font-size: 13px;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      padding: 18px 20px;
+      background: #18181b;
+      border: 2px solid #27272a;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: #7c3aed;
+      background: #1f1f23;
+    }
+
+    .option-btn.selected {
+      border-color: #a78bfa;
+      background: rgba(167, 139, 250, 0.15);
+    }
+
+    /* 결과/공유 화면 */
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .result-desc {
+      font-size: 14px;
+      color: #a1a1aa;
+      margin-bottom: 32px;
+    }
+
+    /* 공유 카드 - 인스타 스토리 비율 */
+    .share-card {
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 24px;
+      padding: 48px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 9/12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
+                  radial-gradient(circle at 70% 80%, rgba(244, 114, 182, 0.1) 0%, transparent 40%);
+    }
+
+    .share-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .share-card-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .share-card-icon {
+      font-size: 56px;
+      margin-bottom: 20px;
+    }
+
+    .share-card-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+
+    .share-card-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .share-card-divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #a78bfa, transparent);
+      margin: 20px auto;
+    }
+
+    .share-card-question {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .share-card-question2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #e4e4e7;
+    }
+
+    .share-card-from {
+      font-size: 14px;
+      color: #a78bfa;
+      margin-top: 24px;
+      margin-bottom: 20px;
+    }
+
+    .share-card-cta {
+      display: inline-block;
+      padding: 10px 24px;
+      background: rgba(167, 139, 250, 0.15);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 24px;
+      font-size: 14px;
+      color: #d4d4d8;
+    }
+
+    .share-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .share-btn {
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+    }
+
+    .share-btn.save-image {
+      background: linear-gradient(135deg, #ec4899, #f472b6);
+      color: #fff;
+    }
+
+    .share-btn.save-image:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+    }
+
+    .share-btn.primary {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff;
+    }
+
+    .share-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .share-btn.secondary {
+      background: #27272a;
+      color: #fff;
+      border: 1px solid #3f3f46;
+    }
+
+    .share-btn.secondary:hover {
+      background: #3f3f46;
+    }
+
+    .share-btn.success {
+      background: #166534 !important;
+      color: #fff !important;
+    }
+
+    .link-box {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .link-label {
+      font-size: 12px;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+
+    .link-display {
+      font-family: monospace;
+      font-size: 12px;
+      color: #a78bfa;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .home-link {
+      display: inline-block;
+      margin-top: 16px;
+      color: #71717a;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .home-link:hover {
+      color: #a78bfa;
+    }
+
+    .results-link {
+      display: block;
+      text-align: center;
+      padding: 14px;
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 12px;
+      color: #a78bfa;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .results-link:hover {
+      background: rgba(167, 139, 250, 0.2);
+    }
+
+    .hidden { display: none !important; }
+
+    /* 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27272a;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">나를 읽어봐</div>
+    </div>
+
+    <!-- 인트로 화면 -->
+    <div class="intro-screen" id="introScreen">
+      <div class="intro-icon">🔮</div>
+      <div class="intro-title">나를 읽어봐</div>
+      <div class="intro-desc">
+        5가지 상황에서 내 선택을 답하고,<br>
+        친구에게 도전장을 보내세요.<br>
+        과연 날 얼마나 알까?
+      </div>
+
+      <div class="intro-steps">
+        <div class="intro-step">
+          <div class="step-num">1</div>
+          <div class="step-text">5개 질문에 솔직하게 답하기</div>
+        </div>
+        <div class="intro-step">
+          <div class="step-num">2</div>
+          <div class="step-text">나만의 도전장 링크 생성</div>
+        </div>
+        <div class="intro-step">
+          <div class="step-num">3</div>
+          <div class="step-text">친구에게 공유하고 결과 확인!</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn">도전장 만들기</button>
+    </div>
+
+    <!-- 질문 화면 -->
+    <div class="question-screen" id="questionScreen">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+      </div>
+
+      <div class="question-num" id="questionNum">질문 1/5</div>
+      <div class="question-text" id="questionText">질문이 여기에 표시됩니다</div>
+
+      <div class="options" id="optionsContainer">
+        <!-- 옵션들이 여기에 동적으로 생성됨 -->
+      </div>
+    </div>
+
+    <!-- 결과/공유 화면 -->
+    <div class="result-screen" id="resultScreen">
+      <div class="result-title">도전장 완성! 🎉</div>
+      <div class="result-desc">친구에게 공유해서 진짜 날 아는지 확인해봐</div>
+
+      <div class="share-card" id="shareCard">
+        <div class="share-card-content">
+          <div class="share-card-icon">🔮</div>
+          <div class="share-card-label">MIND CHALLENGE</div>
+          <div class="share-card-title">나를 읽어봐</div>
+          <div class="share-card-divider"></div>
+          <div class="share-card-question">날 안다고?</div>
+          <div class="share-card-question2">맞춰봐 👀</div>
+          <div class="share-card-divider"></div>
+          <div class="share-card-from">@<span id="shareCardName">???</span>의 도전장</div>
+          <div class="share-card-cta">5문제 도전 →</div>
+        </div>
+      </div>
+
+      <div class="share-actions">
+        <button class="share-btn save-image" id="saveImageBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          인스타 스토리용 이미지 저장
+        </button>
+
+        <button class="share-btn primary" id="copyShareBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          문구 + 링크 복사
+        </button>
+
+        <button class="share-btn secondary" id="nativeShareBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          다른 앱으로 공유
+        </button>
+      </div>
+
+      <div class="link-box" id="linkBox">
+        <div class="link-label">도전 링크</div>
+        <div class="link-display" id="linkDisplay">링크 생성 중...</div>
+      </div>
+
+      <a href="#" class="results-link" id="resultsLink">
+        📊 도전 현황 보기 (누가 몇 점 맞췄는지)
+      </a>
+
+      <a href="index.html" class="home-link">← 홈으로 돌아가기</a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">복사되었습니다!</div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
+    // 질문 풀 (20개 중 5개 랜덤 선택)
+    const ALL_QUESTIONS = [
+      {
+        id: 'q1',
+        text: '카페에서 주문이 틀리게 나왔다. 나는?',
+        options: ['바로 말한다', '그냥 마신다', '다 마시고 나서 말한다', '리뷰에 쓴다']
+      },
+      {
+        id: 'q2',
+        text: '친구가 애인 뒷담화를 한다. 나는?',
+        options: ['같이 까준다', '듣기만 한다', '애인 편을 들어준다', '주제를 바꾼다']
+      },
+      {
+        id: 'q3',
+        text: '처음 보는 사람들 모임. 나의 포지션은?',
+        options: ['분위기 주도', '리액션 담당', '조용히 관찰', '빨리 가고 싶음']
+      },
+      {
+        id: 'q4',
+        text: '택배가 1주일째 안 온다. 첫 행동은?',
+        options: ['문의 전화', '앱에서 조회만 계속', '일단 더 기다림', '환불 요청']
+      },
+      {
+        id: 'q5',
+        text: '친구가 내 비밀을 다른 사람에게 말했다. 나는?',
+        options: ['바로 따진다', '서운하지만 넘어간다', '나도 그 친구 비밀을 퍼뜨린다', '그냥 거리를 둔다']
+      },
+      {
+        id: 'q6',
+        text: '단톡방에서 나만 읽씹 당했다. 나는?',
+        options: ['다시 물어본다', '아무렇지 않은 척', '단톡방 나간다', '1:1로 따로 물어본다']
+      },
+      {
+        id: 'q7',
+        text: '친구가 빌린 돈을 안 갚는다. 나는?',
+        options: ['바로 얘기한다', '넌지시 힌트를 준다', '그냥 포기한다', '공개적으로 말한다']
+      },
+      {
+        id: 'q8',
+        text: '마음에 안 드는 선물을 받았다. 나는?',
+        options: ['솔직히 말한다', '기쁜 척 연기', '나중에 중고로 판다', '교환해달라고 한다']
+      },
+      {
+        id: 'q9',
+        text: '약속에 친구가 30분 늦었다. 나는?',
+        options: ['화낸다', '괜찮다고 한다', '나도 다음에 늦는다', '다음부터 안 만난다']
+      },
+      {
+        id: 'q10',
+        text: '회식에서 상사가 불편한 말을 한다. 나는?',
+        options: ['바로 반박', '웃으며 넘김', '자리를 피함', '나중에 따로 말함']
+      },
+      {
+        id: 'q11',
+        text: '길에서 전 애인을 마주쳤다. 나는?',
+        options: ['먼저 인사한다', '못 본 척한다', '눈만 마주치고 지나간다', '도망간다']
+      },
+      {
+        id: 'q12',
+        text: '친구가 내 옷이 안 어울린다고 한다. 나는?',
+        options: ['고맙다고 한다', '속으로 삐진다', '반박한다', '다음에 그 옷 더 입는다']
+      },
+      {
+        id: 'q13',
+        text: '누가 새치기를 했다. 나는?',
+        options: ['바로 지적', '눈치를 줌', '그냥 참음', '주변 사람에게 말함']
+      },
+      {
+        id: 'q14',
+        text: '좋아하는 사람에게 고백하려 한다. 방식은?',
+        options: ['직접 만나서', '전화로', '문자/카톡으로', '안 한다']
+      },
+      {
+        id: 'q15',
+        text: '중요한 시험 전날. 나는?',
+        options: ['밤새 공부', '적당히 하고 잠', '이미 포기', '운에 맡김']
+      },
+      {
+        id: 'q16',
+        text: '식당 음식이 맛없다. 나는?',
+        options: ['사장님께 말함', '그냥 먹음', '남기고 나옴', '리뷰에 씀']
+      },
+      {
+        id: 'q17',
+        text: '친구가 나 없이 다른 친구들이랑 놀았다. 나는?',
+        options: ['서운하다고 말함', '아무렇지 않은 척', '나도 안 부름', '왜 안 불렀냐고 물음']
+      },
+      {
+        id: 'q18',
+        text: '갑자기 큰 돈이 생겼다. 첫 행동은?',
+        options: ['저축', '쇼핑', '여행', '투자']
+      },
+      {
+        id: 'q19',
+        text: '모르는 번호로 전화가 왔다. 나는?',
+        options: ['바로 받음', '안 받음', '검색해보고 결정', '문자로 누구냐고 물음']
+      },
+      {
+        id: 'q20',
+        text: '친구의 새 애인이 별로다. 나는?',
+        options: ['솔직히 말함', '좋은 점만 말함', '아무 말 안 함', '다른 친구들과 얘기함']
+      }
+    ];
+
+    // 상태
+    let currentQuestionIndex = 0;
+    let selectedQuestions = [];
+    let answers = [];
+    let userName = '???';
+    let challengeId = null;
+
+    // DOM
+    const introScreen = document.getElementById('introScreen');
+    const questionScreen = document.getElementById('questionScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const startBtn = document.getElementById('startBtn');
+    const questionNum = document.getElementById('questionNum');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const progressFill = document.getElementById('progressFill');
+    const shareCardName = document.getElementById('shareCardName');
+    const linkDisplay = document.getElementById('linkDisplay');
+    const saveImageBtn = document.getElementById('saveImageBtn');
+    const copyShareBtn = document.getElementById('copyShareBtn');
+    const nativeShareBtn = document.getElementById('nativeShareBtn');
+    const toast = document.getElementById('toast');
+
+    // 트렌디한 공유 문구들
+    const SHARE_MESSAGES = [
+      `날 안다고 생각해?\n진짜인지 확인해볼게 👀\n\n5문제만 맞춰봐\n틀리면 넌 날 모르는 거야ㅋㅋ`,
+      `우리 사이 몇 %일까?\n맞추면 인정해줄게 😏`,
+      `나 맞추기 챌린지\n자신 있으면 도전해봐 🔮`,
+      `널 테스트해볼게\n나에 대해 얼마나 알아? 👀`,
+      `솔직히 나 잘 모르지?\n증명해봐 😌`
+    ];
+
+    // 초기화
+    function init() {
+      // 로컬 프로필에서 이름 가져오기
+      const saved = localStorage.getItem('eclipse_mindlab_profile');
+      if (saved) {
+        const profile = JSON.parse(saved);
+        if (profile.name && profile.name !== '익명 탐험가') {
+          userName = profile.name;
+        }
+      }
+
+      // 5개 질문 랜덤 선택
+      selectedQuestions = shuffleArray([...ALL_QUESTIONS]).slice(0, 5);
+
+      startBtn.addEventListener('click', startQuiz);
+      saveImageBtn.addEventListener('click', saveImage);
+      copyShareBtn.addEventListener('click', copyShareText);
+      nativeShareBtn.addEventListener('click', shareNative);
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startQuiz() {
+      introScreen.classList.add('hidden');
+      questionScreen.style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = selectedQuestions[currentQuestionIndex];
+      
+      questionNum.textContent = `질문 ${currentQuestionIndex + 1}/5`;
+      questionText.textContent = q.text;
+      progressFill.style.width = `${((currentQuestionIndex + 1) / 5) * 100}%`;
+
+      optionsContainer.innerHTML = q.options.map((opt, idx) => `
+        <button class="option-btn" data-index="${idx}">${opt}</button>
+      `).join('');
+
+      // 옵션 클릭 이벤트
+      optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectOption(parseInt(btn.dataset.index)));
+      });
+    }
+
+    function selectOption(index) {
+      // 선택 표시
+      optionsContainer.querySelectorAll('.option-btn').forEach((btn, i) => {
+        btn.classList.toggle('selected', i === index);
+      });
+
+      // 답 저장
+      answers[currentQuestionIndex] = {
+        questionId: selectedQuestions[currentQuestionIndex].id,
+        answer: index
+      };
+
+      // 잠시 후 다음 질문
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < 5) {
+          showQuestion();
+        } else {
+          finishQuiz();
+        }
+      }, 300);
+    }
+
+    async function finishQuiz() {
+      questionScreen.style.display = 'none';
+      resultScreen.style.display = 'block';
+
+      shareCardName.textContent = `${userName}의 도전장`;
+
+      // Firebase에 저장
+      try {
+        challengeId = generateId();
+        const challengeData = {
+          creatorName: userName,
+          questions: selectedQuestions.map(q => ({
+            id: q.id,
+            text: q.text,
+            options: q.options
+          })),
+          answers: answers,
+          createdAt: new Date().toISOString(),
+          attempts: 0
+        };
+
+        await setDoc(doc(db, 'challenges', challengeId), challengeData);
+        
+        const challengeUrl = `https://eclipse-mindlab.github.io/mindlab/read-me-challenge.html?id=${challengeId}`;
+        linkDisplay.textContent = challengeUrl;
+
+        // 결과 확인 링크 설정
+        const resultsUrl = `https://eclipse-mindlab.github.io/mindlab/read-me-results.html?id=${challengeId}`;
+        document.getElementById('resultsLink').href = resultsUrl;
+
+        // 로컬에 내 도전장 ID 저장
+        const myChallenges = JSON.parse(localStorage.getItem('mindlab_my_challenges') || '[]');
+        if (!myChallenges.includes(challengeId)) {
+          myChallenges.unshift(challengeId); // 최신 것이 앞에
+          localStorage.setItem('mindlab_my_challenges', JSON.stringify(myChallenges.slice(0, 10))); // 최대 10개
+        }
+
+        // EXP 추가
+        addExp(20);
+        
+      } catch (error) {
+        console.error('저장 실패:', error);
+        linkDisplay.textContent = '링크 생성 실패. 다시 시도해주세요.';
+      }
+    }
+
+    function generateId() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let id = '';
+      for (let i = 0; i < 8; i++) {
+        id += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return id;
+    }
+
+    function addExp(amount) {
+      const saved = localStorage.getItem('eclipse_mindlab_profile');
+      if (saved) {
+        const profile = JSON.parse(saved);
+        profile.exp = (profile.exp || 0) + amount;
+        
+        // 레벨업 체크
+        const expNeeded = profile.level * 100;
+        while (profile.exp >= expNeeded) {
+          profile.exp -= expNeeded;
+          profile.level++;
+        }
+        
+        localStorage.setItem('eclipse_mindlab_profile', JSON.stringify(profile));
+      }
+    }
+
+    function getRandomMessage() {
+      return SHARE_MESSAGES[Math.floor(Math.random() * SHARE_MESSAGES.length)];
+    }
+
+    function saveImage() {
+      const card = document.getElementById('shareCard');
+      const btn = saveImageBtn;
+      
+      btn.innerHTML = '저장 중...';
+      btn.disabled = true;
+      
+      html2canvas(card, { 
+        backgroundColor: '#09090b',
+        scale: 2,
+        logging: false,
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `mindlab-challenge-${userName}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.classList.add('success');
+        btn.innerHTML = '✓ 저장 완료!';
+        showToast('이미지가 저장되었습니다!');
+        
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            인스타 스토리용 이미지 저장
+          `;
+        }, 2000);
+      }).catch(err => {
+        console.error('이미지 저장 실패:', err);
+        btn.disabled = false;
+        btn.innerHTML = '다시 시도';
+      });
+    }
+
+    function copyShareText() {
+      const url = linkDisplay.textContent;
+      const message = getRandomMessage();
+      const fullText = `${message}\n\n🔮 도전하기\n${url}`;
+      
+      navigator.clipboard.writeText(fullText).then(() => {
+        showToast('문구와 링크가 복사되었습니다!');
+        copyShareBtn.classList.add('success');
+        copyShareBtn.innerHTML = '✓ 복사 완료!';
+        setTimeout(() => {
+          copyShareBtn.classList.remove('success');
+          copyShareBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            문구 + 링크 복사
+          `;
+        }, 2000);
+      });
+    }
+
+    function shareNative() {
+      const url = linkDisplay.textContent;
+      const message = getRandomMessage();
+      
+      if (navigator.share) {
+        navigator.share({
+          title: '나를 읽어봐 - 이클립스 마인드랩',
+          text: message,
+          url: url
+        }).catch(() => {});
+      } else {
+        // fallback to copy
+        copyShareText();
+      }
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    init();
+  </script>
+</body>
+</html>

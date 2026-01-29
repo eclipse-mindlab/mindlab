@@ -252,6 +252,48 @@
     .daily-desc { font-size: 12px; color: #a78bfa; }
     .daily-arrow { font-size: 18px; color: #71717a; }
 
+    .my-challenges-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .my-challenges-btn:hover {
+      background: #1f1f23;
+      border-color: #3f3f46;
+    }
+
+    .my-challenges-btn.hidden {
+      display: none;
+    }
+
+    .my-challenges-icon {
+      font-size: 20px;
+    }
+
+    .my-challenges-text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .my-challenges-count {
+      background: #a78bfa;
+      color: #000;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
     .map-section { margin-bottom: 24px; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -613,6 +655,21 @@
         <div class="daily-desc">매일 새로운 질문에 답하고 +10 EXP</div>
       </div>
       <div class="daily-arrow">→</div>
+    </a>
+
+    <a href="read-me.html" class="daily-banner" style="background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(167, 139, 250, 0.1)); border-color: rgba(244, 114, 182, 0.3);">
+      <div class="daily-icon">🔮</div>
+      <div class="daily-content">
+        <div class="daily-title">나를 읽어봐</div>
+        <div class="daily-desc" style="color: #f472b6;">친구에게 도전장 보내기 +20 EXP</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
+
+    <a href="my-challenges.html" class="my-challenges-btn hidden" id="myChallengesBtn">
+      <span class="my-challenges-icon">📊</span>
+      <span class="my-challenges-text">내 도전장 현황</span>
+      <span class="my-challenges-count" id="myChallengesCount">0</span>
     </a>
 
     <div class="map-section">
@@ -1051,6 +1108,16 @@
           icon.classList.add('completed');
         }
       });
+
+      // 내 도전장 버튼 표시
+      const myChallenges = JSON.parse(localStorage.getItem('mindlab_my_challenges') || '[]');
+      const myChallengesBtn = document.getElementById('myChallengesBtn');
+      const myChallengesCount = document.getElementById('myChallengesCount');
+      
+      if (myChallenges.length > 0) {
+        myChallengesBtn.classList.remove('hidden');
+        myChallengesCount.textContent = myChallenges.length;
+      }
     }
 
     async function init() {

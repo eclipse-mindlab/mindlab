@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 도전장 - 이클립스 마인드랩</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #18181b;
+      border: 1px solid #27272a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* 로딩 */
+    .loading-state {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #27272a;
+      border-top-color: #a78bfa;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #71717a;
+      font-size: 14px;
+    }
+
+    /* 빈 상태 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: #71717a;
+      margin-bottom: 24px;
+    }
+
+    .create-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .create-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    /* 도전장 목록 */
+    .challenge-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .challenge-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .challenge-card:hover {
+      border-color: #3f3f46;
+      transform: translateY(-2px);
+    }
+
+    .challenge-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .challenge-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .challenge-card-date {
+      font-size: 12px;
+      color: #71717a;
+    }
+
+    .challenge-stats {
+      display: flex;
+      gap: 16px;
+    }
+
+    .challenge-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .challenge-stat-icon {
+      font-size: 14px;
+    }
+
+    .challenge-stat-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a78bfa;
+    }
+
+    .challenge-stat-label {
+      font-size: 12px;
+      color: #71717a;
+    }
+
+    .challenge-card-footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #27272a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .challenge-link-btn {
+      font-size: 13px;
+      color: #a78bfa;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .challenge-link-btn:hover {
+      text-decoration: underline;
+    }
+
+    .challenge-view-btn {
+      font-size: 13px;
+      color: #71717a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 하단 버튼 */
+    .bottom-action {
+      margin-top: 24px;
+    }
+
+    .new-challenge-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(167, 139, 250, 0.1));
+      border: 1px solid rgba(244, 114, 182, 0.3);
+      border-radius: 12px;
+      color: #f472b6;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .new-challenge-btn:hover {
+      background: rgba(244, 114, 182, 0.2);
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27272a;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">내 도전장</div>
+    </div>
+
+    <!-- 로딩 -->
+    <div class="loading-state" id="loadingState">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">도전장 불러오는 중...</div>
+    </div>
+
+    <!-- 빈 상태 -->
+    <div class="empty-state hidden" id="emptyState">
+      <div class="empty-icon">🔮</div>
+      <div class="empty-title">아직 만든 도전장이 없어요</div>
+      <div class="empty-desc">친구들에게 도전장을 보내보세요!</div>
+      <a href="read-me.html" class="create-btn">도전장 만들기</a>
+    </div>
+
+    <!-- 도전장 목록 -->
+    <div class="challenge-list hidden" id="challengeList">
+      <!-- 동적 생성 -->
+    </div>
+
+    <div class="bottom-action hidden" id="bottomAction">
+      <a href="read-me.html" class="new-challenge-btn">
+        ✨ 새 도전장 만들기
+      </a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">복사되었습니다!</div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    async function init() {
+      const myChallenges = JSON.parse(localStorage.getItem('mindlab_my_challenges') || '[]');
+
+      if (myChallenges.length === 0) {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+
+      // 각 도전장 데이터 로드
+      const challengeDataList = [];
+      
+      for (const challengeId of myChallenges) {
+        try {
+          const docRef = doc(db, 'challenges', challengeId);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            challengeDataList.push({
+              id: challengeId,
+              ...docSnap.data()
+            });
+          }
+        } catch (error) {
+          console.error('도전장 로드 실패:', challengeId, error);
+        }
+      }
+
+      document.getElementById('loadingState').classList.add('hidden');
+
+      if (challengeDataList.length === 0) {
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+
+      // 목록 렌더링
+      const listHtml = challengeDataList.map(challenge => {
+        const results = challenge.results || [];
+        const attemptCount = results.length;
+        const avgScore = attemptCount > 0 
+          ? Math.round(results.reduce((sum, r) => sum + r.score, 0) / attemptCount)
+          : 0;
+        const perfectCount = results.filter(r => r.score === 100).length;
+        
+        const createdDate = new Date(challenge.createdAt);
+        const dateStr = `${createdDate.getMonth() + 1}/${createdDate.getDate()}`;
+
+        return `
+          <a href="read-me-results.html?id=${challenge.id}" class="challenge-card">
+            <div class="challenge-card-header">
+              <div class="challenge-card-title">
+                🔮 ${challenge.creatorName || '???'}의 도전장
+              </div>
+              <div class="challenge-card-date">${dateStr}</div>
+            </div>
+            <div class="challenge-stats">
+              <div class="challenge-stat">
+                <span class="challenge-stat-icon">👥</span>
+                <span class="challenge-stat-value">${attemptCount}</span>
+                <span class="challenge-stat-label">도전</span>
+              </div>
+              <div class="challenge-stat">
+                <span class="challenge-stat-icon">📊</span>
+                <span class="challenge-stat-value">${avgScore}%</span>
+                <span class="challenge-stat-label">평균</span>
+              </div>
+              <div class="challenge-stat">
+                <span class="challenge-stat-icon">🏆</span>
+                <span class="challenge-stat-value">${perfectCount}</span>
+                <span class="challenge-stat-label">만점</span>
+              </div>
+            </div>
+            <div class="challenge-card-footer">
+              <button class="challenge-link-btn" onclick="event.preventDefault(); copyLink('${challenge.id}');">
+                📋 링크 복사
+              </button>
+              <span class="challenge-view-btn">상세보기 →</span>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      document.getElementById('challengeList').innerHTML = listHtml;
+      document.getElementById('challengeList').classList.remove('hidden');
+      document.getElementById('bottomAction').classList.remove('hidden');
+    }
+
+    // 전역 함수로 노출
+    window.copyLink = function(challengeId) {
+      const url = `https://eclipse-mindlab.github.io/mindlab/read-me-challenge.html?id=${challengeId}`;
+      const text = `날 안다고 생각해?\n맞춰봐 👀\n\n🔮 도전하기\n${url}`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('링크가 복사되었습니다!');
+      });
+    };
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    init();
+  </script>
+</body>
+</html>
