@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>트롤리 딜레마 - 이클립스 마인드랩</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta property="og:title" content="트롤리 딜레마 - 이클립스 마인드랩">
+  <meta property="og:description" content="당신의 도덕적 기준은 어디까지 흔들릴까?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      min-height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #18181b;
+      border: 1px solid #27272a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /* 진행 바 */
+    .progress-container {
+      margin-bottom: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: #27272a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      transition: width 0.5s ease;
+    }
+
+    /* 스테이지 표시 */
+    .stage-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(167, 139, 250, 0.1));
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 16px;
+    }
+
+    /* 상황 카드 */
+    .situation-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .situation-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .situation-desc {
+      font-size: 15px;
+      color: #a1a1aa;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .situation-highlight {
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 3px solid #ef4444;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+      color: #fca5a5;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .situation-new {
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 3px solid #fbbf24;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+      color: #fcd34d;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* 선택지 */
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .choice-btn {
+      padding: 18px 20px;
+      background: #1f1f23;
+      border: 2px solid #27272a;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.5;
+    }
+
+    .choice-btn:hover {
+      border-color: #7c3aed;
+      background: #252529;
+    }
+
+    .choice-btn:active {
+      transform: scale(0.98);
+    }
+
+    .choice-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 4px;
+    }
+
+    /* 결과 화면 */
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .result-card {
+      background: linear-gradient(135deg, #18181b 0%, #1a1a2e 100%);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+    }
+
+    .result-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .result-type {
+      font-size: 14px;
+      color: #a78bfa;
+      margin-bottom: 8px;
+    }
+
+    .result-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .result-desc {
+      font-size: 15px;
+      color: #a1a1aa;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .result-stat {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .result-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #a78bfa;
+    }
+
+    .result-stat-label {
+      font-size: 12px;
+      color: #71717a;
+    }
+
+    /* 선택 기록 */
+    .choices-record {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .choices-record-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 16px;
+    }
+
+    .choice-record-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #27272a;
+    }
+
+    .choice-record-item:last-child {
+      border-bottom: none;
+    }
+
+    .choice-record-num {
+      width: 24px;
+      height: 24px;
+      background: #27272a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .choice-record-text {
+      font-size: 13px;
+      color: #a1a1aa;
+    }
+
+    .choice-record-answer {
+      font-size: 13px;
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    /* 원칙 카드 */
+    .principle-card {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(167, 139, 250, 0.05));
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .principle-label {
+      font-size: 12px;
+      color: #a78bfa;
+      margin-bottom: 8px;
+    }
+
+    .principle-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    /* 액션 버튼 */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+      border: none;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff;
+    }
+
+    .action-btn.secondary {
+      background: #27272a;
+      color: #fff;
+      border: 1px solid #3f3f46;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">트롤리 딜레마</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="progress-container">
+        <div class="progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+
+      <div class="stage-badge" id="stageBadge">STAGE 1: 클래식</div>
+
+      <div class="situation-card">
+        <div class="situation-title" id="situationTitle">상황 제목</div>
+        <div class="situation-desc" id="situationDesc">상황 설명</div>
+        <div class="situation-highlight hidden" id="situationHighlight"></div>
+        <div class="situation-new hidden" id="situationNew"></div>
+      </div>
+
+      <div class="choices" id="choicesContainer">
+        <!-- 선택지 동적 생성 -->
+      </div>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div class="result-screen" id="resultScreen">
+      <div class="result-card">
+        <div class="result-icon" id="resultIcon">⚖️</div>
+        <div class="result-type">당신의 도덕 유형</div>
+        <div class="result-title" id="resultTitle">공리주의자</div>
+        <div class="result-desc" id="resultDesc">결과 설명</div>
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="result-stat-value" id="resultSaved">0</div>
+            <div class="result-stat-label">구한 생명</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-value" id="resultSacrificed">0</div>
+            <div class="result-stat-label">희생시킨 생명</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="choices-record" id="choicesRecord">
+        <div class="choices-record-title">📋 당신의 선택</div>
+        <div id="choicesRecordList"></div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-label">💎 발견한 원칙</div>
+        <div class="principle-text" id="principleText">원칙 텍스트</div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="action-btn secondary">홈으로 돌아가기</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 스테이지 데이터
+    const STAGES = [
+      {
+        id: 1,
+        badge: "STAGE 1: 클래식",
+        title: "폭주하는 트롤리",
+        desc: "당신은 선로 옆에 서 있다. 브레이크가 고장난 트롤리가 달려오고 있고, 선로 위에는 5명의 인부가 일하고 있다.\n\n당신 옆에는 레버가 있다. 레버를 당기면 트롤리가 다른 선로로 바뀌지만, 그 선로에는 1명의 인부가 있다.",
+        highlight: "5명이 죽거나, 1명이 죽는다.",
+        newCondition: null,
+        choices: [
+          { id: "pull", text: "레버를 당긴다", subtext: "1명을 희생하고 5명을 구한다" },
+          { id: "nothing", text: "아무것도 하지 않는다", subtext: "5명이 죽는 것을 지켜본다" }
+        ]
+      },
+      {
+        id: 2,
+        badge: "STAGE 2: 가치의 무게",
+        title: "특별한 1명",
+        desc: "같은 상황이다. 하지만 이번에는 다른 선로에 있는 1명이 누군지 알게 되었다.",
+        highlight: "그 1명은 수천 명의 생명을 살릴 수 있는 신약을 개발 중인 천재 의사다. 그가 죽으면 연구는 중단된다.",
+        newCondition: "⚡ 새로운 조건: 1명의 가치가 더 높아졌다",
+        choices: [
+          { id: "pull", text: "그래도 레버를 당긴다", subtext: "지금 당장의 5명을 구한다" },
+          { id: "nothing", text: "레버를 당기지 않는다", subtext: "미래의 수천 명을 위해 5명을 희생한다" }
+        ]
+      },
+      {
+        id: 3,
+        badge: "STAGE 3: 불완전한 정보",
+        title: "5명 중 한 명",
+        desc: "다시 처음 상황으로 돌아왔다. 하지만 이번엔 5명에 대한 정보가 주어졌다.",
+        highlight: "5명 중 1명은 3명을 살해한 연쇄살인범이다. 하지만 누가 살인범인지는 모른다.",
+        newCondition: "⚡ 새로운 조건: 구할 5명 중 1명은 살인범",
+        choices: [
+          { id: "pull", text: "레버를 당긴다", subtext: "살인범이 포함되어 있어도 4명의 무고한 사람을 구한다" },
+          { id: "nothing", text: "아무것도 하지 않는다", subtext: "살인범을 구하는 것이 될 수도 있다" }
+        ]
+      },
+      {
+        id: 4,
+        badge: "STAGE 4: 개인적 관계",
+        title: "선로 위의 가족",
+        desc: "이번에는 상황이 완전히 달라졌다.",
+        highlight: "다른 선로에 있는 1명이 당신의 부모/자녀/배우자 중 한 명이다. 5명은 모두 낯선 사람이다.",
+        newCondition: "⚡ 새로운 조건: 1명이 당신의 가족",
+        choices: [
+          { id: "pull", text: "그래도 레버를 당긴다", subtext: "가족을 희생하고 5명을 구한다" },
+          { id: "nothing", text: "레버를 당기지 않는다", subtext: "5명이 죽더라도 가족을 지킨다" }
+        ]
+      },
+      {
+        id: 5,
+        badge: "STAGE 5: 직접적 행위",
+        title: "다리 위의 남자",
+        desc: "더 이상 레버는 없다. 당신은 다리 위에 서 있고, 옆에 덩치 큰 남자가 있다.\n\n이 남자를 다리 아래로 밀면 그의 몸이 트롤리를 멈출 수 있다. 당신이 직접 뛰어내려도 몸이 가벼워서 트롤리를 멈출 수 없다.",
+        highlight: "레버를 당기는 것과 직접 밀어서 죽이는 것. 결과는 같지만 행위는 다르다.",
+        newCondition: "⚡ 새로운 조건: 레버가 아니라 직접 밀어야 한다",
+        choices: [
+          { id: "push", text: "남자를 민다", subtext: "직접 손으로 1명을 죽이고 5명을 구한다" },
+          { id: "nothing", text: "밀지 않는다", subtext: "직접적인 살인은 할 수 없다" }
+        ]
+      }
+    ];
+
+    // 도덕 유형 정의
+    const MORAL_TYPES = {
+      utilitarian: {
+        icon: "📊",
+        title: "공리주의자",
+        desc: "당신은 결과를 중시합니다. '최대 다수의 최대 행복'이 당신의 기준입니다. 숫자로 계산할 수 있는 것, 측정 가능한 결과가 옳고 그름의 기준이 됩니다.\n\n이것은 냉정해 보일 수 있지만, 감정에 휘둘리지 않는 합리적 판단이기도 합니다.",
+        principle: "도덕적 선택에서 가장 중요한 것은 결과다. 더 많은 생명을 구하는 선택이 옳다."
+      },
+      deontologist: {
+        icon: "📜",
+        title: "의무론자",
+        desc: "당신은 행위 자체의 옳고 그름을 중시합니다. 아무리 좋은 결과를 위해서라도 '하지 말아야 할 것'이 있다고 믿습니다.\n\n'목적이 수단을 정당화하지 않는다'는 칸트의 말이 당신의 철학입니다.",
+        principle: "인간을 수단으로 사용해서는 안 된다. 어떤 결과를 위해 무고한 생명을 희생시키는 것은 그 자체로 잘못이다."
+      },
+      relativist: {
+        icon: "🔄",
+        title: "관계주의자",
+        desc: "당신에게는 모든 생명이 동등하지 않습니다. 가족, 친구, 낯선 사람 - 관계에 따라 도덕적 의무도 달라진다고 생각합니다.\n\n이것은 '불공평'이 아니라 인간 본성에 충실한 것일 수 있습니다.",
+        principle: "가까운 사람에 대한 특별한 의무가 있다. 내 가족을 낯선 5명보다 우선시하는 것은 자연스러운 일이다."
+      },
+      situationist: {
+        icon: "🎭",
+        title: "상황주의자",
+        desc: "당신은 고정된 원칙보다 상황의 맥락을 중시합니다. 같은 '5명 vs 1명'도 누가 관련되어 있는지, 어떤 행위가 필요한지에 따라 판단이 달라집니다.\n\n이것은 유연함이자, 동시에 기준의 부재일 수 있습니다.",
+        principle: "도덕적 판단에 절대적 기준은 없다. 상황과 맥락에 따라 옳은 선택이 달라진다."
+      }
+    };
+
+    // 상태
+    let currentStage = 0;
+    let choices = [];
+    let savedLives = 0;
+    let sacrificedLives = 0;
+
+    // DOM
+    const gameScreen = document.getElementById('gameScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const stageLabel = document.getElementById('stageLabel');
+    const stageCount = document.getElementById('stageCount');
+    const progressFill = document.getElementById('progressFill');
+    const stageBadge = document.getElementById('stageBadge');
+    const situationTitle = document.getElementById('situationTitle');
+    const situationDesc = document.getElementById('situationDesc');
+    const situationHighlight = document.getElementById('situationHighlight');
+    const situationNew = document.getElementById('situationNew');
+    const choicesContainer = document.getElementById('choicesContainer');
+
+    function init() {
+      showStage(0);
+    }
+
+    function showStage(index) {
+      const stage = STAGES[index];
+      
+      stageLabel.textContent = `STAGE ${stage.id}`;
+      stageCount.textContent = `${stage.id}/5`;
+      progressFill.style.width = `${(stage.id / 5) * 100}%`;
+      stageBadge.textContent = stage.badge;
+      
+      situationTitle.textContent = stage.title;
+      situationDesc.innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      if (stage.highlight) {
+        situationHighlight.innerHTML = stage.highlight;
+        situationHighlight.classList.remove('hidden');
+      } else {
+        situationHighlight.classList.add('hidden');
+      }
+      
+      if (stage.newCondition) {
+        situationNew.innerHTML = stage.newCondition;
+        situationNew.classList.remove('hidden');
+      } else {
+        situationNew.classList.add('hidden');
+      }
+      
+      // 선택지 생성
+      choicesContainer.innerHTML = stage.choices.map((choice, idx) => `
+        <button class="choice-btn" onclick="selectChoice('${choice.id}', ${index})">
+          <div class="choice-label">${idx === 0 ? 'A' : 'B'}</div>
+          <div>${choice.text}</div>
+          <div style="font-size: 13px; color: #71717a; margin-top: 4px;">${choice.subtext}</div>
+        </button>
+      `).join('');
+    }
+
+    function selectChoice(choiceId, stageIndex) {
+      const stage = STAGES[stageIndex];
+      const choice = stage.choices.find(c => c.id === choiceId);
+      
+      // 선택 기록
+      choices.push({
+        stage: stage.id,
+        title: stage.title,
+        choice: choice.text,
+        choiceId: choiceId
+      });
+      
+      // 생명 계산
+      if (choiceId === 'pull' || choiceId === 'push') {
+        savedLives += 5;
+        sacrificedLives += 1;
+      } else {
+        sacrificedLives += 5;
+      }
+      
+      // 다음 스테이지 또는 결과
+      if (stageIndex < STAGES.length - 1) {
+        currentStage = stageIndex + 1;
+        showStage(currentStage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showResult();
+      }
+    }
+
+    function calculateMoralType() {
+      // 선택 패턴 분석
+      const pullCount = choices.filter(c => c.choiceId === 'pull' || c.choiceId === 'push').length;
+      const nothingCount = choices.filter(c => c.choiceId === 'nothing').length;
+      
+      // Stage 4 (가족) 선택
+      const familyChoice = choices.find(c => c.stage === 4);
+      const savedFamily = familyChoice && familyChoice.choiceId === 'nothing';
+      
+      // Stage 5 (직접 밀기) 선택
+      const pushChoice = choices.find(c => c.stage === 5);
+      const pushedDirectly = pushChoice && pushChoice.choiceId === 'push';
+      
+      // 도덕 유형 판정
+      if (pullCount >= 4 && pushedDirectly) {
+        return 'utilitarian'; // 거의 모든 상황에서 다수 구함 + 직접 밀기도 함
+      } else if (nothingCount >= 4 || (!pushedDirectly && nothingCount >= 2)) {
+        return 'deontologist'; // 대부분 개입 안 함 또는 직접 행위 거부
+      } else if (savedFamily && pullCount >= 2) {
+        return 'relativist'; // 가족은 구하면서 다른 건 공리적 판단
+      } else {
+        return 'situationist'; // 일관성 없이 상황마다 다른 선택
+      }
+    }
+
+    function showResult() {
+      gameScreen.style.display = 'none';
+      resultScreen.style.display = 'block';
+      
+      const typeKey = calculateMoralType();
+      const type = MORAL_TYPES[typeKey];
+      
+      document.getElementById('resultIcon').textContent = type.icon;
+      document.getElementById('resultTitle').textContent = type.title;
+      document.getElementById('resultDesc').textContent = type.desc;
+      document.getElementById('resultSaved').textContent = savedLives;
+      document.getElementById('resultSacrificed').textContent = sacrificedLives;
+      document.getElementById('principleText').textContent = type.principle;
+      
+      // 선택 기록
+      const recordHtml = choices.map(c => `
+        <div class="choice-record-item">
+          <div class="choice-record-num">${c.stage}</div>
+          <div>
+            <div class="choice-record-text">${c.title}</div>
+            <div class="choice-record-answer">→ ${c.choice}</div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('choicesRecordList').innerHTML = recordHtml;
+      
+      // 프로필에 저장
+      saveProgress(typeKey, type.principle);
+      
+      // 공유 버튼
+      document.getElementById('shareBtn').addEventListener('click', () => {
+        const text = `🚃 트롤리 딜레마 결과\n\n나의 도덕 유형: ${type.title}\n\n구한 생명: ${savedLives}명\n희생시킨 생명: ${sacrificedLives}명\n\n"${type.principle}"\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-trolley.html`;
+        
+        if (navigator.share) {
+          navigator.share({ title: '트롤리 딜레마', text: text });
+        } else {
+          navigator.clipboard.writeText(text).then(() => {
+            alert('결과가 클립보드에 복사되었습니다!');
+          });
+        }
+      });
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function saveProgress(typeKey, principle) {
+      const saved = localStorage.getItem('eclipse_mindlab_profile');
+      if (!saved) return;
+      
+      const profile = JSON.parse(saved);
+      
+      // 완료 기록
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.completedSims.includes('trolley')) {
+        profile.completedSims.push('trolley');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 저장
+      if (!profile.principles) profile.principles = [];
+      if (!profile.principles.includes(principle)) {
+        profile.principles.push(principle);
+      }
+      
+      // 레벨업 체크
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem('eclipse_mindlab_profile', JSON.stringify(profile));
+    }
+
+    init();
+  </script>
+</body>
+</html>
