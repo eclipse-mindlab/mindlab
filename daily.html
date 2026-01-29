@@ -396,8 +396,62 @@
     <div class="already-done hidden" id="alreadyDone">
       <div class="already-icon">✅</div>
       <div class="already-title">오늘의 딜레마 완료!</div>
-      <div class="already-desc">당신의 선택:</div>
-      <div class="already-choice" id="alreadyChoice"></div>
+      
+      <!-- 성향 카드 (재방문자용) -->
+      <div class="profile-card-wrapper" style="margin: 20px 0;">
+        <div class="profile-card" id="profileCardDone">
+          <div class="profile-card-content">
+            <div class="profile-top-row">
+              <div class="profile-badge" id="cardBadgeDone">오늘의 딜레마</div>
+              <div class="profile-percent">
+                <div class="percent-label">당신은</div>
+                <div><span class="percent-value" id="cardPercentDone">50</span><span class="percent-suffix">%</span></div>
+              </div>
+            </div>
+            <div class="profile-type">
+              <div class="type-label">당신의 성향</div>
+              <div class="type-name" id="cardTypeNameDone">-</div>
+              <div class="type-desc" id="cardTypeDescDone">-</div>
+            </div>
+            <div class="profile-philosopher">
+              <div class="philosopher-emoji" id="cardPhiloEmojiDone">🎭</div>
+              <div class="philosopher-info">
+                <div class="philosopher-label">비슷한 성향의 철학자</div>
+                <div class="philosopher-name" id="cardPhiloNameDone">-</div>
+                <div class="philosopher-desc" id="cardPhiloDescDone">-</div>
+              </div>
+            </div>
+            <div class="profile-branding">
+              <div class="branding-logo">
+                <span class="branding-icon">🧠</span>
+                <span class="branding-text">이클립스 마인드랩</span>
+              </div>
+              <div class="branding-date" id="cardDateDone"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 공유 버튼 -->
+      <div class="card-actions" style="margin-bottom: 20px;">
+        <button class="action-btn" id="saveImageBtnDone">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          이미지 저장
+        </button>
+        <button class="action-btn secondary" id="shareBtnDone">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          공유하기
+        </button>
+      </div>
+      
       <div class="tomorrow-timer">
         <span>다음 딜레마까지</span>
         <span class="timer-num" id="timerDisplay">--:--:--</span>
@@ -730,10 +784,66 @@
 
     function showAlreadyDone(idx) {
       const dilemma = getTodayDilemma();
+      const choice = dilemma.choices[idx];
+      
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('alreadyDone').classList.remove('hidden');
-      document.getElementById('alreadyChoice').textContent = '"' + dilemma.choices[idx].text + '"';
+      
+      // 성향 카드 데이터 채우기
+      document.getElementById('cardBadgeDone').textContent = dilemma.category;
+      document.getElementById('cardPercentDone').textContent = choice.percent;
+      document.getElementById('cardTypeNameDone').textContent = choice.type;
+      document.getElementById('cardTypeDescDone').textContent = choice.typeDesc;
+      document.getElementById('cardPhiloEmojiDone').textContent = choice.philoEmoji;
+      document.getElementById('cardPhiloNameDone').textContent = choice.philosopher;
+      document.getElementById('cardPhiloDescDone').textContent = choice.philoQuote;
+      document.getElementById('cardDateDone').textContent = formatDateShort();
+      
+      // 버튼 이벤트
+      document.getElementById('saveImageBtnDone').addEventListener('click', () => saveImageDone(idx));
+      document.getElementById('shareBtnDone').addEventListener('click', () => shareResultDone(idx));
+      
       startTimer();
+    }
+    
+    function saveImageDone(idx) {
+      const card = document.getElementById('profileCardDone');
+      const btn = document.getElementById('saveImageBtnDone');
+      btn.innerHTML = '저장 중...';
+      
+      html2canvas(card, { backgroundColor: '#09090b', scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'mindlab-' + formatDateShort() + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.classList.add('success');
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 저장 완료!';
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 이미지 저장';
+        }, 2000);
+      });
+    }
+    
+    function shareResultDone(idx) {
+      const d = getTodayDilemma();
+      const c = d.choices[idx];
+      const text = '🤔 오늘의 딜레마\n\n"' + d.question + '"\n\n나의 선택 → ' + c.type + '\n(' + c.percent + '%가 같은 선택)\n\n비슷한 철학자: ' + c.philosopher + '\n' + c.philoQuote + '\n\n당신의 선택은?';
+      
+      if (navigator.share) {
+        navigator.share({ title: '오늘의 딜레마', text: text, url: 'https://eclipse-mindlab.github.io/mindlab/daily.html' }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(text + '\nhttps://eclipse-mindlab.github.io/mindlab/daily.html').then(() => {
+          const btn = document.getElementById('shareBtnDone');
+          btn.classList.add('success');
+          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 복사됨!';
+          setTimeout(() => {
+            btn.classList.remove('success');
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> 공유하기';
+          }, 2000);
+        });
+      }
     }
 
     function renderDilemma(d) {
