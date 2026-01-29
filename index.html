@@ -1008,14 +1008,19 @@
       const cloudSims = cloud.completedSims || [];
       merged.completedSims = [...new Set([...localSims, ...cloudSims])];
       
-      // 원칙 합치기
+      // 원칙 합치기 (문자열과 객체 모두 처리)
       const localPrinciples = local.principles || [];
       const cloudPrinciples = cloud.principles || [];
-      const principleMap = new Map();
+      const principleSet = new Set();
+      
       [...localPrinciples, ...cloudPrinciples].forEach(p => {
-        if (p.name) principleMap.set(p.name, p);
+        if (typeof p === 'string') {
+          principleSet.add(p);
+        } else if (p && p.name) {
+          principleSet.add(p.name);
+        }
       });
-      merged.principles = Array.from(principleMap.values());
+      merged.principles = Array.from(principleSet);
       
       // 데일리 데이터
       const localDaily = local.dailyData || {};
@@ -1069,7 +1074,13 @@
       tierLabel.style.background = tier.color + '20';
       
       document.getElementById('statCleared').textContent = profile.completedSims.length;
-      document.getElementById('statPrinciples').textContent = profile.principles.length;
+      
+      // 발견한 원칙 수 (객체/문자열 모두 처리, 실제 도감에 있는 것만 카운트)
+      const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
+      const validPrinciples = principleNames.filter(name => 
+        typeof name === 'string' && name.length > 0
+      );
+      document.getElementById('statPrinciples').textContent = validPrinciples.length;
 
       // 마인드 스토리 목록
       const storyList = document.getElementById('storyList');

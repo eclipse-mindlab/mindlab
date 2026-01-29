@@ -233,8 +233,8 @@ const SimTemplate = {
     if (saved) {
       profile = JSON.parse(saved);
     } else {
-      // 프로필 없으면 새로 생성
-      profile = { name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      // 프로필 없으면 새로 생성 (index.html과 동일한 구조)
+      profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
     }
     
     if (!profile.completedSims) profile.completedSims = [];

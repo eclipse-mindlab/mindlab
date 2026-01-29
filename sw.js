@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mindlab-v67';
+const CACHE_NAME = 'mindlab-v71';
 const urlsToCache = [
   './',
   './index.html',
@@ -42,6 +42,11 @@ self.addEventListener('install', event => {
 
 // 요청 가로채기 - 네트워크 우선, 실패시 캐시
 self.addEventListener('fetch', event => {
+  // POST 요청은 캐시하지 않음
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
