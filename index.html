@@ -734,7 +734,7 @@
   <script type="module">
     // Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithRedirect, getRedirectResult } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     // Firebase 설정
@@ -1257,35 +1257,12 @@
               console.log('사용자 선택:', loadExisting);
               
               if (loadExisting) {
-                // 현재 익명 계정 로그아웃
-                console.log('익명 계정 로그아웃 중...');
-                await signOut(auth);
-                
-                // 플래그 저장
+                // 리다이렉트 전에 플래그 저장
                 localStorage.setItem('eclipse_mindlab_load_existing', 'true');
                 
-                // 구글 계정으로 로그인 (팝업)
+                // 구글 계정으로 로그인 (리다이렉트 방식)
                 const provider = new GoogleAuthProvider();
-                signInWithPopup(auth, provider).then(async (result) => {
-                  console.log('구글 로그인 성공:', result.user.uid);
-                  localStorage.removeItem('eclipse_mindlab_load_existing');
-                  
-                  // 프로필 불러오기
-                  const cloudProfile = await loadFromCloud();
-                  console.log('클라우드 프로필:', cloudProfile);
-                  
-                  if (cloudProfile) {
-                    profile = cloudProfile;
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-                    googleSyncBtn.classList.add('synced');
-                    googleSyncBtn.title = '구글 연동됨';
-                    nameModal.classList.add('hidden');
-                    updateUI();
-                    alert('기존 프로필을 불러왔습니다!');
-                  } else {
-                    alert('클라우드에 저장된 프로필이 없습니다.');
-                  }
-                }).catch((signInError) => {
+                signInWithRedirect(auth, provider).catch((signInError) => {
                   console.error('구글 로그인 실패:', signInError);
                   localStorage.removeItem('eclipse_mindlab_load_existing');
                   alert('프로필 불러오기에 실패했습니다.');
