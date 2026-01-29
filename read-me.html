@@ -55,6 +55,85 @@
       font-weight: 600;
     }
 
+    /* 닉네임 입력 화면 */
+    .nickname-screen {
+      padding: 40px 0;
+    }
+
+    .nickname-screen.hidden {
+      display: none;
+    }
+
+    .nickname-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .nickname-card-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .nickname-card-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .nickname-card-desc {
+      font-size: 14px;
+      color: #71717a;
+      margin-bottom: 24px;
+    }
+
+    .nickname-card-input {
+      width: 100%;
+      padding: 16px;
+      background: #09090b;
+      border: 2px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .nickname-card-input:focus {
+      border-color: #a78bfa;
+    }
+
+    .nickname-card-input::placeholder {
+      color: #52525b;
+    }
+
+    .nickname-card-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nickname-card-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nickname-card-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
     /* 인트로 화면 */
     .intro-screen {
       text-align: center;
@@ -458,8 +537,19 @@
       <div class="header-title">나를 읽어봐</div>
     </div>
 
+    <!-- 닉네임 입력 화면 (프로필 없을 때) -->
+    <div class="nickname-screen hidden" id="nicknameScreen">
+      <div class="nickname-card">
+        <div class="nickname-card-icon">✏️</div>
+        <div class="nickname-card-title">먼저 닉네임을 정해주세요</div>
+        <div class="nickname-card-desc">도전장에 표시됩니다</div>
+        <input type="text" class="nickname-card-input" id="creatorNicknameInput" placeholder="예: 홍길동" maxlength="10">
+        <button class="nickname-card-btn" id="nicknameNextBtn" disabled>다음</button>
+      </div>
+    </div>
+
     <!-- 인트로 화면 -->
-    <div class="intro-screen" id="introScreen">
+    <div class="intro-screen hidden" id="introScreen">
       <div class="intro-icon">🔮</div>
       <div class="intro-title">나를 읽어봐</div>
       <div class="intro-desc">
@@ -703,6 +793,16 @@
     const questionText = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
     const progressFill = document.getElementById('progressFill');
+    // DOM
+    const nicknameScreen = document.getElementById('nicknameScreen');
+    const introScreen = document.getElementById('introScreen');
+    const questionScreen = document.getElementById('questionScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const startBtn = document.getElementById('startBtn');
+    const questionNum = document.getElementById('questionNum');
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const progressFill = document.getElementById('progressFill');
     const shareCardName = document.getElementById('shareCardName');
     const linkDisplay = document.getElementById('linkDisplay');
     const saveImageBtn = document.getElementById('saveImageBtn');
@@ -725,7 +825,7 @@
       const saved = localStorage.getItem('eclipse_mindlab_profile');
       if (saved) {
         const profile = JSON.parse(saved);
-        if (profile.name && profile.name !== '익명 탐험가') {
+        if (profile.name && profile.name !== '익명 탐험가' && profile.name !== '') {
           userName = profile.name;
         }
       }
@@ -733,10 +833,63 @@
       // 5개 질문 랜덤 선택
       selectedQuestions = shuffleArray([...ALL_QUESTIONS]).slice(0, 5);
 
+      // 닉네임 없으면 먼저 입력받기
+      if (!userName || userName === '???') {
+        showNicknameScreen();
+      } else {
+        showIntroScreen();
+      }
+
       startBtn.addEventListener('click', startQuiz);
       saveImageBtn.addEventListener('click', saveImage);
       copyShareBtn.addEventListener('click', copyShareText);
       nativeShareBtn.addEventListener('click', shareNative);
+    }
+
+    function showNicknameScreen() {
+      nicknameScreen.classList.remove('hidden');
+      introScreen.classList.add('hidden');
+
+      const input = document.getElementById('creatorNicknameInput');
+      const nextBtn = document.getElementById('nicknameNextBtn');
+
+      input.addEventListener('input', () => {
+        nextBtn.disabled = input.value.trim().length === 0;
+      });
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && input.value.trim()) {
+          saveNicknameAndContinue();
+        }
+      });
+
+      nextBtn.addEventListener('click', saveNicknameAndContinue);
+    }
+
+    function saveNicknameAndContinue() {
+      const input = document.getElementById('creatorNicknameInput');
+      const name = input.value.trim();
+      
+      if (!name) return;
+
+      userName = name;
+
+      // 프로필에 저장
+      let profile = JSON.parse(localStorage.getItem('eclipse_mindlab_profile') || '{}');
+      profile.name = name;
+      if (!profile.version) profile.version = 5;
+      if (!profile.level) profile.level = 1;
+      if (!profile.exp) profile.exp = 0;
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      localStorage.setItem('eclipse_mindlab_profile', JSON.stringify(profile));
+
+      showIntroScreen();
+    }
+
+    function showIntroScreen() {
+      nicknameScreen.classList.add('hidden');
+      introScreen.classList.remove('hidden');
     }
 
     function shuffleArray(array) {
