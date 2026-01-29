@@ -226,13 +226,21 @@ const SimTemplate = {
    * 진행 저장
    */
   saveProgress() {
-    const saved = localStorage.getItem('eclipse_mindlab_profile');
-    if (!saved) return;
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    let saved = localStorage.getItem(STORAGE_KEY);
+    let profile;
     
-    const profile = JSON.parse(saved);
+    if (saved) {
+      profile = JSON.parse(saved);
+    } else {
+      // 프로필 없으면 새로 생성
+      profile = { name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+    }
+    
+    if (!profile.completedSims) profile.completedSims = [];
+    if (!profile.principles) profile.principles = [];
     
     // 완료 기록
-    if (!profile.completedSims) profile.completedSims = [];
     const simId = this.config.id;
     
     if (!profile.completedSims.includes(simId)) {
@@ -240,22 +248,30 @@ const SimTemplate = {
       profile.exp = (profile.exp || 0) + 30;
     }
     
-    // 원칙 저장 (이름으로)
-    if (!profile.principles) profile.principles = [];
+    // 원칙 저장 (이름으로 저장 - 도감과 매칭)
+    // 기존 원칙 이름들 추출 (객체/문자열 모두 처리)
+    const existingNames = profile.principles.map(p => 
+      typeof p === 'string' ? p : p.name
+    );
+    
     this.discoveredPrinciples.forEach(p => {
-      if (!profile.principles.includes(p.name)) {
+      if (!existingNames.includes(p.name)) {
         profile.principles.push(p.name);
+        existingNames.push(p.name);
       }
     });
     
+    console.log('저장된 원칙:', profile.principles);
+    console.log('발견한 원칙:', this.discoveredPrinciples.map(p => p.name));
+    
     // 레벨업 체크
-    const expNeeded = profile.level * 100;
+    const expNeeded = (profile.level || 1) * 100;
     while (profile.exp >= expNeeded) {
       profile.exp -= expNeeded;
-      profile.level++;
+      profile.level = (profile.level || 1) + 1;
     }
     
-    localStorage.setItem('eclipse_mindlab_profile', JSON.stringify(profile));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
   },
 
   /**
