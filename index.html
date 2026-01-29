@@ -1066,39 +1066,7 @@
       const loadExistingFlag = localStorage.getItem('eclipse_mindlab_load_existing');
       console.log('기존 프로필 불러오기 플래그:', loadExistingFlag);
 
-      // 리다이렉트 결과 확인 (기존 구글 프로필 불러오기)
-      try {
-        console.log('리다이렉트 결과 확인 중...');
-        const redirectResult = await getRedirectResult(auth);
-        console.log('리다이렉트 결과:', redirectResult);
-        
-        if (redirectResult && redirectResult.user) {
-          console.log('리다이렉트 로그인 성공:', redirectResult.user.uid);
-          
-          if (loadExistingFlag) {
-            localStorage.removeItem('eclipse_mindlab_load_existing');
-            
-            // 기존 구글 계정의 프로필 불러오기
-            const cloudProfile = await loadFromCloud();
-            console.log('클라우드 프로필:', cloudProfile);
-            
-            if (cloudProfile) {
-              profile = cloudProfile;
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-              alert('기존 프로필을 불러왔습니다!');
-            } else {
-              alert('클라우드에 프로필이 없습니다.');
-            }
-          }
-        } else {
-          console.log('리다이렉트 결과 없음');
-        }
-      } catch (redirectError) {
-        console.log('리다이렉트 에러:', redirectError);
-        localStorage.removeItem('eclipse_mindlab_load_existing');
-      }
-
-      // Firebase 익명 로그인 시도
+      // Firebase 로그인 상태 확인
       try {
         await new Promise((resolve) => {
           onAuthStateChanged(auth, async (user) => {
@@ -1106,9 +1074,27 @@
               console.log('Firebase 로그인됨:', user.uid);
               
               // 구글 연동 여부 체크
-              if (user.providerData.some(p => p.providerId === 'google.com')) {
+              const isGoogleLinked = user.providerData.some(p => p.providerId === 'google.com');
+              if (isGoogleLinked) {
                 googleSyncBtn.classList.add('synced');
                 googleSyncBtn.title = '구글 연동됨';
+                
+                // 기존 프로필 불러오기 플래그가 있으면 처리
+                if (loadExistingFlag) {
+                  console.log('기존 프로필 불러오기 시작...');
+                  localStorage.removeItem('eclipse_mindlab_load_existing');
+                  
+                  const cloudProfile = await loadFromCloud();
+                  console.log('클라우드 프로필:', cloudProfile);
+                  
+                  if (cloudProfile) {
+                    profile = cloudProfile;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                    alert('기존 프로필을 불러왔습니다!');
+                  } else {
+                    alert('클라우드에 저장된 프로필이 없습니다.');
+                  }
+                }
               }
               
               // 클라우드에서 프로필 로드 후 병합
