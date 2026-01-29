@@ -1,0 +1,501 @@
+/* 시뮬레이터 공통 템플릿 CSS */
+/* 색상은 각 시뮬레이터에서 CSS 변수로 오버라이드 */
+
+:root {
+  --sim-primary: #7c3aed;
+  --sim-primary-light: #a78bfa;
+  --sim-primary-bg: rgba(124, 58, 237, 0.1);
+  --sim-primary-border: rgba(124, 58, 237, 0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #09090b;
+  color: #fff;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.sim-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  min-height: 100vh;
+}
+
+/* 헤더 */
+.sim-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sim-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #18181b;
+  border: 1px solid #27272a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.sim-header-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* 진행 바 */
+.sim-progress {
+  margin-bottom: 24px;
+}
+
+.sim-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #71717a;
+  margin-bottom: 8px;
+}
+
+.sim-progress-bar {
+  height: 4px;
+  background: #27272a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sim-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sim-primary), var(--sim-primary-light));
+  transition: width 0.5s ease;
+}
+
+/* 스테이지 뱃지 */
+.sim-stage-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--sim-primary-bg);
+  border: 1px solid var(--sim-primary-border);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sim-primary-light);
+  margin-bottom: 16px;
+}
+
+/* 상황 카드 */
+.sim-situation {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.sim-situation-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.sim-situation-desc {
+  font-size: 15px;
+  color: #a1a1aa;
+  line-height: 1.8;
+}
+
+.sim-situation-highlight {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #fca5a5;
+  border-radius: 0 8px 8px 0;
+}
+
+.sim-situation-quote {
+  background: var(--sim-primary-bg);
+  border-left: 3px solid var(--sim-primary);
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--sim-primary-light);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+/* 선택지 */
+.sim-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sim-choice-btn {
+  padding: 18px 20px;
+  background: #1f1f23;
+  border: 2px solid #27272a;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.5;
+}
+
+.sim-choice-btn:hover {
+  border-color: var(--sim-primary);
+  background: #252529;
+}
+
+.sim-choice-btn:active {
+  transform: scale(0.98);
+}
+
+.sim-choice-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sim-primary-light);
+  margin-bottom: 4px;
+}
+
+.sim-choice-subtext {
+  font-size: 13px;
+  color: #71717a;
+  margin-top: 4px;
+}
+
+/* 해설 화면 */
+.sim-explanation {
+  display: none;
+}
+
+.sim-explanation.show {
+  display: block;
+}
+
+.sim-explanation-card {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.sim-explanation-label {
+  font-size: 12px;
+  color: #71717a;
+  margin-bottom: 8px;
+}
+
+.sim-explanation-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.sim-explanation-desc {
+  font-size: 14px;
+  color: #a1a1aa;
+  line-height: 1.7;
+}
+
+/* 발견한 원칙 카드 */
+.sim-principle-card {
+  background: linear-gradient(135deg, var(--sim-primary-bg), rgba(0,0,0,0.2));
+  border: 1px solid var(--sim-primary-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.sim-principle-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--sim-primary-light);
+  margin-bottom: 12px;
+}
+
+.sim-principle-icon {
+  font-size: 16px;
+}
+
+.sim-principle-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.sim-principle-desc {
+  font-size: 14px;
+  color: #a1a1aa;
+  line-height: 1.6;
+}
+
+/* 인용구 카드 */
+.sim-quote-card {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sim-quote-icon {
+  font-size: 20px;
+}
+
+.sim-quote-text {
+  font-size: 14px;
+  color: #fcd34d;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* 다음 버튼 */
+.sim-next-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--sim-primary), var(--sim-primary-light));
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sim-next-btn:hover {
+  opacity: 0.9;
+}
+
+/* 결과 화면 */
+.sim-result {
+  display: none;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.sim-result.show {
+  display: block;
+}
+
+.sim-result-card {
+  background: linear-gradient(135deg, #18181b 0%, #1a1a2e 100%);
+  border: 1px solid #27272a;
+  border-radius: 20px;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+}
+
+.sim-result-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.sim-result-label {
+  font-size: 14px;
+  color: var(--sim-primary-light);
+  margin-bottom: 8px;
+}
+
+.sim-result-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--sim-primary-light), #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sim-result-desc {
+  font-size: 15px;
+  color: #a1a1aa;
+  line-height: 1.7;
+  text-align: left;
+}
+
+/* 발견한 원칙들 목록 */
+.sim-principles-list {
+  background: #18181b;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.sim-principles-list-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sim-primary-light);
+  margin-bottom: 16px;
+}
+
+.sim-principles-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #27272a;
+}
+
+.sim-principles-item:last-child {
+  border-bottom: none;
+}
+
+.sim-principles-item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.sim-principles-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sim-principles-item-desc {
+  font-size: 12px;
+  color: #71717a;
+  margin-top: 2px;
+}
+
+/* 액션 버튼들 */
+.sim-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sim-action-btn {
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+}
+
+.sim-action-btn.primary {
+  background: linear-gradient(135deg, var(--sim-primary), var(--sim-primary-light));
+  color: #fff;
+}
+
+.sim-action-btn.secondary {
+  background: #27272a;
+  color: #fff;
+  border: 1px solid #3f3f46;
+}
+
+/* 유틸리티 */
+.hidden { display: none !important; }
+
+/* 프로모션 섹션 (책/유튜브) */
+.sim-promo {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #27272a;
+}
+
+.sim-promo-title {
+  text-align: center;
+  font-size: 13px;
+  color: #71717a;
+  margin-bottom: 16px;
+}
+
+.sim-youtube-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto 32px;
+  padding: 12px 24px;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sim-youtube-btn:hover {
+  background: #3f3f46;
+}
+
+.sim-youtube-icon {
+  width: 24px;
+  height: 24px;
+  background: #ff0000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.sim-books {
+  text-align: center;
+}
+
+.sim-books-title {
+  font-size: 13px;
+  color: #71717a;
+  margin-bottom: 16px;
+}
+
+.sim-books-grid {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.sim-book-item {
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+}
+
+.sim-book-cover {
+  width: 100px;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 8px;
+  border: 1px solid #27272a;
+}
+
+.sim-book-title {
+  font-size: 12px;
+  color: #a1a1aa;
+}

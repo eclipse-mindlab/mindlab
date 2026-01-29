@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>테스트 시뮬레이터 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    /* 이 시뮬레이터만의 색상 커스텀 */
+    :root {
+      --sim-primary: #10b981;
+      --sim-primary-light: #34d399;
+      --sim-primary-bg: rgba(16, 185, 129, 0.1);
+      --sim-primary-border: rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">생존자의 선택</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/3</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 33%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices">
+        <!-- 선택지 동적 생성 -->
+      </div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🏝️</div>
+        <div class="sim-result-label" id="resultLabel">당신의 생존 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList">
+        <!-- 발견한 원칙들 동적 생성 -->
+      </div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@eclipse_yt" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://product.kyobobook.co.kr/detail/S000213540289" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://product.kyobobook.co.kr/detail/S000212464912" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sim-template.js"></script>
+  <script>
+    // 이 시뮬레이터의 설정
+    const CONFIG = {
+      id: 'survival_test',
+      title: '생존자의 선택',
+      shareIcon: '🏝️',
+      shareUrl: 'https://eclipse-mindlab.github.io/mindlab/sim-survival-test.html',
+      
+      stages: [
+        {
+          badge: 'STAGE 1: 표류',
+          title: '무인도에 홀로',
+          desc: '비행기 사고로 무인도에 표류했다. 해변에는 파손된 짐들이 흩어져 있다.\n\n당신은 딱 하나만 가져갈 수 있다.',
+          highlight: '선택이 생존을 결정한다.',
+          choices: [
+            {
+              id: 'knife',
+              text: '날카로운 칼',
+              subtext: '도구를 만들고 사냥할 수 있다',
+              meaning: '당신은 즉각적인 실용성을 선택했습니다. 칼은 가장 다용도로 쓸 수 있는 도구입니다. 이는 문제를 직접 해결하려는 성향을 보여줍니다.',
+              principle: {
+                name: '실용적 선택',
+                desc: '가장 다양하게 활용할 수 있는 것을 선택한다.',
+                icon: '🔪'
+              },
+              quote: '"준비된 자에게 기회가 온다" - 파스퇴르'
+            },
+            {
+              id: 'lighter',
+              text: '라이터',
+              subtext: '불을 피울 수 있다',
+              meaning: '불은 인류 문명의 시작입니다. 당신은 원초적이지만 가장 근본적인 생존 요소를 선택했습니다. 이는 본질을 꿰뚫어 보는 능력을 나타냅니다.',
+              principle: {
+                name: '본질 추구',
+                desc: '가장 근본적인 것이 가장 중요하다.',
+                icon: '🔥'
+              },
+              quote: '"불을 다스리는 자가 세상을 다스린다" - 프로메테우스 신화'
+            },
+            {
+              id: 'rope',
+              text: '튼튼한 밧줄',
+              subtext: '묶고, 만들고, 오를 수 있다',
+              meaning: '밧줄은 단독으로는 무의미하지만, 다른 것과 결합하면 무한한 가능성을 만듭니다. 당신은 연결과 조합의 가치를 아는 사람입니다.',
+              principle: {
+                name: '연결의 힘',
+                desc: '개별 요소를 연결하면 새로운 가치가 생긴다.',
+                icon: '🪢'
+              },
+              quote: '"혼자 가면 빨리 가고, 함께 가면 멀리 간다" - 아프리카 속담'
+            }
+          ]
+        },
+        {
+          badge: 'STAGE 2: 선택',
+          title: '다른 생존자',
+          desc: '섬을 탐험하던 중, 다른 생존자를 발견했다. 그는 부상을 입었고 혼자서는 움직일 수 없다.\n\n당신의 식량은 한 사람이 버티기에도 빠듯하다.',
+          highlight: '도움을 주면 둘 다 위험해질 수 있다.',
+          choices: [
+            {
+              id: 'help',
+              text: '함께 가자',
+              subtext: '둘이 힘을 합치면 살 수 있다',
+              meaning: '위험을 감수하고 협력을 선택했습니다. 인간은 사회적 동물입니다. 혼자보다 함께할 때 생존 확률이 높아진다는 것을 본능적으로 아는 것입니다.',
+              principle: {
+                name: '협력의 가치',
+                desc: '단기적 손해를 감수해도 협력은 장기적으로 이득이다.',
+                icon: '🤝'
+              },
+              quote: '"우리는 함께 떠오르거나, 따로 가라앉는다" - 벤자민 프랭클린'
+            },
+            {
+              id: 'leave',
+              text: '혼자 가야 한다',
+              subtext: '냉정하지만 현실적이다',
+              meaning: '냉정한 판단입니다. 제한된 자원 상황에서 감정보다 생존을 우선시했습니다. 이것이 반드시 틀린 것은 아닙니다. 비행기 산소마스크도 자신부터 쓰라고 합니다.',
+              principle: {
+                name: '생존 우선',
+                desc: '자신을 먼저 지켜야 남도 도울 수 있다.',
+                icon: '🛡️'
+              },
+              quote: '"산소마스크는 자신부터 착용하세요" - 항공 안전 수칙'
+            }
+          ]
+        },
+        {
+          badge: 'STAGE 3: 탈출',
+          title: '구조 신호',
+          desc: '멀리서 배가 지나가는 것이 보인다. 하지만 신호를 보내려면 지금까지 모은 자원을 모두 태워야 한다.\n\n배가 신호를 보지 못하면 모든 것을 잃는다.',
+          highlight: '확률은 50%. 실패하면 처음부터 다시.',
+          choices: [
+            {
+              id: 'signal',
+              text: '모든 것을 태운다',
+              subtext: '이 기회를 놓칠 수 없다',
+              meaning: '모든 것을 걸었습니다. 기회가 왔을 때 움켜쥐는 것. 위험하지만, 현상 유지로는 영원히 탈출할 수 없다는 것을 알기에 내린 결단입니다.',
+              principle: {
+                name: '결단의 순간',
+                desc: '때로는 모든 것을 걸어야 할 순간이 있다.',
+                icon: '🎲'
+              },
+              quote: '"배수의 진" - 한신'
+            },
+            {
+              id: 'wait',
+              text: '다음 기회를 기다린다',
+              subtext: '자원을 보존해야 한다',
+              meaning: '신중한 선택입니다. 50%의 확률에 모든 것을 거는 것은 도박입니다. 확실한 것을 지키며 더 나은 기회를 기다리는 것도 전략입니다.',
+              principle: {
+                name: '신중한 대기',
+                desc: '불확실한 기회보다 확실한 현재가 나을 때가 있다.',
+                icon: '⏳'
+              },
+              quote: '"참을 인 세 번이면 살인도 피한다" - 속담'
+            }
+          ]
+        }
+      ],
+      
+      // 결과 계산 함수
+      calculateResult(choices, principles) {
+        // 선택 패턴에 따라 결과 결정
+        const choiceIds = choices.map(c => c.choiceId);
+        
+        if (choiceIds.includes('help') && choiceIds.includes('signal')) {
+          return {
+            icon: '🦁',
+            label: '당신의 생존 유형',
+            title: '용감한 도전자',
+            desc: '당신은 위험을 감수하고 기회를 잡는 유형입니다. 협력을 중시하면서도 결정적 순간에 과감하게 행동합니다. 높은 리스크, 높은 리턴을 추구하는 생존 전략입니다.'
+          };
+        } else if (choiceIds.includes('leave') && choiceIds.includes('wait')) {
+          return {
+            icon: '🦊',
+            label: '당신의 생존 유형',
+            title: '신중한 생존자',
+            desc: '당신은 안전과 확실성을 중시합니다. 감정보다 이성으로 판단하며, 불확실한 기회보다 확실한 현재를 지키는 것을 선호합니다. 장기적 생존에 유리한 전략입니다.'
+          };
+        } else {
+          return {
+            icon: '🦉',
+            label: '당신의 생존 유형',
+            title: '균형잡힌 현실주의자',
+            desc: '당신은 상황에 따라 유연하게 대처합니다. 때로는 협력하고, 때로는 혼자 판단합니다. 고정된 원칙보다 맥락을 읽는 능력이 뛰어난 유형입니다.'
+          };
+        }
+      }
+    };
+
+    // 초기화
+    SimTemplate.init(CONFIG);
+  </script>
+</body>
+</html>
