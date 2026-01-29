@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta property="og:title" content="트롤리 딜레마 - 이클립스 마인드랩">
   <meta property="og:description" content="당신의 도덕적 기준은 어디까지 흔들릴까?">
-  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -653,15 +653,32 @@
       saveProgress(typeKey, type.principle);
       
       // 공유 버튼
-      document.getElementById('shareBtn').addEventListener('click', () => {
+      document.getElementById('shareBtn').addEventListener('click', async () => {
         const text = `🚃 트롤리 딜레마 결과\n\n나의 도덕 유형: ${type.title}\n\n구한 생명: ${savedLives}명\n희생시킨 생명: ${sacrificedLives}명\n\n"${type.principle}"\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-trolley.html`;
         
-        if (navigator.share) {
-          navigator.share({ title: '트롤리 딜레마', text: text });
+        // 모바일에서만 네이티브 공유 사용
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile && navigator.share) {
+          try {
+            await navigator.share({ title: '트롤리 딜레마', text: text });
+          } catch (e) {
+            // 공유 취소시 무시
+          }
         } else {
-          navigator.clipboard.writeText(text).then(() => {
+          try {
+            await navigator.clipboard.writeText(text);
             alert('결과가 클립보드에 복사되었습니다!');
-          });
+          } catch (e) {
+            // fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('결과가 클립보드에 복사되었습니다!');
+          }
         }
       });
       

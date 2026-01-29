@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta property="og:title" content="복제인간 - 이클립스 마인드랩">
   <meta property="og:description" content="완벽한 복제본이 나타났다. 누가 진짜인가?">
-  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -685,15 +685,32 @@
       saveProgress(ending.principle);
       
       // 공유 버튼
-      document.getElementById('shareBtn').addEventListener('click', () => {
+      document.getElementById('shareBtn').addEventListener('click', async () => {
         const text = `🪞 복제인간 시뮬레이터 결과\n\n${ending.icon} ${ending.title}\n유형: ${ending.type}\n\n"${ending.principle}"\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-clone.html`;
         
-        if (navigator.share) {
-          navigator.share({ title: '복제인간', text: text });
+        // 모바일에서만 네이티브 공유 사용
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile && navigator.share) {
+          try {
+            await navigator.share({ title: '복제인간', text: text });
+          } catch (e) {
+            // 공유 취소시 무시
+          }
         } else {
-          navigator.clipboard.writeText(text).then(() => {
+          try {
+            await navigator.clipboard.writeText(text);
             alert('결과가 클립보드에 복사되었습니다!');
-          });
+          } catch (e) {
+            // fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('결과가 클립보드에 복사되었습니다!');
+          }
         }
       });
       
