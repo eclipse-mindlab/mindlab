@@ -144,18 +144,18 @@ mindlab/
       <!-- 프로모션 섹션 -->
       <div class="sim-promo">
         <div class="sim-promo-title">이클립스 더 알아보기</div>
-        <a href="https://www.youtube.com/@eclipse_yt" target="_blank" class="sim-youtube-btn">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
           <span class="sim-youtube-icon">▶</span>
           <span>유튜브 채널</span>
         </a>
         <div class="sim-books">
           <div class="sim-books-title">이클립스의 책</div>
           <div class="sim-books-grid">
-            <a href="https://product.kyobobook.co.kr/detail/S000213540289" target="_blank" class="sim-book-item">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
               <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
               <div class="sim-book-title">훔친 철학 편</div>
             </a>
-            <a href="https://product.kyobobook.co.kr/detail/S000212464912" target="_blank" class="sim-book-item">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
               <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
               <div class="sim-book-title">훔친 심리학 편</div>
             </a>

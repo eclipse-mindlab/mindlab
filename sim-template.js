@@ -188,7 +188,19 @@ const SimTemplate = {
       document.getElementById('resultIcon').textContent = resultType.icon || '✨';
       document.getElementById('resultLabel').textContent = resultType.label || '결과';
       document.getElementById('resultTitle').textContent = resultType.title;
-      document.getElementById('resultDesc').textContent = resultType.desc;
+      document.getElementById('resultDesc').innerHTML = resultType.desc.replace(/\n/g, '<br>');
+      
+      // 커스텀 통계 (있으면 표시)
+      const statsContainer = document.getElementById('resultStats');
+      if (statsContainer && resultType.stats) {
+        statsContainer.innerHTML = resultType.stats.map(stat => `
+          <div class="sim-result-stat">
+            <div class="sim-result-stat-value">${stat.value}</div>
+            <div class="sim-result-stat-label">${stat.label}</div>
+          </div>
+        `).join('');
+        statsContainer.classList.remove('hidden');
+      }
     }
     
     // 발견한 원칙들 목록
@@ -281,13 +293,19 @@ const SimTemplate = {
     const resultTitle = document.getElementById('resultTitle').textContent;
     const principleNames = this.discoveredPrinciples.map(p => p.name).join(', ');
     
-    const text = `${this.config.shareIcon || '🧠'} ${this.config.title} 결과
+    // 커스텀 shareText 함수가 있으면 사용
+    let text;
+    if (this.config.getShareText) {
+      text = this.config.getShareText(resultTitle, this.choices, this.discoveredPrinciples);
+    } else {
+      text = `${this.config.shareIcon || '🧠'} ${this.config.title} 결과
 
 ${resultTitle}
 
 발견한 원칙: ${principleNames || '없음'}
 
 ${this.config.shareUrl || window.location.href}`;
+    }
     
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
