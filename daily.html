@@ -256,20 +256,28 @@
     }
     
     .home-btn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      padding: 16px;
-      background: #27272a;
-      border: 1px solid #3f3f46;
-      border-radius: 12px;
+      padding: 18px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 14px;
       color: #fff;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       text-align: center;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+      transition: all 0.2s;
     }
     
-    .home-btn:hover { background: #3f3f46; }
+    .home-btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+    }
     
     .already-done { text-align: center; padding: 40px 20px; }
     .already-icon { font-size: 48px; margin-bottom: 16px; }
@@ -378,6 +386,10 @@
             공유하기
           </button>
         </div>
+
+        <a href="index.html" class="home-btn">
+          🎮 심리/철학 시뮬레이터 경험해보기
+        </a>
         
         <div class="research-card">
           <div class="research-header">
@@ -388,8 +400,6 @@
           <div class="research-desc" id="resultDesc"></div>
           <div class="research-source" id="resultSource"></div>
         </div>
-        
-        <a href="index.html" class="home-btn">탐험 지도로 돌아가기</a>
       </div>
     </div>
     
@@ -451,12 +461,15 @@
           공유하기
         </button>
       </div>
+
+      <a href="index.html" class="home-btn" style="margin-bottom: 20px;">
+        🎮 심리/철학 시뮬레이터 경험해보기
+      </a>
       
       <div class="tomorrow-timer">
         <span>다음 딜레마까지</span>
         <span class="timer-num" id="timerDisplay">--:--:--</span>
       </div>
-      <a href="index.html" class="home-btn" style="margin-top: 24px;">탐험 지도로 돌아가기</a>
     </div>
   </div>
 
