@@ -1248,27 +1248,27 @@
             // 이미 다른 계정에 연결된 구글 계정
             console.log('credential-already-in-use 감지됨');
             
-            // 팝업이 완전히 닫힌 후 confirm 표시 (딜레이 필요)
-            setTimeout(async () => {
+            // 팝업이 완전히 닫힌 후 confirm 표시
+            console.log('1초 후 confirm 표시 예정...');
+            setTimeout(() => {
+              console.log('setTimeout 실행됨');
               const loadExisting = confirm('이 구글 계정에 기존 프로필이 있습니다.\n\n기존 프로필을 불러올까요?\n(현재 프로필은 삭제됩니다)');
               
               console.log('사용자 선택:', loadExisting);
               
               if (loadExisting) {
-                try {
-                  // 리다이렉트 전에 플래그 저장
-                  localStorage.setItem('eclipse_mindlab_load_existing', 'true');
-                  
-                  // 구글 계정으로 로그인 (리다이렉트 방식)
-                  const provider = new GoogleAuthProvider();
-                  await signInWithRedirect(auth, provider);
-                } catch (signInError) {
+                // 리다이렉트 전에 플래그 저장
+                localStorage.setItem('eclipse_mindlab_load_existing', 'true');
+                
+                // 구글 계정으로 로그인 (리다이렉트 방식)
+                const provider = new GoogleAuthProvider();
+                signInWithRedirect(auth, provider).catch((signInError) => {
                   console.error('구글 로그인 실패:', signInError);
                   localStorage.removeItem('eclipse_mindlab_load_existing');
                   alert('프로필 불러오기에 실패했습니다.');
-                }
+                });
               }
-            }, 500);
+            }, 1000);
           } else if (error.code === 'auth/popup-closed-by-user') {
             // 사용자가 팝업 닫음
             console.log('로그인 취소됨');
