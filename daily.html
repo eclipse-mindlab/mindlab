@@ -387,6 +387,29 @@
           </button>
         </div>
 
+        <!-- 다른 선택지 해설 (아코디언) -->
+        <div class="other-choice-section" style="margin: 20px 0;">
+          <button class="other-choice-toggle" id="otherChoiceToggleFirst" style="width: 100%; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; color: #71717a; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+            <span>🔍 다른 선택을 했다면?</span>
+            <span id="toggleArrowFirst">▼</span>
+          </button>
+          <div class="other-choice-content hidden" id="otherChoiceContentFirst" style="background: #18181b; border: 1px solid #27272a; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
+            <div style="font-size: 14px; color: #d4d4d8; margin-bottom: 12px;" id="otherChoiceTextFirst"></div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #a78bfa;" id="otherPercentFirst"></span>
+              <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeFirst"></span>
+            </div>
+            <div style="font-size: 13px; color: #a1a1aa; margin-bottom: 8px;" id="otherTypeDescFirst"></div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #09090b; border-radius: 8px;">
+              <span style="font-size: 24px;" id="otherPhiloEmojiFirst"></span>
+              <div>
+                <div style="font-size: 13px; color: #fbbf24;" id="otherPhiloNameFirst"></div>
+                <div style="font-size: 12px; color: #71717a;" id="otherPhiloQuoteFirst"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <a href="index.html" class="home-btn">
           🎮 심리/철학 시뮬레이터 경험해보기
         </a>
@@ -406,6 +429,19 @@
     <div class="already-done hidden" id="alreadyDone">
       <div class="already-icon">✅</div>
       <div class="already-title">오늘의 딜레마 완료!</div>
+      
+      <!-- 딜레마 내용 다시 보기 -->
+      <div class="dilemma-card" style="margin: 20px 0;">
+        <div class="dilemma-category" id="dilemmaCategoryDone"></div>
+        <div class="dilemma-situation" id="dilemmaSituationDone"></div>
+        <div class="dilemma-question" id="dilemmaQuestionDone"></div>
+      </div>
+      
+      <!-- 내 선택 표시 -->
+      <div class="my-choice-card" style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+        <div style="font-size: 12px; color: #a78bfa; margin-bottom: 8px;">✓ 나의 선택</div>
+        <div style="font-size: 15px; color: #fff;" id="myChoiceTextDone"></div>
+      </div>
       
       <!-- 성향 카드 (재방문자용) -->
       <div class="profile-card-wrapper" style="margin: 20px 0;">
@@ -440,6 +476,40 @@
             </div>
           </div>
         </div>
+      </div>
+      
+      <!-- 다른 선택지 해설 (아코디언) -->
+      <div class="other-choice-section" style="margin-bottom: 20px;">
+        <button class="other-choice-toggle" id="otherChoiceToggle" style="width: 100%; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; color: #71717a; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          <span>🔍 다른 선택을 했다면?</span>
+          <span id="toggleArrow">▼</span>
+        </button>
+        <div class="other-choice-content hidden" id="otherChoiceContent" style="background: #18181b; border: 1px solid #27272a; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
+          <div style="font-size: 14px; color: #d4d4d8; margin-bottom: 12px;" id="otherChoiceTextDone"></div>
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #a78bfa;" id="otherPercentDone"></span>
+            <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeDone"></span>
+          </div>
+          <div style="font-size: 13px; color: #a1a1aa; margin-bottom: 8px;" id="otherTypeDescDone"></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #09090b; border-radius: 8px;">
+            <span style="font-size: 24px;" id="otherPhiloEmojiDone"></span>
+            <div>
+              <div style="font-size: 13px; color: #fbbf24;" id="otherPhiloNameDone"></div>
+              <div style="font-size: 12px; color: #71717a;" id="otherPhiloQuoteDone"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 연구 결과 해설 -->
+      <div class="research-card" style="margin-bottom: 20px;">
+        <div class="research-header">
+          <span class="research-icon">📊</span>
+          <span class="research-label">연구 결과</span>
+        </div>
+        <div class="research-title" id="resultTitleDone"></div>
+        <div class="research-desc" id="resultDescDone"></div>
+        <div class="research-source" id="resultSourceDone"></div>
       </div>
       
       <!-- 공유 버튼 -->
@@ -832,9 +902,19 @@
     function showAlreadyDone(idx) {
       const dilemma = getTodayDilemma();
       const choice = dilemma.choices[idx];
+      const otherIdx = idx === 0 ? 1 : 0;
+      const otherChoice = dilemma.choices[otherIdx];
       
       document.getElementById('mainContent').classList.add('hidden');
       document.getElementById('alreadyDone').classList.remove('hidden');
+      
+      // 딜레마 내용 채우기
+      document.getElementById('dilemmaCategoryDone').textContent = dilemma.category;
+      document.getElementById('dilemmaSituationDone').textContent = dilemma.situation;
+      document.getElementById('dilemmaQuestionDone').textContent = dilemma.question;
+      
+      // 내 선택 표시
+      document.getElementById('myChoiceTextDone').textContent = choice.text;
       
       // 성향 카드 데이터 채우기
       document.getElementById('cardBadgeDone').textContent = dilemma.category;
@@ -845,6 +925,30 @@
       document.getElementById('cardPhiloNameDone').textContent = choice.philosopher;
       document.getElementById('cardPhiloDescDone').textContent = choice.philoQuote;
       document.getElementById('cardDateDone').textContent = formatDateShort();
+      
+      // 다른 선택지 해설 채우기
+      document.getElementById('otherChoiceTextDone').textContent = otherChoice.text;
+      document.getElementById('otherPercentDone').textContent = otherChoice.percent + '%가 선택';
+      document.getElementById('otherTypeDone').textContent = otherChoice.type;
+      document.getElementById('otherTypeDescDone').textContent = otherChoice.typeDesc;
+      document.getElementById('otherPhiloEmojiDone').textContent = otherChoice.philoEmoji;
+      document.getElementById('otherPhiloNameDone').textContent = otherChoice.philosopher;
+      document.getElementById('otherPhiloQuoteDone').textContent = otherChoice.philoQuote;
+      
+      // 연구 결과 해설 채우기
+      document.getElementById('resultTitleDone').textContent = dilemma.principle;
+      document.getElementById('resultDescDone').textContent = dilemma.explanation;
+      document.getElementById('resultSourceDone').textContent = '출처: ' + dilemma.source;
+      
+      // 아코디언 토글
+      const toggleBtn = document.getElementById('otherChoiceToggle');
+      const toggleContent = document.getElementById('otherChoiceContent');
+      const toggleArrow = document.getElementById('toggleArrow');
+      
+      toggleBtn.addEventListener('click', () => {
+        toggleContent.classList.toggle('hidden');
+        toggleArrow.textContent = toggleContent.classList.contains('hidden') ? '▼' : '▲';
+      });
       
       // 버튼 이벤트
       document.getElementById('saveImageBtnDone').addEventListener('click', () => saveImageDone(idx));
@@ -953,6 +1057,9 @@
       });
       
       const c = dilemma.choices[index];
+      const otherIdx = index === 0 ? 1 : 0;
+      const otherChoice = dilemma.choices[otherIdx];
+      
       document.getElementById('cardBadge').textContent = dilemma.category;
       document.getElementById('cardPercent').textContent = c.percent;
       document.getElementById('cardTypeName').textContent = c.type;
@@ -961,6 +1068,25 @@
       document.getElementById('cardPhiloName').textContent = c.philosopher;
       document.getElementById('cardPhiloDesc').textContent = c.philoQuote;
       document.getElementById('cardDate').textContent = formatDateShort();
+      
+      // 다른 선택지 해설 채우기
+      document.getElementById('otherChoiceTextFirst').textContent = otherChoice.text;
+      document.getElementById('otherPercentFirst').textContent = otherChoice.percent + '%가 선택';
+      document.getElementById('otherTypeFirst').textContent = otherChoice.type;
+      document.getElementById('otherTypeDescFirst').textContent = otherChoice.typeDesc;
+      document.getElementById('otherPhiloEmojiFirst').textContent = otherChoice.philoEmoji;
+      document.getElementById('otherPhiloNameFirst').textContent = otherChoice.philosopher;
+      document.getElementById('otherPhiloQuoteFirst').textContent = otherChoice.philoQuote;
+      
+      // 아코디언 토글
+      const toggleBtnFirst = document.getElementById('otherChoiceToggleFirst');
+      const toggleContentFirst = document.getElementById('otherChoiceContentFirst');
+      const toggleArrowFirst = document.getElementById('toggleArrowFirst');
+      
+      toggleBtnFirst.addEventListener('click', () => {
+        toggleContentFirst.classList.toggle('hidden');
+        toggleArrowFirst.textContent = toggleContentFirst.classList.contains('hidden') ? '▼' : '▲';
+      });
       
       document.getElementById('resultTitle').textContent = dilemma.principle;
       document.getElementById('resultDesc').textContent = dilemma.explanation;
