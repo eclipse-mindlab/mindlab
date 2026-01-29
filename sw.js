@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mindlab-v50';
+const CACHE_NAME = 'mindlab-v51';
 const urlsToCache = [
   './',
   './index.html',

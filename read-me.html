@@ -978,8 +978,11 @@
           localStorage.setItem('mindlab_my_challenges', JSON.stringify(myChallenges.slice(0, 10))); // 최대 10개
         }
 
-        // EXP 추가
-        addExp(20);
+        // EXP 추가 (첫 도전장 생성만)
+        if (!localStorage.getItem('mindlab_first_challenge_reward')) {
+          addExp(20);
+          localStorage.setItem('mindlab_first_challenge_reward', 'true');
+        }
         
       } catch (error) {
         console.error('저장 실패:', error);

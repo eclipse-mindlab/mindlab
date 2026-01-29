@@ -900,6 +900,16 @@
           })
         });
         console.log('결과 저장 완료');
+
+        // EXP 보상 (첫 3회만, 자기 도전장 제외)
+        const myChallenges = JSON.parse(localStorage.getItem('mindlab_my_challenges') || '[]');
+        const isMyChallenge = myChallenges.includes(challengeId);
+        const challengeRewardCount = parseInt(localStorage.getItem('mindlab_challenge_reward_count') || '0');
+
+        if (!isMyChallenge && challengeRewardCount < 3) {
+          addExp(10);
+          localStorage.setItem('mindlab_challenge_reward_count', (challengeRewardCount + 1).toString());
+        }
       } catch (error) {
         console.error('결과 저장 실패:', error);
       }
@@ -962,6 +972,23 @@
           btn.innerHTML = '📋 결과 공유하기';
         }, 2000);
       });
+    }
+
+    function addExp(amount) {
+      const saved = localStorage.getItem('eclipse_mindlab_profile');
+      if (saved) {
+        const profile = JSON.parse(saved);
+        profile.exp = (profile.exp || 0) + amount;
+        
+        // 레벨업 체크
+        const expNeeded = profile.level * 100;
+        while (profile.exp >= expNeeded) {
+          profile.exp -= expNeeded;
+          profile.level++;
+        }
+        
+        localStorage.setItem('eclipse_mindlab_profile', JSON.stringify(profile));
+      }
     }
 
     function showToast(message) {
