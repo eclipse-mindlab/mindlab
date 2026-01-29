@@ -252,159 +252,64 @@
     .sim-desc { font-size: 12px; color: #71717a; }
     .sim-reward { font-size: 11px; color: #a78bfa; }
 
-    .principles-section {
-      background: #18181b;
+    /* 원칙 도감 링크 */
+    .dex-link {
+      display: block;
+      background: linear-gradient(135deg, #18181b 0%, #1f1f23 100%);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 24px;
+      border: 1px solid #27272a;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
     }
 
-    .principles-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .principles-count { font-size: 13px; color: #a78bfa; }
-    
-    .principles-subtitle {
-      font-size: 12px;
-      color: #52525b;
-      margin-bottom: 16px;
+    .dex-link:hover {
+      border-color: #7c3aed;
+      transform: translateY(-2px);
     }
-    
-    .principles-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    
-    .principle-item {
-      padding: 12px 8px;
-      background: #27272a;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-    }
-    
-    .principle-item:hover {
-      background: #3f3f46;
-    }
-    
-    .principle-item.discovered {
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), #27272a);
-      border-color: rgba(124, 58, 237, 0.3);
-    }
-    
-    .principle-item.locked {
-      opacity: 0.5;
-      cursor: default;
-    }
-    
-    .principle-item.locked:hover {
-      background: #27272a;
-    }
-    
-    .principle-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-    
-    .principle-name {
-      font-size: 11px;
-      color: #a1a1aa;
-      line-height: 1.3;
-      word-break: keep-all;
-    }
-    
-    .principle-item.discovered .principle-name {
-      color: #fff;
-    }
-    
-    .principle-item.locked .principle-name {
-      color: #52525b;
-    }
-    
-    /* 원칙 상세 모달 */
-    .principle-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+
+    .dex-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 20px;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s;
-    }
-    
-    .principle-modal.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .principle-modal-content {
-      background: #18181b;
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 340px;
-      width: 100%;
-      text-align: center;
-      transform: scale(0.9);
-      transition: transform 0.2s;
-    }
-    
-    .principle-modal.show .principle-modal-content {
-      transform: scale(1);
-    }
-    
-    .principle-modal-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    
-    .principle-modal-name {
-      font-size: 20px;
-      font-weight: 600;
+      justify-content: space-between;
       margin-bottom: 12px;
-      color: #fff;
     }
-    
-    .principle-modal-desc {
-      font-size: 14px;
-      color: #a1a1aa;
-      line-height: 1.8;
-      margin-bottom: 16px;
-    }
-    
-    .principle-modal-source {
-      display: inline-flex;
+
+    .dex-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: #27272a;
-      border-radius: 20px;
-      font-size: 12px;
-      color: #a78bfa;
-      margin-bottom: 20px;
+      gap: 8px;
     }
-    
-    .principle-modal-close {
-      width: 100%;
-      padding: 14px;
-      background: #27272a;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
+
+    .dex-count {
       font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
+      color: #a78bfa;
+      font-weight: 600;
     }
-    
-    .principle-modal-close:hover {
-      background: #3f3f46;
+
+    .dex-progress {
+      height: 8px;
+      background: #27272a;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
     }
-    
-    .principles-empty { font-size: 13px; color: #52525b; text-align: center; padding: 16px; width: 100%; }
+
+    .dex-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .dex-subtitle {
+      font-size: 12px;
+      color: #71717a;
+    }
 
     .tier-section { background: #18181b; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
     .tier-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
@@ -710,27 +615,16 @@
       </div>
     </div>
 
-    <div class="principles-section">
-      <div class="principles-header">
-        <div class="section-title"><span class="icon">💎</span> 핵심 원칙</div>
-        <div class="principles-count" id="principlesCount">0/9</div>
+    <a href="dex.html" class="dex-link">
+      <div class="dex-header">
+        <div class="dex-title"><span class="icon">💎</span> 원칙 도감</div>
+        <div class="dex-count" id="dexCount">0/80</div>
       </div>
-      <div class="principles-subtitle">각 시뮬레이터의 최적 선택에서 발견</div>
-      <div class="principles-grid" id="principlesGrid"></div>
-    </div>
-
-    <!-- 원칙 상세 모달 -->
-    <div class="principle-modal" id="principleModal">
-      <div class="principle-modal-content">
-        <div class="principle-modal-icon" id="principleModalIcon">💡</div>
-        <div class="principle-modal-name" id="principleModalName">원칙 이름</div>
-        <div class="principle-modal-desc" id="principleModalDesc">원칙 설명</div>
-        <div class="principle-modal-source" id="principleModalSource">
-          <span>📍</span> <span id="principleModalSourceText">발견 위치</span>
-        </div>
-        <button class="principle-modal-close" id="principleModalClose">닫기</button>
+      <div class="dex-progress">
+        <div class="dex-progress-fill" id="dexProgressFill" style="width: 0%"></div>
       </div>
-    </div>
+      <div class="dex-subtitle">시뮬레이터를 클리어하며 원칙을 수집하세요 →</div>
+    </a>
 
     <div class="tier-section">
       <div class="section-title">티어 진행도</div>
@@ -776,11 +670,11 @@
     <div class="books-section">
       <div class="books-section-title">이클립스의 책</div>
       <div class="books-grid">
-        <a href="https://product.kyobobook.co.kr/detail/S000214938953" target="_blank" class="book-item">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
           <img src="book-philosophy.png" alt="훔친 철학 편">
           <div class="book-item-title">훔친 철학 편</div>
         </a>
-        <a href="https://product.kyobobook.co.kr/detail/S000214938954" target="_blank" class="book-item">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
           <img src="book-psychology.png" alt="훔친 심리학 편">
           <div class="book-item-title">훔친 심리학 편</div>
         </a>
@@ -826,23 +720,8 @@
       ]
     };
 
-    // 원칙 도감 마스터 목록 (핵심 원칙만)
-    const ALL_PRINCIPLES = [
-      // 아이디어 도둑 동료 - 핵심 3개
-      { name: '전략적 관용', desc: '당장의 승리 대신 장기적 영향력을 선택한다. 상대에게 빚을 지게 만든다.', icon: '🎯', source: '아이디어 도둑 동료' },
-      { name: '사실 고정', desc: '구체적인 시점을 언급하면 부정하기 어려워진다. 모호함을 허용하지 않는다.', icon: '📌', source: '아이디어 도둑 동료' },
-      { name: '경계 설정', desc: '앞으로의 행동 규칙을 명시한다. 관계보다 원칙을 우선한다.', icon: '🚧', source: '아이디어 도둑 동료' },
-      
-      // 돈 안 갚는 친구 - 핵심 3개
-      { name: '감정 인정 후 본론', desc: '상대 감정을 먼저 인정하면 대화가 열린다. 공감 후 요청.', icon: '💚', source: '돈 안 갚는 친구' },
-      { name: '구체적 약속', desc: '날짜와 금액을 정해야 지킬 수 있다. 모호한 약속은 약속이 아니다.', icon: '📅', source: '돈 안 갚는 친구' },
-      { name: '매몰비용의 손절', desc: '이미 잃은 것에 집착하면 더 잃는다. 때로는 포기가 최선이다.', icon: '✂️', source: '돈 안 갚는 친구' },
-      
-      // 경험 기계 - 핵심 3개
-      { name: '쾌락주의', desc: '경험 자체가 가치라면, 그 경험이 어디서 오든 중요하지 않다.', icon: '🌈', source: '경험 기계' },
-      { name: '진정성', desc: '경험의 출처가 중요하다. 스스로 만들어낸 것만이 진짜 가치를 가진다.', icon: '✨', source: '경험 기계' },
-      { name: '부조리의 수용', desc: '삶은 원래 불합리하다. 그래도 의미를 찾으며 산다.', icon: '🌊', source: '경험 기계' }
-    ];
+    // 도감 총 원칙 수 (dex.html과 동기화 필요)
+    const DEX_TOTAL = 80;
 
     let profile = {
       version: CURRENT_VERSION,
@@ -999,8 +878,10 @@
         `;
       }).join('');
 
-      // 원칙 도감 렌더링
-      renderPrinciplesDex();
+      // 원칙 도감 진행도 업데이트
+      const dexCount = profile.principles ? profile.principles.length : 0;
+      document.getElementById('dexCount').textContent = `${dexCount}/${DEX_TOTAL}`;
+      document.getElementById('dexProgressFill').style.width = `${(dexCount/DEX_TOTAL)*100}%`;
 
       // 티어 진행도
       TIERS.forEach(t => {
@@ -1017,61 +898,6 @@
         }
       });
     }
-
-    // 원칙 도감 렌더링
-    function renderPrinciplesDex() {
-      const grid = document.getElementById('principlesGrid');
-      const discoveredNames = profile.principles.map(p => p.name);
-      const discoveredCount = discoveredNames.length;
-      
-      document.getElementById('principlesCount').textContent = `${discoveredCount}/${ALL_PRINCIPLES.length}`;
-      
-      grid.innerHTML = ALL_PRINCIPLES.map(p => {
-        const isDiscovered = discoveredNames.includes(p.name);
-        const className = isDiscovered ? 'principle-item discovered' : 'principle-item locked';
-        const icon = isDiscovered ? p.icon : '❓';
-        const name = isDiscovered ? p.name : '???';
-        
-        return `
-          <div class="${className}" data-name="${p.name}" data-discovered="${isDiscovered}">
-            <div class="principle-icon">${icon}</div>
-            <div class="principle-name">${name}</div>
-          </div>
-        `;
-      }).join('');
-      
-      // 클릭 이벤트 추가
-      grid.querySelectorAll('.principle-item.discovered').forEach(item => {
-        item.addEventListener('click', () => {
-          const name = item.dataset.name;
-          showPrincipleModal(name);
-        });
-      });
-    }
-    
-    // 원칙 상세 모달 표시
-    function showPrincipleModal(name) {
-      const principle = ALL_PRINCIPLES.find(p => p.name === name);
-      if (!principle) return;
-      
-      document.getElementById('principleModalIcon').textContent = principle.icon;
-      document.getElementById('principleModalName').textContent = principle.name;
-      document.getElementById('principleModalDesc').textContent = principle.desc;
-      document.getElementById('principleModalSourceText').textContent = principle.source;
-      
-      document.getElementById('principleModal').classList.add('show');
-    }
-    
-    // 모달 닫기
-    document.getElementById('principleModalClose').addEventListener('click', () => {
-      document.getElementById('principleModal').classList.remove('show');
-    });
-    
-    document.getElementById('principleModal').addEventListener('click', (e) => {
-      if (e.target.id === 'principleModal') {
-        document.getElementById('principleModal').classList.remove('show');
-      }
-    });
 
     function init() {
       const nameInput = document.getElementById('nameInput');

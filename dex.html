@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>원칙 도감 - 이클립스 마인드랩</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      padding-bottom: 40px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-btn:hover { color: #a78bfa; }
+
+    .page-title {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 진행도 카드 */
+    .progress-card {
+      background: linear-gradient(135deg, #18181b 0%, #1f1f23 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid #27272a;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: #a1a1aa;
+    }
+
+    .progress-count {
+      font-size: 18px;
+      font-weight: 600;
+      color: #a78bfa;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #27272a;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    /* 필터 */
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 20px;
+      color: #a1a1aa;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: #3f3f46;
+    }
+
+    .filter-btn.active {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #fff;
+    }
+
+    /* 원칙 리스트 */
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .principle-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: #18181b;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .principle-item:hover {
+      background: #1f1f23;
+    }
+
+    .principle-item.discovered {
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .principle-item.locked {
+      opacity: 0.5;
+    }
+
+    .principle-icon {
+      width: 44px;
+      height: 44px;
+      background: #27272a;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .principle-item.discovered .principle-icon {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(167, 139, 250, 0.1));
+    }
+
+    .principle-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .principle-name {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .principle-item.locked .principle-name {
+      color: #71717a;
+    }
+
+    .principle-source {
+      font-size: 12px;
+      color: #71717a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .principle-source .tag {
+      padding: 2px 8px;
+      background: #27272a;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .principle-status {
+      font-size: 18px;
+    }
+
+    /* 모달 */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #18181b;
+      border-radius: 20px;
+      padding: 28px 24px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.2s;
+    }
+
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .modal-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: #a1a1aa;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .modal-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #27272a;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #a78bfa;
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      width: 100%;
+      padding: 14px;
+      background: #27272a;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      background: #3f3f46;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #52525b;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+    </div>
+
+    <div class="page-title">
+      <span>💎</span> 원칙 도감
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-header">
+        <span class="progress-label">수집 진행도</span>
+        <span class="progress-count" id="progressCount">0/0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-row" id="categoryFilter">
+        <button class="filter-btn active" data-filter="all">전체</button>
+        <button class="filter-btn" data-filter="심리">🧠 심리</button>
+        <button class="filter-btn" data-filter="철학">💭 철학</button>
+      </div>
+      <div class="filter-row" id="statusFilter">
+        <button class="filter-btn active" data-filter="all">전체</button>
+        <button class="filter-btn" data-filter="discovered">발견됨 ✓</button>
+        <button class="filter-btn" data-filter="locked">미발견 🔒</button>
+      </div>
+    </div>
+
+    <div class="principles-list" id="principlesList"></div>
+  </div>
+
+  <!-- 모달 -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-icon" id="modalIcon">💎</div>
+      <div class="modal-name" id="modalName">원칙 이름</div>
+      <div class="modal-desc" id="modalDesc">원칙 설명</div>
+      <div class="modal-source">
+        <span>📍</span> <span id="modalSource">출처</span>
+      </div>
+      <button class="modal-close" id="modalClose">닫기</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+
+    // 모든 원칙 목록
+    const ALL_PRINCIPLES = [
+      // 아이디어 도둑 동료 (심리)
+      { name: '직접 대면', desc: '문제를 바로 짚는 것. 명확하지만, 상대가 방어 모드로 들어갈 수 있다.', icon: '👊', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '질문형 압박', desc: '단정 대신 질문으로 상대가 스스로 인정하게 만든다.', icon: '❓', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '관망', desc: '상황을 지켜보며 정보를 모은다. 타이밍을 놓치면 문제 제기가 어려워진다.', icon: '👀', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '사실 고정', desc: '구체적인 시점을 언급하면 부정하기 어려워진다.', icon: '📌', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '전략적 관용', desc: '당장의 승리 대신 장기적 영향력을 선택한다.', icon: '🎯', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '철회', desc: '문제를 제기했다가 거두는 것. 상대는 밀어도 되는 사람으로 학습한다.', icon: '🔙', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '관용 + 방향 제시', desc: '잘못을 인정받은 후 관계를 복원할 길을 열어준다.', icon: '🤝', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '경계 설정', desc: '앞으로의 행동 규칙을 명시한다. 관계보다 원칙을 우선한다.', icon: '🚧', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '경고', desc: '명확한 불쾌감 전달. 효과적이지만, 관계가 적대적으로 변할 수 있다.', icon: '⚠️', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '공개적 개입', desc: '팀 앞에서 자연스럽게 지분을 주장한다.', icon: '📢', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '사전 허락', desc: '공개하기 전에 상대에게 먼저 말한다.', icon: '🙏', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '포기', desc: '싸울 타이밍을 놓치면 영원히 못 싸운다.', icon: '🏳️', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '선 긋고 리셋', desc: '과거를 정리하고 새 출발을 제안한다.', icon: '🔄', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '거리 유지', desc: '가까워지지 않으면서 적대하지도 않는다.', icon: '↔️', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '주도권 확보', desc: '관용을 베풀었지만 핵심은 양보하지 않는다.', icon: '👑', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '과잉 양보', desc: '관용에도 한계가 있어야 한다.', icon: '😓', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '신뢰 회복 확인', desc: '기회를 줬을 때 상대가 어떻게 하는지 본다.', icon: '🔍', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '공유 크레딧', desc: '성과를 나누면서 관계도 지킨다.', icon: '🤲', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '경계 후 협력', desc: '선을 그은 뒤 다시 협력한다.', icon: '🤜', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '값비싼 교훈', desc: '손해를 통해 얻는 값진 깨달음.', icon: '💸', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '긴장 완화', desc: '충돌 직전에 한 발 물러서 분위기를 누그러뜨린다.', icon: '🕊️', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '냉전 유지', desc: '직접 충돌 없이 거리를 두며 평화를 유지한다.', icon: '🧊', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '늦은 경계', desc: '뒤늦게 선을 그어봤자 이미 늦었다.', icon: '⏰', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '뒤늦은 고발', desc: '시간이 지난 후의 문제 제기는 힘을 잃는다.', icon: '📜', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '미래 지향', desc: '과거보다 앞으로를 바라본다.', icon: '🔮', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '삼킨 분노', desc: '표현하지 못한 감정은 내면에 쌓인다.', icon: '😤', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '실용적 화해', desc: '감정보다 실리를 택하는 화해.', icon: '🤝', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '업무 분리', desc: '개인 감정과 업무를 분리한다.', icon: '💼', source: '아이디어 도둑 동료', category: '심리' },
+      { name: '패턴 고착', desc: '한 번 정해진 관계 패턴은 바꾸기 어렵다.', icon: '🔁', source: '아이디어 도둑 동료', category: '심리' },
+
+      // 돈 안 갚는 친구 (심리)
+      { name: '공개적 압박의 역효과', desc: '공개적으로 압박하면 상대가 방어적으로 변한다.', icon: '🚫', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '개인적 접근', desc: '1:1로 대화하면 체면 손상 없이 해결할 수 있다.', icon: '💬', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '소극적 기대의 함정', desc: '기다리기만 하면 상대는 문제를 잊는다.', icon: '⏳', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '감정 대 감정의 악순환', desc: '감정으로 대응하면 감정으로 돌아온다.', icon: '🔥', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '감정 인정 후 본론', desc: '상대 감정을 먼저 인정하면 대화가 열린다.', icon: '💚', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '과도한 양보', desc: '너무 많이 양보하면 원금조차 잃는다.', icon: '📉', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '반복되는 약속의 평가절하', desc: '지키지 않는 약속은 점점 가치가 떨어진다.', icon: '📜', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '작은 단위로 쪼개기', desc: '큰 금액을 작게 나누면 실행 가능성이 높아진다.', icon: '🧩', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '열린 질문과 경청', desc: '왜 그런지 물으면 진짜 이유가 나온다.', icon: '👂', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '대면의 힘', desc: '직접 만나면 회피하기 어렵다.', icon: '🤝', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '자기 상황 공개', desc: '내 상황을 말하면 상대도 공감한다.', icon: '💭', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '간접 소통의 리스크', desc: '메시지는 오해를 부른다.', icon: '📱', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '매몰비용의 손절', desc: '이미 잃은 것에 집착하면 더 잃는다.', icon: '✂️', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '감정과 문제의 분리', desc: '감정을 분리해야 문제를 해결할 수 있다.', icon: '🧠', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '구체적 약속', desc: '날짜와 금액을 정해야 지킬 수 있다.', icon: '📅', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '학습된 무력감', desc: '계속 거절당하면 시도조차 안 하게 된다.', icon: '😔', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '지속적 요청', desc: '포기하지 않고 계속 요청하면 결국 된다.', icon: '🔁', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '수업료', desc: '손해를 교훈으로 바꾼다.', icon: '🎓', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '마감의 힘', desc: '기한이 있어야 행동한다.', icon: '⏰', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '직접적 질문', desc: '돌려 말하지 않고 바로 묻는다.', icon: '❗', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '구체적 실행 계획', desc: '계획이 구체적일수록 실행 확률이 높다.', icon: '📋', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '불완전한 마무리', desc: '완전히 해결되지 않은 문제는 다시 불거진다.', icon: '🔓', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '상호 이해의 힘', desc: '서로를 이해하면 해결책이 보인다.', icon: '🤲', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '성공 경험의 강화', desc: '작은 성공이 다음 성공을 이끈다.', icon: '📈', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '솔직한 인정', desc: '솔직하게 인정하면 신뢰가 회복된다.', icon: '✅', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '신뢰의 회복', desc: '깨진 신뢰도 노력으로 회복할 수 있다.', icon: '💪', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '자기 주장', desc: '자신의 입장을 명확히 표현한다.', icon: '🗣️', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '자발적 동기', desc: '스스로 하고 싶어야 진짜 한다.', icon: '🌟', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '정당화의 함정', desc: '합리화하면 문제가 보이지 않는다.', icon: '🙈', source: '돈 안 갚는 친구', category: '심리' },
+      { name: '조건부 관용', desc: '조건이 있는 용서는 진짜 용서가 아니다.', icon: '⚖️', source: '돈 안 갚는 친구', category: '심리' },
+
+      // 경험 기계 (철학)
+      { name: '쾌락주의', desc: '경험 자체가 가치라면, 그 경험이 어디서 오든 중요하지 않다.', icon: '🌈', source: '경험 기계', category: '철학' },
+      { name: '진정성', desc: '경험의 출처가 중요하다. 스스로 만들어낸 것만이 진짜 가치를 가진다.', icon: '✨', source: '경험 기계', category: '철학' },
+      { name: '철학적 보류', desc: '확신이 없을 때 판단을 미루는 지혜.', icon: '⏸️', source: '경험 기계', category: '철학' },
+      { name: '급진적 주관주의', desc: '행복은 결국 내가 느끼는 것. 객관적 조건은 중요하지 않다.', icon: '😊', source: '경험 기계', category: '철학' },
+      { name: '가치의 위계', desc: '모든 가치가 동등하지 않다. 어떤 것은 더 중요하다.', icon: '📊', source: '경험 기계', category: '철학' },
+      { name: '실재론', desc: '실제로 존재하는 것만이 가치를 가진다.', icon: '🏔️', source: '경험 기계', category: '철학' },
+      { name: '회의주의', desc: '확실한 것은 아무것도 없다.', icon: '🤔', source: '경험 기계', category: '철학' },
+      { name: '실용주의', desc: '작동하면 그게 진리다.', icon: '🔧', source: '경험 기계', category: '철학' },
+      { name: '창조적 니힐리즘', desc: '의미가 없다면 스스로 만들면 된다.', icon: '🎨', source: '경험 기계', category: '철학' },
+      { name: '자유의지 존중', desc: '타인의 선택을 존중한다.', icon: '🕊️', source: '경험 기계', category: '철학' },
+      { name: '자기 정직의 의무', desc: '스스로에게 정직해야 한다.', icon: '🪞', source: '경험 기계', category: '철학' },
+      { name: '의미 추구', desc: '행복보다 의미가 중요하다.', icon: '🔥', source: '경험 기계', category: '철학' },
+      { name: '중용', desc: '극단을 피하고 균형을 찾는다.', icon: '⚖️', source: '경험 기계', category: '철학' },
+      { name: '사회적 존재', desc: '인간은 관계 속에서만 의미를 가진다.', icon: '👥', source: '경험 기계', category: '철학' },
+      { name: '관계의 양면성', desc: '진정한 관계는 상호적이어야 한다.', icon: '💑', source: '경험 기계', category: '철학' },
+      { name: '부조리의 수용', desc: '삶은 원래 불합리하다. 그래도 산다.', icon: '🌊', source: '경험 기계', category: '철학' },
+      { name: '방법적 회의', desc: '의심할 수 있는 것은 모두 의심한다.', icon: '🔬', source: '경험 기계', category: '철학' },
+      { name: '도구주의', desc: '진리는 유용성으로 판단한다.', icon: '🛠️', source: '경험 기계', category: '철학' },
+      { name: '진실의 무조건적 가치', desc: '진실은 그 자체로 가치가 있다.', icon: '💎', source: '경험 기계', category: '철학' },
+      { name: '자기 극복', desc: '어제의 나를 넘어서는 것이 목표다.', icon: '🏃', source: '경험 기계', category: '철학' },
+      { name: '사랑과 연대', desc: '사랑은 함께할 때 의미가 있다.', icon: '❤️', source: '경험 기계', category: '철학' }
+    ];
+
+    let profile = { principles: [] };
+    let currentCategoryFilter = 'all';
+    let currentStatusFilter = 'all';
+
+    function loadProfile() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        profile = JSON.parse(saved);
+        if (!profile.principles) profile.principles = [];
+      }
+    }
+
+    function getDiscoveredNames() {
+      return profile.principles.map(p => p.name);
+    }
+
+    function updateProgress() {
+      const discovered = getDiscoveredNames();
+      const total = ALL_PRINCIPLES.length;
+      const count = discovered.filter(name => 
+        ALL_PRINCIPLES.find(p => p.name === name)
+      ).length;
+      
+      document.getElementById('progressCount').textContent = `${count}/${total}`;
+      document.getElementById('progressFill').style.width = `${(count/total)*100}%`;
+    }
+
+    function renderList() {
+      const discovered = getDiscoveredNames();
+      const list = document.getElementById('principlesList');
+      
+      let filtered = ALL_PRINCIPLES;
+      
+      // 카테고리 필터
+      if (currentCategoryFilter !== 'all') {
+        filtered = filtered.filter(p => p.category === currentCategoryFilter);
+      }
+      
+      // 상태 필터
+      if (currentStatusFilter === 'discovered') {
+        filtered = filtered.filter(p => discovered.includes(p.name));
+      } else if (currentStatusFilter === 'locked') {
+        filtered = filtered.filter(p => !discovered.includes(p.name));
+      }
+      
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <div>조건에 맞는 원칙이 없습니다</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = filtered.map(p => {
+        const isDiscovered = discovered.includes(p.name);
+        return `
+          <div class="principle-item ${isDiscovered ? 'discovered' : 'locked'}" 
+               data-name="${p.name}" 
+               data-discovered="${isDiscovered}">
+            <div class="principle-icon">${isDiscovered ? p.icon : '❓'}</div>
+            <div class="principle-info">
+              <div class="principle-name">${isDiscovered ? p.name : '???'}</div>
+              <div class="principle-source">
+                <span class="tag">${p.category}</span>
+                ${isDiscovered ? p.source : '???'}
+              </div>
+            </div>
+            <div class="principle-status">${isDiscovered ? '✓' : '🔒'}</div>
+          </div>
+        `;
+      }).join('');
+      
+      // 클릭 이벤트
+      list.querySelectorAll('.principle-item.discovered').forEach(item => {
+        item.addEventListener('click', () => showModal(item.dataset.name));
+      });
+    }
+
+    function showModal(name) {
+      const p = ALL_PRINCIPLES.find(x => x.name === name);
+      if (!p) return;
+      
+      document.getElementById('modalIcon').textContent = p.icon;
+      document.getElementById('modalName').textContent = p.name;
+      document.getElementById('modalDesc').textContent = p.desc;
+      document.getElementById('modalSource').textContent = p.source;
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+
+    // 필터 이벤트
+    document.getElementById('categoryFilter').addEventListener('click', e => {
+      if (e.target.classList.contains('filter-btn')) {
+        document.querySelectorAll('#categoryFilter .filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentCategoryFilter = e.target.dataset.filter;
+        renderList();
+      }
+    });
+
+    document.getElementById('statusFilter').addEventListener('click', e => {
+      if (e.target.classList.contains('filter-btn')) {
+        document.querySelectorAll('#statusFilter .filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentStatusFilter = e.target.dataset.filter;
+        renderList();
+      }
+    });
+
+    // 모달 닫기
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target.id === 'modal') closeModal();
+    });
+
+    // 초기화
+    loadProfile();
+    updateProgress();
+    renderList();
+  </script>
+</body>
+</html>
