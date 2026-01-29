@@ -1,8 +1,9 @@
-const CACHE_NAME = 'mindlab-v2';
+const CACHE_NAME = 'mindlab-v3';
 const urlsToCache = [
   './',
   './index.html',
   './sim-idea-thief.html',
+  './sim-experience-machine.html',
   './logo.png',
   './icon-192.png',
   './icon-512.png',
@@ -16,26 +17,37 @@ const urlsToCache = [
   './book-psychology.png'
 ];
 
-// 설치
+// 설치 - 새 캐시 생성
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting()) // 즉시 활성화
   );
 });
 
-// 요청 가로채기
+// 요청 가로채기 - 네트워크 우선, 실패시 캐시
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // 캐시에 있으면 캐시에서, 없으면 네트워크에서
-        return response || fetch(event.request);
+        // 네트워크 응답을 캐시에 저장
+        if (response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // 네트워크 실패시 캐시에서
+        return caches.match(event.request);
       })
   );
 });
 
-// 업데이트
+// 활성화 - 이전 캐시 삭제
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -46,6 +58,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // 즉시 모든 클라이언트에 적용
   );
 });
