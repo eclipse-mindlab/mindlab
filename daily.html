@@ -879,14 +879,18 @@
       dailyData.lastDate = today;
       saveDailyData();
       
-      const ps = localStorage.getItem(PROFILE_KEY);
+      // 프로필 처리 - 없으면 익명으로 생성
+      let ps = localStorage.getItem(PROFILE_KEY);
+      let p;
       if (ps) {
-        const p = JSON.parse(ps);
-        p.exp = (p.exp || 0) + 10;
-        const need = (p.level || 1) * 100;
-        while (p.exp >= need) { p.exp -= need; p.level = (p.level || 1) + 1; }
-        localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+        p = JSON.parse(ps);
+      } else {
+        p = { name: '익명 탐험가', level: 1, exp: 0, cleared: [], principles: [] };
       }
+      p.exp = (p.exp || 0) + 10;
+      const need = (p.level || 1) * 100;
+      while (p.exp >= need) { p.exp -= need; p.level = (p.level || 1) + 1; }
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
       
       document.getElementById('streakNum').textContent = dailyData.streak;
       document.getElementById('streakCard').style.display = 'flex';

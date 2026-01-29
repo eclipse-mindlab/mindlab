@@ -723,8 +723,12 @@
       const startBtn = document.getElementById('startBtn');
       const nameModal = document.getElementById('nameModal');
 
-      if (loadProfile() && profile.name) {
+      // 프로필 로드 후, 이름이 있고 "익명 탐험가"가 아니면 모달 숨김
+      if (loadProfile() && profile.name && profile.name !== '익명 탐험가') {
         nameModal.classList.add('hidden');
+        updateUI();
+      } else if (profile.name === '익명 탐험가') {
+        // 익명이면 모달은 띄우되 UI는 업데이트 (EXP 등 표시)
         updateUI();
       }
 
