@@ -686,7 +686,28 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685",
+      measurementId: "G-2V3Z9XZJYT"
+    };
+
+    // Firebase 초기화
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
     const STORAGE_KEY = 'eclipse_mindlab_profile';
     const CURRENT_VERSION = 5;
 
@@ -760,6 +781,94 @@
 
     function saveProfile() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      // Firebase에도 저장
+      saveToCloud();
+    }
+
+    // Firebase 클라우드 저장
+    async function saveToCloud() {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        await setDoc(docRef, {
+          ...profile,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        console.log('클라우드 저장 완료');
+      } catch (error) {
+        console.error('클라우드 저장 실패:', error);
+      }
+    }
+
+    // Firebase 클라우드에서 불러오기
+    async function loadFromCloud() {
+      const user = auth.currentUser;
+      if (!user) return null;
+      
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return docSnap.data();
+        }
+      } catch (error) {
+        console.error('클라우드 로드 실패:', error);
+      }
+      return null;
+    }
+
+    // 로컬과 클라우드 프로필 병합
+    function mergeProfiles(local, cloud) {
+      if (!cloud) return local;
+      if (!local) return cloud;
+      
+      const merged = { ...local };
+      
+      // 레벨이 높은 쪽 선택
+      if ((cloud.level || 1) > (local.level || 1)) {
+        merged.level = cloud.level;
+        merged.exp = cloud.exp;
+      } else if ((cloud.level || 1) === (local.level || 1)) {
+        merged.exp = Math.max(cloud.exp || 0, local.exp || 0);
+      }
+      
+      // 이름은 "익명 탐험가"가 아닌 쪽 선택
+      if (local.name === '익명 탐험가' && cloud.name && cloud.name !== '익명 탐험가') {
+        merged.name = cloud.name;
+      }
+      
+      // 완료한 시뮬레이션 합치기
+      const localSims = local.completedSims || [];
+      const cloudSims = cloud.completedSims || [];
+      merged.completedSims = [...new Set([...localSims, ...cloudSims])];
+      
+      // 원칙 합치기
+      const localPrinciples = local.principles || [];
+      const cloudPrinciples = cloud.principles || [];
+      const principleMap = new Map();
+      [...localPrinciples, ...cloudPrinciples].forEach(p => {
+        if (p.name) principleMap.set(p.name, p);
+      });
+      merged.principles = Array.from(principleMap.values());
+      
+      // 데일리 데이터
+      const localDaily = local.dailyData || {};
+      const cloudDaily = cloud.dailyData || {};
+      merged.dailyData = {
+        ...localDaily,
+        ...cloudDaily,
+        streak: Math.max(localDaily.streak || 0, cloudDaily.streak || 0),
+        totalVotes: Math.max(localDaily.totalVotes || 0, cloudDaily.totalVotes || 0)
+      };
+      
+      // 투표 기록 합치기
+      const localVotes = local.dailyVotes || {};
+      const cloudVotes = cloud.dailyVotes || {};
+      merged.dailyVotes = { ...localVotes, ...cloudVotes };
+      
+      return merged;
     }
 
     function getTier(level) {
@@ -899,13 +1008,47 @@
       });
     }
 
-    function init() {
+    async function init() {
       const nameInput = document.getElementById('nameInput');
       const startBtn = document.getElementById('startBtn');
       const nameModal = document.getElementById('nameModal');
 
+      // 로컬 프로필 먼저 로드
+      loadProfile();
+
+      // Firebase 익명 로그인 시도
+      try {
+        await new Promise((resolve) => {
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              console.log('Firebase 로그인됨:', user.uid);
+              // 클라우드에서 프로필 로드 후 병합
+              const cloudProfile = await loadFromCloud();
+              if (cloudProfile) {
+                const localProfile = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                profile = mergeProfiles(localProfile, cloudProfile);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                console.log('프로필 동기화 완료');
+              }
+              resolve();
+            } else {
+              // 익명 로그인
+              try {
+                await signInAnonymously(auth);
+                console.log('익명 로그인 성공');
+              } catch (error) {
+                console.error('익명 로그인 실패:', error);
+              }
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Firebase 초기화 실패:', error);
+      }
+
       // 프로필 로드 후, 이름이 있고 "익명 탐험가"가 아니면 모달 숨김
-      if (loadProfile() && profile.name && profile.name !== '익명 탐험가') {
+      if (profile.name && profile.name !== '익명 탐험가') {
         nameModal.classList.add('hidden');
         updateUI();
       } else if (profile.name === '익명 탐험가') {
