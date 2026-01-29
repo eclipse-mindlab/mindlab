@@ -13,6 +13,8 @@
   <meta name="apple-mobile-web-app-title" content="마인드랩">
   <link rel="apple-touch-icon" href="icon-192.png">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
   <!-- SEO -->
   <meta name="description" content="당신의 도덕 성향을 알아보세요. 심리, 철학, 사회의 숨겨진 원칙들을 발견하는 지적 탐험.">
   <meta property="og:title" content="이클립스 마인드랩 - 당신의 도덕 성향은?">
@@ -73,8 +75,23 @@
 
     .profile-top { display: flex; gap: 16px; margin-bottom: 16px; }
 
-    .tier-badge { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-    .tier-badge img { width: 100%; height: 100%; object-fit: cover; }
+    .tier-badge { 
+      width: 72px; 
+      flex-shrink: 0; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .tier-badge img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+    .tier-label {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
 
     .profile-info { flex: 1; }
     .profile-name { font-size: 20px; font-weight: 600; margin-bottom: 2px; }
@@ -93,6 +110,33 @@
     .journey-stat { flex: 1; text-align: center; padding: 12px; background: #1f1f23; border-radius: 10px; }
     .journey-stat-value { font-size: 20px; font-weight: 700; }
     .journey-stat-label { font-size: 11px; color: #71717a; }
+
+    .save-profile-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .save-profile-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .save-profile-btn.success {
+      background: #166534;
+    }
 
     .install-btn {
       width: 100%;
@@ -332,6 +376,7 @@
       <div class="profile-top">
         <div class="tier-badge">
           <img src="tier-ruby.png" alt="티어" id="tierImage">
+          <span class="tier-label" id="tierLabel">루비</span>
         </div>
         <div class="profile-info">
           <div class="profile-name" id="profileName">탐험가</div>
@@ -358,6 +403,15 @@
           </div>
         </div>
       </div>
+
+      <button class="save-profile-btn" id="saveProfileBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        프로필 이미지 저장
+      </button>
 
       <button class="install-btn hidden" id="installBtn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -512,12 +566,12 @@
     const CURRENT_VERSION = 5;
 
     const TIERS = [
-      { name: '루비', key: 'ruby', minLevel: 1 },
-      { name: '자수정', key: 'amethyst', minLevel: 6 },
-      { name: '사파이어', key: 'sapphire', minLevel: 11 },
-      { name: '에메랄드', key: 'emerald', minLevel: 16 },
-      { name: '옵시디언', key: 'obsidian', minLevel: 21 },
-      { name: '골드', key: 'gold', minLevel: 26 }
+      { name: '루비', key: 'ruby', minLevel: 1, color: '#ef4444', colorName: '빨간색' },
+      { name: '자수정', key: 'amethyst', minLevel: 6, color: '#a855f7', colorName: '보라색' },
+      { name: '사파이어', key: 'sapphire', minLevel: 11, color: '#3b82f6', colorName: '파란색' },
+      { name: '에메랄드', key: 'emerald', minLevel: 16, color: '#10b981', colorName: '초록색' },
+      { name: '옵시디언', key: 'obsidian', minLevel: 21, color: '#1f2937', colorName: '검은색' },
+      { name: '골드', key: 'gold', minLevel: 26, color: '#f59e0b', colorName: '금색' }
     ];
 
     const TITLES = [
@@ -606,6 +660,12 @@
       document.getElementById('levelNum').textContent = profile.level;
       document.getElementById('expFill').style.width = expPercent + '%';
       document.getElementById('expText').textContent = profile.exp + '/' + expNeeded;
+      
+      // 티어 라벨 업데이트
+      const tierLabel = document.getElementById('tierLabel');
+      tierLabel.textContent = tier.name;
+      tierLabel.style.color = tier.color;
+      tierLabel.style.background = tier.color + '20';
       
       document.getElementById('statCleared').textContent = profile.completedSims.length;
       document.getElementById('statPrinciples').textContent = profile.principles.length;
@@ -816,6 +876,47 @@
           }, 2000);
         });
       }
+    });
+
+    // 프로필 이미지 저장 기능
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    saveProfileBtn.addEventListener('click', () => {
+      const card = document.querySelector('.profile-card');
+      const btn = saveProfileBtn;
+      
+      btn.innerHTML = '저장 중...';
+      
+      html2canvas(card, { 
+        backgroundColor: '#09090b', 
+        scale: 2,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const today = new Date();
+        const dateStr = today.getFullYear() + '.' + String(today.getMonth()+1).padStart(2,'0') + '.' + String(today.getDate()).padStart(2,'0');
+        link.download = 'mindlab-profile-' + dateStr + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.classList.add('success');
+        btn.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          저장 완료!
+        `;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            프로필 이미지 저장
+          `;
+        }, 2000);
+      });
     });
     
     // Service Worker 등록
