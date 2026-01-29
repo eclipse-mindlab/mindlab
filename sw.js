@@ -1,9 +1,10 @@
-const CACHE_NAME = 'mindlab-v3';
+const CACHE_NAME = 'mindlab-v4';
 const urlsToCache = [
   './',
   './index.html',
   './sim-idea-thief.html',
   './sim-experience-machine.html',
+  './sim-money-friend.html',
   './logo.png',
   './icon-192.png',
   './icon-512.png',

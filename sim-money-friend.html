@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>돈 안 갚는 친구 - 이클립스 마인드랩</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 540px; margin: 0 auto; }
+    
+    .header { margin-bottom: 32px; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:hover { color: #a78bfa; }
+
+    .header-content { text-align: center; }
+    .header-category { font-size: 12px; color: #a78bfa; margin-bottom: 8px; }
+    .header h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #71717a; }
+    
+    .progress { display: flex; gap: 8px; margin-bottom: 24px; }
+    
+    .progress-bar {
+      height: 4px;
+      flex: 1;
+      border-radius: 4px;
+      background: #27272a;
+      transition: background 0.3s;
+    }
+    
+    .progress-bar.completed { background: #a78bfa; }
+    .progress-bar.current { background: rgba(167, 139, 250, 0.5); }
+    
+    .scenario-card {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stage-label {
+      font-size: 11px;
+      color: #71717a;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .context {
+      font-size: 13px;
+      color: #a1a1aa;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 8px;
+    }
+    
+    .situation { font-size: 17px; line-height: 1.8; }
+    
+    .choices { display: flex; flex-direction: column; gap: 12px; }
+    
+    .choice-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.6;
+    }
+    
+    .choice-btn:hover {
+      background: #27272a;
+      border-color: #3f3f46;
+    }
+    
+    .result-section { display: none; }
+    .result-section.show { display: block; }
+    
+    .selected-choice {
+      padding: 16px;
+      background: #18181b;
+      border: 2px solid #3f3f46;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .selected-header { font-size: 13px; color: #71717a; margin-bottom: 8px; }
+    .selected-text { color: #d4d4d8; line-height: 1.6; }
+    
+    .outcome-card {
+      padding: 16px;
+      background: rgba(24, 24, 27, 0.5);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .outcome-label { font-size: 13px; color: #71717a; margin-bottom: 8px; }
+    .outcome-text { color: #d4d4d8; line-height: 1.8; }
+    
+    .principle-card {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), #18181b);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .principle-icon { font-size: 20px; }
+    .principle-label {
+      font-size: 11px;
+      color: #a78bfa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .principle-name { color: #fff; font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+    .principle-explanation { color: #a1a1aa; line-height: 1.8; font-size: 14px; }
+
+    .evaluation-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .evaluation-card.positive {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .evaluation-card.neutral {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .evaluation-card.negative {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    .evaluation-icon { font-size: 18px; flex-shrink: 0; }
+    .evaluation-text { font-size: 14px; line-height: 1.7; }
+
+    .evaluation-card.positive .evaluation-text { color: #4ade80; }
+    .evaluation-card.neutral .evaluation-text { color: #fbbf24; }
+    .evaluation-card.negative .evaluation-text { color: #f87171; }
+
+    .other-choices-section { margin-bottom: 16px; }
+
+    .other-choices-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #27272a;
+      border-radius: 10px;
+      color: #71717a;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .other-choices-toggle:hover {
+      border-color: #3f3f46;
+      color: #a1a1aa;
+    }
+
+    .other-choices-toggle.open {
+      border-color: #3f3f46;
+      background: #18181b;
+    }
+
+    .other-choices-toggle.open svg { transform: rotate(180deg); }
+
+    .other-choices-content {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .other-choices-content.hidden { display: none; }
+
+    .other-choice-card {
+      background: #131316;
+      border: 1px solid #1f1f23;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .other-choice-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .eval-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .eval-badge.positive { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .eval-badge.neutral { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .eval-badge.negative { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+
+    .other-choice-text { font-size: 14px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.6; }
+
+    .other-choice-outcome {
+      font-size: 13px;
+      color: #71717a;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #18181b;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .other-choice-eval {
+      font-size: 12px;
+      color: #a1a1aa;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      background: rgba(39, 39, 42, 0.5);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+
+    .other-choice-principle { font-size: 12px; color: #71717a; }
+    .other-choice-principle strong { color: #a78bfa; }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      background: #7c3aed;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .next-btn:hover { background: #6d28d9; }
+    
+    .final-screen { display: none; padding: 20px 0; }
+    .final-screen.show { display: block; }
+
+    .clear-card {
+      background: linear-gradient(135deg, #1f1f23, #18181b);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .clear-icon { font-size: 56px; margin-bottom: 16px; }
+    .clear-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .clear-subtitle { font-size: 14px; color: #71717a; margin-bottom: 20px; }
+
+    .clear-exp {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(167, 139, 250, 0.2);
+      border-radius: 20px;
+      color: #a78bfa;
+      font-weight: 600;
+    }
+
+    .principles-collected {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .principles-title { font-size: 14px; color: #71717a; margin-bottom: 16px; }
+
+    .principle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .principle-item:last-child { margin-bottom: 0; }
+    .principle-item-icon { font-size: 20px; flex-shrink: 0; }
+    .principle-item-content { flex: 1; }
+    .principle-item-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .principle-item-desc { font-size: 12px; color: #71717a; line-height: 1.5; }
+
+    .share-section { margin-bottom: 24px; }
+    .share-label { font-size: 14px; color: #71717a; margin-bottom: 12px; text-align: center; }
+    .share-buttons { display: flex; gap: 10px; justify-content: center; }
+    
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .share-btn:hover { background: #3f3f46; }
+    .share-btn.success { background: #166534; border-color: #22c55e; }
+
+    .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+    
+    .home-btn {
+      width: 100%;
+      padding: 16px;
+      background: #7c3aed;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .home-btn:hover { background: #6d28d9; }
+
+    .restart-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid #3f3f46;
+      border-radius: 12px;
+      color: #a1a1aa;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .restart-btn:hover { background: #27272a; color: #fff; }
+
+    .install-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .install-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .install-btn.hidden { display: none; }
+
+    .promo-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #27272a;
+    }
+
+    .book-promo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #1a1520 0%, #18181b 100%);
+      border: 1px solid #2d2438;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .book-promo:hover {
+      border-color: #a78bfa;
+      transform: translateY(-2px);
+    }
+
+    .book-promo-images { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .book-promo-img {
+      width: 48px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .book-promo-text { flex: 1; }
+    .book-promo-series { font-size: 11px; color: #a78bfa; margin-bottom: 2px; }
+    .book-promo-title { font-size: 14px; font-weight: 500; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+      <div class="header-content">
+        <div class="header-category">심리 · 인간관계</div>
+        <h1>돈 안 갚는 친구</h1>
+        <p>3개월째 30만원을 안 갚는 친구, 어떻게 할까?</p>
+      </div>
+    </div>
+    
+    <div class="progress" id="progress"></div>
+    
+    <div id="game-screen">
+      <div class="scenario-card">
+        <div class="stage-label" id="stage-label">Stage 1</div>
+        <div class="context" id="context"></div>
+        <div class="situation" id="situation"></div>
+      </div>
+      
+      <div class="choices" id="choices"></div>
+      
+      <div class="result-section" id="result-section">
+        <div class="selected-choice">
+          <div class="selected-header">선택한 답변</div>
+          <div class="selected-text" id="selected-text"></div>
+        </div>
+        
+        <div class="outcome-card">
+          <div class="outcome-label">상대방의 반응</div>
+          <div class="outcome-text" id="outcome-text"></div>
+        </div>
+        
+        <div class="principle-card">
+          <div class="principle-header">
+            <span class="principle-icon">💡</span>
+            <span class="principle-label">발견한 원칙</span>
+          </div>
+          <div class="principle-name" id="principle-name"></div>
+          <div class="principle-explanation" id="principle-explanation"></div>
+        </div>
+
+        <div class="evaluation-card" id="evaluation-card">
+          <div class="evaluation-icon" id="evaluation-icon">⚠️</div>
+          <div class="evaluation-text" id="evaluation-text"></div>
+        </div>
+
+        <div class="other-choices-section">
+          <button class="other-choices-toggle" id="other-toggle">
+            <span>다른 선택은?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="other-choices-content hidden" id="other-choices-content"></div>
+        </div>
+        
+        <button class="next-btn" id="next-btn">다음 상황</button>
+      </div>
+    </div>
+    
+    <div class="final-screen" id="final-screen">
+      <div class="clear-card">
+        <div class="clear-icon">💰</div>
+        <div class="clear-title">시뮬레이션 완료!</div>
+        <div class="clear-subtitle">돈 안 갚는 친구 상황을 클리어했습니다</div>
+        <div class="clear-exp">+30 EXP 획득!</div>
+      </div>
+
+      <div class="principles-collected">
+        <div class="principles-title">🔓 발견한 원칙들</div>
+        <div id="principles-list"></div>
+      </div>
+
+      <div class="share-section">
+        <div class="share-label">친구에게 공유하기</div>
+        <div class="share-buttons">
+          <button class="share-btn" id="native-share-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            공유하기
+          </button>
+          <button class="share-btn" id="copy-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            링크 복사
+          </button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="index.html" class="home-btn">탐험 지도로 돌아가기</a>
+        <button class="restart-btn" id="restart-btn">다시 해보기</button>
+        <button class="install-btn hidden" id="installBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          앱으로 설치하고 계속 탐험하기
+        </button>
+      </div>
+
+      <div class="promo-section">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-promo">
+          <div class="book-promo-images">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="book-promo-img">
+            <img src="book-psychology.png" alt="훔친 심리학 편" class="book-promo-img">
+          </div>
+          <div class="book-promo-text">
+            <div class="book-promo-series">세계척학전집 시리즈</div>
+            <div class="book-promo-title">더 깊은 원칙들이 궁금하다면</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SITE_URL = 'https://eclipse-mindlab.github.io/mindlab/';
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    const SIM_ID = 'money_friend';
+
+    const stages = [
+      {
+        id: 1,
+        context: "3개월 전, 친한 친구가 급하다며 30만원을 빌려갔다. '다음 달에 갚을게'라고 했지만, 두 번의 월급날이 지났다. 그동안 친구는 밥도 사고, SNS에 카페 사진도 올리고 있다.",
+        situation: "오늘 또 단톡방에서 친구가 웃으며 대화하고 있다. 어떻게 시작할까?",
+        choices: [
+          {
+            text: "단톡방에서 '야 그 30만원 언제 줄 거야?'라고 말한다",
+            outcome: "친구가 '아 ㅋㅋ 미안 곧 줄게~'라고 대충 넘긴다. 다른 친구들도 어색해한다. 친구는 창피를 당했다고 느낀다.",
+            principle: "공개적 압박의 역효과",
+            principleDesc: "공개적 망신은 상대의 체면을 구긴다. 체면을 잃은 사람은 방어적이 되고, 관계가 틀어진다. 문제는 해결되지 않는다.",
+            evaluation: "negative",
+            evalText: "돈도 못 받고 관계만 나빠졌다. 공개 압박은 최악의 선택 중 하나다.",
+            nextStage: "stage2_public"
+          },
+          {
+            text: "1:1 카톡으로 '혹시 저번에 빌려간 돈 언제쯤 가능할까?'라고 보낸다",
+            outcome: "친구가 '아 맞다 미안, 이번 달 말에는 꼭!'이라고 답한다. 일단 대화는 열렸다.",
+            principle: "개인적 접근",
+            principleDesc: "1:1 대화는 상대에게 체면을 지켜준다. 사람은 체면이 지켜질 때 더 협조적이 된다.",
+            evaluation: "positive",
+            evalText: "좋은 시작이다. 상대가 방어적이지 않으니 대화가 가능하다.",
+            nextStage: "stage2_private"
+          },
+          {
+            text: "더 기다려본다. 친구니까 알아서 갚겠지",
+            outcome: "일주일이 지났다. 친구는 여전히 말이 없다. SNS에는 새로 산 옷 사진이 올라왔다.",
+            principle: "소극적 기대의 함정",
+            principleDesc: "상대가 '알아서' 해줄 거라는 기대는 대부분 틀린다. 명확한 요청 없이는 상대의 우선순위에서 밀린다.",
+            evaluation: "negative",
+            evalText: "기다림은 해결책이 아니다. 시간이 지날수록 돈 받기 어려워진다.",
+            nextStage: "stage2_wait"
+          }
+        ]
+      },
+      
+      // Stage 2 - 공개 압박 후
+      {
+        id: "stage2_public",
+        context: "친구가 기분 나빠한다. 며칠 후, 친구에게서 카톡이 왔다. '야, 저번에 그렇게 말할 거 있어? 창피하게...'",
+        situation: "관계가 틀어지고 있다. 어떻게 대응할까?",
+        choices: [
+          {
+            text: "'내가 잘못했어? 3개월이나 기다렸잖아'라고 반박한다",
+            outcome: "친구가 '그래 내가 미안하지. 근데 그렇게 말하는 건 아니잖아'라며 감정싸움이 된다. 돈 얘기는 뒷전이 됐다.",
+            principle: "감정 대 감정의 악순환",
+            principleDesc: "감정으로 맞받아치면 논점이 흐려진다. '누가 더 잘못했나' 싸움은 문제를 해결하지 못한다.",
+            evaluation: "negative",
+            evalText: "돈 문제가 감정 문제로 바뀌었다. 최악의 방향으로 흘러가고 있다.",
+            nextStage: "stage3_fight"
+          },
+          {
+            text: "'미안, 내가 급하게 말했다. 근데 우리 돈 문제는 정리하자'",
+            outcome: "친구가 '...그래 나도 미안해. 진짜 이번 달에는 줄게'라며 한 발 물러선다.",
+            principle: "감정 인정 후 본론",
+            principleDesc: "상대의 감정을 인정하면 방어벽이 낮아진다. 그 다음에 본론으로 돌아가면 합의가 쉬워진다.",
+            evaluation: "positive",
+            evalText: "관계를 회복하면서 본론도 짚었다. 좋은 전환이다.",
+            nextStage: "stage3_recover"
+          },
+          {
+            text: "그냥 사과만 한다. '미안, 내가 예민했나봐'",
+            outcome: "친구가 '괜찮아~' 하며 분위기가 풀렸다. 하지만 돈 얘기는 또 묻혔다.",
+            principle: "과도한 양보",
+            principleDesc: "관계를 위해 자신의 권리를 포기하면, 상대는 그것을 당연하게 여기기 시작한다.",
+            evaluation: "neutral",
+            evalText: "관계는 지켰지만, 돈 받기는 더 어려워졌다.",
+            nextStage: "stage3_doormat"
+          }
+        ]
+      },
+      
+      // Stage 2 - 1:1 접근 후
+      {
+        id: "stage2_private",
+        context: "'이번 달 말에는 꼭'이라고 했던 친구. 그런데 월말이 지났는데 연락이 없다.",
+        situation: "약속을 또 어겼다. 어떻게 할까?",
+        choices: [
+          {
+            text: "'저번에 이번 달이라고 했잖아. 언제 가능해?'라고 다시 물어본다",
+            outcome: "친구가 '아 미안 요즘 좀 빠듯해서... 조금만 더 기다려줘'라고 한다. 또 미뤄진다.",
+            principle: "반복되는 약속의 평가절하",
+            principleDesc: "어긴 약속이 반복되면 다음 약속의 신뢰도가 떨어진다. 구체적인 조건이 필요하다.",
+            evaluation: "neutral",
+            evalText: "같은 패턴이 반복되고 있다. 다른 접근이 필요하다.",
+            nextStage: "stage3_deadline"
+          },
+          {
+            text: "'형편이 어려우면 분할로 갚아도 돼. 이번 달 10만원만이라도?'",
+            outcome: "친구가 '아 그래? 그 정도면 될 것 같아. 내일 보낼게'라며 수락한다. 다음 날 정말 10만원이 들어왔다.",
+            principle: "작은 단위로 쪼개기",
+            principleDesc: "큰 금액은 심리적 부담이 크다. 작게 나누면 실행 가능성이 높아진다. 행동경제학의 '목표 세분화' 원칙.",
+            evaluation: "positive",
+            evalText: "훌륭하다! 상대가 실행할 수 있는 현실적인 제안을 했다.",
+            nextStage: "stage3_partial"
+          },
+          {
+            text: "'사정이 있으면 말해줘. 어려우면 방법을 찾아보자'",
+            outcome: "친구가 '사실 요즘 진짜 힘들어서...'라며 상황을 털어놓는다. 진짜로 어려운 상황이었다.",
+            principle: "열린 질문과 경청",
+            principleDesc: "상대의 상황을 이해하면 해결책이 보인다. 판단 대신 경청이 먼저다.",
+            evaluation: "positive",
+            evalText: "상대의 진짜 상황을 알게 됐다. 이제 현실적인 해결책을 찾을 수 있다.",
+            nextStage: "stage3_empathy"
+          }
+        ]
+      },
+      
+      // Stage 2 - 기다린 후
+      {
+        id: "stage2_wait",
+        context: "한 달이 더 지났다. 이제 빌려준 지 4개월째. 친구는 여전히 말이 없고, 오히려 더 자주 만나자고 한다.",
+        situation: "이제 진짜 말해야 할 것 같다. 어떻게 꺼낼까?",
+        choices: [
+          {
+            text: "만나서 직접 얘기한다. '우리 저번에 빌려준 돈 얘기 좀 하자'",
+            outcome: "친구가 당황하며 '아 맞다... 내가 진짜 미안해. 계속 말하려다가...'라며 머뭇거린다.",
+            principle: "대면의 힘",
+            principleDesc: "대면 대화는 회피하기 어렵다. 문자보다 대면에서 사람들은 더 솔직해지고 책임감을 느낀다.",
+            evaluation: "positive",
+            evalText: "직접 만나니 상대도 피할 수 없다. 좋은 선택이다.",
+            nextStage: "stage3_faceto"
+          },
+          {
+            text: "'나도 요즘 사정이 있어서... 저번에 빌려준 돈 좀 필요해'",
+            outcome: "친구가 '아 그래? 알았어, 좀 알아볼게'라며 진지해졌다. 네 상황을 알게 되니 반응이 달라졌다.",
+            principle: "자기 상황 공개",
+            principleDesc: "자신의 필요를 밝히면 요청이 정당해진다. 상대도 '그냥 잔소리'가 아닌 '진짜 필요'로 받아들인다.",
+            evaluation: "positive",
+            evalText: "네 상황을 알리니 상대가 심각하게 받아들인다.",
+            nextStage: "stage3_need"
+          },
+          {
+            text: "공통 친구에게 '걔 좀 말해줘'라고 부탁한다",
+            outcome: "공통 친구가 말을 전했다. 하지만 친구가 '뒤에서 그런 식으로?'라며 기분 나빠했다.",
+            principle: "간접 소통의 리스크",
+            principleDesc: "제3자를 통한 소통은 메시지가 왜곡되고, 뒤에서 험담한다는 인상을 준다.",
+            evaluation: "negative",
+            evalText: "간접 소통은 대부분 역효과를 낸다. 직접 말하는 게 낫다.",
+            nextStage: "stage3_indirect"
+          }
+        ]
+      },
+      
+      // Stage 3들
+      {
+        id: "stage3_fight",
+        context: "감정싸움이 됐다. 서로 '네가 잘못' '아니 네가 잘못'을 반복 중이다.",
+        situation: "이대로 가면 친구도 돈도 다 잃는다. 어떻게 수습할까?",
+        choices: [
+          {
+            text: "'그래, 싸우지 말자. 돈은... 됐다. 그냥 친구로 지내자'",
+            outcome: "친구가 '...진짜? 미안해'라며 화해했다. 하지만 30만원은 공중으로 사라졌다. 그리고 마음 한켠이 찝찝하다.",
+            principle: "매몰비용의 손절",
+            principleDesc: "이미 잃은 것(매몰비용)에 집착하면 더 큰 손해를 본다. 하지만 '그냥 포기'는 자기합리화일 수 있다.",
+            evaluation: "neutral",
+            evalText: "관계는 지켰지만, 속으로 후회가 남을 수 있다.",
+            nextStage: "end"
+          },
+          {
+            text: "'감정은 나중에 풀고, 돈 문제만 깔끔하게 정리하자'",
+            outcome: "친구가 '...그래 알겠어. 다음 달 15일까지는 꼭 줄게'라며 구체적인 날짜를 잡았다.",
+            principle: "감정과 문제의 분리",
+            principleDesc: "감정 문제와 실질적 문제를 분리한다. 하나씩 해결하면 둘 다 해결할 수 있다.",
+            evaluation: "positive",
+            evalText: "현명하다. 감정과 문제를 분리해서 실질적 진전을 만들었다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_recover",
+        context: "친구가 '이번 달에는 꼭'이라고 했다. 하지만 예전에도 같은 말을 들었다.",
+        situation: "이번에는 어떻게 다르게 할 수 있을까?",
+        choices: [
+          {
+            text: "'고마워. 근데 정확히 며칠까지 가능해?'라고 구체적 날짜를 요청한다",
+            outcome: "친구가 '음... 25일?'이라고 답한다. 25일이 됐을 때 다시 물어볼 명분이 생겼다.",
+            principle: "구체적 약속",
+            principleDesc: "'이번 달'보다 '25일'이 명확하다. 구체적인 약속은 어기기 어렵고, 어겼을 때 지적하기도 쉽다.",
+            evaluation: "positive",
+            evalText: "좋은 전략이다. 모호한 약속을 구체적으로 바꿨다.",
+            nextStage: "end"
+          },
+          {
+            text: "'알겠어 ㅎㅎ'라고 하고 기다린다",
+            outcome: "월말이 지났다. 친구에게서 연락이 없다. 또 같은 상황이 반복된다.",
+            principle: "학습된 무력감",
+            principleDesc: "반복되는 실패를 경험하면 '어차피 안 될 것'이라는 무력감이 생긴다. 다른 시도를 하지 않게 된다.",
+            evaluation: "negative",
+            evalText: "같은 실수를 반복했다. 이번에도 흐지부지될 가능성이 높다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_doormat",
+        context: "관계는 괜찮아졌지만, 돈은 여전히 받지 못했다. 친구는 돈 얘기를 꺼내지 않는다.",
+        situation: "이제 어떻게 할까?",
+        choices: [
+          {
+            text: "다시 한 번 정중하게 요청한다. '미안한데, 돈 얘기 다시 해도 될까?'",
+            outcome: "친구가 '아 그래... 미안해. 다음 주까지 해볼게'라며 진지하게 받아들인다.",
+            principle: "지속적 요청",
+            principleDesc: "한 번 양보했다고 권리가 사라지지 않는다. 정중하지만 지속적으로 요청하면 상대도 우선순위를 올린다.",
+            evaluation: "positive",
+            evalText: "포기하지 않고 다시 요청했다. 좋은 선택이다.",
+            nextStage: "end"
+          },
+          {
+            text: "그냥 포기한다. 30만원으로 친구 인성 알게 됐다고 생각하기로",
+            outcome: "마음이 편해졌다. 하지만 그 친구와는 이전처럼 지내기 어려워졌다.",
+            principle: "수업료",
+            principleDesc: "때로는 '수업료'라 생각하고 넘어가는 것도 방법이다. 단, 이 경험을 통해 다음에는 빌려주는 기준을 세우자.",
+            evaluation: "neutral",
+            evalText: "마음은 편하지만, 관계에 균열이 생겼다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_deadline",
+        context: "친구가 또 '조금만 더'라고 했다. 이제는 패턴이 보인다.",
+        situation: "이 패턴을 어떻게 끊을까?",
+        choices: [
+          {
+            text: "'그럼 정확히 언제? 날짜 정해줘'라고 구체적으로 묻는다",
+            outcome: "친구가 '다음 주 금요일..?'이라고 답한다. 드디어 구체적인 날짜가 나왔다.",
+            principle: "마감의 힘",
+            principleDesc: "마감이 없으면 일은 무한히 미뤄진다. 구체적 기한을 정하면 상대의 행동을 이끌어낼 수 있다.",
+            evaluation: "positive",
+            evalText: "마감을 설정했다. 이제 그 날짜에 다시 확인할 수 있다.",
+            nextStage: "end"
+          },
+          {
+            text: "'솔직히 말해줘. 갚을 의향이 있어?'라고 직접적으로 묻는다",
+            outcome: "친구가 침묵하다가 '...있어. 근데 진짜 지금 어려워서'라며 솔직해졌다.",
+            principle: "직접적 질문",
+            principleDesc: "핵심을 직접 물으면 상대도 핵심으로 답한다. 돌려 말하는 것보다 효과적일 때가 있다.",
+            evaluation: "positive",
+            evalText: "직접적으로 물으니 직접적인 답이 왔다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_partial",
+        context: "10만원을 받았다. 아직 20만원이 남았지만, 일단 움직이기 시작했다.",
+        situation: "나머지 20만원은 어떻게 받을까?",
+        choices: [
+          {
+            text: "'고마워! 나머지도 이런 식으로 나눠서 줘도 돼'라고 말한다",
+            outcome: "친구가 '응 그럴게. 다음 달에 10만원 더 보낼게'라고 한다. 3개월에 걸쳐 전액을 회수했다.",
+            principle: "성공 경험의 강화",
+            principleDesc: "작은 성공은 다음 행동의 동기가 된다. '해봤더니 되네'라는 경험이 쌓인다.",
+            evaluation: "positive",
+            evalText: "완벽한 전략! 작게 시작해서 결국 전액을 받았다.",
+            nextStage: "end"
+          },
+          {
+            text: "'응 고마워~'하고 나머지는 알아서 주겠지 기다린다",
+            outcome: "한 달이 지났지만 추가 입금이 없다. 10만원으로 끝날 것 같다.",
+            principle: "불완전한 마무리",
+            principleDesc: "마무리를 짓지 않으면 일은 중간에서 멈춘다. 끝까지 관리가 필요하다.",
+            evaluation: "neutral",
+            evalText: "10만원은 받았지만, 20만원은 흐지부지될 가능성이 높다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_empathy",
+        context: "친구의 사정을 들었다. 회사에서 권고사직을 받았고, 실업급여도 늦어지고 있다고 한다.",
+        situation: "진짜 어려운 상황이었다. 어떻게 할까?",
+        choices: [
+          {
+            text: "'힘들었겠다. 돈은 형편 나아지면 천천히 줘. 대신 어느 정도 될 것 같아?'",
+            outcome: "친구가 '고마워 진짜... 실업급여 나오면 바로 줄게. 아마 2달 뒤?'라며 감사해한다.",
+            principle: "조건부 관용",
+            principleDesc: "무조건 봐주는 게 아니라 '언제'라는 조건을 단다. 관계도 지키고, 약속도 받는다.",
+            evaluation: "positive",
+            evalText: "상대의 상황을 이해하면서도 약속을 받아냈다. 최선의 선택이다.",
+            nextStage: "end"
+          },
+          {
+            text: "'그래도 30만원은 나한테도 큰 돈이야. 조금씩이라도...'",
+            outcome: "친구가 '...그래 알겠어. 다음 달에 5만원이라도 보낼게'라며 수락한다.",
+            principle: "자기 주장",
+            principleDesc: "상대 상황을 이해하되, 자신의 입장도 말해야 한다. 일방적 양보는 관계의 균형을 무너뜨린다.",
+            evaluation: "positive",
+            evalText: "공감하면서도 자기 입장을 말했다. 균형 잡힌 대화다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_faceto",
+        context: "친구가 직접 만나니 더 미안해하며 '진짜 미안해'를 반복한다.",
+        situation: "어떻게 마무리할까?",
+        choices: [
+          {
+            text: "'괜찮아. 그럼 우리 구체적으로 정하자. 언제까지 얼마?'",
+            outcome: "친구가 '다음 달 15일에 15만원, 그 다음 달에 15만원 줄게'라며 구체적인 계획을 세웠다. 실제로 지켜졌다.",
+            principle: "구체적 실행 계획",
+            principleDesc: "의지만으로는 실행이 안 된다. 구체적인 날짜와 금액이 있어야 지킬 수 있다.",
+            evaluation: "positive",
+            evalText: "완벽하다! 구체적인 계획을 세우고 실행까지 이어졌다.",
+            nextStage: "end"
+          },
+          {
+            text: "'알겠어, 여유 될 때 줘'라고 하며 넘어간다",
+            outcome: "친구가 고마워했다. 3개월 후, 갑자기 30만원이 들어왔다. 놀랐지만 기뻤다.",
+            principle: "신뢰의 회복",
+            principleDesc: "직접 만나서 진심을 확인하면, 상대도 책임감을 느낀다. 때로는 믿어주는 것도 방법이다.",
+            evaluation: "positive",
+            evalText: "신뢰를 보여줬더니 친구가 결국 갚았다. 좋은 결말이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_need",
+        context: "네 상황을 알게 된 친구가 '미안, 몰랐어'라며 진지해졌다.",
+        situation: "분위기가 달라졌다. 어떻게 마무리할까?",
+        choices: [
+          {
+            text: "'괜찮아, 근데 언제까지 가능할까?'",
+            outcome: "친구가 '이번 주 안에는 꼭 보낼게'라며 약속한다. 실제로 3일 후 입금이 왔다.",
+            principle: "상호 이해의 힘",
+            principleDesc: "서로의 상황을 알면 해결이 쉬워진다. 일방적 요구가 아니라 상호 이해가 협력을 이끈다.",
+            evaluation: "positive",
+            evalText: "네 상황을 알리니 친구가 우선순위를 올렸다. 바로 해결됐다!",
+            nextStage: "end"
+          },
+          {
+            text: "'그래 알았어. 가능할 때 보내줘'",
+            outcome: "일주일 후 친구가 먼저 연락해서 '오늘 보냈어 미안했어'라고 한다.",
+            principle: "자발적 동기",
+            principleDesc: "강요보다 자발적 동기가 강하다. 상대가 스스로 결정하게 하면 더 잘 지킨다.",
+            evaluation: "positive",
+            evalText: "친구가 스스로 움직였다. 좋은 결말이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_indirect",
+        context: "친구가 기분 나빠했다. '직접 말하지 왜 그래'라며 서운해한다.",
+        situation: "관계가 틀어지고 있다. 어떻게 수습할까?",
+        choices: [
+          {
+            text: "'미안, 직접 말하기 어려워서 그랬어. 앞으로는 직접 얘기할게'",
+            outcome: "친구가 '...알겠어. 나도 미안해. 돈은 다음 주에 줄게'라며 풀렸다.",
+            principle: "솔직한 인정",
+            principleDesc: "실수를 인정하면 상대도 마음이 누그러진다. 변명보다 솔직한 인정이 신뢰를 쌓는다.",
+            evaluation: "positive",
+            evalText: "실수를 인정하고 관계를 회복했다.",
+            nextStage: "end"
+          },
+          {
+            text: "'내가 왜 미안해야 해? 돈 안 갚은 건 너잖아'",
+            outcome: "친구가 '그래 내가 잘못했지. 근데 뒤에서 그러는 것도 잘한 거야?'라며 싸움이 커졌다.",
+            principle: "정당화의 함정",
+            principleDesc: "자기 행동을 정당화하면 상대도 정당화로 맞선다. 누가 더 잘못했나 싸움은 끝이 없다.",
+            evaluation: "negative",
+            evalText: "관계가 더 나빠졌다. 돈도 받기 어려워졌다.",
+            nextStage: "end"
+          }
+        ]
+      }
+    ];
+
+    let currentStageId = 1;
+    let collectedPrinciples = [];
+    let stageHistory = [];
+
+    function getStageById(id) {
+      return stages.find(s => s.id === id);
+    }
+
+    function init() {
+      renderProgress();
+      renderStage();
+      
+      document.getElementById('next-btn').addEventListener('click', nextStage);
+      document.getElementById('restart-btn').addEventListener('click', restart);
+      document.getElementById('native-share-btn').addEventListener('click', nativeShare);
+      document.getElementById('copy-btn').addEventListener('click', copyLink);
+      document.getElementById('other-toggle').addEventListener('click', toggleOtherChoices);
+    }
+
+    function toggleOtherChoices() {
+      const content = document.getElementById('other-choices-content');
+      const toggle = document.getElementById('other-toggle');
+      content.classList.toggle('hidden');
+      toggle.classList.toggle('open');
+    }
+
+    function renderProgress() {
+      const totalStages = 3;
+      const currentCount = stageHistory.length;
+      
+      const progressEl = document.getElementById('progress');
+      progressEl.innerHTML = Array(totalStages).fill(0).map((_, idx) => {
+        let className = 'progress-bar';
+        if (idx < currentCount) className += ' completed';
+        else if (idx === currentCount) className += ' current';
+        return `<div class="${className}"></div>`;
+      }).join('');
+    }
+
+    function renderStage() {
+      const stage = getStageById(currentStageId);
+      if (!stage) return;
+      
+      document.getElementById('stage-label').textContent = `Stage ${stageHistory.length + 1}`;
+      document.getElementById('context').textContent = stage.context;
+      document.getElementById('situation').textContent = stage.situation;
+      
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = stage.choices.map((choice, idx) => `
+        <button class="choice-btn" data-index="${idx}">${choice.text}</button>
+      `).join('');
+      
+      choicesEl.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleChoice(parseInt(btn.dataset.index)));
+      });
+      
+      document.getElementById('choices').classList.remove('hidden');
+      document.getElementById('result-section').classList.remove('show');
+    }
+
+    function handleChoice(index) {
+      const stage = getStageById(currentStageId);
+      const choice = stage.choices[index];
+      
+      stageHistory.push({
+        stageId: currentStageId,
+        choiceIndex: index,
+        principle: choice.principle
+      });
+      
+      if (!collectedPrinciples.find(p => p.name === choice.principle)) {
+        collectedPrinciples.push({
+          name: choice.principle,
+          desc: choice.principleDesc
+        });
+      }
+      
+      document.getElementById('choices').classList.add('hidden');
+      document.getElementById('result-section').classList.add('show');
+      
+      document.getElementById('selected-text').textContent = choice.text;
+      document.getElementById('outcome-text').textContent = choice.outcome;
+      document.getElementById('principle-name').textContent = choice.principle;
+      document.getElementById('principle-explanation').textContent = choice.principleDesc;
+      
+      const evalCard = document.getElementById('evaluation-card');
+      const evalIcon = document.getElementById('evaluation-icon');
+      const evalText = document.getElementById('evaluation-text');
+      
+      evalCard.className = 'evaluation-card ' + choice.evaluation;
+      evalText.textContent = choice.evalText;
+      
+      if (choice.evaluation === 'positive') evalIcon.textContent = '✓';
+      else if (choice.evaluation === 'neutral') evalIcon.textContent = '⚠️';
+      else evalIcon.textContent = '✗';
+      
+      const otherChoices = stage.choices.filter((_, i) => i !== index);
+      const otherContent = document.getElementById('other-choices-content');
+      otherContent.innerHTML = otherChoices.map(c => {
+        let evalBadge = '';
+        if (c.evaluation === 'positive') evalBadge = '<span class="eval-badge positive">✓ 효과적</span>';
+        else if (c.evaluation === 'neutral') evalBadge = '<span class="eval-badge neutral">⚠️ 상황에 따라</span>';
+        else evalBadge = '<span class="eval-badge negative">✗ 리스크</span>';
+        
+        return `
+          <div class="other-choice-card">
+            <div class="other-choice-header">${evalBadge}</div>
+            <div class="other-choice-text">${c.text}</div>
+            <div class="other-choice-outcome">${c.outcome}</div>
+            <div class="other-choice-eval">${c.evalText}</div>
+            <div class="other-choice-principle"><strong>${c.principle}</strong>: ${c.principleDesc}</div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('other-choices-content').classList.add('hidden');
+      document.getElementById('other-toggle').classList.remove('open');
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (choice.nextStage === 'end') {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음 상황';
+      }
+      
+      currentStageId = choice.nextStage;
+      renderProgress();
+    }
+
+    function nextStage() {
+      if (currentStageId === 'end') {
+        showFinalScreen();
+      } else {
+        renderStage();
+      }
+    }
+
+    function showFinalScreen() {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('final-screen').classList.add('show');
+      
+      const principlesList = document.getElementById('principles-list');
+      principlesList.innerHTML = collectedPrinciples.map(p => `
+        <div class="principle-item">
+          <div class="principle-item-icon">💡</div>
+          <div class="principle-item-content">
+            <div class="principle-item-name">${p.name}</div>
+            <div class="principle-item-desc">${p.desc}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      saveProgress();
+      showInstallButton();
+    }
+
+    function saveProgress() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const profile = JSON.parse(saved);
+        
+        if (!profile.completedSims) profile.completedSims = [];
+        if (!profile.principles) profile.principles = [];
+        
+        const isFirstTime = !profile.completedSims.includes(SIM_ID);
+        
+        if (isFirstTime) {
+          profile.completedSims.push(SIM_ID);
+          profile.exp = (profile.exp || 0) + 30;
+          
+          const expNeeded = (profile.level || 1) * 100;
+          while (profile.exp >= expNeeded) {
+            profile.exp -= expNeeded;
+            profile.level = (profile.level || 1) + 1;
+          }
+        }
+        
+        collectedPrinciples.forEach(p => {
+          if (!profile.principles.find(existing => existing.name === p.name)) {
+            profile.principles.push(p);
+          }
+        });
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      }
+    }
+
+    function getShareText() {
+      return `💰 이클립스 마인드랩
+
+[돈 안 갚는 친구] 클리어!
+
+발견한 원칙 ${collectedPrinciples.length}개:
+${collectedPrinciples.map(p => '• ' + p.name).join('\n')}
+
+당신은 돈을 받을 수 있을까요?`;
+    }
+
+    function nativeShare() {
+      if (navigator.share) {
+        navigator.share({
+          title: '돈 안 갚는 친구 - 이클립스 마인드랩',
+          text: getShareText(),
+          url: SITE_URL
+        }).catch(() => {});
+      } else {
+        copyLink();
+      }
+    }
+
+    function copyLink() {
+      const text = getShareText() + '\n' + SITE_URL;
+      const btn = document.getElementById('copy-btn');
+      
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('success');
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 복사 완료!`;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 링크 복사`;
+        }, 2000);
+      });
+    }
+
+    function restart() {
+      currentStageId = 1;
+      collectedPrinciples = [];
+      stageHistory = [];
+      
+      document.getElementById('final-screen').classList.remove('show');
+      document.getElementById('game-screen').classList.remove('hidden');
+      
+      renderProgress();
+      renderStage();
+    }
+
+    // PWA
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function showInstallButton() {
+      if (deferredPrompt && installBtn) {
+        installBtn.classList.remove('hidden');
+      }
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    init();
+  </script>
+</body>
+</html>
