@@ -1005,34 +1005,39 @@
     }
 
     function saveProgress() {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      let saved = localStorage.getItem(STORAGE_KEY);
+      let profile;
+      
       if (saved) {
-        const profile = JSON.parse(saved);
-        
-        if (!profile.completedSims) profile.completedSims = [];
-        if (!profile.principles) profile.principles = [];
-        
-        const isFirstTime = !profile.completedSims.includes(SIM_ID);
-        
-        if (isFirstTime) {
-          profile.completedSims.push(SIM_ID);
-          profile.exp = (profile.exp || 0) + 30;
-          
-          const expNeeded = (profile.level || 1) * 100;
-          while (profile.exp >= expNeeded) {
-            profile.exp -= expNeeded;
-            profile.level = (profile.level || 1) + 1;
-          }
-        }
-        
-        collectedPrinciples.forEach(p => {
-          if (!profile.principles.find(existing => existing.name === p.name)) {
-            profile.principles.push(p);
-          }
-        });
-        
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+        profile = JSON.parse(saved);
+      } else {
+        // 프로필 없으면 익명으로 생성
+        profile = { name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
       }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      const isFirstTime = !profile.completedSims.includes(SIM_ID);
+      
+      if (isFirstTime) {
+        profile.completedSims.push(SIM_ID);
+        profile.exp = (profile.exp || 0) + 30;
+        
+        const expNeeded = (profile.level || 1) * 100;
+        while (profile.exp >= expNeeded) {
+          profile.exp -= expNeeded;
+          profile.level = (profile.level || 1) + 1;
+        }
+      }
+      
+      collectedPrinciples.forEach(p => {
+        if (!profile.principles.find(existing => existing.name === p.name)) {
+          profile.principles.push(p);
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     }
 
     function getShareText() {
