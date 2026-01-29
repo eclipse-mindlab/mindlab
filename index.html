@@ -71,6 +71,43 @@
       padding: 24px;
       margin-bottom: 24px;
       border: 1px solid #27272a;
+      position: relative;
+    }
+
+    .google-sync-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .google-sync-btn:hover {
+      background: #3f3f46;
+      transform: scale(1.05);
+    }
+
+    .google-sync-btn.synced {
+      background: #166534;
+      border-color: #22c55e;
+    }
+
+    .google-sync-btn.synced svg {
+      display: none;
+    }
+
+    .google-sync-btn.synced::after {
+      content: '✓';
+      color: #fff;
+      font-size: 16px;
     }
 
     .profile-top { display: flex; gap: 16px; margin-bottom: 16px; }
@@ -502,6 +539,14 @@
     </div>
 
     <div class="profile-card">
+      <button class="google-sync-btn" id="googleSyncBtn" title="구글 계정으로 백업">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </button>
       <div class="profile-top">
         <div class="tier-badge">
           <img src="tier-ruby.png" alt="티어" id="tierImage">
@@ -689,7 +734,7 @@
   <script type="module">
     // Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
     // Firebase 설정
@@ -1012,6 +1057,7 @@
       const nameInput = document.getElementById('nameInput');
       const startBtn = document.getElementById('startBtn');
       const nameModal = document.getElementById('nameModal');
+      const googleSyncBtn = document.getElementById('googleSyncBtn');
 
       // 로컬 프로필 먼저 로드
       loadProfile();
@@ -1022,6 +1068,13 @@
           onAuthStateChanged(auth, async (user) => {
             if (user) {
               console.log('Firebase 로그인됨:', user.uid);
+              
+              // 구글 연동 여부 체크
+              if (user.providerData.some(p => p.providerId === 'google.com')) {
+                googleSyncBtn.classList.add('synced');
+                googleSyncBtn.title = '구글 연동됨';
+              }
+              
               // 클라우드에서 프로필 로드 후 병합
               const cloudProfile = await loadFromCloud();
               if (cloudProfile) {
@@ -1067,6 +1120,55 @@
           saveProfile();
           nameModal.classList.add('hidden');
           updateUI();
+        }
+      });
+
+      // 구글 연동 버튼
+      // 이미 구글 연동됐는지 확인
+      const user2 = auth.currentUser;
+      if (user2 && user2.providerData.some(p => p.providerId === 'google.com')) {
+        googleSyncBtn.classList.add('synced');
+        googleSyncBtn.title = '구글 연동됨';
+      }
+      
+      googleSyncBtn.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          alert('잠시 후 다시 시도해주세요.');
+          return;
+        }
+        
+        // 이미 구글 연동됐으면 무시
+        if (user.providerData.some(p => p.providerId === 'google.com')) {
+          alert('이미 구글 계정과 연동되어 있습니다!');
+          return;
+        }
+        
+        try {
+          const provider = new GoogleAuthProvider();
+          
+          // 익명 계정을 구글 계정에 연결
+          await linkWithPopup(user, provider);
+          
+          // 연동 성공
+          googleSyncBtn.classList.add('synced');
+          googleSyncBtn.title = '구글 연동됨';
+          alert('구글 계정 연동 완료! 이제 다른 기기에서도 데이터를 사용할 수 있습니다.');
+          
+          // 프로필 다시 저장 (새 uid로)
+          saveProfile();
+        } catch (error) {
+          console.error('구글 연동 실패:', error);
+          
+          if (error.code === 'auth/credential-already-in-use') {
+            // 이미 다른 계정에 연결된 구글 계정
+            alert('이 구글 계정은 이미 다른 프로필과 연동되어 있습니다.');
+          } else if (error.code === 'auth/popup-closed-by-user') {
+            // 사용자가 팝업 닫음
+            console.log('로그인 취소됨');
+          } else {
+            alert('연동 중 오류가 발생했습니다. 다시 시도해주세요.');
+          }
         }
       });
     }
