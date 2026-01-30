@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dilem-v14';
+const CACHE_NAME = 'dilem-v15';
 const urlsToCache = [
   './',
   './index.html',
