@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>나를 읽어봐 - 이클립스 마인드랩</title>
+  <title>나를 읽어봐 - 이클립스의 딜렘</title>
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -12,7 +12,7 @@
   
   <!-- SEO -->
   <meta name="description" content="내 선택을 친구가 맞출 수 있을까? 도전장을 만들어 공유하세요.">
-  <meta property="og:title" content="나를 읽어봐 - 이클립스 마인드랩">
+  <meta property="og:title" content="나를 읽어봐 - 이클립스의 딜렘">
   <meta property="og:description" content="내 선택을 친구가 맞출 수 있을까?">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-read-me.png?v=2">
   
@@ -1034,7 +1034,7 @@
         useCORS: true
       }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `mindlab-challenge-${userName}.png`;
+        link.download = `dilem-challenge-${userName}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         
@@ -1089,7 +1089,7 @@
       
       if (navigator.share) {
         navigator.share({
-          title: '나를 읽어봐 - 이클립스 마인드랩',
+          title: '나를 읽어봐 - 이클립스의 딜렘',
           text: message,
           url: url
         }).catch(() => {});

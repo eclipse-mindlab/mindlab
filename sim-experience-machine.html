@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>경험 기계 - 이클립스 마인드랩</title>
+  <title>경험 기계 - 이클립스의 딜렘</title>
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -1074,7 +1074,7 @@
     }
 
     function getShareText() {
-      return `🧠 이클립스 마인드랩
+      return `🧠 이클립스의 딜렘
 
 [경험 기계] 사고실험 완료!
 
@@ -1087,7 +1087,7 @@ ${collectedPrinciples.map(p => '• ' + p.name).join('\n')}
     function nativeShare() {
       if (navigator.share) {
         navigator.share({
-          title: '경험 기계 - 이클립스 마인드랩',
+          title: '경험 기계 - 이클립스의 딜렘',
           text: getShareText(),
           url: SITE_URL
         }).catch(() => {});

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>나를 읽어봐 - 이클립스 마인드랩</title>
+  <title>나를 읽어봐 - 이클립스의 딜렘</title>
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -587,7 +587,7 @@
       <div class="error-icon">😢</div>
       <div class="error-title">도전장을 찾을 수 없어요</div>
       <div class="error-desc">링크가 잘못되었거나 만료된 도전장이에요</div>
-      <a href="index.html" class="action-btn primary">마인드랩 홈으로</a>
+      <a href="index.html" class="action-btn primary">딜렘 홈으로</a>
     </div>
 
     <!-- 인트로 화면 -->
@@ -664,7 +664,7 @@
 
       <div class="action-buttons">
         <a href="read-me.html" class="action-btn primary">나도 도전장 만들기</a>
-        <a href="index.html" class="action-btn secondary">마인드랩 둘러보기</a>
+        <a href="index.html" class="action-btn secondary">딜렘 둘러보기</a>
       </div>
     </div>
   </div>
@@ -937,7 +937,7 @@
         logging: false
       }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `mindlab-result-${percentage}percent.png`;
+        link.download = `dilem-result-${percentage}percent.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         

@@ -1,6 +1,6 @@
 {
-  "name": "이클립스 마인드랩",
-  "short_name": "마인드랩",
+  "name": "이클립스의 딜렘",
+  "short_name": "딜렘",
   "description": "심리, 철학, 사회의 숨겨진 원칙들을 발견하세요",
   "start_url": "./index.html",
   "scope": "./",

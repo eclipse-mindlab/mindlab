@@ -1,4 +1,4 @@
-# 이클립스 마인드랩 개발 가이드
+# 이클립스의 딜렘 개발 가이드
 
 ## 🚨 중요: 원칙 저장 시스템
 
@@ -62,7 +62,7 @@ mindlab/
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>시뮬레이터 제목 - 이클립스 마인드랩</title>
+  <title>시뮬레이터 제목 - 이클립스의 딜렘</title>
   <link rel="stylesheet" href="sim-template.css">
   <style>
     /* 색상 커스텀 */

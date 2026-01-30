@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>이클립스 마인드랩</title>
+  <title>이클립스의 딜렘</title>
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -17,13 +17,13 @@
   
   <!-- SEO -->
   <meta name="description" content="당신의 도덕 성향을 알아보세요. 심리, 철학, 사회의 숨겨진 원칙들을 발견하는 지적 탐험.">
-  <meta property="og:title" content="이클립스 마인드랩 - 당신의 도덕 성향은?">
+  <meta property="og:title" content="이클립스의 딜렘 - 당신의 도덕 성향은?">
   <meta property="og:description" content="매일 새로운 딜레마에 답하고, 나와 비슷한 철학자를 찾아보세요.">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
   <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="이클립스 마인드랩 - 당신의 도덕 성향은?">
+  <meta name="twitter:title" content="이클립스의 딜렘 - 당신의 도덕 성향은?">
   <meta name="twitter:description" content="매일 새로운 딜레마에 답하고, 나와 비슷한 철학자를 찾아보세요.">
   <meta name="twitter:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
   
@@ -590,7 +590,7 @@
   <div class="modal-overlay" id="nameModal">
     <div class="modal">
       <img src="logo.png" alt="이클립스" class="modal-logo">
-      <div class="modal-title">이클립스 마인드랩</div>
+      <div class="modal-title">이클립스의 딜렘</div>
       <div class="modal-desc">지적 탐험을 시작하세요.<br>심리, 철학, 사회의 숨겨진 원칙들을 발견합니다.</div>
       <input type="text" class="modal-input" id="nameInput" placeholder="탐험가 이름" maxlength="12">
       <button class="modal-btn" id="startBtn" disabled>탐험 시작</button>
@@ -613,7 +613,7 @@
     <div class="header">
       <div class="brand">
         <img src="logo.png" alt="이클립스" class="brand-logo">
-        <span class="brand-text">이클립스 마인드랩</span>
+        <span class="brand-text">이클립스의 딜렘</span>
         <span class="beta-badge">BETA</span>
       </div>
       <div class="header-links">
@@ -845,7 +845,7 @@
     </div>
 
     <div class="footer">
-      <div class="footer-copy">© 이클립스 마인드랩</div>
+      <div class="footer-copy">© 딜렘</div>
     </div>
   </div>
 
@@ -1622,7 +1622,7 @@
     // 앱 공유 기능
     const shareAppBtn = document.getElementById('shareAppBtn');
     shareAppBtn.addEventListener('click', () => {
-      const shareText = `🧠 이클립스 마인드랩
+      const shareText = `🧠 이클립스의 딜렘
 
 당신의 도덕 성향을 알아보세요!
 매일 새로운 딜레마에 답하고, 나와 비슷한 철학자를 찾아보세요.
@@ -1631,7 +1631,7 @@
 
       if (navigator.share) {
         navigator.share({
-          title: '이클립스 마인드랩',
+          title: '이클립스의 딜렘',
           text: shareText,
           url: 'https://eclipse-mindlab.github.io/mindlab/'
         }).catch(() => {});
@@ -1675,7 +1675,7 @@
         const link = document.createElement('a');
         const today = new Date();
         const dateStr = today.getFullYear() + '.' + String(today.getMonth()+1).padStart(2,'0') + '.' + String(today.getDate()).padStart(2,'0');
-        link.download = 'mindlab-profile-' + dateStr + '.png';
+        link.download = 'dilem-profile-' + dateStr + '.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
         
