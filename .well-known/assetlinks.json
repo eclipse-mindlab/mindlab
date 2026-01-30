@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.eclipse_mindlab.twa",
+      "sha256_cert_fingerprints": [
+        "51:A3:09:D4:3F:4E:0B:09:4A:56:84:EC:92:BC:E9:14:FE:92:40:F5:BE:AF:F2:07:99:F6:39:8D:CB:20:7F:2D"
+      ]
+    }
+  }
+]
