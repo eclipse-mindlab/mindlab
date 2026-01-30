@@ -5,7 +5,9 @@
       "namespace": "android_app",
       "package_name": "io.github.eclipse_mindlab.twa",
       "sha256_cert_fingerprints": [
-        "51:A3:09:D4:3F:4E:0B:09:4A:56:84:EC:92:BC:E9:14:FE:92:40:F5:BE:AF:F2:07:99:F6:39:8D:CB:20:7F:2D"
+        "51:A3:09:D4:3F:4E:0B:09:4A:56:84:EC:92:BC:E9:14:FE:92:40:F5:BE:AF:F2:07:99:F6:39:8D:CB:20:7F:2D",
+        "DE:39:4B:C9:E5:D5:3A:12:2C:D5:08:AC:2D:3C:27:B8:9E:0F:58:B6:9E:ED:5B:94:0D:09:DC:C1:18:1E:09:4A",
+        "08:28:7D:96:CF:00:81:42:54:10:EB:0D:4B:47:1D:31:B2:E5:A2:90:7A:96:D8:07:A9:0B:82:23:14:BD:83:CC"
       ]
     }
   }
