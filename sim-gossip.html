@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뒷담화 현장 - 이클립스의 딜렘</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- SEO -->
+  <meta name="description" content="동료들이 내 뒷담화를 하고 있다. 어떻게 대응할까?">
+  <meta property="og:title" content="뒷담화 현장 - 이클립스의 딜렘">
+  <meta property="og:description" content="동료들이 내 뒷담화를 하고 있다. 어떻게 대응할까?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      margin-bottom: 32px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:hover {
+      color: #f87171;
+    }
+
+    .header-content {
+      text-align: center;
+    }
+
+    .header-category {
+      font-size: 12px;
+      color: #f87171;
+      margin-bottom: 8px;
+    }
+    
+    .header h1 {
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      color: #71717a;
+    }
+    
+    .progress {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      flex: 1;
+      border-radius: 4px;
+      background: #27272a;
+      transition: background 0.3s;
+    }
+    
+    .progress-bar.completed { background: #f87171; }
+    .progress-bar.current { background: rgba(248, 113, 113, 0.5); }
+    
+    .scenario-card {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stage-label {
+      font-size: 11px;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .context {
+      font-size: 13px;
+      color: #a1a1aa;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #27272a;
+    }
+    
+    .situation {
+      font-size: 17px;
+      color: #fff;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+    
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .choice-btn {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: left;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    
+    .choice-btn:hover {
+      border-color: #f87171;
+      background: rgba(248, 113, 113, 0.05);
+    }
+
+    .choice-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .result-section {
+      display: none;
+    }
+    
+    .result-section.show {
+      display: block;
+    }
+
+    .selected-choice {
+      background: #1f1f23;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .selected-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .selected-label {
+      font-size: 12px;
+      color: #71717a;
+    }
+
+    .selected-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .selected-badge.optimal {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+    }
+
+    .selected-badge.neutral {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+
+    .selected-badge.bad {
+      background: rgba(248, 113, 113, 0.2);
+      color: #f87171;
+    }
+
+    .selected-text {
+      font-size: 15px;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    .outcome-card {
+      background: #18181b;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .outcome-label {
+      font-size: 12px;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+
+    .outcome-text {
+      font-size: 14px;
+      color: #a1a1aa;
+      line-height: 1.8;
+    }
+    
+    .principle-card {
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(248, 113, 113, 0.05));
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .principle-icon {
+      font-size: 20px;
+    }
+
+    .principle-label {
+      font-size: 11px;
+      color: #f87171;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .principle-name {
+      color: #fff;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .principle-explanation {
+      color: #a1a1aa;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .evaluation-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .evaluation-card.positive {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .evaluation-card.neutral {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .evaluation-card.negative {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    .evaluation-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .evaluation-text {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .evaluation-card.positive .evaluation-text { color: #4ade80; }
+    .evaluation-card.neutral .evaluation-text { color: #fbbf24; }
+    .evaluation-card.negative .evaluation-text { color: #f87171; }
+
+    .other-choices-section {
+      margin-bottom: 16px;
+    }
+
+    .other-choices-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #27272a;
+      border-radius: 10px;
+      color: #71717a;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .other-choices-toggle:hover {
+      border-color: #3f3f46;
+      color: #a1a1aa;
+    }
+
+    .other-choices-toggle.open {
+      border-color: #3f3f46;
+      background: #18181b;
+    }
+
+    .other-choices-toggle.open svg {
+      transform: rotate(180deg);
+    }
+
+    .other-choices-content {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .other-choices-content.hidden {
+      display: none;
+    }
+
+    .other-choice-card {
+      background: #131316;
+      border: 1px solid #1f1f23;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .other-choice-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .eval-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .eval-badge.positive {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+    }
+
+    .eval-badge.neutral {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+
+    .eval-badge.negative {
+      background: rgba(248, 113, 113, 0.2);
+      color: #f87171;
+    }
+
+    .other-choice-text {
+      font-size: 14px;
+      color: #a1a1aa;
+      margin-bottom: 10px;
+    }
+
+    .other-choice-principle {
+      font-size: 13px;
+      color: #71717a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .other-choice-principle::before {
+      content: "💡";
+      font-size: 12px;
+    }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      background: #f87171;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .next-btn:hover {
+      background: #ef4444;
+    }
+    
+    /* Final Result Screen */
+    .final-screen {
+      display: none;
+      padding: 20px 0;
+    }
+    
+    .final-screen.show {
+      display: block;
+    }
+
+    .score-card {
+      background: linear-gradient(135deg, #1f1f23, #18181b);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .score-display {
+      margin-bottom: 16px;
+    }
+
+    .score-number {
+      font-size: 64px;
+      font-weight: 700;
+      color: #f87171;
+    }
+
+    .score-total {
+      font-size: 32px;
+      color: #71717a;
+    }
+
+    .score-label {
+      font-size: 14px;
+      color: #71717a;
+      margin-bottom: 20px;
+    }
+
+    .score-message {
+      font-size: 15px;
+      color: #a1a1aa;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .score-exp {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(248, 113, 113, 0.2);
+      border-radius: 20px;
+      color: #f87171;
+      font-weight: 600;
+    }
+
+    .principles-collected {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .principles-title {
+      font-size: 14px;
+      color: #71717a;
+      margin-bottom: 16px;
+    }
+
+    .principle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: #1f1f23;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .principle-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .principle-item-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .principle-item-content {
+      flex: 1;
+    }
+
+    .principle-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .principle-item-desc {
+      font-size: 12px;
+      color: #71717a;
+      line-height: 1.5;
+    }
+
+    .share-section {
+      margin-bottom: 24px;
+    }
+    
+    .share-label {
+      font-size: 14px;
+      color: #71717a;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .share-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .share-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      background: #1f1f23;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .share-btn:hover {
+      border-color: #f87171;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .home-btn {
+      display: block;
+      text-align: center;
+      padding: 16px;
+      background: #f87171;
+      border-radius: 12px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .home-btn:hover {
+      background: #ef4444;
+    }
+
+    .restart-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      color: #a1a1aa;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .restart-btn:hover {
+      border-color: #f87171;
+      color: #fff;
+    }
+
+    .promo-section {
+      border-top: 1px solid #27272a;
+      padding-top: 32px;
+    }
+
+    .eclipse-section {
+      margin-bottom: 24px;
+    }
+
+    .eclipse-section-title {
+      font-size: 14px;
+      color: #71717a;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .youtube-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .youtube-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #ef4444;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .youtube-btn:hover {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .books-section {
+      margin-top: 24px;
+    }
+
+    .books-section-title {
+      font-size: 14px;
+      color: #71717a;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .books-grid {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .book-item {
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .book-item img {
+      width: 100px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: transform 0.2s;
+    }
+
+    .book-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .book-item-title {
+      font-size: 12px;
+      color: #a1a1aa;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+      <div class="header-content">
+        <div class="header-category">심리 · 관계</div>
+        <h1>뒷담화 현장</h1>
+        <p>당신의 선택 뒤에 숨겨진 원칙을 발견하세요</p>
+      </div>
+    </div>
+    
+    <div class="progress" id="progress"></div>
+    
+    <div id="game-screen">
+      <div class="scenario-card">
+        <div class="stage-label" id="stage-label">Stage 1</div>
+        <div class="context" id="context"></div>
+        <div class="situation" id="situation"></div>
+      </div>
+      
+      <div class="choices" id="choices"></div>
+      
+      <div class="result-section" id="result-section">
+        <div class="selected-choice">
+          <div class="selected-header">
+            <span class="selected-label">선택한 답변</span>
+            <span class="selected-badge" id="selected-badge">최적의 수</span>
+          </div>
+          <div class="selected-text" id="selected-text"></div>
+        </div>
+        
+        <div class="outcome-card">
+          <div class="outcome-label">결과</div>
+          <div class="outcome-text" id="outcome-text"></div>
+        </div>
+        
+        <div class="principle-card">
+          <div class="principle-header">
+            <span class="principle-icon">💡</span>
+            <span class="principle-label">발견한 원칙</span>
+          </div>
+          <div class="principle-name" id="principle-name"></div>
+          <div class="principle-explanation" id="principle-explanation"></div>
+        </div>
+
+        <div class="evaluation-card" id="evaluation-card">
+          <div class="evaluation-icon" id="evaluation-icon">⚠️</div>
+          <div class="evaluation-text" id="evaluation-text"></div>
+        </div>
+
+        <div class="other-choices-section">
+          <button class="other-choices-toggle" id="other-toggle">
+            <span>다른 선택은?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="other-choices-content hidden" id="other-choices-content"></div>
+        </div>
+        
+        <button class="next-btn" id="next-btn">다음 상황</button>
+      </div>
+    </div>
+    
+    <div class="final-screen" id="final-screen">
+      <div class="score-card">
+        <div class="score-display">
+          <span class="score-number" id="score-number">0</span><span class="score-total">/6</span>
+        </div>
+        <div class="score-label">당신의 심리전 점수</div>
+        <div class="score-message" id="score-message">메시지</div>
+        <div class="score-exp">+30 EXP 획득!</div>
+      </div>
+
+      <div class="principles-collected">
+        <div class="principles-title">🔓 발견한 원칙들</div>
+        <div id="principles-list"></div>
+      </div>
+
+      <div class="share-section">
+        <div class="share-label">친구에게 공유하기</div>
+        <div class="share-buttons">
+          <button class="share-btn" id="native-share-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            공유하기
+          </button>
+          <button class="share-btn" id="copy-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            링크 복사
+          </button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="index.html" class="home-btn">홈으로 돌아가기</a>
+        <button class="restart-btn" id="restart-btn">다시 도전하기</button>
+      </div>
+
+      <div class="promo-section">
+        <div class="eclipse-section">
+          <div class="eclipse-section-title">이클립스 더 알아보기</div>
+          <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="youtube-btn">
+            <span class="youtube-icon">▶</span>
+            <span>유튜브 채널</span>
+          </a>
+        </div>
+
+        <div class="books-section">
+          <div class="books-section-title">이클립스의 책</div>
+          <div class="books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편">
+              <div class="book-item-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편">
+              <div class="book-item-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 시나리오 데이터
+    const scenarios = [
+      // Stage 1: 발견
+      {
+        id: "start",
+        context: "퇴근 준비 중. 화장실 가려고 복도를 지나가는데 휴게실에서 웃음소리가 들린다.",
+        situation: "\"걔 진짜... 솔직히 좀 그렇지 않아?\"\n\n내 이름이 들렸다. 분명히 나를 얘기하고 있다.",
+        choices: [
+          {
+            text: "문을 열고 들어간다",
+            outcome: "문이 열리자 웃음소리가 뚝 끊긴다. 세 명이 당신을 본다. 어색한 침묵. 이제 당신은 '예민한 사람'이 됐다.",
+            principle: "충동적 대면의 비용",
+            principleDesc: "감정이 앞서면 정보 없이 싸움터에 들어가게 된다. 상대는 '그냥 얘기했을 뿐인데'라고 생각하고, 오히려 당신이 과민반응하는 사람으로 보일 수 있다.",
+            evaluation: "negative",
+            evalText: "성급했다. 뭘 들었는지도 모른 채 대면하면, 오히려 내가 불리해진다.",
+            score: 0,
+            nextStage: "confronted"
+          },
+          {
+            text: "문 앞에서 조용히 듣는다",
+            outcome: "숨을 죽이고 듣는다. \"진짜 요즘 왜 저러는지 모르겠어.\" \"그니까, 나만 불편한 줄 알았는데.\" 누가 주도하는지, 뭘 불편해하는지 파악된다.",
+            principle: "정보 비대칭",
+            principleDesc: "상대가 모르는 걸 내가 알 때 선택권이 생긴다. 대응할지, 무시할지, 거리를 둘지 — 정보가 있어야 판단할 수 있다.",
+            evaluation: "positive",
+            evalText: "최적의 선택. '누가, 무엇을, 왜' — 알아야 대응 여부를 결정할 수 있다.",
+            score: 2,
+            nextStage: "listened"
+          },
+          {
+            text: "못 들은 척 지나간다",
+            outcome: "화장실로 향한다. 마음이 좀 불편하지만, 직장에서 모든 말에 반응할 필요는 없다. 내일이면 잊을 수도 있다.",
+            principle: "전략적 무시",
+            principleDesc: "모든 갈등에 에너지를 쓸 필요는 없다. 한 번의 험담이 패턴인지, 일회성인지 모르는 상황에서 반응하면 오히려 손해다.",
+            evaluation: "neutral",
+            evalText: "현실적인 선택. 다만 반복되면 다른 전략이 필요하다.",
+            score: 1,
+            nextStage: "avoided"
+          }
+        ]
+      },
+      
+      // Stage 2A: 직접 대면 후
+      {
+        id: "confronted",
+        context: "세 명이 당황한 표정이다. 그 중 민지가 먼저 말한다. \"어, 언제 왔어?\"",
+        situation: "이미 들어왔다. 이 상황을 어떻게 수습할까?",
+        choices: [
+          {
+            text: "\"무슨 얘기 하고 있었어?\"",
+            outcome: "\"아... 그냥 회사 얘기.\" 민지가 시선을 피한다. 예상대로 진실은 안 나온다. 분위기만 어색해졌다.",
+            principle: "열린 질문의 함정",
+            principleDesc: "\"무슨 얘기했어?\"는 상대에게 도망칠 구멍을 준다. 거짓말할 여지가 있는 질문은 거짓말을 부른다.",
+            evaluation: "negative",
+            evalText: "진실도 못 얻고, 관계만 어색해졌다. 최악의 결과.",
+            score: 0,
+            nextStage: "asked_directly"
+          },
+          {
+            text: "\"아 나 물 마시러 왔어.\" (자연스럽게)",
+            outcome: "물을 마시고 나온다. 그들의 대화가 재개되지 않는다. 당신이 들었는지 안 들었는지 모르니까, 그들은 불안해한다.",
+            principle: "모호함의 압박",
+            principleDesc: "상대가 '내가 뭘 아는지'를 모를 때, 그들은 스스로 불안해하고 행동을 조심하게 된다. 말하지 않는 것도 전략이다.",
+            evaluation: "positive",
+            evalText: "현명한 수습. 이미 들어온 상황에서 최선의 선택.",
+            score: 2,
+            nextStage: "played_dumb"
+          },
+          {
+            text: "\"나 얘기하던 거 맞지? 들었어.\"",
+            outcome: "표정이 굳는다. \"...아, 그게...\" 민지가 말을 더듬는다. 사과는 받을 수 있지만, 이제 당신은 '예민한 사람'으로 찍혔다.",
+            principle: "직접 대면의 비용",
+            principleDesc: "사과를 받아도 관계는 회복되지 않는다. '걔 앞에서 조심해야 해'라는 새로운 낙인이 생긴다. 이긴 것 같지만 진 싸움일 수 있다.",
+            evaluation: "neutral",
+            evalText: "사과는 받았지만, 앞으로 그들은 당신을 '조심해야 할 사람'으로 본다.",
+            score: 1,
+            nextStage: "revealed"
+          }
+        ]
+      },
+      
+      // Stage 2B: 엿들은 후
+      {
+        id: "listened",
+        context: "대화를 들었다. 민지가 주도하고 있었고, 내가 \"요즘 너무 예민하다\"는 얘기였다. 구체적으로 어떤 일 때문인지도 들었다.",
+        situation: "정보를 얻었다. 이제 어떻게 할까?",
+        choices: [
+          {
+            text: "들어가서 \"다 들었어\"라고 한다",
+            outcome: "충격받은 표정들. \"...미안해.\" 민지가 사과한다. 하지만 그 후로 그들은 당신 앞에서 말을 아낀다. 투명인간이 된 느낌.",
+            principle: "즉각 대면의 역효과",
+            principleDesc: "사과를 받아도 관계 역학이 바뀐다. '걔 앞에선 조심해'가 암묵적 규칙이 되고, 당신은 팀 내 자연스러운 소통에서 배제될 수 있다.",
+            evaluation: "neutral",
+            evalText: "사과는 받았지만, 이제 그들은 당신 앞에서 진짜 대화를 안 한다.",
+            score: 1,
+            nextStage: "confronted_with_info"
+          },
+          {
+            text: "일단 지나간다. 스스로 돌아본다",
+            outcome: "들은 내용을 곱씹는다. '예민하다'는 평가가 완전히 틀린 건 아닐 수도 있다. 불편하지만, 남들이 보는 내 모습을 알게 됐다.",
+            principle: "피드백으로서의 뒷담화",
+            principleDesc: "뒷담화는 불쾌하지만, 면전에서 듣기 어려운 솔직한 평가일 수 있다. 감정을 빼고 정보만 취하면, 자기 인식의 도구가 된다.",
+            evaluation: "positive",
+            evalText: "성숙한 선택. 불쾌한 정보에서도 유용한 피드백을 추출했다.",
+            score: 2,
+            nextStage: "self_reflect"
+          },
+          {
+            text: "나중에 민지만 따로 만난다",
+            outcome: "다음 날 민지를 따로 부른다. \"어제 휴게실에서 들었어.\" 민지 표정이 굳는다. 사과는 받았지만, 관계가 어색해졌다.",
+            principle: "1:1 대면의 한계",
+            principleDesc: "집단보다 개인을 상대하는 건 맞지만, 대면 자체가 관계 비용을 수반한다. 사과를 받아도 '걔가 들었대'라는 얘기가 또 돈다.",
+            evaluation: "neutral",
+            evalText: "합리적 선택이지만, 민지는 이제 당신을 불편한 사람으로 기억한다.",
+            score: 1,
+            nextStage: "private_talk"
+          }
+        ]
+      },
+      
+      // Stage 2C: 회피 후
+      {
+        id: "avoided",
+        context: "며칠이 지났다. 딱히 뭔가 달라진 건 없다. 민지랑도 평소처럼 지낸다.",
+        situation: "그런데 비슷한 상황이 또 생겼다. 이번엔 어떻게 할까?",
+        choices: [
+          {
+            text: "이번에도 그냥 지나간다",
+            outcome: "또 지나간다. 사실 직장에서 험담은 흔하다. 모든 걸 신경 쓰면 일을 못 한다. 중요한 건 내 업무 성과다.",
+            principle: "선택적 무시",
+            principleDesc: "모든 갈등에 반응하면 에너지가 고갈된다. 실질적 피해가 없으면, 무시하는 것도 전략이다. 단, 패턴이 되면 다른 대응이 필요하다.",
+            evaluation: "neutral",
+            evalText: "현실적인 선택. 직장에서 모든 말에 반응할 필요는 없다.",
+            score: 1,
+            nextStage: "end_neutral"
+          },
+          {
+            text: "슬쩍 거리를 둔다",
+            outcome: "그 그룹과 자연스럽게 거리를 둔다. 점심도 다른 사람들과 먹고, 필요한 업무 대화만 한다. 에너지 낭비가 줄었다.",
+            principle: "조용한 거리두기",
+            principleDesc: "직접 대면하지 않고도 관계를 재조정할 수 있다. 싸우지 않고 멀어지면, 상대도 눈치채고 행동이 달라진다.",
+            evaluation: "positive",
+            evalText: "가장 현실적인 선택. 에너지는 나를 인정하는 사람에게 쓰는 게 낫다.",
+            score: 2,
+            nextStage: "end_distance"
+          },
+          {
+            text: "다른 동료에게 슬쩍 물어본다",
+            outcome: "\"요즘 민지가 나 뭐라 그래?\" 동료가 어색하게 웃는다. \"왜? 무슨 일 있어?\" 당신의 질문이 새로운 소문이 됐다.",
+            principle: "제3자 개입의 위험",
+            principleDesc: "둘 사이의 문제에 제3자를 끌어들이면 상황이 복잡해진다. 당신의 질문 자체가 '걔가 신경 쓰나 봐'라는 새로운 얘깃거리가 된다.",
+            evaluation: "negative",
+            evalText: "최악의 선택. 뒷담화를 해결하려다 더 큰 뒷담화를 만들었다.",
+            score: 0,
+            nextStage: "end_worse"
+          }
+        ]
+      },
+      
+      // Stage 3A: 정보 가지고 대면 후
+      {
+        id: "confronted_with_info",
+        context: "민지가 사과했다. 하지만 그 후로 분위기가 어색하다. 그들은 당신 앞에서 말을 아낀다.",
+        situation: "팀 점심 시간. 민지 그룹이 따로 간다. 당신을 안 부른다.",
+        choices: [
+          {
+            text: "신경 쓰지 않는다. 다른 사람들과 먹는다",
+            outcome: "다른 동료들과 점심을 먹는다. 사실 더 편하다. 굳이 불편한 사람들과 억지로 어울릴 필요 없다.",
+            principle: "관계 재편성",
+            principleDesc: "모든 사람과 잘 지낼 필요는 없다. 갈등 후 자연스럽게 거리가 생기는 건 정상이다. 새로운 관계에 에너지를 쓰는 게 낫다.",
+            evaluation: "positive",
+            evalText: "건강한 선택. 나를 불편해하는 사람과 억지로 친할 필요 없다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "\"나도 같이 가도 돼?\"라고 물어본다",
+            outcome: "어색한 침묵 후 \"어, 그래...\" 같이 가긴 했지만 분위기가 불편하다. 억지로 끼어든 느낌.",
+            principle: "과잉 친화의 역효과",
+            principleDesc: "갈등 후 바로 친해지려 하면 더 어색해진다. 관계 회복에는 시간이 필요하다. 조급하면 오히려 '눈치 없는 사람'이 된다.",
+            evaluation: "negative",
+            evalText: "너무 급했다. 시간을 두고 자연스럽게 회복되도록 뒀어야 했다.",
+            score: 0,
+            nextStage: "end"
+          },
+          {
+            text: "업무적으로만 잘 지낸다",
+            outcome: "사적 대화는 줄이고, 업무 협업은 프로페셔널하게 한다. 시간이 지나면서 어색함이 옅어진다.",
+            principle: "프로페셔널 거리",
+            principleDesc: "직장 관계는 친구 관계가 아니다. 업무적으로 문제없이 협력하면 충분하다. 감정적 친밀함을 강요하지 않는 게 서로 편하다.",
+            evaluation: "positive",
+            evalText: "현실적인 선택. 직장에서는 이 정도가 적당하다.",
+            score: 2,
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      // Stage 3B: 자기 성찰 선택 후
+      {
+        id: "self_reflect",
+        context: "들은 내용을 곱씹었다. '예민하다'는 평가. 불쾌하지만, 완전히 틀린 말은 아닐 수도 있다.",
+        situation: "솔직히 나도 요즘 좀 날이 서 있었다. 어떻게 할까?",
+        choices: [
+          {
+            text: "내 행동을 조금 조절해본다",
+            outcome: "의식적으로 말투를 부드럽게 하고, 팀원들에게 먼저 인사한다. 몇 주 후, 분위기가 달라졌다. 아무도 모르게 바뀌었다.",
+            principle: "보이지 않는 변화",
+            principleDesc: "대면하지 않고도 상황을 바꿀 수 있다. 내 행동이 바뀌면 상대의 반응도 바뀐다. 가장 조용하고 효과적인 해결책.",
+            evaluation: "positive",
+            evalText: "가장 현명한 선택. 싸우지 않고, 입증하지 않고, 그냥 바꿨다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "그래도 뒷담화는 잘못된 거다. 민지에게 말한다",
+            outcome: "\"내가 좀 예민했던 건 맞아. 근데 뒤에서 말하지 말고 직접 말해줬으면 좋겠어.\" 민지가 고개를 끄덕인다. 어색하지만 솔직한 대화였다.",
+            principle: "인정 + 경계",
+            principleDesc: "내 잘못을 인정하면서도 상대의 잘못도 짚는다. 둘 다 맞을 수 있다. 방어만 하거나 공격만 하는 것보다 효과적이다.",
+            evaluation: "positive",
+            evalText: "균형 잡힌 선택. 성숙한 대화가 가능했다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "내가 뭘 잘못했는데? 그냥 무시한다",
+            outcome: "계속 평소대로 행동한다. 하지만 팀 분위기가 조금씩 멀어지는 게 느껴진다. 뭔가 잘못되고 있다.",
+            principle: "방어적 부정",
+            principleDesc: "불편한 피드백을 완전히 거부하면 성장 기회를 잃는다. 100% 맞는 말이 아니어도, 0%는 더더욱 아닐 수 있다.",
+            evaluation: "negative",
+            evalText: "피드백을 완전히 무시했다. 상황이 나아지지 않을 가능성이 높다.",
+            score: 0,
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      // Stage 3C: 1:1 대화 후
+      {
+        id: "private_talk",
+        context: "민지와 1:1로 얘기했다. 어색했지만 사과는 받았다.",
+        situation: "며칠 후, 민지가 다른 사람에게 \"걔가 다 들었대, 조심해\"라고 말하는 걸 또 들었다.",
+        choices: [
+          {
+            text: "이번엔 그냥 무시한다",
+            outcome: "또 대면해봤자 같은 패턴이다. 그냥 거리를 둔다. 에너지 아끼는 게 낫다.",
+            principle: "손절의 지혜",
+            principleDesc: "한 번은 실수, 두 번은 패턴이다. 같은 행동이 반복되면, 대면보다 거리두기가 효과적이다. 상대는 바뀌지 않는다.",
+            evaluation: "positive",
+            evalText: "현명한 선택. 두 번째 기회를 줬는데 또 같으면, 그게 그 사람이다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "다시 얘기한다. \"또 그러네?\"",
+            outcome: "민지가 당황한다. \"아, 그게 그런 뜻이 아니라...\" 같은 변명이 반복된다. 에너지만 소모된다.",
+            principle: "반복 대면의 한계",
+            principleDesc: "같은 문제로 여러 번 대면하면, 상대는 바뀌지 않고 당신만 '집착하는 사람'이 된다. 한 번이면 충분하다.",
+            evaluation: "negative",
+            evalText: "같은 대화를 두 번 할 필요 없다. 시간 낭비.",
+            score: 0,
+            nextStage: "end"
+          },
+          {
+            text: "팀장에게 보고한다",
+            outcome: "팀장이 민지에게 주의를 줬다. 하지만 이제 당신은 '윗선에 보고하는 사람'이 됐다. 팀 전체가 조심한다... 당신을.",
+            principle: "권위 개입의 역효과",
+            principleDesc: "상사에게 보고하면 문제는 해결되지만, 새로운 문제가 생긴다. 동료들에게 '같이 일하기 불편한 사람'으로 인식될 수 있다.",
+            evaluation: "negative",
+            evalText: "문제는 해결됐지만, 더 큰 비용을 치렀다.",
+            score: 0,
+            nextStage: "end"
+          }
+        ]
+      },
+
+      // Stage 3D: 모른척 후
+      {
+        id: "played_dumb",
+        context: "모른 척하고 나왔다. 그들은 당신이 들었는지 안 들었는지 모른다.",
+        situation: "며칠 후, 민지가 먼저 다가와 말을 건다. 평소보다 친절하다.",
+        choices: [
+          {
+            text: "평소처럼 대한다",
+            outcome: "아무 일 없던 것처럼 지낸다. 민지도 안심한 듯 평소로 돌아온다. 어쩌면 진짜 별 일 아니었을 수도 있다.",
+            principle: "불확실성의 효과",
+            principleDesc: "상대가 '내가 뭘 아는지' 모르면, 스스로 행동을 조심한다. 굳이 대면하지 않아도 억제력이 생긴다.",
+            evaluation: "positive",
+            evalText: "가장 효율적인 선택. 싸우지 않고 결과를 얻었다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "슬쩍 떠본다. \"요즘 휴게실에서 뭔 얘기들 해?\"",
+            outcome: "민지 표정이 굳는다. \"어... 그냥 회사 얘기.\" 이제 민지는 당신이 알고 있다고 확신한다. 어색해졌다.",
+            principle: "모호함의 파괴",
+            principleDesc: "떠보는 순간 모호함이 사라진다. 상대는 '알고 있구나'를 확인하고, 관계가 경직된다. 차라리 모르는 척하는 게 나았다.",
+            evaluation: "negative",
+            evalText: "괜히 떠봤다. 모호함이 주는 이점을 스스로 없앴다.",
+            score: 0,
+            nextStage: "end"
+          },
+          {
+            text: "거리를 둔다. 필요한 대화만 한다",
+            outcome: "굳이 친하게 지내지 않는다. 업무적으로만 대한다. 서로 편하다.",
+            principle: "조용한 경계",
+            principleDesc: "말로 선을 긋지 않아도 행동으로 거리를 둘 수 있다. 대면의 비용 없이 관계를 재조정한다.",
+            evaluation: "positive",
+            evalText: "현명한 선택. 말하지 않고도 경계를 세웠다.",
+            score: 2,
+            nextStage: "end"
+          }
+        ]
+      },
+
+      // Stage 3E: 직접 대면 후 추가 상황
+      {
+        id: "revealed",
+        context: "\"들었어\"라고 말했다. 민지가 사과했지만, 분위기가 서먹해졌다.",
+        situation: "며칠 후 팀 회식이 있다. 민지 그룹과 같은 테이블이다.",
+        choices: [
+          {
+            text: "평소처럼 대화한다",
+            outcome: "의식적으로 평소처럼 행동한다. 처음엔 어색하지만, 시간이 지나면서 풀린다. 직장인의 기본기다.",
+            principle: "프로페셔널 리셋",
+            principleDesc: "감정과 업무를 분리한다. 불편해도 같이 일해야 하면, 어느 정도의 연기는 필요하다. 시간이 해결해주기도 한다.",
+            evaluation: "positive",
+            evalText: "성숙한 선택. 감정보다 상황을 우선했다.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "다른 테이블로 간다",
+            outcome: "대놓고 피하는 모습이 팀 전체에 보인다. \"쟤네 무슨 일 있어?\" 새로운 소문의 주인공이 됐다.",
+            principle: "공개적 회피의 비용",
+            principleDesc: "피하는 모습이 보이면, 그 자체가 새로운 이야깃거리가 된다. 차라리 평소처럼 행동하는 게 관심을 덜 받는다.",
+            evaluation: "negative",
+            evalText: "오히려 주목받았다. 피하려다 더 눈에 띄었다.",
+            score: 0,
+            nextStage: "end"
+          },
+          {
+            text: "일찍 간다고 하고 나간다",
+            outcome: "자연스럽게 빠진다. 아무도 신경 쓰지 않는다. 억지로 버틸 필요 없다.",
+            principle: "전략적 퇴장",
+            principleDesc: "모든 자리에 끝까지 있을 필요 없다. 불편한 상황을 피하는 것도 에너지 관리다. 단, 습관이 되면 고립된다.",
+            evaluation: "neutral",
+            evalText: "무난한 선택. 하지만 매번 이러면 안 된다.",
+            score: 1,
+            nextStage: "end"
+          }
+        ]
+      },
+
+      // Stage 3F: 직접 질문 후
+      {
+        id: "asked_directly",
+        context: "\"무슨 얘기 하고 있었어?\"라고 물었지만, \"그냥 회사 얘기\"라는 답만 돌아왔다.",
+        situation: "진실도 못 얻고 분위기만 어색해졌다. 어떻게 수습할까?",
+        choices: [
+          {
+            text: "\"아 그래?\" 하고 자연스럽게 넘긴다",
+            outcome: "더 파고들지 않고 넘어간다. 어색함이 약간 풀린다. 최선은 아니지만, 최악은 면했다.",
+            principle: "손실 최소화",
+            principleDesc: "이미 잘못된 상황에서는 더 나빠지지 않게 하는 게 최선이다. 실수를 인정하고 빠르게 수습한다.",
+            evaluation: "positive",
+            evalText: "손절을 잘했다. 더 파면 더 어색해졌을 것.",
+            score: 2,
+            nextStage: "end"
+          },
+          {
+            text: "\"진짜? 내 얘기 아니었어?\"라고 다시 묻는다",
+            outcome: "\"아니야, 왜 그래?\" 민지가 의아해한다. 이제 당신이 피해망상 있는 사람처럼 보인다.",
+            principle: "과잉 추궁의 역효과",
+            principleDesc: "증거 없이 계속 의심하면, 상대가 아니라 당신이 문제가 된다. '걔 왜 저래?'의 주인공이 된다.",
+            evaluation: "negative",
+            evalText: "최악의 선택. 이제 당신이 이상한 사람이 됐다.",
+            score: 0,
+            nextStage: "end"
+          },
+          {
+            text: "그냥 나온다. 머리 식히러",
+            outcome: "일단 그 자리를 벗어난다. 냉정해지니 굳이 대응할 필요 없었다는 생각이 든다.",
+            principle: "감정적 거리두기",
+            principleDesc: "화가 날 때 바로 행동하면 후회한다. 일단 물리적으로 떨어지면 생각이 정리된다.",
+            evaluation: "neutral",
+            evalText: "나쁘지 않은 선택. 쿨다운이 필요했다.",
+            score: 1,
+            nextStage: "end"
+          }
+        ]
+      }
+    ];
+
+    // 게임 상태
+    let currentStageIndex = 0;
+    let currentScenario = scenarios[0];
+    let score = 0;
+    let totalStages = 0;
+    let collectedPrinciples = [];
+    let stageHistory = ['start'];
+
+    // DOM 요소
+    const gameScreen = document.getElementById('game-screen');
+    const finalScreen = document.getElementById('final-screen');
+    const progressBar = document.getElementById('progress');
+    const stageLabel = document.getElementById('stage-label');
+    const contextEl = document.getElementById('context');
+    const situationEl = document.getElementById('situation');
+    const choicesEl = document.getElementById('choices');
+    const resultSection = document.getElementById('result-section');
+    const selectedBadge = document.getElementById('selected-badge');
+    const selectedText = document.getElementById('selected-text');
+    const outcomeText = document.getElementById('outcome-text');
+    const principleName = document.getElementById('principle-name');
+    const principleExplanation = document.getElementById('principle-explanation');
+    const evaluationCard = document.getElementById('evaluation-card');
+    const evaluationIcon = document.getElementById('evaluation-icon');
+    const evaluationText = document.getElementById('evaluation-text');
+    const otherToggle = document.getElementById('other-toggle');
+    const otherContent = document.getElementById('other-choices-content');
+    const nextBtn = document.getElementById('next-btn');
+
+    // 초기화
+    function init() {
+      currentStageIndex = 0;
+      currentScenario = scenarios[0];
+      score = 0;
+      totalStages = 0;
+      collectedPrinciples = [];
+      stageHistory = ['start'];
+      
+      gameScreen.classList.remove('hidden');
+      finalScreen.classList.remove('show');
+      
+      renderStage();
+    }
+
+    // 스테이지 렌더링
+    function renderStage() {
+      const scenario = currentScenario;
+      totalStages++;
+      
+      // 진행바 업데이트
+      updateProgress();
+      
+      stageLabel.textContent = `상황 ${totalStages}`;
+      contextEl.textContent = scenario.context;
+      situationEl.innerHTML = scenario.situation.replace(/\n/g, '<br>');
+      
+      // 선택지 렌더링
+      choicesEl.innerHTML = '';
+      scenario.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice.text;
+        btn.addEventListener('click', () => handleChoice(index));
+        choicesEl.appendChild(btn);
+      });
+      
+      // 결과 섹션 숨기기
+      resultSection.classList.remove('show');
+      choicesEl.classList.remove('hidden');
+    }
+
+    // 진행바 업데이트
+    function updateProgress() {
+      const maxStages = 3;
+      progressBar.innerHTML = '';
+      for (let i = 0; i < maxStages; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'progress-bar';
+        if (i < totalStages - 1) bar.classList.add('completed');
+        else if (i === totalStages - 1) bar.classList.add('current');
+        progressBar.appendChild(bar);
+      }
+    }
+
+    // 선택 처리
+    function handleChoice(index) {
+      const choice = currentScenario.choices[index];
+      
+      // 점수 추가
+      score += choice.score;
+      
+      // 원칙 수집
+      collectedPrinciples.push({
+        name: choice.principle,
+        desc: choice.principleDesc,
+        evaluation: choice.evaluation
+      });
+      
+      // 선택지 숨기기
+      choicesEl.classList.add('hidden');
+      
+      // 결과 표시
+      selectedText.textContent = choice.text;
+      
+      // 뱃지 설정
+      if (choice.score === 2) {
+        selectedBadge.textContent = '최적의 수';
+        selectedBadge.className = 'selected-badge optimal';
+      } else if (choice.score === 1) {
+        selectedBadge.textContent = '중립';
+        selectedBadge.className = 'selected-badge neutral';
+      } else {
+        selectedBadge.textContent = '최악의 수';
+        selectedBadge.className = 'selected-badge bad';
+      }
+      
+      outcomeText.textContent = choice.outcome;
+      principleName.textContent = choice.principle;
+      principleExplanation.textContent = choice.principleDesc;
+      
+      // 평가 카드
+      evaluationCard.className = 'evaluation-card ' + choice.evaluation;
+      if (choice.evaluation === 'positive') {
+        evaluationIcon.textContent = '✅';
+      } else if (choice.evaluation === 'neutral') {
+        evaluationIcon.textContent = '⚠️';
+      } else {
+        evaluationIcon.textContent = '❌';
+      }
+      evaluationText.textContent = choice.evalText;
+      
+      // 다른 선택지 표시
+      renderOtherChoices(index);
+      
+      // 다음 버튼
+      if (choice.nextStage === 'end') {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음 상황';
+      }
+      
+      // 결과 섹션 표시
+      resultSection.classList.add('show');
+      
+      // 다음 스테이지 저장
+      stageHistory.push(choice.nextStage);
+    }
+
+    // 다른 선택지 렌더링
+    function renderOtherChoices(selectedIndex) {
+      otherContent.innerHTML = '';
+      otherContent.classList.add('hidden');
+      otherToggle.classList.remove('open');
+      
+      currentScenario.choices.forEach((choice, index) => {
+        if (index === selectedIndex) return;
+        
+        const card = document.createElement('div');
+        card.className = 'other-choice-card';
+        
+        let badgeText, badgeClass;
+        if (choice.score === 2) {
+          badgeText = '최적의 수';
+          badgeClass = 'positive';
+        } else if (choice.score === 1) {
+          badgeText = '중립';
+          badgeClass = 'neutral';
+        } else {
+          badgeText = '최악의 수';
+          badgeClass = 'negative';
+        }
+        
+        card.innerHTML = `
+          <div class="other-choice-header">
+            <span class="eval-badge ${badgeClass}">${badgeText}</span>
+          </div>
+          <div class="other-choice-text">${choice.text}</div>
+          <div class="other-choice-principle">${choice.principle}</div>
+        `;
+        
+        otherContent.appendChild(card);
+      });
+    }
+
+    // 다른 선택지 토글
+    otherToggle.addEventListener('click', () => {
+      otherToggle.classList.toggle('open');
+      otherContent.classList.toggle('hidden');
+    });
+
+    // 다음 버튼
+    nextBtn.addEventListener('click', () => {
+      const nextStageId = stageHistory[stageHistory.length - 1];
+      
+      if (nextStageId === 'end') {
+        showFinalResult();
+      } else {
+        currentScenario = scenarios.find(s => s.id === nextStageId);
+        if (currentScenario) {
+          renderStage();
+        } else {
+          showFinalResult();
+        }
+      }
+    });
+
+    // 최종 결과
+    function showFinalResult() {
+      gameScreen.classList.add('hidden');
+      finalScreen.classList.add('show');
+      
+      const maxScore = totalStages * 2;
+      document.getElementById('score-number').textContent = score;
+      document.querySelector('.score-total').textContent = '/' + maxScore;
+      
+      // 메시지
+      const percentage = score / maxScore;
+      let message;
+      if (percentage >= 0.8) {
+        message = "뛰어난 심리전 감각입니다! 상황을 정확히 읽고 최적의 수를 찾았네요. 관계를 다루는 데 탁월한 능력을 가지고 있습니다.";
+      } else if (percentage >= 0.5) {
+        message = "괜찮은 감각이에요! 몇 가지 상황에서 더 전략적인 선택이 가능했지만, 기본적인 심리 원칙은 이해하고 있네요.";
+      } else {
+        message = "아직 감이 덜 잡혔어요. 하지만 걱정 마세요 — 심리전은 타고나는 게 아니라 배우는 겁니다. 다시 해보면서 패턴을 익혀보세요.";
+      }
+      document.getElementById('score-message').textContent = message;
+      
+      // 원칙 목록
+      const principlesList = document.getElementById('principles-list');
+      principlesList.innerHTML = '';
+      collectedPrinciples.forEach(p => {
+        let icon;
+        if (p.evaluation === 'positive') icon = '🟢';
+        else if (p.evaluation === 'neutral') icon = '🟡';
+        else icon = '🔴';
+        
+        const item = document.createElement('div');
+        item.className = 'principle-item';
+        item.innerHTML = `
+          <div class="principle-item-icon">${icon}</div>
+          <div class="principle-item-content">
+            <div class="principle-item-name">${p.name}</div>
+            <div class="principle-item-desc">${p.desc}</div>
+          </div>
+        `;
+        principlesList.appendChild(item);
+      });
+      
+      // 프로필 저장
+      saveProgress();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 프로필 저장
+    function saveProgress() {
+      const STORAGE_KEY = 'eclipse_mindlab_profile';
+      let saved = localStorage.getItem(STORAGE_KEY);
+      let profile;
+      
+      if (saved) {
+        profile = JSON.parse(saved);
+      } else {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      // 완료 기록
+      if (!profile.completedSims.includes('gossip')) {
+        profile.completedSims.push('gossip');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 추가
+      collectedPrinciples.forEach(p => {
+        const principleStr = p.name;
+        if (!profile.principles.includes(principleStr) && 
+            !profile.principles.find(existing => (typeof existing === 'object' ? existing.name : existing) === principleStr)) {
+          profile.principles.push(principleStr);
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+
+    // 공유
+    document.getElementById('native-share-btn').addEventListener('click', async () => {
+      const maxScore = totalStages * 2;
+      const text = `심리전 시뮬레이터 - 🎯 나의 심리전 점수: ${score}/${maxScore}점\n당신의 심리전 감각을 테스트해보세요!\nhttps://eclipse-mindlab.github.io/mindlab/sim-gossip.html`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '심리전 시뮬레이터', text: text });
+        } catch (e) {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('결과가 클립보드에 복사되었습니다!');
+        } catch (e) {
+          alert('공유 기능을 사용할 수 없습니다.');
+        }
+      }
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', async () => {
+      const maxScore = totalStages * 2;
+      const text = `심리전 시뮬레이터 - 🎯 나의 심리전 점수: ${score}/${maxScore}점\n당신의 심리전 감각을 테스트해보세요!\nhttps://eclipse-mindlab.github.io/mindlab/sim-gossip.html`;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('링크가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        alert('복사 기능을 사용할 수 없습니다.');
+      }
+    });
+
+    // 다시하기
+    document.getElementById('restart-btn').addEventListener('click', () => {
+      init();
+    });
+
+    // 시작
+    init();
+  </script>
+</body>
+</html>
