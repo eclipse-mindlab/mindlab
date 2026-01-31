@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>죽음을 앞둔 선택 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="죽음을 앞둔 선택 - 이클립스의 딜렘">
+  <meta property="og:description" content="6개월이 남았다. 당신은 어떻게 살겠는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #6b7280;
+      --sim-primary-light: #9ca3af;
+      --sim-primary-bg: rgba(107, 114, 128, 0.1);
+      --sim-primary-border: rgba(107, 114, 128, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">죽음을 앞둔 선택</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 철학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">💀</div>
+        <div class="sim-result-label" id="resultLabel">당신의 죽음관</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">관련 콘텐츠</div>
+        
+        <!-- 관련 영상 -->
+        <a href="https://youtu.be/tO6r6AzUq3I?si=I6wM7MvkEhRsSaTM" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>죽음관 12분 정리</span>
+        </a>
+        
+        <!-- 철학책 -->
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-desc" style="font-size: 13px; color: #a1a1aa; text-align: center; margin-bottom: 12px; line-height: 1.6;">
+            이 시뮬레이터에 등장한 소크라테스, 플라톤, 에피쿠로스,<br>
+            니체, 하이데거, 카뮈, 사르트르의 철학을 더 깊이 알고 싶다면
+          </div>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item" style="display: flex; flex-direction: column; align-items: center;">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover" style="width: 120px; height: auto; border-radius: 8px;">
+            <div class="sim-book-title" style="margin-top: 12px; font-size: 14px; color: #fff;">세계척학전집 - 훔친 철학 편</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    // 게임 상태
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    // 모든 스테이지
+    const stages = [
+      // Stage 1: 선고
+      {
+        badge: 'STAGE 1: 선고',
+        title: '6개월',
+        desc: '병원. 의사가 검사 결과지를 내려놓으며 말한다.\n\n"솔직하게 말씀드리겠습니다. 6개월 정도 남았습니다."',
+        highlight: '당신의 첫 반응은?',
+        choices: [
+          {
+            id: 'deny',
+            text: '"검사 다시 해주세요."',
+            meaning: '받아들이기 싫은 현실을 밀어낸다. 이것은 자연스러운 반응이다. 마음이 충격을 흡수할 시간이 필요하다.',
+            principle: {
+              name: '부정',
+              desc: '죽음을 직면했을 때 나타나는 첫 번째 방어 기제. 퀴블러-로스가 정의한 애도의 5단계 중 첫 단계다.',
+              icon: '🚫'
+            },
+            quote: '"부정은 마음의 완충장치다." - 엘리자베스 퀴블러-로스'
+          },
+          {
+            id: 'accept',
+            text: '"...알겠습니다."',
+            meaning: '저항하지 않는다. 통제할 수 없는 것에 에너지를 쓰지 않겠다는 선택.',
+            principle: {
+              name: '스토아적 수용',
+              desc: '우리가 통제할 수 있는 것과 없는 것을 구분하라. 통제 밖의 것에 흔들리지 않는 것이 지혜다.',
+              icon: '🏛️'
+            },
+            quote: '"우리를 괴롭히는 것은 일 자체가 아니라, 그것에 대한 우리의 판단이다." - 에픽테토스'
+          },
+          {
+            id: 'angry',
+            text: '"왜 하필 저예요? 뭘 잘못했는데요?"',
+            meaning: '세상의 불공정함에 분노한다. 왜 나인가? 이 질문에는 답이 없다. 그래서 더 화가 난다.',
+            principle: {
+              name: '부조리에 대한 분노',
+              desc: '세상은 공정하지 않다. 이유 없이 고통받는다는 사실 자체가 인간을 분노하게 만든다.',
+              icon: '😤'
+            },
+            quote: '"부조리란 이성적 인간과 무관심한 세계의 대립이다." - 알베르 카뮈'
+          },
+          {
+            id: 'laugh',
+            text: '(웃음) "6개월이나요?"',
+            meaning: '역설적 반응. 최악의 소식 앞에서 오히려 자유로워진다. 더 이상 잃을 것이 없다.',
+            principle: {
+              name: '죽음 앞의 자유',
+              desc: '죽음을 확정적으로 마주하면, 역설적으로 삶의 속박에서 풀려난다. 하이데거가 말한 본래적 실존의 시작.',
+              icon: '🕊️'
+            },
+            quote: '"죽음을 향한 존재만이 진정으로 자유롭다." - 마르틴 하이데거'
+          },
+          {
+            id: 'cynical',
+            text: '"그래서요? 어쩌라고요?"',
+            meaning: '냉소. 감정을 차단한다. 의사도, 병도, 죽음도 - 다 의미 없다는 태도.',
+            principle: {
+              name: '냉소적 방어',
+              desc: '의미를 부정함으로써 고통을 회피한다. 상처받지 않기 위해 먼저 모든 것을 무의미하게 만든다.',
+              icon: '😏'
+            },
+            quote: '"냉소주의자는 모든 것의 가격을 알지만 가치는 모른다." - 오스카 와일드'
+          }
+        ]
+      },
+      
+      // Stage 2: 그날 밤
+      {
+        badge: 'STAGE 2: 그날 밤',
+        title: '천장을 보며',
+        desc: '집에 돌아왔다. 침대에 누워 천장을 본다.\n\n6개월. 180일. 4,320시간.\n\n뭘 해야 하지?',
+        choices: [
+          {
+            id: 'bucket',
+            text: '버킷리스트를 쓴다. 당장 내일부터.',
+            meaning: '남은 시간을 최대한 채우겠다. 하고 싶었던 것, 미뤘던 것, 꿈꿨던 것.',
+            principle: {
+              name: '카르페 디엠',
+              desc: '오늘을 잡아라. 내일은 약속되지 않았다. 순간을 최대한 살아라.',
+              icon: '📝'
+            },
+            quote: '"오늘을 잡아라, 가능한 한 내일을 믿지 말라." - 호라티우스'
+          },
+          {
+            id: 'normal',
+            text: '아무것도 안 한다. 원래 그랬듯이.',
+            meaning: '특별해지려 하지 않는다. 일상이 이미 충분하다면, 죽음 앞에서도 바꿀 이유가 없다.',
+            principle: {
+              name: '일상의 신성함',
+              desc: '깨달음은 특별한 곳에 없다. 밥 먹고, 잠자고, 걷는 것. 평범한 일상이 곧 수행이다.',
+              icon: '🍵'
+            },
+            quote: '"도를 깨닫기 전에는 나무를 패고 물을 긷는다. 깨달은 후에도 나무를 패고 물을 긷는다." - 선불교'
+          },
+          {
+            id: 'legacy',
+            text: '뭔가 남겨야 해. 책이든, 영상이든.',
+            meaning: '육체는 죽어도 흔적은 남긴다. 기억되고 싶다. 완전히 사라지고 싶지 않다.',
+            principle: {
+              name: '불멸 프로젝트',
+              desc: '인간은 죽음을 알기에, 상징적 불멸을 추구한다. 업적, 자녀, 예술 - 모두 죽음을 부정하려는 시도다.',
+              icon: '📚'
+            },
+            quote: '"인간 문명의 상당 부분은 죽음의 공포를 부정하려는 시도다." - 어니스트 베커'
+          },
+          {
+            id: 'people',
+            text: '그동안 못 만난 사람들에게 연락한다.',
+            meaning: '결국 남는 건 관계다. 일도, 돈도, 명예도 아닌 사람.',
+            principle: {
+              name: '관계의 본질',
+              desc: '인간은 관계 속에서만 진정한 자기가 된다. "나"는 "너"를 통해서만 존재한다.',
+              icon: '🤝'
+            },
+            quote: '"모든 참된 삶은 만남이다." - 마르틴 부버'
+          },
+          {
+            id: 'alone',
+            text: '아무에게도 말하지 않는다.',
+            meaning: '혼자 감당한다. 동정받기 싫다. 달라진 눈빛을 견딜 수 없다.',
+            principle: {
+              name: '고독한 죽음',
+              desc: '죽음은 결국 혼자 맞이하는 것이다. 누구도 대신 죽어줄 수 없다. 그래서 혼자 준비한다.',
+              icon: '🚶'
+            },
+            quote: '"인간은 혼자 태어나 혼자 죽는다." - 블레즈 파스칼'
+          },
+          {
+            id: 'pray',
+            text: '신에게 기도한다.',
+            meaning: '인간의 한계 앞에서 초월적 존재에게 의탁한다. 내가 이해할 수 없어도, 더 큰 계획이 있을 것이다.',
+            principle: {
+              name: '초월적 의탁',
+              desc: '인간 이성으로 이해할 수 없는 것들이 있다. 그때 믿음이 시작된다. 신, 운명, 우주의 섭리.',
+              icon: '🙏'
+            },
+            quote: '"이해할 수 없기에 믿는다." - 테르툴리아누스'
+          }
+        ]
+      },
+      
+      // Stage 3: 한 달 후
+      {
+        badge: 'STAGE 3: 한 달 후',
+        title: '죽음이란 뭘까',
+        desc: '한 달이 지났다. 가까운 사람이 조심스럽게 묻는다.\n\n"...죽음이 뭐라고 생각해?"',
+        choices: [
+          {
+            id: 'nothing',
+            text: '"끝이지. 그냥 없어지는 거야."',
+            meaning: '의식은 뇌의 산물이다. 뇌가 멈추면 나도 멈춘다. 두려워할 대상조차 없다.',
+            principle: {
+              name: '유물론적 죽음관',
+              desc: '죽음 이후에는 아무것도 없다. 그래서 두려워할 것도 없다. 에피쿠로스는 말했다 - 죽음은 우리와 무관하다고.',
+              icon: '⚫'
+            },
+            quote: '"죽음은 우리와 무관하다. 우리가 있으면 죽음은 없고, 죽음이 오면 우리가 없다." - 에피쿠로스'
+          },
+          {
+            id: 'afterlife',
+            text: '"다른 곳으로 가는 거 아닐까."',
+            meaning: '육체는 껍데기다. 진짜 나는 영혼이고, 영혼은 죽지 않는다.',
+            principle: {
+              name: '영혼 불멸',
+              desc: '죽음은 끝이 아니라 이동이다. 플라톤은 영혼의 불멸을, 종교는 내세를 말한다.',
+              icon: '✨'
+            },
+            quote: '"철학은 죽음의 연습이다." - 플라톤'
+          },
+          {
+            id: 'unknown',
+            text: '"모르겠어. 아무도 모르잖아."',
+            meaning: '정직한 대답이다. 죽어본 사람은 돌아오지 않았다. 확신은 거짓이다.',
+            principle: {
+              name: '불가지론',
+              desc: '알 수 없는 것에 대해 모른다고 인정하는 것. 이것이 소크라테스가 말한 진정한 지혜의 시작이다.',
+              icon: '❓'
+            },
+            quote: '"나는 내가 아무것도 모른다는 것을 안다." - 소크라테스'
+          },
+          {
+            id: 'meaning',
+            text: '"삶에 의미를 주는 거지."',
+            meaning: '죽음이 있어서 시간이 소중하다. 영원히 산다면 지금은 의미가 없다.',
+            principle: {
+              name: '유한성의 의미',
+              desc: '한계가 있어서 선택이 의미를 갖는다. 무한한 시간에서는 아무것도 중요하지 않다.',
+              icon: '⏳'
+            },
+            quote: '"죽음을 직시할 때만 삶이 본래적이 된다." - 마르틴 하이데거'
+          },
+          {
+            id: 'avoid',
+            text: '"별로 생각 안 해. 생각해서 뭐해."',
+            meaning: '생각한다고 바뀌는 것 없다. 죽음을 묻어두고 하루하루를 산다.',
+            principle: {
+              name: '죽음의 망각',
+              desc: '대부분의 인간은 죽음을 외면하며 산다. 하이데거가 비판한 "세인"의 삶. 편하지만 진정성이 없다.',
+              icon: '😶'
+            },
+            quote: '"사람들은 죽음을 언젠가 일어나지만 당장은 아닌 것으로 치부한다." - 하이데거'
+          },
+          {
+            id: 'fear',
+            text: '"솔직히? 무섭지."',
+            meaning: '두렵다고 인정한다. 죽음 공포는 부끄러운 게 아니다. 인간의 가장 근본적인 감정이다.',
+            principle: {
+              name: '죽음 공포',
+              desc: '어니스트 베커에 따르면, 인간 행동의 상당 부분은 죽음 공포에서 비롯된다. 공포를 인정하는 것이 첫걸음이다.',
+              icon: '😨'
+            },
+            quote: '"죽음의 공포는 모든 것의 밑바탕에 있다." - 어니스트 베커'
+          }
+        ]
+      },
+      
+      // Stage 4: 마지막 날
+      {
+        badge: 'STAGE 4: 마지막 날',
+        title: '눈을 감기 전',
+        desc: '마지막 날이 왔다.\n\n숨이 가빠진다. 의식이 희미해진다.\n\n마지막 생각은...',
+        choices: [
+          {
+            id: 'enough',
+            text: '"됐어. 충분히 살았어."',
+            meaning: '운명을 받아들인다. 주어진 삶에 감사한다. 더 바라지 않는다.',
+            principle: {
+              name: '아모르 파티',
+              desc: '운명을 사랑하라. 일어난 모든 일, 일어날 모든 일을 긍정하라. 니체의 가장 높은 삶의 태도.',
+              icon: '💜'
+            },
+            quote: '"운명을 사랑하라. 그것이 최고의 삶이다." - 프리드리히 니체'
+          },
+          {
+            id: 'more',
+            text: '"더 살고 싶었는데."',
+            meaning: '삶에 대한 집착. 끝까지 살고 싶은 것, 그것도 자연스럽다.',
+            principle: {
+              name: '삶에의 의지',
+              desc: '쇼펜하우어가 말한 맹목적 삶의 충동. 이성으로 제어할 수 없는 근원적 욕구. 살고 싶다는 것.',
+              icon: '🔥'
+            },
+            quote: '"삶에의 의지는 가장 근원적이고 무조건적인 것이다." - 쇼펜하우어'
+          },
+          {
+            id: 'thanks',
+            text: '"고마웠어, 다들."',
+            meaning: '감사로 마무리한다. 원망도, 미련도 아닌 감사.',
+            principle: {
+              name: '감사의 철학',
+              desc: '삶 자체가 선물이다. 주어진 것에 감사하는 태도. 스토아 철학과 종교적 지혜가 공유하는 덕목.',
+              icon: '🙏'
+            },
+            quote: '"감사하는 마음은 가장 위대한 덕이다." - 키케로'
+          },
+          {
+            id: 'meaningless',
+            text: '"결국 아무 의미 없었네."',
+            meaning: '끝에서 돌아보니 다 부질없다. 노력도, 성취도, 관계도.',
+            principle: {
+              name: '허무',
+              desc: '모든 의미는 인간이 만든 환상이다. 죽음 앞에서 그 환상이 벗겨진다. 니힐리즘의 직시.',
+              icon: '🕳️'
+            },
+            quote: '"태어났다는 것이 이미 불행의 시작이다." - 에밀 시오랑'
+          },
+          {
+            id: 'next',
+            text: '"다음엔 더 잘 살아야지."',
+            meaning: '이번 생은 끝나도 다음이 있다고 믿는다. 윤회, 환생, 새로운 시작.',
+            principle: {
+              name: '윤회적 희망',
+              desc: '삶은 원환한다. 이번 생의 업은 다음 생으로 이어진다. 불교와 힌두교의 핵심 세계관.',
+              icon: '🔄'
+            },
+            quote: '"죽음은 끝이 아니라 변화다." - 붓다'
+          },
+          {
+            id: 'empty',
+            text: '(아무 생각 없이 눈을 감는다)',
+            meaning: '생각도 집착이다. 마지막 순간에도 무언가를 생각해야 한다는 강박을 놓는다.',
+            principle: {
+              name: '무심',
+              desc: '마음을 비운다. 집착도, 미련도, 생각도 내려놓는다. 선불교가 추구하는 궁극의 경지.',
+              icon: '🌊'
+            },
+            quote: '"생각이 일어나면 알아차리고 놓아라." - 선불교'
+          }
+        ]
+      }
+    ];
+    
+    // DOM 요소
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    // 화면 전환
+    function showScreen(screen) {
+      [gameScreen, explanationScreen, resultScreen].forEach(s => s.classList.add('hidden'));
+      screen.classList.remove('hidden');
+    }
+    
+    // 스테이지 렌더링
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').textContent = stage.desc;
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const quoteEl = document.getElementById('situationQuote');
+      if (stage.quote) {
+        quoteEl.textContent = stage.quote;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+      
+      // 선택지 렌더링
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 선택 처리
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    // 해설 화면
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentStageIndex >= stages.length - 1) {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음으로';
+      }
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 다음 버튼
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    // 결과 계산
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      // Stage 1 반응 기반
+      const stage1 = choiceIds[0];
+      // Stage 2 시간 활용
+      const stage2 = choiceIds[1];
+      // Stage 3 죽음관
+      const stage3 = choiceIds[2];
+      // Stage 4 마지막
+      const stage4 = choiceIds[3];
+      
+      // 유형 판정 로직
+      // 스토아적 현자: 수용 + 일상 또는 담담한 선택들
+      if ((stage1 === 'accept' || stage4 === 'enough' || stage4 === 'thanks') && 
+          (stage2 === 'normal' || stage3 === 'nothing' || stage3 === 'meaning')) {
+        return {
+          icon: '🏛️',
+          title: '스토아적 현자',
+          desc: '당신은 죽음을 담담히 받아들입니다. 통제할 수 없는 것에 저항하지 않고, 주어진 삶에 감사합니다. 에픽테토스와 마르쿠스 아우렐리우스가 추구한 지혜의 길을 걷고 있습니다.'
+        };
+      }
+      
+      // 실존적 투사: 자유, 의미, 직시
+      if ((stage1 === 'laugh' || stage3 === 'meaning') && 
+          (stage4 === 'enough' || stage4 === 'more')) {
+        return {
+          icon: '⚔️',
+          title: '실존적 투사',
+          desc: '당신은 죽음을 직시하고 그 안에서 자유를 찾습니다. 삶의 유한함이 오히려 의미를 만든다고 믿습니다. 하이데거와 사르트르가 말한 본래적 실존을 살고 있습니다.'
+        };
+      }
+      
+      // 쾌락주의자: 버킷리스트, 카르페 디엠
+      if (stage2 === 'bucket') {
+        return {
+          icon: '🎉',
+          title: '쾌락주의자',
+          desc: '당신은 남은 시간을 최대한 즐기려 합니다. 호라티우스의 "카르페 디엠"을 실천합니다. 내일은 없을 수 있으니, 오늘을 잡으세요.'
+        };
+      }
+      
+      // 허무주의자: 냉소, 무의미
+      if ((stage1 === 'cynical' || stage4 === 'meaningless') && 
+          (stage3 === 'avoid' || stage3 === 'nothing')) {
+        return {
+          icon: '🕳️',
+          title: '허무주의자',
+          desc: '당신은 삶의 무의미함을 직시합니다. 모든 것이 부질없다는 것을 알지만, 그래서 더 자유롭기도 합니다. 시오랑이 말한 "태어난 것의 불행"을 이해하는 사람입니다.'
+        };
+      }
+      
+      // 영적 순례자: 기도, 영혼 불멸, 윤회
+      if ((stage2 === 'pray' || stage3 === 'afterlife' || stage4 === 'next')) {
+        return {
+          icon: '✨',
+          title: '영적 순례자',
+          desc: '당신은 죽음 너머의 세계를 믿습니다. 플라톤의 영혼 불멸이든, 종교적 내세든, 윤회든 - 이 세상이 전부가 아니라는 희망을 품고 있습니다.'
+        };
+      }
+      
+      // 관계 중심자: 사람, 감사
+      if ((stage2 === 'people' || stage4 === 'thanks')) {
+        return {
+          icon: '🤝',
+          title: '관계 중심자',
+          desc: '당신에게 삶의 의미는 사람입니다. 마르틴 부버가 말한 "나와 너"의 만남이 진정한 삶이라고 믿습니다. 마지막까지 소중한 사람들과 함께하는 것이 당신의 선택입니다.'
+        };
+      }
+      
+      // 유산 건설자: 남기기
+      if (stage2 === 'legacy') {
+        return {
+          icon: '📚',
+          title: '유산 건설자',
+          desc: '당신은 무언가를 남기고 싶어합니다. 어니스트 베커가 말한 "불멸 프로젝트"를 추구합니다. 육체는 죽어도 당신의 흔적은 남을 것입니다.'
+        };
+      }
+      
+      // 기본값: 구도자
+      return {
+        icon: '🌅',
+        title: '삶의 구도자',
+        desc: '당신은 하나의 태도로 정의되지 않습니다. 죽음 앞에서 다양한 감정과 생각이 교차합니다. 그것이 인간입니다. 답을 찾는 여정 자체가 의미 있습니다.'
+      };
+    }
+    
+    // 결과 화면
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      // 발견한 원칙 표시
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      // 프로필 저장
+      saveProgress(result);
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 프로필 저장
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      // 완료 체크 및 경험치
+      if (!profile.completedSims.includes('death')) {
+        profile.completedSims.push('death');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 저장 (문자열로)
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 공유
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나의 죽음관 유형: ${result.title}
+
+"6개월 남았습니다."
+이 말을 들으면 당신은 어떻게 하시겠습니까?
+
+▶ 테스트 해보기
+https://bit.ly/3Z9ZFPq`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '죽음을 앞둔 선택', text });
+        } catch (e) {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('결과가 클립보드에 복사되었습니다!');
+        } catch (e) {
+          alert('공유 기능을 사용할 수 없습니다.');
+        }
+      }
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>

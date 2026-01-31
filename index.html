@@ -900,6 +900,7 @@
         { id: 'clone', title: '복제인간', desc: '완벽한 복제본이 나타났다. 누가 진짜인가?', url: 'sim-clone.html' }
       ],
       philosophy: [
+        { id: 'death', title: '죽음을 앞둔 선택', desc: '6개월이 남았다. 당신은 어떻게 살겠는가?', url: 'sim-death.html' },
         { id: 'trolley', title: '트롤리 딜레마', desc: '당신의 도덕적 기준은 어디까지 흔들릴까?', url: 'sim-trolley.html' },
         { id: 'experience_machine', title: '경험 기계', desc: '완벽한 가짜 행복 vs 불완전한 현실', url: 'sim-experience-machine.html' }
       ],
@@ -912,7 +913,7 @@
     };
 
     // 도감 총 원칙 수 (dex.html과 동기화 필요)
-    const DEX_TOTAL = 106;
+    const DEX_TOTAL = 151;
 
     let profile = {
       version: CURRENT_VERSION,
@@ -923,6 +924,9 @@
       principles: []
     };
 
+    // 유효한 원칙 목록 (dex.html ALL_PRINCIPLES와 동기화)
+    const VALID_PRINCIPLES = ['직접 대면','질문형 압박','관망','사실 고정','전략적 관용','철회','관용 + 방향 제시','경계 설정','경고','공개적 개입','사전 허락','포기','선 긋고 리셋','거리 유지','주도권 확보','과잉 양보','신뢰 회복 확인','공유 크레딧','경계 후 협력','값비싼 교훈','긴장 완화','냉전 유지','늦은 경계','뒤늦은 고발','미래 지향','삼킨 분노','실용적 화해','업무 분리','패턴 고착','공개적 압박의 역효과','개인적 접근','소극적 기대의 함정','감정 대 감정의 악순환','감정 인정 후 본론','과도한 양보','반복되는 약속의 평가절하','작은 단위로 쪼개기','열린 질문과 경청','대면의 힘','자기 상황 공개','간접 소통의 리스크','매몰비용의 손절','감정과 문제의 분리','구체적 약속','학습된 무력감','지속적 요청','수업료','마감의 힘','직접적 질문','구체적 실행 계획','불완전한 마무리','상호 이해의 힘','성공 경험의 강화','솔직한 인정','신뢰의 회복','자기 주장','자발적 동기','정당화의 함정','조건부 관용','쾌락주의','진정성','철학적 보류','급진적 주관주의','가치의 위계','실재론','회의주의','실용주의','창조적 니힐리즘','자유의지 존중','자기 정직의 의무','의미 추구','중용','사회적 존재','관계의 양면성','부조리의 수용','방법적 회의','도구주의','진실의 무조건적 가치','자기 극복','사랑과 연대','결과주의','행위의 도덕성','보편적 공정','생명 가치의 차등','극단적 공정','특별한 의무','결과의 동등성','행위의 직접성','임계점 윤리','절대적 의무','응보적 정의','생명의 절대성','동의 기반 윤리','행위자 중심 윤리','확장된 자아','갈등의 해결','실용적 정체성','선택의 총합','공유된 정체성','내면의 연속성','타인의 인정','사회적 정체성','숨겨진 자아','실용적 선택','본질 추구','연결의 힘','협력의 가치','생존 우선','결단의 순간','신중한 대기','충동적 대면의 비용','정보 비대칭','전략적 무시','열린 질문의 함정','모호함의 압박','직접 대면의 비용','피드백으로서의 뒷담화','선택적 무시','조용한 거리두기','제3자 개입의 위험','관계 재편성','프로페셔널 거리','보이지 않는 변화','인정 + 경계','손절의 지혜','불확실성의 효과','조용한 경계','손실 최소화','부정','스토아적 수용','부조리에 대한 분노','죽음 앞의 자유','냉소적 방어','카르페 디엠','일상의 신성함','불멸 프로젝트','관계의 본질','고독한 죽음','초월적 의탁','유물론적 죽음관','영혼 불멸','불가지론','유한성의 의미','죽음의 망각','죽음 공포','아모르 파티','삶에의 의지','감사의 철학','허무','윤회적 희망','무심'];
+
     function loadProfile() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -930,6 +934,19 @@
         if (!p.version || p.version < CURRENT_VERSION) {
           p = migrateProfile(p);
         }
+        
+        // 유효하지 않은 원칙 제거 (VALID_PRINCIPLES에 없는 것)
+        if (p.principles && p.principles.length > 0) {
+          const beforeCount = p.principles.length;
+          p.principles = p.principles.filter(pr => {
+            const name = typeof pr === 'string' ? pr : (pr && pr.name ? pr.name : null);
+            return name && VALID_PRINCIPLES.includes(name);
+          });
+          if (p.principles.length !== beforeCount) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+          }
+        }
+        
         profile = p;
         return true;
       }
@@ -1081,11 +1098,9 @@
       
       document.getElementById('statCleared').textContent = profile.completedSims.length;
       
-      // 발견한 원칙 수 (객체/문자열 모두 처리, 실제 도감에 있는 것만 카운트)
+      // 발견한 원칙 수 (VALID_PRINCIPLES에 있는 것만 카운트)
       const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
-      const validPrinciples = principleNames.filter(name => 
-        typeof name === 'string' && name.length > 0
-      );
+      const validPrinciples = principleNames.filter(name => VALID_PRINCIPLES.includes(name));
       document.getElementById('statPrinciples').textContent = validPrinciples.length;
 
       // 마인드 스토리 목록
@@ -1208,8 +1223,13 @@
         `;
       }).join('');
 
-      // 원칙 도감 진행도 업데이트
-      const dexCount = profile.principles ? profile.principles.length : 0;
+      // 원칙 도감 진행도 업데이트 (VALID_PRINCIPLES에 있는 것만 카운트)
+      const dexPrincipleNames = profile.principles
+        ? profile.principles
+            .map(p => typeof p === 'string' ? p : (p && p.name ? p.name : null))
+            .filter(name => name && VALID_PRINCIPLES.includes(name))
+        : [];
+      const dexCount = dexPrincipleNames.length;
       document.getElementById('dexCount').textContent = `${dexCount}/${DEX_TOTAL}`;
       document.getElementById('dexProgressFill').style.width = `${(dexCount/DEX_TOTAL)*100}%`;
 
