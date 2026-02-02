@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>복수 시뮬레이터 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="복수 시뮬레이터 - 이클립스의 딜렘">
+  <meta property="og:description" content="복수할 기회가 왔다. 당신은 어떻게 할 것인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #ef4444;
+      --sim-primary-light: #f87171;
+      --sim-primary-bg: rgba(239, 68, 68, 0.1);
+      --sim-primary-border: rgba(239, 68, 68, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">복수 시뮬레이터</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">⚔️</div>
+        <div class="sim-result-label" id="resultLabel">당신의 복수관</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    // 게임 상태
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    // 모든 스테이지
+    const stages = [
+      // Stage 1: 배신
+      {
+        badge: 'STAGE 1: 배신',
+        title: '신뢰의 붕괴',
+        desc: '오랫동안 믿었던 친구가 있었다.\n\n그 친구가 당신을 배신했다. 당신의 비밀을 퍼뜨리고, 뒤에서 험담했다. 사람들 앞에서 당신을 망신시켰다.\n\n당신은 크게 상처받았다.',
+        highlight: '1년이 지났다. 아직도 그때 일이 생각난다.',
+        choices: [
+          {
+            id: 'still_angry',
+            text: '여전히 분노가 사라지지 않는다',
+            subtext: '잊으려 해도 잊히지 않는다',
+            meaning: '상처가 깊을수록 회복에 시간이 오래 걸립니다. 분노는 자연스러운 감정입니다.',
+            principle: {
+              name: '원한의 심리학',
+              desc: '해결되지 않은 분노는 마음속에 남아 반복적으로 떠오른다. 이를 "침투적 사고"라 한다.',
+              icon: '🔥'
+            },
+            quote: '"용서하지 않는 것은 독을 마시며 상대가 죽기를 바라는 것이다." - 불교 속담'
+          },
+          {
+            id: 'moved_on',
+            text: '이제는 무덤덤하다',
+            subtext: '신경 쓸 에너지도 아깝다',
+            meaning: '시간이 지나며 감정이 희석되었습니다. 또는 감정을 억압했을 수도 있습니다.',
+            principle: {
+              name: '감정의 자연 소멸',
+              desc: '모든 감정은 시간이 지나면 강도가 약해진다. 하지만 해결되지 않으면 다른 형태로 나타날 수 있다.',
+              icon: '⏳'
+            },
+            quote: '"시간은 모든 상처를 치유한다. 하지만 흉터는 남긴다." - 로즈 케네디'
+          },
+          {
+            id: 'forgiven',
+            text: '용서하기로 했다',
+            subtext: '내 마음의 평화를 위해',
+            meaning: '용서는 상대를 위한 것이 아니라 자신을 위한 것입니다. 원한에서 자유로워지는 선택입니다.',
+            principle: {
+              name: '용서의 역설',
+              desc: '용서는 상대를 위한 것 같지만, 실제로는 자신을 원한에서 해방시키는 행위다.',
+              icon: '🕊️'
+            },
+            quote: '"용서는 포로를 풀어주는 것이다. 그 포로가 자신임을 깨닫는 것이다." - 루이스 스미드'
+          },
+          {
+            id: 'waiting',
+            text: '복수할 기회를 기다리고 있다',
+            subtext: '때가 오면 갚아주겠다',
+            meaning: '응보의 욕구가 남아있습니다. 정의에 대한 갈망이기도 합니다.',
+            principle: {
+              name: '응보 욕구',
+              desc: '잘못에는 대가가 따라야 한다는 인간의 본능적 정의감. 진화적으로 협력을 유지하기 위한 메커니즘이다.',
+              icon: '⚖️'
+            },
+            quote: '"복수는 야생의 정의다." - 프랜시스 베이컨'
+          }
+        ]
+      },
+      
+      // Stage 2: 기회
+      {
+        badge: 'STAGE 2: 기회',
+        title: '우연한 발견',
+        desc: '그 친구의 치명적인 약점을 알게 되었다.\n\n불법은 아니지만, 알려지면 그 친구의 평판은 끝장날 것이다. 직장도, 인간관계도 무너질 수 있다.',
+        highlight: '당신의 손에 결정권이 있다.',
+        choices: [
+          {
+            id: 'spread',
+            text: '바로 퍼뜨린다',
+            subtext: '당한 만큼 돌려줘야지',
+            meaning: '즉각적인 응보를 선택했습니다. 오랜 분노가 행동으로 전환됩니다.',
+            principle: {
+              name: '즉각적 응보',
+              desc: '잘못에 대해 즉시 보복하는 것. 감정적 해소는 되지만 예상치 못한 결과를 낳을 수 있다.',
+              icon: '⚡'
+            },
+            quote: '"복수의 불은 복수하는 자를 가장 먼저 태운다." - 중국 속담'
+          },
+          {
+            id: 'save',
+            text: '일단 저장해둔다',
+            subtext: '나중에 필요할 수도 있어',
+            meaning: '전략적으로 보류합니다. 권력의 카드를 손에 쥐고 있는 것 자체가 힘입니다.',
+            principle: {
+              name: '전략적 보류',
+              desc: '당장 사용하지 않고 최적의 타이밍을 기다리는 것. 마키아벨리가 말한 권력의 기술.',
+              icon: '🃏'
+            },
+            quote: '"복수는 차갑게 먹어야 맛있다." - 서양 속담'
+          },
+          {
+            id: 'ignore',
+            text: '알고도 무시한다',
+            subtext: '그 사람에게 신경 쓸 가치가 없다',
+            meaning: '상대에게 에너지를 쓰지 않기로 했습니다. 초연함의 표현입니다.',
+            principle: {
+              name: '전략적 무관심',
+              desc: '상대에게 관심을 주지 않는 것 자체가 하나의 대응 방식. 때로는 가장 효과적인 복수이기도 하다.',
+              icon: '🙄'
+            },
+            quote: '"무관심은 가장 무거운 형벌이다." - 조지 버나드 쇼'
+          },
+          {
+            id: 'confront',
+            text: '직접 경고한다',
+            subtext: '나 이거 알아. 조심해라',
+            meaning: '직접 대면을 선택합니다. 복수보다 경고를 통해 관계를 재설정합니다.',
+            principle: {
+              name: '경고의 기능',
+              desc: '실제 보복 없이 위협만으로 상대의 행동을 억제하는 것. 협상의 도구가 될 수 있다.',
+              icon: '⚠️'
+            },
+            quote: '"좋은 울타리가 좋은 이웃을 만든다." - 로버트 프로스트'
+          },
+          {
+            id: 'already_forgave',
+            text: '이미 용서했다. 사용할 생각 없다',
+            subtext: '그 사람 인생은 그 사람 것',
+            meaning: '용서를 실천합니다. 상대의 약점을 무기로 쓰지 않는 선택입니다.',
+            principle: {
+              name: '무조건적 용서',
+              desc: '상대의 변화나 사과 없이도 용서하는 것. 가장 어렵지만 가장 자유로운 선택.',
+              icon: '💚'
+            },
+            quote: '"용서하라. 하지만 잊지는 마라." - 존 F. 케네디'
+          }
+        ]
+      },
+      
+      // Stage 3: 갈등
+      {
+        badge: 'STAGE 3: 갈등',
+        title: '주변의 목소리',
+        desc: '친구들이 당신에게 말한다.\n\n"그때 걔가 너한테 한 짓 생각하면... 난 이해 못 해. 넌 왜 가만있어?"',
+        highlight: '어떻게 대답할 것인가?',
+        choices: [
+          {
+            id: 'not_my_style',
+            text: '"복수는 내 스타일 아니야"',
+            subtext: '나는 그렇게 살고 싶지 않아',
+            meaning: '자신의 가치관을 지킵니다. 외부 압력에 흔들리지 않는 내적 기준이 있습니다.',
+            principle: {
+              name: '가치 기반 결정',
+              desc: '결과가 아닌 자신의 가치관에 따라 행동하는 것. 칸트의 의무론적 윤리학의 핵심.',
+              icon: '🧭'
+            },
+            quote: '"네가 싫어하는 것을 남에게 하지 마라." - 공자'
+          },
+          {
+            id: 'timing',
+            text: '"타이밍을 보는 중이야"',
+            subtext: '섣불리 움직이면 안 돼',
+            meaning: '신중함을 보여줍니다. 하지만 내면에는 응보의 욕구가 남아있습니다.',
+            principle: {
+              name: '전략적 인내',
+              desc: '감정에 휘둘리지 않고 최적의 순간을 기다리는 것. 체스에서 중요한 수를 아끼는 것과 같다.',
+              icon: '⏰'
+            },
+            quote: '"기다릴 줄 아는 자에게 모든 것이 온다." - 몽테뉴'
+          },
+          {
+            id: 'self_damage',
+            text: '"복수해봤자 나만 손해야"',
+            subtext: '그 에너지로 내 인생 살래',
+            meaning: '결과를 계산합니다. 복수의 비용과 편익을 따져보는 합리적 접근입니다.',
+            principle: {
+              name: '비용-편익 분석',
+              desc: '행동의 결과를 계산하여 결정하는 것. 결과주의적 윤리학의 핵심.',
+              icon: '🧮'
+            },
+            quote: '"현명한 사람은 복수하지 않는다. 앞으로 나아갈 뿐이다." - 세네카'
+          },
+          {
+            id: 'convinced',
+            text: '"그래, 한 번 해볼까"',
+            subtext: '말 들어보니 그런 것 같기도',
+            meaning: '주변의 영향을 받습니다. 사회적 압력이 결정에 영향을 미칩니다.',
+            principle: {
+              name: '사회적 동조',
+              desc: '집단의 기대나 압력에 따라 행동하는 것. 인간의 사회적 본성.',
+              icon: '👥'
+            },
+            quote: '"우리는 우리가 생각하는 것보다 훨씬 더 사회적 존재다." - 에밀 뒤르켐'
+          },
+          {
+            id: 'dont_care',
+            text: '"남들 생각은 상관없어"',
+            subtext: '내 결정은 내가 해',
+            meaning: '자율성을 주장합니다. 외부 의견에 흔들리지 않는 독립성을 보여줍니다.',
+            principle: {
+              name: '자율성',
+              desc: '자신의 결정을 스스로 내리는 것. 자기 결정권은 인간 존엄의 핵심.',
+              icon: '🦅'
+            },
+            quote: '"너 자신의 길을 가라. 남들이 뭐라 하든 상관 마라." - 단테'
+          }
+        ]
+      },
+      
+      // Stage 4: 결정
+      {
+        badge: 'STAGE 4: 결정',
+        title: '결정의 순간',
+        desc: '그 친구가 중요한 자리에 올랐다.\n\n사람들 앞에서 연설하고 있다. 존경받는 듯 보인다.\n\n당신이 알고 있는 것을 말하면, 저 자리에서 내려올 것이다.',
+        highlight: '당신의 최종 선택은?',
+        choices: [
+          {
+            id: 'expose',
+            text: '입을 연다',
+            subtext: '진실이 밝혀져야 한다',
+            meaning: '복수를 실행합니다. 정의의 실현인가, 원한의 해소인가.',
+            principle: {
+              name: '응보적 정의',
+              desc: '잘못에는 대가가 따라야 한다는 정의관. "눈에는 눈"의 원칙.',
+              icon: '⚔️'
+            },
+            quote: '"정의가 이루어지리라. 하늘이 무너져도." - 라틴 격언'
+          },
+          {
+            id: 'silence',
+            text: '입을 다문다',
+            subtext: '내가 이럴 필요 있나',
+            meaning: '복수를 포기합니다. 상대를 무너뜨릴 힘이 있지만 사용하지 않습니다.',
+            principle: {
+              name: '힘의 절제',
+              desc: '할 수 있지만 하지 않는 것. 진정한 힘은 사용하지 않을 때 드러난다.',
+              icon: '🏛️'
+            },
+            quote: '"가장 좋은 복수는 그들과 같지 않은 것이다." - 마르쿠스 아우렐리우스'
+          },
+          {
+            id: 'private',
+            text: '나중에 단둘이 만나서 말한다',
+            subtext: '공개 망신은 싫다',
+            meaning: '복수의 방식을 선택합니다. 공개 처형 대신 사적 경고를 택합니다.',
+            principle: {
+              name: '회복적 접근',
+              desc: '처벌보다 관계 회복을 추구하는 정의관. 상대에게 변화의 기회를 준다.',
+              icon: '🤝'
+            },
+            quote: '"사람을 바꾸고 싶다면 그의 체면을 세워줘라." - 데일 카네기'
+          },
+          {
+            id: 'negotiate',
+            text: '대가를 요구한다',
+            subtext: '이걸 묻어줄 테니 대신...',
+            meaning: '협상의 도구로 사용합니다. 정보는 권력이 됩니다.',
+            principle: {
+              name: '협상 레버리지',
+              desc: '정보나 권력을 협상의 도구로 사용하는 것. 마키아벨리적 현실주의.',
+              icon: '💼'
+            },
+            quote: '"힘이 없는 정의는 무력하다." - 블레즈 파스칼'
+          },
+          {
+            id: 'watch',
+            text: '지켜보기만 한다',
+            subtext: '어떻게 되나 보자',
+            meaning: '관망합니다. 아직 결정하지 않고 상황을 지켜봅니다.',
+            principle: {
+              name: '관망의 전략',
+              desc: '성급히 행동하지 않고 상황이 어떻게 전개되는지 지켜보는 것.',
+              icon: '👀'
+            },
+            quote: '"가만히 앉아서 강물을 바라보면, 결국 적의 시체가 떠내려온다." - 중국 속담'
+          }
+        ]
+      }
+    ];
+    
+    // 화면 요소
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    // 스테이지 렌더링
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      // 진행바 업데이트
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      // 배지
+      document.getElementById('stageBadge').textContent = stage.badge;
+      
+      // 상황
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const quoteEl = document.getElementById('situationQuote');
+      if (stage.quote) {
+        quoteEl.textContent = stage.quote;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+      
+      // 선택지 렌더링
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 선택 처리
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    // 해설 화면
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentStageIndex >= stages.length - 1) {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음으로';
+      }
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 다음 버튼
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    // 결과 계산
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 배신 후 감정
+      const stage2 = choiceIds[1]; // 기회
+      const stage3 = choiceIds[2]; // 갈등
+      const stage4 = choiceIds[3]; // 결정
+      
+      // 응보적 정의론자: 복수 실행
+      if ((stage1 === 'still_angry' || stage1 === 'waiting') && 
+          (stage2 === 'spread' || stage4 === 'expose')) {
+        return {
+          icon: '⚔️',
+          title: '응보적 정의론자',
+          desc: '당신은 잘못에는 대가가 따라야 한다고 믿습니다. 정의가 실현되지 않으면 세상이 공정하지 않다고 느낍니다. 칸트의 응보주의와 맥을 같이 합니다. 다만 복수가 새로운 상처를 만들 수 있음을 기억하세요.'
+        };
+      }
+      
+      // 전략적 보류자: 타이밍, 저장, 협상
+      if ((stage2 === 'save' || stage3 === 'timing') && 
+          (stage4 === 'negotiate' || stage4 === 'watch')) {
+        return {
+          icon: '🦊',
+          title: '전략적 보류자',
+          desc: '당신은 복수를 차갑게 계획합니다. 감정에 휘둘리지 않고 최적의 순간을 기다립니다. 마키아벨리가 인정할 만한 냉철함입니다. 하지만 너무 오래 품으면 자신을 갉아먹을 수 있습니다.'
+        };
+      }
+      
+      // 회복적 용서자: 용서, 사적 대화
+      if ((stage1 === 'forgiven' || stage2 === 'already_forgave') && 
+          (stage4 === 'silence' || stage4 === 'private')) {
+        return {
+          icon: '🕊️',
+          title: '회복적 용서자',
+          desc: '당신은 복수보다 용서를 선택합니다. 상대를 무너뜨릴 힘이 있지만 사용하지 않습니다. 마르쿠스 아우렐리우스가 말한 진정한 강함입니다. 당신은 자유로운 사람입니다.'
+        };
+      }
+      
+      // 스토아적 초월자: 무관심, 자기 손해 인식
+      if ((stage1 === 'moved_on' || stage2 === 'ignore') && 
+          (stage3 === 'self_damage' || stage3 === 'not_my_style')) {
+        return {
+          icon: '🏛️',
+          title: '스토아적 초월자',
+          desc: '당신은 복수를 초월했습니다. 상대에게 에너지를 쓸 가치가 없다고 봅니다. 세네카가 말한 현자의 길을 걷고 있습니다. 다만 때로는 정의를 위해 목소리를 내는 것도 필요합니다.'
+        };
+      }
+      
+      // 결과주의적 계산가: 비용-편익, 손해 인식
+      if (stage3 === 'self_damage') {
+        return {
+          icon: '🧮',
+          title: '결과주의적 계산가',
+          desc: '당신은 복수의 비용과 편익을 계산합니다. 감정보다 결과를 중시합니다. 벤담의 공리주의적 사고방식입니다. 합리적이지만 때로는 원칙이 결과보다 중요할 수 있습니다.'
+        };
+      }
+      
+      // 무관심한 손절러: 무시, 상관없어
+      if ((stage2 === 'ignore' || stage3 === 'dont_care') && 
+          stage1 === 'moved_on') {
+        return {
+          icon: '✂️',
+          title: '무관심한 손절러',
+          desc: '당신은 그 사람에게 더 이상 관심이 없습니다. 복수할 가치도 없다고 봅니다. 에피쿠로스가 말한 아타락시아(평정심)를 추구합니다. 가장 효과적인 복수는 잘 사는 것입니다.'
+        };
+      }
+      
+      // 기본: 갈등하는 인간
+      return {
+        icon: '⚖️',
+        title: '갈등하는 인간',
+        desc: '당신은 복수와 용서 사이에서 갈등합니다. 정의를 원하지만 자신도 상처받고 싶지 않습니다. 이것은 매우 인간적인 모습입니다. 대부분의 사람들이 같은 갈등을 경험합니다.'
+      };
+    }
+    
+    // 결과 화면
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      // 발견한 원칙 표시
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      // 프로필 저장
+      saveProgress(result);
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 프로필 저장
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      // 완료 체크 및 경험치
+      if (!profile.completedSims.includes('revenge')) {
+        profile.completedSims.push('revenge');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 저장 (문자열로)
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      // 레벨업 체크
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 공유
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나의 복수관: ${result.title}
+
+복수할 기회가 왔다.
+당신은 어떻게 할 것인가?
+
+▶ 테스트 해보기
+https://eclipse-mindlab.github.io/mindlab/sim-revenge.html`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '복수 시뮬레이터', text });
+          return;
+        } catch (e) {}
+      }
+      
+      // clipboard API 시도
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('결과가 클립보드에 복사되었습니다!');
+          return;
+        } catch (e) {}
+      }
+      
+      // fallback: textarea 사용
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('결과가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>읽씹 시뮬레이터 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="읽씹 시뮬레이터 - 이클립스의 딜렘">
+  <meta property="og:description" content="읽음. 그리고 침묵. 당신은 어떻게 반응하나요?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #3b82f6;
+      --sim-primary-light: #60a5fa;
+      --sim-primary-bg: rgba(59, 130, 246, 0.1);
+      --sim-primary-border: rgba(59, 130, 246, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">읽씹 시뮬레이터</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 심리학 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">📱</div>
+        <div class="sim-result-label" id="resultLabel">당신의 읽씹 대응 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    // 게임 상태
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    // 모든 스테이지
+    const stages = [
+      // Stage 1: 1시간 후
+      {
+        badge: 'STAGE 1: 1시간 후',
+        title: '읽음',
+        desc: '좋아하는 사람에게 용기 내서 메시지를 보냈다.\n\n읽음 표시가 떴다. 하지만 답이 없다.\n\n1시간이 지났다.',
+        highlight: '당신의 반응은?',
+        choices: [
+          {
+            id: 'wait',
+            text: '그냥 기다린다',
+            subtext: '바쁜가 보지',
+            meaning: '불확실한 상황에서 인내심을 발휘합니다. 상대에게 여유를 주는 여유로운 태도입니다.',
+            principle: {
+              name: '불확실성 내성',
+              desc: '모호한 상황을 견디는 심리적 능력. 불확실성 내성이 높을수록 불안에 덜 휘둘린다.',
+              icon: '⏳'
+            },
+            quote: '"인내는 쓰다, 그러나 그 열매는 달다." - 장 자크 루소'
+          },
+          {
+            id: 'check',
+            text: '폰을 계속 확인한다',
+            subtext: '혹시 답장 왔나...',
+            meaning: '불확실함을 견디기 어려워합니다. 답이 올 때까지 불안이 지속됩니다.',
+            principle: {
+              name: '간헐적 강화',
+              desc: '보상이 불규칙하게 주어질 때 행동이 가장 강하게 유지된다. 슬롯머신과 같은 원리.',
+              icon: '🎰'
+            },
+            quote: '"예측할 수 없는 보상이 가장 강력한 행동을 만든다." - B.F. 스키너의 강화 이론'
+          },
+          {
+            id: 'distract',
+            text: '다른 일에 집중한다',
+            subtext: '생각 안 하는 게 낫지',
+            meaning: '감정을 회피하려는 전략입니다. 건강할 수도, 억압일 수도 있습니다.',
+            principle: {
+              name: '회피적 대처',
+              desc: '스트레스 상황을 피하거나 무시하는 대처 방식. 단기적으로 효과적이나 장기적으로는 문제가 될 수 있다.',
+              icon: '🙈'
+            },
+            quote: '"억압된 감정은 사라지지 않는다. 묻혀 있다가 더 나쁜 방식으로 나온다." - 지그문트 프로이트'
+          },
+          {
+            id: 'anxious',
+            text: '뭔가 잘못했나 메시지를 다시 읽는다',
+            subtext: '내가 이상하게 보냈나?',
+            meaning: '원인을 자신에게서 찾습니다. 과도한 자기 검열은 불안을 높입니다.',
+            principle: {
+              name: '자기 귀인 편향',
+              desc: '상대의 행동 원인을 자신에게서 찾는 경향. 관계에서 불안형 애착의 특징이다.',
+              icon: '🔍'
+            },
+            quote: '"우리는 자신을 세상의 중심에 놓고 모든 일의 원인으로 본다." - 데이비드 번스'
+          },
+          {
+            id: 'angry',
+            text: '짜증이 난다',
+            subtext: '읽고 왜 답을 안 해?',
+            meaning: '불확실함이 분노로 전환됩니다. 통제감의 상실이 화를 유발합니다.',
+            principle: {
+              name: '좌절-공격 가설',
+              desc: '목표 달성이 좌절되면 공격적 충동이 생긴다는 이론. 읽씹은 연결 욕구의 좌절이다.',
+              icon: '😤'
+            },
+            quote: '"분노는 종종 두려움의 가면이다." - 알버트 엘리스'
+          }
+        ]
+      },
+      
+      // Stage 2: 6시간 후
+      {
+        badge: 'STAGE 2: 6시간 후',
+        title: '여전히 무응답',
+        desc: '6시간이 지났다.\n\n여전히 답이 없다. 상대의 SNS에는 30분 전 게시물이 올라왔다.',
+        highlight: '어떻게 할 것인가?',
+        choices: [
+          {
+            id: 'still_wait',
+            text: '그래도 기다린다',
+            subtext: '내 메시지는 못 봤을 수도 있어',
+            meaning: '합리화를 통해 평정심을 유지합니다. 하지만 자기기만일 수도 있습니다.',
+            principle: {
+              name: '인지 부조화 해소',
+              desc: '불편한 현실을 합리화하여 심리적 균형을 맞추려는 시도. 때로는 자기 보호, 때로는 자기기만.',
+              icon: '🧠'
+            },
+            quote: '"인간은 합리적 존재가 아니라 합리화하는 존재다." - 레온 페스팅거'
+          },
+          {
+            id: 'double_text',
+            text: '"바빠?" 한 마디 더 보낸다',
+            subtext: '답장 유도',
+            meaning: '불확실함을 해소하려는 능동적 시도입니다. 하지만 더 불안해질 수도 있습니다.',
+            principle: {
+              name: '불확실성 회피',
+              desc: '애매한 상황을 빨리 끝내려는 심리. 답을 얻으려 하지만 역효과를 낳을 수 있다.',
+              icon: '❓'
+            },
+            quote: '"확실성에 대한 욕구가 우리를 더 불확실하게 만든다." - 에리히 프롬'
+          },
+          {
+            id: 'ask_friend',
+            text: '친구한테 상황 공유한다',
+            subtext: '이거 어떻게 생각해?',
+            meaning: '사회적 지지를 통해 불안을 해소합니다. 타인의 시각이 객관성을 줄 수 있습니다.',
+            principle: {
+              name: '사회적 지지 추구',
+              desc: '스트레스 상황에서 타인의 조언이나 위로를 구하는 건강한 대처 방식.',
+              icon: '👥'
+            },
+            quote: '"우리는 함께일 때 더 현명하다." - 아리스토텔레스'
+          },
+          {
+            id: 'stalk',
+            text: 'SNS 접속 기록을 확인한다',
+            subtext: '언제 마지막으로 접속했지?',
+            meaning: '정보를 수집해 불안을 통제하려 합니다. 하지만 더 깊은 불안으로 이어질 수 있습니다.',
+            principle: {
+              name: '통제 욕구',
+              desc: '불확실한 상황에서 정보를 수집해 통제감을 얻으려는 심리. 과도하면 집착이 된다.',
+              icon: '🔎'
+            },
+            quote: '"통제하려는 욕구는 종종 무력감의 반작용이다." - 알프레드 아들러'
+          },
+          {
+            id: 'pretend_forget',
+            text: '안 읽은 척 잊으려 한다',
+            subtext: '애초에 별로 기대 안 했어',
+            meaning: '상처받기 전에 먼저 마음을 닫습니다. 자기 보호이자 자기 기만입니다.',
+            principle: {
+              name: '선제적 자기 보호',
+              desc: '거절당하기 전에 먼저 마음을 철회하는 방어 기제. 회피형 애착의 특징.',
+              icon: '🛡️'
+            },
+            quote: '"상처받기 싫으면 사랑하지 마라. 하지만 그것이 가장 큰 상처다." - C.S. 루이스'
+          }
+        ]
+      },
+      
+      // Stage 3: 다음 날
+      {
+        badge: 'STAGE 3: 다음 날',
+        title: '답장이 왔다',
+        desc: '다음 날 아침.\n\n드디어 답장이 왔다.\n\n"아 미안 어제 바빴어ㅎㅎ"',
+        highlight: '어떻게 답할 것인가?',
+        choices: [
+          {
+            id: 'accept',
+            text: '"ㅋㅋ 괜찮아~"',
+            subtext: '이해한다는 표현',
+            meaning: '상대의 변명을 받아들입니다. 관계의 조화를 중시하는 태도입니다.',
+            principle: {
+              name: '관계 지향적 대처',
+              desc: '갈등보다 조화를 우선시하는 대처 방식. 관계 유지에 도움되지만 자기 감정이 억압될 수 있다.',
+              icon: '🤝'
+            },
+            quote: '"조화는 때로 침묵을 요구한다." - 공자'
+          },
+          {
+            id: 'probe',
+            text: '"뭐가 바빴는데?"',
+            subtext: '진짜인지 확인하고 싶다',
+            meaning: '정보를 통해 불안을 해소하려 합니다. 의심의 표현일 수도 있습니다.',
+            principle: {
+              name: '확인 추구',
+              desc: '불확실한 상황에서 명확한 답을 얻으려는 욕구. 과하면 상대를 압박할 수 있다.',
+              icon: '🧐'
+            },
+            quote: '"의심은 답을 찾지만, 신뢰는 평화를 찾는다." - 파울로 코엘료'
+          },
+          {
+            id: 'cool',
+            text: '"ㅇㅇ"',
+            subtext: '쿨하게 짧은 답',
+            meaning: '감정을 드러내지 않습니다. 거리를 두는 것일 수도, 자존심일 수도 있습니다.',
+            principle: {
+              name: '감정적 거리두기',
+              desc: '상처받지 않기 위해 감정 표현을 억제하는 방어 기제. 회피형 애착의 특징.',
+              icon: '😐'
+            },
+            quote: '"무관심은 종종 가장 큰 관심의 가면이다." - 에리히 프롬'
+          },
+          {
+            id: 'revenge',
+            text: '읽고 나중에 답한다',
+            subtext: '나도 좀 기다려봐',
+            meaning: '받은 대로 돌려줍니다. 공정성의 추구이자 작은 복수입니다.',
+            principle: {
+              name: '호혜성의 원칙',
+              desc: '받은 대로 돌려주려는 심리. 긍정적으로는 감사, 부정적으로는 보복으로 나타난다.',
+              icon: '⚖️'
+            },
+            quote: '"눈에는 눈, 이에는 이. 하지만 그러면 세상이 눈멀게 된다." - 간디'
+          },
+          {
+            id: 'honest',
+            text: '"솔직히 좀 서운했어"',
+            subtext: '내 감정을 표현한다',
+            meaning: '자신의 감정을 솔직하게 전달합니다. 관계에서 진정성을 추구합니다.',
+            principle: {
+              name: '자기 표현',
+              desc: '자신의 감정과 욕구를 솔직하게 전달하는 것. 건강한 관계의 기초이지만 용기가 필요하다.',
+              icon: '💬'
+            },
+            quote: '"진정한 친밀함은 솔직함에서 시작된다." - 브레네 브라운'
+          }
+        ]
+      },
+      
+      // Stage 4: 반복
+      {
+        badge: 'STAGE 4: 한 달 후',
+        title: '패턴',
+        desc: '한 달이 지났다.\n\n이 사람은 항상 답장이 느리다. 읽씹은 일상이 되었다.\n\n같은 패턴이 반복된다.',
+        highlight: '이 관계를 어떻게 할 것인가?',
+        choices: [
+          {
+            id: 'accept_style',
+            text: '이 사람의 스타일이라고 받아들인다',
+            subtext: '원래 이런 사람이야',
+            meaning: '상대를 있는 그대로 수용합니다. 기대를 조정하는 현명한 선택일 수 있습니다.',
+            principle: {
+              name: '수용',
+              desc: '바꿀 수 없는 것을 받아들이는 것. 스토아 철학의 핵심 가르침이자 심리적 유연성의 기초.',
+              icon: '🙏'
+            },
+            quote: '"평온함은 바꿀 수 없는 것을 받아들이는 데서 온다." - 에픽테토스'
+          },
+          {
+            id: 'confront',
+            text: '"답장 늦는 편이야?"라고 물어본다',
+            subtext: '직접 확인한다',
+            meaning: '불편함을 직접 다룹니다. 관계에서 명확성을 추구하는 용기 있는 선택입니다.',
+            principle: {
+              name: '직접 소통',
+              desc: '문제를 회피하지 않고 직접 다루는 것. 단기적 불편함이 있지만 장기적으로 관계를 개선한다.',
+              icon: '🗣️'
+            },
+            quote: '"말하지 않은 것은 존재하지 않는 것과 같다." - 폴 와츨라윅'
+          },
+          {
+            id: 'reduce',
+            text: '연락 빈도를 줄인다',
+            subtext: '나도 비슷하게 맞춘다',
+            meaning: '기대와 투자를 조절합니다. 균형을 맞추려는 자기 보호 전략입니다.',
+            principle: {
+              name: '투자 조절',
+              desc: '관계에 쏟는 에너지를 상대의 투자에 맞추는 것. 불균형한 관계에서 자신을 보호한다.',
+              icon: '📉'
+            },
+            quote: '"관계의 균형은 서로의 투자량에서 온다." - 존 가트만'
+          },
+          {
+            id: 'end',
+            text: '이 관계를 정리한다',
+            subtext: '이건 아닌 것 같아',
+            meaning: '더 이상 맞지 않는 관계를 끝냅니다. 손절의 지혜를 발휘합니다.',
+            principle: {
+              name: '손절의 지혜',
+              desc: '더 이상 가치가 없는 관계에서 빠져나오는 것. 매몰비용에 연연하지 않는 현명한 선택.',
+              icon: '✂️'
+            },
+            quote: '"떠날 줄 아는 것도 능력이다." - 존 맥스웰'
+          },
+          {
+            id: 'mirror',
+            text: '나도 똑같이 읽씹한다',
+            subtext: '그게 공평하니까',
+            meaning: '상대의 행동을 그대로 반영합니다. 공평함의 추구이지만 관계는 악화될 수 있습니다.',
+            principle: {
+              name: '팃포탯',
+              desc: '상대의 행동을 그대로 따라하는 전략. 게임이론에서는 효과적이나 관계에서는 악순환을 부를 수 있다.',
+              icon: '🔄'
+            },
+            quote: '"팃포탯은 협력을 이끌어내지만, 보복의 연쇄도 만든다." - 로버트 액설로드'
+          }
+        ]
+      }
+    ];
+    
+    // 화면 요소
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    // 스테이지 렌더링
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      // 진행바 업데이트
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      // 배지
+      document.getElementById('stageBadge').textContent = stage.badge;
+      
+      // 상황
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const quoteEl = document.getElementById('situationQuote');
+      if (stage.quote) {
+        quoteEl.textContent = stage.quote;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+      
+      // 선택지 렌더링
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 선택 처리
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    // 해설 화면
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentStageIndex >= stages.length - 1) {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음으로';
+      }
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 다음 버튼
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    // 결과 계산
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 1시간 후
+      const stage2 = choiceIds[1]; // 6시간 후
+      const stage3 = choiceIds[2]; // 답장 옴
+      const stage4 = choiceIds[3]; // 한 달 후
+      
+      // 불안형 집착러: 계속 확인, 스토킹, 확인 추구
+      if ((stage1 === 'check' || stage1 === 'anxious') && 
+          (stage2 === 'stalk' || stage2 === 'double_text') &&
+          (stage3 === 'probe')) {
+        return {
+          icon: '😰',
+          title: '불안형 집착러',
+          desc: '당신은 읽씹에 예민하게 반응합니다. 불확실함을 견디기 어렵고, 확인을 통해 불안을 해소하려 합니다. 이것은 불안형 애착의 특징입니다. 자신의 가치가 상대의 반응에 달려있지 않다는 것을 기억하세요.'
+        };
+      }
+      
+      // 쿨한 회피러: 회피, 무관심, 감정 숨김
+      if ((stage1 === 'distract' || stage2 === 'pretend_forget') && 
+          (stage3 === 'cool' || stage4 === 'reduce')) {
+        return {
+          icon: '😎',
+          title: '쿨한 회피러',
+          desc: '당신은 감정을 드러내지 않으려 합니다. 읽씹에 무관심한 척하지만, 사실은 상처받지 않기 위한 방어입니다. 회피형 애착의 특징이 보입니다. 때로는 솔직한 감정 표현이 관계를 더 깊게 만듭니다.'
+        };
+      }
+      
+      // 안정적 기다림러: 기다림, 이해, 수용
+      if ((stage1 === 'wait') && 
+          (stage2 === 'still_wait' || stage2 === 'ask_friend') &&
+          (stage3 === 'accept') &&
+          (stage4 === 'accept_style')) {
+        return {
+          icon: '😌',
+          title: '안정적 기다림러',
+          desc: '당신은 읽씹에도 흔들리지 않습니다. 상대의 상황을 이해하고 기다릴 줄 압니다. 안정형 애착의 특징입니다. 이것은 건강한 관계의 기초입니다. 다만 너무 참기만 하면 자기 감정이 무시될 수 있어요.'
+        };
+      }
+      
+      // 전략적 대응러: 역읽씹, 팃포탯
+      if ((stage3 === 'revenge' || stage4 === 'mirror')) {
+        return {
+          icon: '🎮',
+          title: '전략적 대응러',
+          desc: '당신은 읽씹에 읽씹으로 맞섭니다. 공평함을 추구하고, 받은 대로 돌려주려 합니다. 게임이론적으로는 합리적이지만, 관계에서는 악순환을 만들 수 있습니다. 때로는 먼저 손 내미는 것도 전략입니다.'
+        };
+      }
+      
+      // 직접 소통러: 솔직한 표현, 직접 대화
+      if ((stage3 === 'honest' || stage4 === 'confront')) {
+        return {
+          icon: '💬',
+          title: '직접 소통러',
+          desc: '당신은 불편함을 직접 표현합니다. 관계에서 명확성과 솔직함을 중시합니다. 이것은 건강한 소통의 기초입니다. 다만 표현의 방식과 타이밍도 중요하다는 것을 기억하세요.'
+        };
+      }
+      
+      // 손절 결단러: 관계 정리
+      if (stage4 === 'end') {
+        return {
+          icon: '✂️',
+          title: '손절 결단러',
+          desc: '당신은 맞지 않는 관계를 빠르게 정리합니다. 매몰비용에 연연하지 않고 손절할 줄 압니다. 때로는 현명한 선택이지만, 모든 불편함이 손절의 이유가 되지는 않습니다. 관계에도 성장통이 있습니다.'
+        };
+      }
+      
+      // 기본: 균형잡힌 대처러
+      return {
+        icon: '⚖️',
+        title: '균형잡힌 대처러',
+        desc: '당신은 상황에 따라 유연하게 대처합니다. 하나의 패턴에 갇히지 않고 다양한 방식을 사용합니다. 이것은 심리적 유연성의 표현입니다. 다만 자신만의 일관된 원칙을 갖는 것도 중요합니다.'
+      };
+    }
+    
+    // 결과 화면
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      // 발견한 원칙 표시
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      // 프로필 저장
+      saveProgress(result);
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 프로필 저장
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      // 완료 체크 및 경험치
+      if (!profile.completedSims.includes('left-on-read')) {
+        profile.completedSims.push('left-on-read');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 저장 (문자열로)
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      // 레벨업 체크
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 공유
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나의 읽씹 대응 유형: ${result.title}
+
+읽음. 그리고 침묵.
+당신은 어떻게 반응하나요?
+
+▶ 테스트 해보기
+https://eclipse-mindlab.github.io/mindlab/sim-left-on-read.html`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '읽씹 시뮬레이터', text });
+          return;
+        } catch (e) {}
+      }
+      
+      // clipboard API 시도
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('결과가 클립보드에 복사되었습니다!');
+          return;
+        } catch (e) {}
+      }
+      
+      // fallback: textarea 사용
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('결과가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>
