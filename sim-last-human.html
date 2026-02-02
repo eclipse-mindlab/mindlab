@@ -15,6 +15,17 @@
       --sim-primary-bg: rgba(100, 116, 139, 0.1);
       --sim-primary-border: rgba(100, 116, 139, 0.3);
     }
+    
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -82,6 +93,7 @@
     <div id="resultScreen" class="hidden">
       <div class="sim-result-card">
         <div class="sim-result-icon" id="resultIcon">🌍</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
         <div class="sim-result-label" id="resultLabel">당신의 실존 유형</div>
         <div class="sim-result-title" id="resultTitle">결과 타입</div>
         <div class="sim-result-desc" id="resultDesc">결과 설명</div>
@@ -90,9 +102,13 @@
       <div class="sim-principles-list hidden" id="principlesList"></div>
 
       <div class="sim-actions">
-        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
         <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
       </div>
+
+      <!-- 숨겨진 캔버스 -->
+      <canvas id="shareCanvas" style="display:none;"></canvas>
 
       <!-- 프로모션 섹션 -->
       <div class="sim-promo">
@@ -553,7 +569,8 @@
         return {
           icon: '⚔️',
           title: '실존적 투사',
-          desc: '의미 없는 세상에서 스스로 의미를 만든다. 아무도 보지 않아도 기록하고, 아무도 기억하지 않아도 남긴다. 카뮈가 말한 "시지프스의 행복"을 아는 사람. 부조리에 굴복하지 않는다.'
+          desc: '의미 없는 세상에서 스스로 의미를 만든다. 아무도 보지 않아도 기록하고, 아무도 기억하지 않아도 남긴다. 카뮈가 말한 "시지프스의 행복"을 아는 사람. 부조리에 굴복하지 않는다.',
+          rarity: '상위 8%'
         };
       }
       
@@ -562,7 +579,8 @@
         return {
           icon: '📜',
           title: '기록자',
-          desc: '인류의 마지막 증인. 누가 읽을지 모르지만, 우리가 존재했다는 것을 남긴다. 사라진 모든 이들을 대신해 기억한다. 그것이 마지막 책임이라 믿는다.'
+          desc: '인류의 마지막 증인. 누가 읽을지 모르지만, 우리가 존재했다는 것을 남긴다. 사라진 모든 이들을 대신해 기억한다. 그것이 마지막 책임이라 믿는다.',
+          rarity: '상위 15%'
         };
       }
       
@@ -572,7 +590,8 @@
         return {
           icon: '🕳️',
           title: '허무주의자',
-          desc: '아무도 없으면 아무것도 의미 없다. 니체가 경고한 허무의 심연을 직시한다. 하지만 그것도 하나의 진실이다. 환상 없이 세상을 본다.'
+          desc: '아무도 없으면 아무것도 의미 없다. 니체가 경고한 허무의 심연을 직시한다. 하지만 그것도 하나의 진실이다. 환상 없이 세상을 본다.',
+          rarity: '상위 18%'
         };
       }
       
@@ -582,7 +601,8 @@
         return {
           icon: '🦅',
           title: '자유로운 자',
-          desc: '모든 속박에서 풀려났다. 사회도, 규범도, 타인의 시선도 없다. 완전한 자유. 사르트르가 말한 "자유의 형벌"을 오히려 즐긴다.'
+          desc: '모든 속박에서 풀려났다. 사회도, 규범도, 타인의 시선도 없다. 완전한 자유. 사르트르가 말한 "자유의 형벌"을 오히려 즐긴다.',
+          rarity: '상위 11%'
         };
       }
       
@@ -592,7 +612,8 @@
         return {
           icon: '💔',
           title: '그리워하는 자',
-          desc: '끝까지 타인을 그리워한다. 인간은 관계 속에서만 온전해진다는 것을 몸으로 안다. 혼자여도 혼자가 아닌 척한다. 그것이 살아가는 법이다.'
+          desc: '끝까지 타인을 그리워한다. 인간은 관계 속에서만 온전해진다는 것을 몸으로 안다. 혼자여도 혼자가 아닌 척한다. 그것이 살아가는 법이다.',
+          rarity: '상위 22%'
         };
       }
       
@@ -601,7 +622,8 @@
         return {
           icon: '🙏',
           title: '수용하는 자',
-          desc: '존재했다는 것 자체에 감사한다. 시작이 있으면 끝이 있다. 인류도, 나도. 그래도 있었다는 것. 사랑했고, 아팠고, 웃었다는 것. 그 자체로 충분하다.'
+          desc: '존재했다는 것 자체에 감사한다. 시작이 있으면 끝이 있다. 인류도, 나도. 그래도 있었다는 것. 사랑했고, 아팠고, 웃었다는 것. 그 자체로 충분하다.',
+          rarity: '상위 19%'
         };
       }
       
@@ -609,7 +631,8 @@
       return {
         icon: '🌫️',
         title: '방황하는 자',
-        desc: '아직 답을 모른다. 희망과 절망 사이, 의미와 무의미 사이를 오간다. 하지만 그것도 삶이다. 답을 찾는 과정 자체가 살아있다는 증거다.'
+        desc: '아직 답을 모른다. 희망과 절망 사이, 의미와 무의미 사이를 오간다. 하지만 그것도 삶이다. 답을 찾는 과정 자체가 살아있다는 증거다.',
+        rarity: '상위 25%'
       };
     }
     
@@ -620,6 +643,7 @@
       document.getElementById('resultIcon').textContent = result.icon;
       document.getElementById('resultTitle').textContent = result.title;
       document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
       
       // 발견한 원칙 표시
       if (principles.length > 0) {
@@ -681,13 +705,136 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     }
     
-    // 공유
+    // 이미지 생성
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 인스타 스토리 비율 (9:16)
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      // 배경 그라데이션
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(0.5, '#16213e');
+      gradient.addColorStop(1, '#0f0f23');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 별 효과
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // 상단 타이틀
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('마지막 인류', canvas.width / 2, 200);
+      
+      // 아이콘
+      ctx.font = '180px sans-serif';
+      ctx.fillText(result.icon, canvas.width / 2, 500);
+      
+      // 희귀도 뱃지
+      const rarityText = result.rarity;
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(rarityText).width + 40;
+      
+      // 뱃지 배경
+      const badgeGradient = ctx.createLinearGradient(
+        canvas.width / 2 - rarityWidth / 2, 580,
+        canvas.width / 2 + rarityWidth / 2, 620
+      );
+      badgeGradient.addColorStop(0, '#f59e0b');
+      badgeGradient.addColorStop(1, '#ef4444');
+      
+      ctx.fillStyle = badgeGradient;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillText(rarityText, canvas.width / 2, 617);
+      
+      // 결과 유형
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(result.title, canvas.width / 2, 750);
+      
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 - 150, 820);
+      ctx.lineTo(canvas.width / 2 + 150, 820);
+      ctx.stroke();
+      
+      // 설명 (줄바꿈 처리)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900;
+      const lineHeight = 54;
+      const words = result.desc.split(' ');
+      let line = '';
+      let y = 900;
+      
+      for (let word of words) {
+        const testLine = line + word + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && line !== '') {
+          ctx.fillText(line.trim(), canvas.width / 2, y);
+          line = word + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      
+      // 하단 CTA
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('지구에 남은 마지막 사람.', canvas.width / 2, 1650);
+      ctx.fillText('당신은 왜 살아가는가?', canvas.width / 2, 1700);
+      
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      
+      return canvas;
+    }
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      
+      // 다운로드
+      const link = document.createElement('a');
+      link.download = '마지막인류_결과.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+    
+    // 공유 (텍스트)
     document.getElementById('shareBtn').addEventListener('click', async () => {
       const result = calculateResult();
-      const text = `${result.icon} 나의 실존 유형: ${result.title}
+      const text = `${result.icon} 나는 "${result.title}"래
 
-지구에 남은 마지막 사람.
-당신은 왜 살아가는가?
+인류가 멸망하고 나만 남는다면?
+너는 어떻게 할 것 같아?
 
 ▶ 테스트 해보기
 https://bit.ly/mindlab-last-human`;
@@ -703,7 +850,7 @@ https://bit.ly/mindlab-last-human`;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
           await navigator.clipboard.writeText(text);
-          alert('결과가 클립보드에 복사되었습니다!');
+          alert('복사 완료! 친구에게 보내보세요 💬');
           return;
         } catch (e) {}
       }
@@ -717,7 +864,7 @@ https://bit.ly/mindlab-last-human`;
       textarea.select();
       try {
         document.execCommand('copy');
-        alert('결과가 클립보드에 복사되었습니다!');
+        alert('복사 완료! 친구에게 보내보세요 💬');
       } catch (e) {
         alert('복사 실패. 직접 복사해주세요:\n\n' + text);
       }

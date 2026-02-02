@@ -15,6 +15,17 @@
       --sim-primary-bg: rgba(239, 68, 68, 0.1);
       --sim-primary-border: rgba(239, 68, 68, 0.3);
     }
+    
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -82,6 +93,7 @@
     <div id="resultScreen" class="hidden">
       <div class="sim-result-card">
         <div class="sim-result-icon" id="resultIcon">⚔️</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
         <div class="sim-result-label" id="resultLabel">당신의 복수관</div>
         <div class="sim-result-title" id="resultTitle">결과 타입</div>
         <div class="sim-result-desc" id="resultDesc">결과 설명</div>
@@ -90,9 +102,13 @@
       <div class="sim-principles-list hidden" id="principlesList"></div>
 
       <div class="sim-actions">
-        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
         <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
       </div>
+
+      <!-- 숨겨진 캔버스 -->
+      <canvas id="shareCanvas" style="display:none;"></canvas>
 
       <!-- 프로모션 섹션 -->
       <div class="sim-promo">
@@ -541,7 +557,8 @@
         return {
           icon: '⚔️',
           title: '응보적 정의론자',
-          desc: '당신은 잘못에는 대가가 따라야 한다고 믿습니다. 정의가 실현되지 않으면 세상이 공정하지 않다고 느낍니다. 칸트의 응보주의와 맥을 같이 합니다. 다만 복수가 새로운 상처를 만들 수 있음을 기억하세요.'
+          desc: '당신은 잘못에는 대가가 따라야 한다고 믿습니다. 정의가 실현되지 않으면 세상이 공정하지 않다고 느낍니다. 칸트의 응보주의와 맥을 같이 합니다. 다만 복수가 새로운 상처를 만들 수 있음을 기억하세요.',
+          rarity: '상위 14%'
         };
       }
       
@@ -551,7 +568,8 @@
         return {
           icon: '🦊',
           title: '전략적 보류자',
-          desc: '당신은 복수를 차갑게 계획합니다. 감정에 휘둘리지 않고 최적의 순간을 기다립니다. 마키아벨리가 인정할 만한 냉철함입니다. 하지만 너무 오래 품으면 자신을 갉아먹을 수 있습니다.'
+          desc: '당신은 복수를 차갑게 계획합니다. 감정에 휘둘리지 않고 최적의 순간을 기다립니다. 마키아벨리가 인정할 만한 냉철함입니다. 하지만 너무 오래 품으면 자신을 갉아먹을 수 있습니다.',
+          rarity: '상위 9%'
         };
       }
       
@@ -561,7 +579,8 @@
         return {
           icon: '🕊️',
           title: '회복적 용서자',
-          desc: '당신은 복수보다 용서를 선택합니다. 상대를 무너뜨릴 힘이 있지만 사용하지 않습니다. 마르쿠스 아우렐리우스가 말한 진정한 강함입니다. 당신은 자유로운 사람입니다.'
+          desc: '당신은 복수보다 용서를 선택합니다. 상대를 무너뜨릴 힘이 있지만 사용하지 않습니다. 마르쿠스 아우렐리우스가 말한 진정한 강함입니다. 당신은 자유로운 사람입니다.',
+          rarity: '상위 6%'
         };
       }
       
@@ -571,7 +590,8 @@
         return {
           icon: '🏛️',
           title: '스토아적 초월자',
-          desc: '당신은 복수를 초월했습니다. 상대에게 에너지를 쓸 가치가 없다고 봅니다. 세네카가 말한 현자의 길을 걷고 있습니다. 다만 때로는 정의를 위해 목소리를 내는 것도 필요합니다.'
+          desc: '당신은 복수를 초월했습니다. 상대에게 에너지를 쓸 가치가 없다고 봅니다. 세네카가 말한 현자의 길을 걷고 있습니다. 다만 때로는 정의를 위해 목소리를 내는 것도 필요합니다.',
+          rarity: '상위 8%'
         };
       }
       
@@ -580,7 +600,8 @@
         return {
           icon: '🧮',
           title: '결과주의적 계산가',
-          desc: '당신은 복수의 비용과 편익을 계산합니다. 감정보다 결과를 중시합니다. 벤담의 공리주의적 사고방식입니다. 합리적이지만 때로는 원칙이 결과보다 중요할 수 있습니다.'
+          desc: '당신은 복수의 비용과 편익을 계산합니다. 감정보다 결과를 중시합니다. 벤담의 공리주의적 사고방식입니다. 합리적이지만 때로는 원칙이 결과보다 중요할 수 있습니다.',
+          rarity: '상위 17%'
         };
       }
       
@@ -590,7 +611,8 @@
         return {
           icon: '✂️',
           title: '무관심한 손절러',
-          desc: '당신은 그 사람에게 더 이상 관심이 없습니다. 복수할 가치도 없다고 봅니다. 에피쿠로스가 말한 아타락시아(평정심)를 추구합니다. 가장 효과적인 복수는 잘 사는 것입니다.'
+          desc: '당신은 그 사람에게 더 이상 관심이 없습니다. 복수할 가치도 없다고 봅니다. 에피쿠로스가 말한 아타락시아(평정심)를 추구합니다. 가장 효과적인 복수는 잘 사는 것입니다.',
+          rarity: '상위 11%'
         };
       }
       
@@ -598,7 +620,8 @@
       return {
         icon: '⚖️',
         title: '갈등하는 인간',
-        desc: '당신은 복수와 용서 사이에서 갈등합니다. 정의를 원하지만 자신도 상처받고 싶지 않습니다. 이것은 매우 인간적인 모습입니다. 대부분의 사람들이 같은 갈등을 경험합니다.'
+        desc: '당신은 복수와 용서 사이에서 갈등합니다. 정의를 원하지만 자신도 상처받고 싶지 않습니다. 이것은 매우 인간적인 모습입니다. 대부분의 사람들이 같은 갈등을 경험합니다.',
+        rarity: '상위 35%'
       };
     }
     
@@ -609,6 +632,7 @@
       document.getElementById('resultIcon').textContent = result.icon;
       document.getElementById('resultTitle').textContent = result.title;
       document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
       
       // 발견한 원칙 표시
       if (principles.length > 0) {
@@ -670,13 +694,129 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     }
     
+    // 이미지 생성
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      // 배경 (빨간색 계열)
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#3d0c0c');
+      gradient.addColorStop(0.5, '#1a0505');
+      gradient.addColorStop(1, '#2d0a0a');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 불꽃 효과
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 100 + Math.random() * 100, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // 타이틀
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('복수 시뮬레이터', canvas.width / 2, 200);
+      
+      // 아이콘
+      ctx.font = '180px sans-serif';
+      ctx.fillText(result.icon, canvas.width / 2, 500);
+      
+      // 희귀도
+      const rarityText = result.rarity;
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(rarityText).width + 40;
+      
+      const badgeGradient = ctx.createLinearGradient(
+        canvas.width / 2 - rarityWidth / 2, 580,
+        canvas.width / 2 + rarityWidth / 2, 620
+      );
+      badgeGradient.addColorStop(0, '#f59e0b');
+      badgeGradient.addColorStop(1, '#ef4444');
+      
+      ctx.fillStyle = badgeGradient;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillText(rarityText, canvas.width / 2, 617);
+      
+      // 결과
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(result.title, canvas.width / 2, 750);
+      
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 - 150, 820);
+      ctx.lineTo(canvas.width / 2 + 150, 820);
+      ctx.stroke();
+      
+      // 설명
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900;
+      const lineHeight = 54;
+      const words = result.desc.split(' ');
+      let line = '';
+      let y = 900;
+      
+      for (let word of words) {
+        const testLine = line + word + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && line !== '') {
+          ctx.fillText(line.trim(), canvas.width / 2, y);
+          line = word + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      
+      // 하단 CTA
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('복수할 기회가 왔다.', canvas.width / 2, 1650);
+      ctx.fillText('넌 어떻게 할 거야?', canvas.width / 2, 1700);
+      
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      
+      return canvas;
+    }
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      
+      const link = document.createElement('a');
+      link.download = '복수시뮬레이터_결과.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+    
     // 공유
     document.getElementById('shareBtn').addEventListener('click', async () => {
       const result = calculateResult();
-      const text = `${result.icon} 나의 복수관: ${result.title}
+      const text = `${result.icon} 나는 "${result.title}"래
 
-복수할 기회가 왔다.
-당신은 어떻게 할 것인가?
+복수할 기회가 왔을 때, 넌 어떻게 해?
 
 ▶ 테스트 해보기
 https://bit.ly/mindlab-revenge`;
@@ -688,16 +828,14 @@ https://bit.ly/mindlab-revenge`;
         } catch (e) {}
       }
       
-      // clipboard API 시도
       if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
           await navigator.clipboard.writeText(text);
-          alert('결과가 클립보드에 복사되었습니다!');
+          alert('복사 완료! 친구에게 보내보세요 💬');
           return;
         } catch (e) {}
       }
       
-      // fallback: textarea 사용
       const textarea = document.createElement('textarea');
       textarea.value = text;
       textarea.style.position = 'fixed';
@@ -706,7 +844,7 @@ https://bit.ly/mindlab-revenge`;
       textarea.select();
       try {
         document.execCommand('copy');
-        alert('결과가 클립보드에 복사되었습니다!');
+        alert('복사 완료! 친구에게 보내보세요 💬');
       } catch (e) {
         alert('복사 실패. 직접 복사해주세요:\n\n' + text);
       }
