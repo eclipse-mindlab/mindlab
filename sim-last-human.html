@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>마지막 인류 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="마지막 인류 - 이클립스의 딜렘">
+  <meta property="og:description" content="지구에 남은 마지막 사람. 왜 살아야 하는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #64748b;
+      --sim-primary-light: #94a3b8;
+      --sim-primary-bg: rgba(100, 116, 139, 0.1);
+      --sim-primary-border: rgba(100, 116, 139, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">마지막 인류</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 철학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🌍</div>
+        <div class="sim-result-label" id="resultLabel">당신의 실존 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    // 게임 상태
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    // 모든 스테이지
+    const stages = [
+      // Stage 1: 첫날
+      {
+        badge: 'STAGE 1: 첫날',
+        title: '텅 빈 세상',
+        desc: '눈을 떴다. 평범한 아침인 줄 알았다.\n\n거리에 나갔다. 아무도 없다. 어제까지 붐볐던 거리가 텅 비었다.\n\n며칠을 헤맸다. 라디오, 인터넷, 전화 — 아무 응답이 없다.\n\n인정하기 싫지만, 이제 확실하다. 나 혼자다.',
+        highlight: '당신의 첫 반응은?',
+        choices: [
+          {
+            id: 'search',
+            text: '계속 사람을 찾는다',
+            subtext: '어딘가에 누군가 있을 거야',
+            meaning: '희망을 버리지 않는다. 한 명이라도 있다면 의미가 달라진다. 인간은 사회적 존재이기에.',
+            principle: {
+              name: '희망의 원리',
+              desc: '에른스트 블로흐는 희망을 인간 존재의 근본 원리라 했다. 아직 아닌 것을 향해 나아가는 힘.',
+              icon: '🔦'
+            },
+            quote: '"희망이 없는 곳에 삶도 없다." - 에른스트 블로흐'
+          },
+          {
+            id: 'collapse',
+            text: '주저앉는다',
+            subtext: '이게 무슨 의미가 있어',
+            meaning: '압도당한다. 너무 큰 상실 앞에서 무력감이 밀려온다. 자연스러운 반응이다.',
+            principle: {
+              name: '실존적 절망',
+              desc: '키르케고르가 말한 절망은 자기 자신과의 관계가 무너진 상태다. 존재의 근거가 흔들린다.',
+              icon: '🌑'
+            },
+            quote: '"절망은 죽음에 이르는 병이다." - 쇠렌 키르케고르'
+          },
+          {
+            id: 'survive',
+            text: '살아남을 준비를 한다',
+            subtext: '일단 생존이 먼저다',
+            meaning: '감정보다 이성을 선택한다. 무슨 일이 있었든 살아남아야 생각할 수 있다.',
+            principle: {
+              name: '생존 본능',
+              desc: '쇼펜하우어의 "삶에의 의지". 이성보다 앞서는, 존재 자체가 살려는 근원적 충동.',
+              icon: '🔥'
+            },
+            quote: '"삶에의 의지는 모든 존재의 핵심이다." - 아르투어 쇼펜하우어'
+          },
+          {
+            id: 'laugh',
+            text: '웃음이 나온다',
+            subtext: '말도 안 돼. 이건 꿈이야',
+            meaning: '현실을 받아들이기엔 너무 부조리하다. 웃음은 때로 부조리에 대한 반응이다.',
+            principle: {
+              name: '부조리의 인식',
+              desc: '카뮈가 말한 부조리. 의미를 찾는 인간과 침묵하는 세계 사이의 간극.',
+              icon: '🎭'
+            },
+            quote: '"부조리를 인식하는 것이 첫 번째 단계다." - 알베르 카뮈'
+          },
+          {
+            id: 'free',
+            text: '자유롭다고 느낀다',
+            subtext: '아무도 없다. 모든 규칙이 사라졌다',
+            meaning: '역설적 해방. 타인의 시선, 사회의 기대, 모든 의무에서 풀려났다.',
+            principle: {
+              name: '절대적 자유',
+              desc: '사르트르는 인간이 자유에 처해졌다고 말했다. 타인이 없으면 자유는 완전해진다. 하지만 그 무게도.',
+              icon: '🦅'
+            },
+            quote: '"인간은 자유라는 형벌에 처해져 있다." - 장 폴 사르트르'
+          }
+        ]
+      },
+      
+      // Stage 2: 한 달 후
+      {
+        badge: 'STAGE 2: 한 달 후',
+        title: '왜 일어나야 하지?',
+        desc: '한 달이 지났다. 생존은 어렵지 않았다.\n\n마트에 음식은 넘쳤고, 빈 집은 무한했다.\n\n문제는 다른 거다.\n\n아침에 눈을 뜬다. 왜 일어나야 하지?\n\n누구도 나를 기다리지 않는다. 내가 뭘 해도 아무도 모른다.',
+        highlight: '당신은 어떻게 하루를 보내는가?',
+        choices: [
+          {
+            id: 'routine',
+            text: '원래 하던 대로 산다',
+            subtext: '아침에 일어나고, 밥 먹고, 잠든다',
+            meaning: '습관이 나를 지탱한다. 의미가 없어도 리듬은 남는다. 그것만으로 살 수 있다.',
+            principle: {
+              name: '습관의 힘',
+              desc: '파스칼은 습관을 제2의 천성이라 했다. 이유 없이도 행동할 수 있게 해주는 것.',
+              icon: '🔁'
+            },
+            quote: '"습관은 제2의 천성이며, 제1의 천성을 파괴한다." - 블레즈 파스칼'
+          },
+          {
+            id: 'desire',
+            text: '하고 싶었던 것들을 한다',
+            subtext: '더 이상 눈치 볼 사람이 없으니까',
+            meaning: '제약이 사라졌다. 법도, 도덕도, 판단도 없다. 순수한 욕망만 남았다.',
+            principle: {
+              name: '욕망의 해방',
+              desc: '들뢰즈와 가타리는 욕망을 긍정했다. 억압에서 풀려난 욕망은 창조가 된다.',
+              icon: '✨'
+            },
+            quote: '"욕망은 결핍이 아니라 생산이다." - 질 들뢰즈'
+          },
+          {
+            id: 'record',
+            text: '기록을 남긴다',
+            subtext: '일기든, 영상이든. 누군가 읽을지도 모르니까',
+            meaning: '증인이 되려 한다. 내가 존재했다는 것, 인류가 존재했다는 것을 남기려 한다.',
+            principle: {
+              name: '증언의 의무',
+              desc: '레비나스는 타자에 대한 책임을 말했다. 사라진 자들을 위해 기록하는 것도 책임이다.',
+              icon: '📝'
+            },
+            quote: '"타인의 얼굴은 나에게 말한다: 나를 죽이지 마라." - 엠마누엘 레비나스'
+          },
+          {
+            id: 'nothing',
+            text: '대부분 누워 있다',
+            subtext: '뭘 해도 의미가 없으니까',
+            meaning: '허무가 밀려온다. 아무도 보지 않는 행동에 무슨 가치가 있을까.',
+            principle: {
+              name: '허무주의',
+              desc: '니체가 경고한 허무주의. 신이 죽고, 이제 인류도 사라졌다. 모든 가치가 무너졌다.',
+              icon: '🕳️'
+            },
+            quote: '"신은 죽었다. 그리고 우리가 그를 죽였다." - 프리드리히 니체'
+          },
+          {
+            id: 'animals',
+            text: '동물들과 시간을 보낸다',
+            subtext: '개들, 고양이들. 혼자가 아닌 척이라도',
+            meaning: '관계를 찾는다. 인간은 아니지만, 살아있는 존재와의 연결을 갈망한다.',
+            principle: {
+              name: '관계의 본질',
+              desc: '마르틴 부버는 "나-너"의 관계를 말했다. 타자와의 만남에서 진정한 존재가 시작된다.',
+              icon: '🐕'
+            },
+            quote: '"모든 참된 삶은 만남이다." - 마르틴 부버'
+          }
+        ]
+      },
+      
+      // Stage 3: 1년 후
+      {
+        badge: 'STAGE 3: 1년 후',
+        title: '거울 속 낯선 얼굴',
+        desc: '1년이 지났다. 살아있다.\n\n어느 날, 우연히 거울을 본다. 낯선 얼굴.\n\n1년 동안 아무도 내 이름을 부르지 않았다.\n\n문득 생각한다.\n\n"나는 누구지? 아무도 없는 세상에서 \'나\'란 뭐지?"',
+        highlight: '당신의 생각은?',
+        choices: [
+          {
+            id: 'still_me',
+            text: '"나는 여전히 나다"',
+            subtext: '타인이 없어도 나는 존재한다',
+            meaning: '자아는 내면에 있다고 믿는다. 관계와 무관하게 존재하는 본질적 자아.',
+            principle: {
+              name: '본질적 자아',
+              desc: '데카르트의 "나는 생각한다, 고로 존재한다." 타인의 인정 없이도 사유하는 나는 있다.',
+              icon: '💭'
+            },
+            quote: '"나는 생각한다, 고로 존재한다." - 르네 데카르트'
+          },
+          {
+            id: 'dont_know',
+            text: '"모르겠다. 내가 누군지"',
+            subtext: '관계 없이 정체성이 있을까?',
+            meaning: '흔들린다. 타인의 눈에 비친 나, 역할로서의 나 — 그것 없이 내가 누군지 모르겠다.',
+            principle: {
+              name: '사회적 자아',
+              desc: '미드는 자아가 사회적 상호작용에서 형성된다고 했다. 타인 없이 자아도 흔들린다.',
+              icon: '👥'
+            },
+            quote: '"자아는 타인과의 상호작용 속에서 탄생한다." - 조지 허버트 미드'
+          },
+          {
+            id: 'no_matter',
+            text: '"상관없다. 이름 따윈"',
+            subtext: '정체성은 이제 사치다',
+            meaning: '정체성에 대한 집착을 버린다. 이름, 역할, 정의 — 다 부질없다.',
+            principle: {
+              name: '무아',
+              desc: '불교의 무아(無我) 사상. 고정된 자아는 환상이다. 집착에서 벗어나면 자유로워진다.',
+              icon: '🌊'
+            },
+            quote: '"자아란 없다. 있다고 믿는 것이 고통의 원인이다." - 붓다'
+          },
+          {
+            id: 'humanity',
+            text: '"내가 곧 인류다"',
+            subtext: '마지막 남은 사람으로서의 책임',
+            meaning: '개인을 넘어선다. 나는 더 이상 한 명이 아니라 인류 전체의 마지막 대표자.',
+            principle: {
+              name: '인류의 대리자',
+              desc: '한나 아렌트는 인간의 조건을 복수성이라 했다. 마지막 한 명은 역설적으로 모두를 대표한다.',
+              icon: '🌍'
+            },
+            quote: '"인간 존재의 조건은 복수성이다." - 한나 아렌트'
+          },
+          {
+            id: 'fading',
+            text: '"점점 사라지는 느낌이다"',
+            subtext: '나와 세계의 경계가 흐려진다',
+            meaning: '자아의 경계가 무너진다. 아무도 나를 규정하지 않으니, 나도 나를 규정할 수 없다.',
+            principle: {
+              name: '경계의 해체',
+              desc: '장자는 물아일체를 말했다. 나와 세계의 구분이 사라질 때, 새로운 존재 방식이 열린다.',
+              icon: '🌫️'
+            },
+            quote: '"나비가 나인지, 내가 나비인지 알 수 없다." - 장자'
+          }
+        ]
+      },
+      
+      // Stage 4: 끝을 앞두고
+      {
+        badge: 'STAGE 4: 끝을 앞두고',
+        title: '마지막 질문',
+        desc: '몇 년이 지났다. 정확히 몇 년인지도 모르겠다.\n\n몸이 예전 같지 않다. 이제 얼마 남지 않았음을 안다.\n\n내가 죽으면, 인류는 진짜로 끝난다.\n\n80억 명의 역사가, 수천 년의 문명이, 모든 사랑과 증오와 꿈이 —\n\n아무도 기억하지 않게 된다.',
+        highlight: '마지막으로 무엇을 할 것인가?',
+        choices: [
+          {
+            id: 'record_final',
+            text: '인류의 기록을 남긴다',
+            subtext: '우리가 존재했다는 증거',
+            meaning: '증인으로서의 마지막 의무. 누가 읽을지 모르지만, 남기는 것 자체가 의미다.',
+            principle: {
+              name: '존재의 증거',
+              desc: '파스칼은 인간을 "생각하는 갈대"라 했다. 우주가 침묵해도, 우리가 생각했다는 것은 사라지지 않는다.',
+              icon: '📜'
+            },
+            quote: '"인간은 생각하는 갈대에 불과하다. 하지만 그것이 인간의 위대함이다." - 블레즈 파스칼'
+          },
+          {
+            id: 'nothing_left',
+            text: '아무것도 남기지 않는다',
+            subtext: '사라지면 그만이다',
+            meaning: '무상함을 받아들인다. 시작이 있으면 끝이 있다. 인류도 예외가 아니다.',
+            principle: {
+              name: '무상',
+              desc: '모든 것은 변한다. 영원한 것은 없다. 불교의 근본 가르침.',
+              icon: '🍂'
+            },
+            quote: '"형성된 모든 것은 소멸한다." - 붓다'
+          },
+          {
+            id: 'live_till_end',
+            text: '마지막 순간까지 살아본다',
+            subtext: '끝까지 경험한다',
+            meaning: '삶 자체를 끝까지 긍정한다. 의미를 찾지 않아도, 살아있음 자체가 전부다.',
+            principle: {
+              name: '삶의 긍정',
+              desc: '니체의 영원회귀. 이 삶을 무한히 반복해도 좋다고 말할 수 있는가? 그것이 삶의 긍정이다.',
+              icon: '♾️'
+            },
+            quote: '"운명을 사랑하라." - 프리드리히 니체'
+          },
+          {
+            id: 'choose_end',
+            text: '스스로 끝을 선택한다',
+            subtext: '기다리지 않겠다',
+            meaning: '마지막까지 자율성을 지킨다. 죽음의 방식만큼은 내가 정한다.',
+            principle: {
+              name: '자기 결정권',
+              desc: '스토아 철학자들은 죽음을 선택할 권리를 인정했다. 삶의 주인은 끝까지 나다.',
+              icon: '🚪'
+            },
+            quote: '"문이 열려 있다. 원할 때 나갈 수 있다." - 에픽테토스'
+          },
+          {
+            id: 'gratitude',
+            text: '감사한다',
+            subtext: '존재했다는 것 자체에',
+            meaning: '결국 있었다는 것. 사랑했고, 아팠고, 웃었다는 것. 그 자체로 충분하다.',
+            principle: {
+              name: '존재의 경이',
+              desc: '하이데거는 "왜 무가 아니라 존재가 있는가"라고 물었다. 존재 자체가 기적이다.',
+              icon: '🙏'
+            },
+            quote: '"왜 아무것도 없지 않고, 무언가 있는 것인가?" - 마르틴 하이데거'
+          }
+        ]
+      }
+    ];
+    
+    // 화면 요소
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    // 스테이지 렌더링
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      // 진행바 업데이트
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      // 배지
+      document.getElementById('stageBadge').textContent = stage.badge;
+      
+      // 상황
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const quoteEl = document.getElementById('situationQuote');
+      if (stage.quote) {
+        quoteEl.textContent = stage.quote;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+      
+      // 선택지 렌더링
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 선택 처리
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    // 해설 화면
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentStageIndex >= stages.length - 1) {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음으로';
+      }
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 다음 버튼
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    // 결과 계산
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 첫날
+      const stage2 = choiceIds[1]; // 한 달 후
+      const stage3 = choiceIds[2]; // 1년 후
+      const stage4 = choiceIds[3]; // 끝을 앞두고
+      
+      // 실존적 투사: 의미 창조, 기록, 긍정
+      if ((stage2 === 'record' || stage4 === 'record_final') && 
+          (stage3 === 'still_me' || stage3 === 'humanity')) {
+        return {
+          icon: '⚔️',
+          title: '실존적 투사',
+          desc: '의미 없는 세상에서 스스로 의미를 만든다. 아무도 보지 않아도 기록하고, 아무도 기억하지 않아도 남긴다. 카뮈가 말한 "시지프스의 행복"을 아는 사람. 부조리에 굴복하지 않는다.'
+        };
+      }
+      
+      // 기록자: 증언에 집중
+      if (stage2 === 'record' || stage4 === 'record_final') {
+        return {
+          icon: '📜',
+          title: '기록자',
+          desc: '인류의 마지막 증인. 누가 읽을지 모르지만, 우리가 존재했다는 것을 남긴다. 사라진 모든 이들을 대신해 기억한다. 그것이 마지막 책임이라 믿는다.'
+        };
+      }
+      
+      // 허무주의자: 무기력, 의미 없음
+      if ((stage1 === 'collapse' || stage2 === 'nothing') && 
+          (stage3 === 'no_matter' || stage3 === 'fading' || stage4 === 'nothing_left')) {
+        return {
+          icon: '🕳️',
+          title: '허무주의자',
+          desc: '아무도 없으면 아무것도 의미 없다. 니체가 경고한 허무의 심연을 직시한다. 하지만 그것도 하나의 진실이다. 환상 없이 세상을 본다.'
+        };
+      }
+      
+      // 자유로운 자: 해방, 욕망
+      if ((stage1 === 'free' || stage2 === 'desire') && 
+          (stage3 === 'no_matter' || stage4 === 'choose_end')) {
+        return {
+          icon: '🦅',
+          title: '자유로운 자',
+          desc: '모든 속박에서 풀려났다. 사회도, 규범도, 타인의 시선도 없다. 완전한 자유. 사르트르가 말한 "자유의 형벌"을 오히려 즐긴다.'
+        };
+      }
+      
+      // 그리워하는 자: 관계 추구, 희망
+      if ((stage1 === 'search' || stage2 === 'animals') && 
+          (stage3 === 'dont_know')) {
+        return {
+          icon: '💔',
+          title: '그리워하는 자',
+          desc: '끝까지 타인을 그리워한다. 인간은 관계 속에서만 온전해진다는 것을 몸으로 안다. 혼자여도 혼자가 아닌 척한다. 그것이 살아가는 법이다.'
+        };
+      }
+      
+      // 수용하는 자: 감사, 긍정
+      if (stage4 === 'gratitude' || stage4 === 'live_till_end') {
+        return {
+          icon: '🙏',
+          title: '수용하는 자',
+          desc: '존재했다는 것 자체에 감사한다. 시작이 있으면 끝이 있다. 인류도, 나도. 그래도 있었다는 것. 사랑했고, 아팠고, 웃었다는 것. 그 자체로 충분하다.'
+        };
+      }
+      
+      // 기본: 방황하는 자
+      return {
+        icon: '🌫️',
+        title: '방황하는 자',
+        desc: '아직 답을 모른다. 희망과 절망 사이, 의미와 무의미 사이를 오간다. 하지만 그것도 삶이다. 답을 찾는 과정 자체가 살아있다는 증거다.'
+      };
+    }
+    
+    // 결과 화면
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      // 발견한 원칙 표시
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      // 프로필 저장
+      saveProgress(result);
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 프로필 저장
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      // 완료 체크 및 경험치
+      if (!profile.completedSims.includes('last-human')) {
+        profile.completedSims.push('last-human');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      // 원칙 저장 (문자열로)
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      // 레벨업 체크
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 공유
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나의 실존 유형: ${result.title}
+
+지구에 남은 마지막 사람.
+당신은 왜 살아가는가?
+
+▶ 테스트 해보기
+https://bit.ly/mindlab-last-human`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '마지막 인류', text });
+          return;
+        } catch (e) {}
+      }
+      
+      // clipboard API 시도
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('결과가 클립보드에 복사되었습니다!');
+          return;
+        } catch (e) {}
+      }
+      
+      // fallback: textarea 사용
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('결과가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>
