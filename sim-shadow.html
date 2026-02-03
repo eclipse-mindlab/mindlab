@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>내면의 그림자 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="내면의 그림자 - 이클립스 마인드랩">
+  <meta property="og:description" content="당신이 숨기고 있는 또 다른 자아는 무엇인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #6366f1;
+      --sim-primary-light: #818cf8;
+      --sim-primary-bg: rgba(99, 102, 241, 0.1);
+      --sim-primary-border: rgba(99, 102, 241, 0.3);
+    }
+    
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">내면의 그림자</div>
+    </div>
+
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 심리학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🌑</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 그림자 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      // Stage 1: 거울
+      {
+        badge: 'STAGE 1: 거울',
+        title: '싫어하는 사람',
+        desc: '생각해보자.\n\n당신이 가장 싫어하는 유형의 사람은 어떤 사람인가?\n\n그 사람의 어떤 점이 당신을 불편하게 만드는가?',
+        highlight: '가장 견디기 힘든 유형은?',
+        choices: [
+          {
+            id: 'attention',
+            text: '관심받으려 애쓰는 사람',
+            subtext: '오버하고, 자기 자랑만 하는',
+            meaning: '융에 따르면, 우리가 타인에게서 강하게 거부하는 특성은 우리 내면에 억압된 것일 수 있다. 당신은 주목받고 싶은 욕구를 억누르고 있을지 모른다.',
+            principle: {
+              name: '그림자 투사',
+              desc: '융의 핵심 개념. 자신이 인정하지 못하는 특성을 타인에게서 발견하고 혐오한다. 거울을 보는 것처럼.',
+              icon: '🪞'
+            },
+            quote: '"타인에게서 당신을 화나게 하는 모든 것은 자기 자신을 이해하는 데 이용될 수 있다." - 칼 융'
+          },
+          {
+            id: 'weak',
+            text: '나약하고 의존적인 사람',
+            subtext: '스스로 결정 못하고, 늘 기대는',
+            meaning: '강함을 중시하는 당신은 자신의 나약함을 인정하기 어려울 수 있다. 하지만 모든 인간에게는 의존의 욕구가 있다.',
+            principle: {
+              name: '페르소나와 그림자',
+              desc: '페르소나(가면)가 강할수록 그림자도 깊어진다. 강한 척 하는 만큼 내면의 연약함은 억압된다.',
+              icon: '🎭'
+            },
+            quote: '"가면을 오래 쓰면 가면이 얼굴이 된다." - 칼 융'
+          },
+          {
+            id: 'selfish',
+            text: '이기적인 사람',
+            subtext: '자기밖에 모르고, 남 생각 안 하는',
+            meaning: '이타적이려 노력하는 당신은 자신의 욕구를 죄책감 없이 표현하기 어려울 수 있다. 하지만 건강한 이기심도 필요하다.',
+            principle: {
+              name: '억압된 욕구',
+              desc: '지나친 이타성은 자기 욕구의 억압일 수 있다. 균형 잡힌 자기 돌봄이 건강한 관계의 기초다.',
+              icon: '⚖️'
+            },
+            quote: '"자신을 사랑하지 못하는 사람은 타인도 사랑할 수 없다." - 에리히 프롬'
+          },
+          {
+            id: 'cold',
+            text: '감정 없이 차가운 사람',
+            subtext: '공감 없고, 계산적인',
+            meaning: '따뜻함을 중시하는 당신은 감정에 휩쓸리지 않는 냉철함을 내면에 억압하고 있을 수 있다.',
+            principle: {
+              name: '감정과 이성의 균형',
+              desc: '융은 네 가지 기능(사고, 감정, 감각, 직관) 중 덜 발달한 것이 그림자가 된다고 했다.',
+              icon: '🧠'
+            },
+            quote: '"우리가 빛을 의식할수록 그림자는 더 어두워진다." - 칼 융'
+          },
+          {
+            id: 'fake',
+            text: '위선적인 사람',
+            subtext: '겉과 속이 다른, 가식적인',
+            meaning: '진정성을 중시하는 당신도 사회적 기대에 맞춰 자신을 포장한 적이 있을 것이다. 그것이 불편한 것이다.',
+            principle: {
+              name: '페르소나의 필요성',
+              desc: '사회적 가면(페르소나)은 나쁜 것이 아니다. 다만 그것이 진짜 자신이라고 착각하면 문제가 된다.',
+              icon: '🎪'
+            },
+            quote: '"페르소나는 사회와의 타협이다." - 칼 융'
+          }
+        ]
+      },
+      
+      // Stage 2: 꿈
+      {
+        badge: 'STAGE 2: 꿈',
+        title: '반복되는 꿈',
+        desc: '꿈에서 당신은 때때로 평소와 다른 행동을 한다.\n\n깨어나면 "내가 왜 그랬지?" 싶은 꿈.\n\n어떤 꿈이 가장 기억에 남는가?',
+        highlight: '꿈에서의 당신은?',
+        choices: [
+          {
+            id: 'dream_aggression',
+            text: '누군가에게 화를 폭발시키는 꿈',
+            subtext: '소리 지르거나, 물건을 던지거나',
+            meaning: '평소 분노를 억제하는 당신의 무의식이 꿈에서 해방된다. 융은 꿈을 무의식으로 가는 왕도라 했다.',
+            principle: {
+              name: '꿈의 보상 기능',
+              desc: '꿈은 의식의 일방성을 보상한다. 낮에 억누른 것이 밤에 나타난다.',
+              icon: '💢'
+            },
+            quote: '"꿈은 무의식에서 오는 편지다." - 칼 융'
+          },
+          {
+            id: 'dream_escape',
+            text: '모든 것을 버리고 도망치는 꿈',
+            subtext: '책임, 관계, 일상에서 탈출',
+            meaning: '책임감 강한 당신의 내면에는 자유를 갈망하는 또 다른 자아가 있다.',
+            principle: {
+              name: '억압된 자유',
+              desc: '의무와 책임에 충실한 삶은 내면의 자유로운 영혼을 억누른다. 그것이 꿈에서 탈출로 나타난다.',
+              icon: '🏃'
+            },
+            quote: '"무의식은 의식이 거부한 모든 것의 저장고다." - 칼 융'
+          },
+          {
+            id: 'dream_power',
+            text: '엄청난 힘이나 능력을 가진 꿈',
+            subtext: '날거나, 초능력을 쓰거나',
+            meaning: '현실에서 무력감을 느끼는 순간들이 있을 것이다. 꿈은 그 보상으로 전능함을 선물한다.',
+            principle: {
+              name: '열등감의 보상',
+              desc: '아들러가 말한 열등감 보상. 현실의 무력감이 꿈에서 전능감으로 나타난다.',
+              icon: '⚡'
+            },
+            quote: '"인간의 모든 행동은 열등감을 극복하려는 시도다." - 알프레드 아들러'
+          },
+          {
+            id: 'dream_intimacy',
+            text: '낯선 사람과 깊이 연결되는 꿈',
+            subtext: '사랑에 빠지거나, 깊은 대화를 나누거나',
+            meaning: '현실의 관계에서 채워지지 않는 친밀감의 욕구가 있을 수 있다.',
+            principle: {
+              name: '아니마/아니무스',
+              desc: '융은 남성 내면의 여성성(아니마)과 여성 내면의 남성성(아니무스)이 꿈에서 나타난다고 했다.',
+              icon: '💫'
+            },
+            quote: '"아니마는 남자의 영혼이고, 아니무스는 여자의 정신이다." - 칼 융'
+          },
+          {
+            id: 'dream_fall',
+            text: '떨어지거나 쫓기는 꿈',
+            subtext: '불안하고, 통제 불가능한',
+            meaning: '삶에서 통제력을 잃고 있다는 불안이 있을 수 있다. 꿈은 그 불안을 직면하게 한다.',
+            principle: {
+              name: '불안의 상징화',
+              desc: '꿈은 추상적 감정을 구체적 이미지로 바꾼다. 떨어지는 꿈은 통제력 상실의 상징.',
+              icon: '😰'
+            },
+            quote: '"꿈은 결코 사소한 것을 다루지 않는다." - 칼 융'
+          }
+        ]
+      },
+      
+      // Stage 3: 선택
+      {
+        badge: 'STAGE 3: 갈림길',
+        title: '아무도 모른다면',
+        desc: '당신 앞에 두 개의 버튼이 있다.\n\n빨간 버튼: 누르면 당신이 원하는 것을 얻지만, 모르는 누군가가 작은 불행을 겪는다.\n\n파란 버튼: 아무 일도 일어나지 않는다.\n\n아무도 모른다. 절대로.',
+        highlight: '어떤 버튼을 누르겠는가?',
+        choices: [
+          {
+            id: 'press_red',
+            text: '빨간 버튼을 누른다',
+            subtext: '나도 내 이익을 챙길 권리가 있다',
+            meaning: '솔직한 선택. 인간의 이기적 충동을 인정한다. 융은 그림자를 인정하는 것이 첫 단계라 했다.',
+            principle: {
+              name: '그림자의 인정',
+              desc: '그림자를 부정하면 더 강해진다. 인정하면 통합의 길이 열린다.',
+              icon: '🔴'
+            },
+            quote: '"그림자를 의식하지 못하면 그것은 운명이 된다." - 칼 융'
+          },
+          {
+            id: 'press_blue',
+            text: '파란 버튼을 누른다',
+            subtext: '다른 사람을 해치면서까지는 안 된다',
+            meaning: '도덕적 선택. 하지만 융은 물었을 것이다 - 이것은 진정한 선함인가, 아니면 그림자에 대한 두려움인가?',
+            principle: {
+              name: '도덕적 그림자',
+              desc: '지나친 선함도 그림자를 만든다. 억압된 어두움은 언젠가 폭발한다.',
+              icon: '🔵'
+            },
+            quote: '"선인의 그림자는 악인이고, 악인의 그림자는 선인이다." - 칼 융'
+          },
+          {
+            id: 'hesitate',
+            text: '아무것도 누르지 않는다',
+            subtext: '결정하고 싶지 않다',
+            meaning: '결정 회피. 하지만 선택하지 않는 것도 선택이다. 현상 유지는 파란 버튼과 같다.',
+            principle: {
+              name: '결정의 회피',
+              desc: '선택을 피하는 것은 무의식에 선택을 맡기는 것이다. 그것은 그림자에게 힘을 주는 것.',
+              icon: '⏸️'
+            },
+            quote: '"결정하지 않으면 무의식이 결정한다." - 칼 융'
+          },
+          {
+            id: 'question',
+            text: '"작은 불행"이 뭔지 먼저 묻는다',
+            subtext: '정보가 더 필요하다',
+            meaning: '분석적 접근. 하지만 이 질문은 결국 자신을 합리화하려는 시도일 수 있다.',
+            principle: {
+              name: '합리화',
+              desc: '지성화는 감정을 회피하는 방어기제다. 머리로 이해하면 마음의 불편함을 피할 수 있다.',
+              icon: '🤔'
+            },
+            quote: '"지성은 감정의 하인이 될 수 있다." - 데이비드 흄'
+          }
+        ]
+      },
+      
+      // Stage 4: 통합
+      {
+        badge: 'STAGE 4: 통합',
+        title: '거울 속 그림자',
+        desc: '마지막 질문.\n\n만약 당신의 "그림자" - 숨겨진 자아 - 를 만날 수 있다면,\n\n어떻게 하겠는가?',
+        highlight: '그림자를 만난다면?',
+        choices: [
+          {
+            id: 'embrace',
+            text: '받아들인다',
+            subtext: '그것도 나의 일부다',
+            meaning: '융이 말한 개성화의 핵심. 그림자를 통합하면 더 완전한 자아가 된다.',
+            principle: {
+              name: '개성화',
+              desc: '융 심리학의 궁극적 목표. 의식과 무의식, 페르소나와 그림자를 통합하여 온전한 자기가 되는 것.',
+              icon: '🌓'
+            },
+            quote: '"개성화란 자기 자신이 되는 것이다." - 칼 융'
+          },
+          {
+            id: 'fight',
+            text: '싸워서 이긴다',
+            subtext: '어둠을 정복해야 한다',
+            meaning: '그림자와 싸우면 더 강해진다. 억압은 해결책이 아니다.',
+            principle: {
+              name: '억압의 역설',
+              desc: '억압된 것은 사라지지 않고 더 강해진다. 프로이트가 발견한 억압의 회귀.',
+              icon: '⚔️'
+            },
+            quote: '"억압된 것은 반드시 돌아온다." - 지그문트 프로이트'
+          },
+          {
+            id: 'understand',
+            text: '이해하려 한다',
+            subtext: '왜 그런 모습이 되었는지',
+            meaning: '통찰을 통한 접근. 그림자의 기원을 이해하면 그것을 다루기 쉬워진다.',
+            principle: {
+              name: '통찰',
+              desc: '무의식적 내용을 의식화하는 것. 인식하는 것만으로도 치유가 시작된다.',
+              icon: '💡'
+            },
+            quote: '"인식은 치유의 첫 걸음이다." - 칼 융'
+          },
+          {
+            id: 'fear',
+            text: '두렵다',
+            subtext: '마주하고 싶지 않다',
+            meaning: '자연스러운 반응. 그림자는 두려운 것이다. 하지만 피하면 그것은 더 커진다.',
+            principle: {
+              name: '그림자의 힘',
+              desc: '인정하지 않은 그림자는 투사, 강박, 증상으로 나타난다. 피할수록 강해진다.',
+              icon: '😨'
+            },
+            quote: '"우리가 직면하지 않는 것은 운명이 된다." - 칼 융'
+          },
+          {
+            id: 'dialogue',
+            text: '대화를 시도한다',
+            subtext: '무엇을 원하는지 묻는다',
+            meaning: '능동적 상상. 융이 개발한 기법으로, 무의식과 대화하는 방법이다.',
+            principle: {
+              name: '능동적 상상',
+              desc: '깨어있는 상태에서 무의식의 이미지와 대화하는 융의 기법. 그림자와 협상하는 방법.',
+              icon: '💬'
+            },
+            quote: '"무의식과 대화하라. 그것은 당신의 적이 아니다." - 칼 융'
+          }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 싫어하는 유형
+      const stage2 = choiceIds[1]; // 꿈
+      const stage3 = choiceIds[2]; // 버튼
+      const stage4 = choiceIds[3]; // 통합
+      
+      // 통합을 향해 가는 자
+      if (stage4 === 'embrace' || stage4 === 'dialogue') {
+        return {
+          icon: '🌓',
+          title: '통합을 향해 가는 자',
+          desc: '당신은 그림자를 인정하고 대화할 준비가 되어있다. 융이 말한 개성화의 길을 걷고 있다. 어둠과 빛이 함께 할 때 완전한 자아가 된다. 이것은 성숙의 표시다.',
+          rarity: '상위 8%'
+        };
+      }
+      
+      // 억압된 힘의 소유자
+      if (stage1 === 'attention' && (stage2 === 'dream_power' || stage2 === 'dream_aggression')) {
+        return {
+          icon: '⚡',
+          title: '억압된 힘의 소유자',
+          desc: '당신은 주목받고 싶은 욕구와 힘을 표현하고 싶은 욕구를 억누르고 있다. 겸손함 뒤에 인정받고 싶은 열망이 있다. 이것을 인정하면 더 자유로워질 수 있다.',
+          rarity: '상위 15%'
+        };
+      }
+      
+      // 도덕적 그림자를 가진 자
+      if (stage3 === 'press_blue' && stage4 === 'fight') {
+        return {
+          icon: '🛡️',
+          title: '도덕적 완벽주의자',
+          desc: '당신은 "좋은 사람"이어야 한다는 압박을 느낀다. 하지만 지나친 선함도 그림자를 만든다. 억압된 이기심, 분노, 욕망이 어딘가에 쌓여있을 수 있다. 때로는 "나쁜 생각"을 해도 괜찮다.',
+          rarity: '상위 12%'
+        };
+      }
+      
+      // 자유를 갈망하는 영혼
+      if (stage2 === 'dream_escape' && (stage1 === 'weak' || stage1 === 'attention')) {
+        return {
+          icon: '🦋',
+          title: '자유를 갈망하는 영혼',
+          desc: '당신의 그림자는 자유를 원한다. 책임감과 의무감 뒤에 모든 것을 버리고 떠나고 싶은 욕구가 숨어있다. 이것을 인정하는 것이 건강한 균형을 찾는 첫 걸음이다.',
+          rarity: '상위 18%'
+        };
+      }
+      
+      // 솔직한 자기 인식자
+      if (stage3 === 'press_red' && (stage4 === 'embrace' || stage4 === 'understand')) {
+        return {
+          icon: '🔥',
+          title: '솔직한 자기 인식자',
+          desc: '당신은 자신의 어두운 면을 인정할 용기가 있다. 이것은 드문 능력이다. 대부분의 사람들은 자신의 그림자를 부정한다. 당신은 통합을 향한 좋은 출발점에 있다.',
+          rarity: '상위 6%'
+        };
+      }
+      
+      // 불안과 싸우는 자
+      if (stage2 === 'dream_fall' && stage4 === 'fear') {
+        return {
+          icon: '🌊',
+          title: '불안과 싸우는 자',
+          desc: '당신의 그림자에는 불안과 통제력 상실에 대한 두려움이 있다. 이것은 많은 사람들이 공유하는 보편적인 그림자다. 불안을 적이 아닌 신호로 바라보면 도움이 된다.',
+          rarity: '상위 20%'
+        };
+      }
+      
+      // 친밀함을 갈망하는 자
+      if (stage2 === 'dream_intimacy') {
+        return {
+          icon: '💜',
+          title: '연결을 갈망하는 자',
+          desc: '당신의 그림자는 깊은 연결을 원한다. 독립적이고 강해 보이는 외면 뒤에 누군가와 진정으로 연결되고 싶은 욕구가 있다. 이것은 인간의 가장 근본적인 욕구다.',
+          rarity: '상위 16%'
+        };
+      }
+      
+      // 기본: 탐색 중인 자아
+      return {
+        icon: '🔮',
+        title: '탐색 중인 자아',
+        desc: '당신의 그림자는 아직 명확한 형태를 드러내지 않았다. 이것은 나쁜 것이 아니다. 자아 탐색은 평생의 여정이다. 중요한 것은 계속 질문하는 것이다.',
+        rarity: '상위 22%'
+      };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      saveProgress(result);
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      if (!profile.completedSims.includes('shadow')) {
+        profile.completedSims.push('shadow');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 이미지 생성
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      // 배경 (보라/남색 그라데이션)
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1e1b4b');
+      gradient.addColorStop(0.5, '#0c0a1d');
+      gradient.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 그림자 효과
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.1)';
+      ctx.beginPath();
+      ctx.arc(540, 400, 200, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 타이틀
+      ctx.fillStyle = '#6366f1';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('내면의 그림자', canvas.width / 2, 200);
+      
+      // 아이콘
+      ctx.font = '180px sans-serif';
+      ctx.fillText(result.icon, canvas.width / 2, 500);
+      
+      // 희귀도
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(result.rarity).width + 40;
+      
+      const badgeGradient = ctx.createLinearGradient(
+        canvas.width / 2 - rarityWidth / 2, 580,
+        canvas.width / 2 + rarityWidth / 2, 620
+      );
+      badgeGradient.addColorStop(0, '#f59e0b');
+      badgeGradient.addColorStop(1, '#ef4444');
+      
+      ctx.fillStyle = badgeGradient;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillText(result.rarity, canvas.width / 2, 617);
+      
+      // 결과
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 64px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(result.title, canvas.width / 2, 750);
+      
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 - 150, 820);
+      ctx.lineTo(canvas.width / 2 + 150, 820);
+      ctx.stroke();
+      
+      // 설명
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900;
+      const lineHeight = 54;
+      const words = result.desc.split(' ');
+      let line = '';
+      let y = 900;
+      
+      for (let word of words) {
+        const testLine = line + word + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && line !== '') {
+          ctx.fillText(line.trim(), canvas.width / 2, y);
+          line = word + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      
+      // 하단 CTA
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('당신이 숨기고 있는', canvas.width / 2, 1650);
+      ctx.fillText('또 다른 자아는 무엇인가?', canvas.width / 2, 1700);
+      
+      ctx.fillStyle = '#6366f1';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      
+      return canvas;
+    }
+    
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      const link = document.createElement('a');
+      link.download = '내면의그림자_결과.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 내 그림자 유형: "${result.title}"
+
+당신이 숨기고 있는 또 다른 자아는 뭘까?
+
+▶ 테스트 해보기
+https://bit.ly/mindlab-shadow`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '내면의 그림자', text });
+          return;
+        } catch (e) {}
+      }
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('복사 완료! 친구에게 보내보세요 💬');
+          return;
+        } catch (e) {}
+      }
+      
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('복사 완료! 친구에게 보내보세요 💬');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    renderStage();
+  </script>
+</body>
+</html>

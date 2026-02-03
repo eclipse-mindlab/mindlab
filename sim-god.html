@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>신이 된다면 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="신이 된다면 - 이클립스의 딜렘">
+  <meta property="og:description" content="24시간 동안 전지전능해진다. 당신은 무엇을 하겠는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #f59e0b;
+      --sim-primary-light: #fbbf24;
+      --sim-primary-bg: rgba(245, 158, 11, 0.1);
+      --sim-primary-border: rgba(245, 158, 11, 0.3);
+    }
+    
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">신이 된다면</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 철학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">⚡</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 신격</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      // Stage 1: 각성
+      {
+        badge: 'STAGE 1: 각성',
+        title: '전지전능',
+        desc: '눈을 떴다. 뭔가 다르다.\n\n모든 것이 보인다. 지구 반대편의 아이가 우는 소리, 심해의 고래 노래, 은하계 너머의 별들.\n\n모든 것이 가능하다. 생각만으로 현실이 바뀐다.\n\n알 수 없는 목소리가 말한다.\n\n"24시간이다. 그 후엔 원래대로 돌아간다. 네 기억만 남는다."',
+        highlight: '가장 먼저 무엇을 하겠는가?',
+        choices: [
+          {
+            id: 'end_suffering',
+            text: '모든 고통을 없앤다',
+            subtext: '질병, 기아, 전쟁 — 지금 당장',
+            meaning: '가장 직관적인 선택. 신이 있다면 왜 고통을 방치하는가? 당신은 그 질문에 행동으로 답한다.',
+            principle: {
+              name: '신정론의 도전',
+              desc: '전지전능하고 선한 신이 존재한다면 왜 악과 고통이 존재하는가? 라이프니츠가 제기한 철학적 난제.',
+              icon: '❓'
+            },
+            quote: '"신이 악을 막고 싶지만 못한다면 무능하다. 막을 수 있지만 안 한다면 악하다." - 에피쿠로스'
+          },
+          {
+            id: 'observe',
+            text: '일단 관찰한다',
+            subtext: '함부로 개입하면 안 될 것 같다',
+            meaning: '신중함. 전지전능해도 결과를 예측할 수 없다. 선의의 개입이 재앙이 될 수 있다.',
+            principle: {
+              name: '의도하지 않은 결과',
+              desc: '모든 행동은 예측하지 못한 결과를 낳는다. 복잡한 시스템에서 개입은 항상 부작용을 동반한다.',
+              icon: '🔄'
+            },
+            quote: '"지옥으로 가는 길은 선의로 포장되어 있다." - 서양 속담'
+          },
+          {
+            id: 'knowledge',
+            text: '모든 진실을 알아낸다',
+            subtext: '우주의 비밀, 존재의 의미',
+            meaning: '지식에 대한 갈망. 힘보다 앎을 선택한다. 하지만 모든 것을 안다면 삶은 어떻게 되는가?',
+            principle: {
+              name: '지식의 저주',
+              desc: '모든 것을 알면 행복할까? 카산드라처럼 미래를 알지만 바꿀 수 없다면 고통일 뿐이다.',
+              icon: '📚'
+            },
+            quote: '"지식이 늘면 슬픔도 는다." - 전도서'
+          },
+          {
+            id: 'personal',
+            text: '내 인생부터 바꾼다',
+            subtext: '부, 건강, 사랑 — 내가 원하는 삶',
+            meaning: '솔직한 욕망. 위선 없이 자신의 이익을 먼저 챙긴다. 비난할 수 있을까?',
+            principle: {
+              name: '합리적 이기주의',
+              desc: '에고이즘은 반드시 악한가? 랜드는 자기 이익 추구가 도덕적으로 정당하다고 주장했다.',
+              icon: '👤'
+            },
+            quote: '"자신의 행복을 추구하는 것은 도덕적 권리다." - 아인 랜드'
+          },
+          {
+            id: 'nothing',
+            text: '아무것도 하지 않는다',
+            subtext: '개입할 권리가 없다',
+            meaning: '겸손. 24시간의 힘으로 수십억 년의 질서를 바꿀 자격이 있는가? 존재하되 개입하지 않는다.',
+            principle: {
+              name: '신의 침묵',
+              desc: '신이 존재하지만 개입하지 않는다는 이신론. 시계공은 시계를 만들고 떠난다.',
+              icon: '🤫'
+            },
+            quote: '"신은 주사위를 던지고 자리를 떴다." - 이신론적 관점'
+          }
+        ]
+      },
+      
+      // Stage 2: 시험
+      {
+        badge: 'STAGE 2: 시험',
+        title: '악의 문제',
+        desc: '당신은 본다.\n\n지금 이 순간, 무고한 아이가 폭력에 시달리고 있다. 당신은 그것을 멈출 수 있다.\n\n하지만 생각한다. 내가 이것을 멈추면, 다른 모든 것도 멈춰야 하지 않을까?\n\n선을 어디에 긋는가? 모든 고통을 막으면 인간에게 자유의지가 남는가?',
+        highlight: '당신의 판단은?',
+        choices: [
+          {
+            id: 'intervene_all',
+            text: '모든 악을 막는다',
+            subtext: '자유의지보다 고통 없는 세상이 낫다',
+            meaning: '고통의 제거를 최우선으로. 자유의지가 악을 낳는다면, 그 자유는 가치 없다.',
+            principle: {
+              name: '결과주의적 신',
+              desc: '결과만이 중요하다면, 고통 없는 세상이 자유로운 세상보다 낫다. 공리주의의 극단.',
+              icon: '📊'
+            },
+            quote: '"최대 다수의 최대 행복." - 제러미 벤담'
+          },
+          {
+            id: 'intervene_selective',
+            text: '최악만 막는다',
+            subtext: '아동 학대, 대량 학살 — 선을 넘는 것만',
+            meaning: '절충안. 작은 고통은 성장의 기회지만, 극단적 악은 어떤 선도 정당화하지 못한다.',
+            principle: {
+              name: '임계점 윤리',
+              desc: '어느 지점을 넘으면 개입이 정당화된다. 하지만 그 선은 누가 긋는가?',
+              icon: '📏'
+            },
+            quote: '"절대 악 앞에서 중립은 가해자의 편이다." - 엘리 비젤'
+          },
+          {
+            id: 'free_will',
+            text: '개입하지 않는다',
+            subtext: '인간의 자유의지를 존중해야 한다',
+            meaning: '자유의지 옹호. 선택할 수 있는 능력이 인간을 인간으로 만든다. 그 대가가 악이라 해도.',
+            principle: {
+              name: '자유의지 방어',
+              desc: '악은 자유의지의 부작용이다. 하지만 자유 없는 선은 선이 아니다. 알빈 플란팅가의 논증.',
+              icon: '🗽'
+            },
+            quote: '"강제된 선은 선이 아니다." - 알빈 플란팅가'
+          },
+          {
+            id: 'educate',
+            text: '악인의 마음을 바꾼다',
+            subtext: '강제가 아닌 변화로',
+            meaning: '계몽적 접근. 행동을 막는 것이 아니라 의지를 변화시킨다. 하지만 이것도 개입 아닌가?',
+            principle: {
+              name: '세뇌의 역설',
+              desc: '마음을 바꾸는 것이 행동을 막는 것보다 나은가? 자유의지를 조작하는 것은 더 큰 침해일 수 있다.',
+              icon: '🧠'
+            },
+            quote: '"생각을 통제하는 것이 가장 완전한 지배다." - 조지 오웰'
+          }
+        ]
+      },
+      
+      // Stage 3: 한계
+      {
+        badge: 'STAGE 3: 한계',
+        title: '12시간 후',
+        desc: '절반이 지났다.\n\n무엇을 하든, 완벽하지 않았다. 하나를 고치면 다른 것이 무너졌다.\n\n고통을 없애니 성장도 사라졌다. 지식을 주니 혼란이 왔다. 악을 막으니 자유가 사라졌다.\n\n이제 12시간 남았다.',
+        highlight: '남은 시간을 어떻게 쓸 것인가?',
+        choices: [
+          {
+            id: 'undo',
+            text: '모든 것을 원래대로 돌린다',
+            subtext: '내 개입이 틀렸다',
+            meaning: '겸손한 후퇴. 신의 힘으로도 완벽한 세상을 만들 수 없다는 것을 인정한다.',
+            principle: {
+              name: '한계의 인정',
+              desc: '전지전능조차 완벽한 세상을 만들 수 없다면, 어쩌면 이 세상이 가능한 최선일지 모른다. 라이프니츠의 논증.',
+              icon: '🔙'
+            },
+            quote: '"이 세상은 가능한 세계 중 최선이다." - 고트프리트 라이프니츠'
+          },
+          {
+            id: 'small_good',
+            text: '작은 선행들을 한다',
+            subtext: '세상을 바꾸지 않고, 개인을 돕는다',
+            meaning: '겸손한 선. 시스템을 바꾸려 하지 않고, 눈앞의 고통을 덜어준다.',
+            principle: {
+              name: '국지적 선',
+              desc: '전체를 바꿀 수 없다면 부분을 돕는다. 테레사 수녀의 방식.',
+              icon: '🌱'
+            },
+            quote: '"한 사람을 구하는 것이 세상을 구하는 것이다." - 탈무드'
+          },
+          {
+            id: 'message',
+            text: '메시지를 남긴다',
+            subtext: '인류에게 경고나 희망을',
+            meaning: '계시적 접근. 직접 개입 대신 방향을 제시한다. 하지만 들을까?',
+            principle: {
+              name: '계시의 한계',
+              desc: '신이 말해도 인간은 듣지 않는다. 모든 종교에 신의 말씀이 있지만 인간은 여전히 싸운다.',
+              icon: '📜'
+            },
+            quote: '"예언자는 고향에서 환영받지 못한다." - 성경'
+          },
+          {
+            id: 'experience',
+            text: '그냥 경험한다',
+            subtext: '남은 시간, 전지전능을 느낀다',
+            meaning: '관조적 선택. 바꾸려 하지 않고 존재 자체를 경험한다.',
+            principle: {
+              name: '신적 관조',
+              desc: '아리스토텔레스가 말한 테오리아. 가장 높은 행복은 순수한 관조에 있다.',
+              icon: '👁️'
+            },
+            quote: '"관조적 삶이 가장 행복하다." - 아리스토텔레스'
+          },
+          {
+            id: 'prepare',
+            text: '돌아간 후를 준비한다',
+            subtext: '힘은 사라져도 기억은 남으니까',
+            meaning: '실용적 선택. 신의 시각으로 본 것을 인간으로서 활용할 방법을 찾는다.',
+            principle: {
+              name: '지혜의 보존',
+              desc: '경험에서 지혜를 추출한다. 플라톤의 동굴에서 나온 자가 다시 돌아가 말하는 것.',
+              icon: '💎'
+            },
+            quote: '"동굴에서 나온 자는 다시 돌아가야 한다." - 플라톤'
+          }
+        ]
+      },
+      
+      // Stage 4: 끝
+      {
+        badge: 'STAGE 4: 귀환',
+        title: '마지막 순간',
+        desc: '1분 남았다.\n\n곧 평범한 인간으로 돌아간다. 전지전능은 사라지고, 기억만 남는다.\n\n당신은 신이었다. 24시간 동안.\n\n무엇을 느꼈는가?',
+        highlight: '마지막 생각은?',
+        choices: [
+          {
+            id: 'grateful',
+            text: '"다행이다, 끝나서"',
+            subtext: '신은 외롭고 무겁다',
+            meaning: '안도. 전지전능은 축복이 아니었다. 모든 것을 알고 모든 것을 할 수 있다는 건 무거운 짐이었다.',
+            principle: {
+              name: '유한성의 축복',
+              desc: '한계가 있기에 선택이 의미있다. 모든 것이 가능하면 아무것도 특별하지 않다.',
+              icon: '🙏'
+            },
+            quote: '"인간은 유한하기에 아름답다." - 마르틴 하이데거'
+          },
+          {
+            id: 'regret',
+            text: '"더 할 수 있었는데"',
+            subtext: '시간이 부족했다',
+            meaning: '아쉬움. 무한한 힘도 유한한 시간 앞에서는 불완전했다.',
+            principle: {
+              name: '행위자의 후회',
+              desc: '무엇을 하든 더 할 수 있었다는 후회는 남는다. 버나드 윌리엄스가 말한 도덕적 잔여.',
+              icon: '😔'
+            },
+            quote: '"최선을 다해도 후회는 남는다." - 버나드 윌리엄스'
+          },
+          {
+            id: 'understand',
+            text: '"이제 이해한다"',
+            subtext: '왜 신이 침묵하는지',
+            meaning: '깨달음. 개입하지 않는 것이 무관심이 아니라 사랑일 수 있다는 것을.',
+            principle: {
+              name: '신적 사랑의 역설',
+              desc: '진정한 사랑은 자유를 주는 것. 부모가 자녀를 놓아주듯, 신도 인간을 놓아준다.',
+              icon: '💫'
+            },
+            quote: '"사랑한다면 자유롭게 하라." - 생텍쥐페리'
+          },
+          {
+            id: 'doubt',
+            text: '"진짜 신은 없는 것 같다"',
+            subtext: '있다면 이렇지 않았을 것이다',
+            meaning: '회의. 직접 신이 되어보니 신의 부재가 더 설득력 있게 느껴진다.',
+            principle: {
+              name: '경험적 무신론',
+              desc: '악의 존재는 신의 부재를 증명한다. 신이 있었다면 개입했을 것이다.',
+              icon: '❌'
+            },
+            quote: '"아우슈비츠 이후 신은 없다." - 엘리 비젤'
+          },
+          {
+            id: 'mystery',
+            text: '"모르겠다"',
+            subtext: '더 깊은 미스터리만 남았다',
+            meaning: '겸손한 불가지론. 신이 되어봐도 답은 없었다. 어쩌면 답이 없는 것이 답일지도.',
+            principle: {
+              name: '신비의 수용',
+              desc: '모든 것을 안다고 해서 모든 것을 이해하는 것은 아니다. 앎 너머의 영역.',
+              icon: '🌌'
+            },
+            quote: '"이해할 수 있는 신은 신이 아니다." - 테르툴리아누스'
+          }
+        ]
+      }
+    ];
+    
+    // 화면 요소
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 첫 선택
+      const stage2 = choiceIds[1]; // 악의 문제
+      const stage3 = choiceIds[2]; // 12시간 후
+      const stage4 = choiceIds[3]; // 마지막 생각
+      
+      // 구원자: 고통 제거, 개입
+      if (stage1 === 'end_suffering' && (stage2 === 'intervene_all' || stage2 === 'intervene_selective')) {
+        return {
+          icon: '🌍',
+          title: '구원자',
+          desc: '당신은 고통받는 세상을 외면하지 못했다. 힘이 있다면 써야 한다고 믿었다. 비록 완벽하지 않았더라도, 아무것도 하지 않는 것보다 나았다. 당신의 신은 적극적으로 개입하는 신이다.',
+          rarity: '상위 18%'
+        };
+      }
+      
+      // 관찰자: 관찰, 불개입
+      if ((stage1 === 'observe' || stage1 === 'nothing') && stage2 === 'free_will') {
+        return {
+          icon: '👁️',
+          title: '관찰자',
+          desc: '당신은 개입을 거부했다. 전지전능해도 개입할 권리는 없다고 생각했다. 인간의 자유의지와 자율성을 존중한 것이다. 당신의 신은 멀리서 지켜보는 신이다.',
+          rarity: '상위 8%'
+        };
+      }
+      
+      // 회의주의자: 의심, 불확실
+      if (stage4 === 'doubt' || stage4 === 'mystery') {
+        return {
+          icon: '❓',
+          title: '회의주의자',
+          desc: '당신은 신이 되어봐도 답을 찾지 못했다. 오히려 더 많은 질문만 생겼다. 전지전능해도 알 수 없는 것이 있다는 것. 당신은 신의 존재 자체를 의심하게 되었다.',
+          rarity: '상위 12%'
+        };
+      }
+      
+      // 계몽자: 지식, 메시지
+      if (stage1 === 'knowledge' || stage3 === 'message') {
+        return {
+          icon: '📚',
+          title: '계몽자',
+          desc: '당신은 힘보다 지혜를 선택했다. 세상을 바꾸는 것보다 세상을 이해하고, 그 이해를 나누려 했다. 당신의 신은 가르치는 신이다.',
+          rarity: '상위 14%'
+        };
+      }
+      
+      // 겸손한 신: 원래대로, 다행
+      if (stage3 === 'undo' || stage4 === 'grateful') {
+        return {
+          icon: '🙏',
+          title: '겸손한 신',
+          desc: '당신은 한계를 인정했다. 전지전능해도 완벽한 세상을 만들 수 없다는 것을 깨달았다. 그리고 인간으로 돌아가는 것이 다행이라고 느꼈다. 신의 짐은 너무 무거웠다.',
+          rarity: '상위 6%'
+        };
+      }
+      
+      // 현실주의자: 개인, 작은 선
+      if (stage1 === 'personal' || stage3 === 'small_good') {
+        return {
+          icon: '🌱',
+          title: '현실주의자',
+          desc: '당신은 거대한 변화보다 작은 선을 선택했다. 세상을 구하려 하지 않고, 눈앞의 사람을 도왔다. 위대하지 않지만 확실한 선. 당신의 신은 작은 것에 깃드는 신이다.',
+          rarity: '상위 21%'
+        };
+      }
+      
+      // 기본: 갈등하는 신
+      return {
+        icon: '⚖️',
+        title: '갈등하는 신',
+        desc: '당신은 쉽게 답을 내리지 못했다. 개입과 불개입 사이, 자유와 보호 사이에서 흔들렸다. 하지만 그것이 정상이다. 완벽한 답이 있다면 이 문제는 수천 년 전에 풀렸을 것이다.',
+        rarity: '상위 21%'
+      };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      saveProgress(result);
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      if (!profile.completedSims.includes('god')) {
+        profile.completedSims.push('god');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 이미지 생성
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      // 배경 (금색/신성한 느낌)
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1a1500');
+      gradient.addColorStop(0.5, '#0d0a00');
+      gradient.addColorStop(1, '#1a1200');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 빛 효과
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.05)';
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, 400, 200 + i * 100, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // 타이틀
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('신이 된다면', canvas.width / 2, 200);
+      
+      // 아이콘
+      ctx.font = '180px sans-serif';
+      ctx.fillText(result.icon, canvas.width / 2, 500);
+      
+      // 희귀도
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(result.rarity).width + 40;
+      
+      const badgeGradient = ctx.createLinearGradient(
+        canvas.width / 2 - rarityWidth / 2, 580,
+        canvas.width / 2 + rarityWidth / 2, 620
+      );
+      badgeGradient.addColorStop(0, '#f59e0b');
+      badgeGradient.addColorStop(1, '#ef4444');
+      
+      ctx.fillStyle = badgeGradient;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillText(result.rarity, canvas.width / 2, 617);
+      
+      // 결과
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(result.title, canvas.width / 2, 750);
+      
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 - 150, 820);
+      ctx.lineTo(canvas.width / 2 + 150, 820);
+      ctx.stroke();
+      
+      // 설명
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900;
+      const lineHeight = 54;
+      const words = result.desc.split(' ');
+      let line = '';
+      let y = 900;
+      
+      for (let word of words) {
+        const testLine = line + word + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && line !== '') {
+          ctx.fillText(line.trim(), canvas.width / 2, y);
+          line = word + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      
+      // 하단 CTA
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('24시간 동안 전지전능해진다면', canvas.width / 2, 1650);
+      ctx.fillText('너는 무엇을 하겠어?', canvas.width / 2, 1700);
+      
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      
+      return canvas;
+    }
+    
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      const link = document.createElement('a');
+      link.download = '신이된다면_결과.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나는 "${result.title}"래
+
+24시간 동안 신이 된다면, 넌 뭘 할 거야?
+
+▶ 테스트 해보기
+https://bit.ly/mindlab-god`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '신이 된다면', text });
+          return;
+        } catch (e) {}
+      }
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('복사 완료! 친구에게 보내보세요 💬');
+          return;
+        } catch (e) {}
+      }
+      
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('복사 완료! 친구에게 보내보세요 💬');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>영생 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="영생 - 이클립스의 딜렘">
+  <meta property="og:description" content="영원히 살 수 있다. 축복인가, 저주인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #8b5cf6;
+      --sim-primary-light: #a78bfa;
+      --sim-primary-bg: rgba(139, 92, 246, 0.1);
+      --sim-primary-border: rgba(139, 92, 246, 0.3);
+    }
+    
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">영생</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 철학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">♾️</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 영생관</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      // Stage 1: 제안
+      {
+        badge: 'STAGE 1: 제안',
+        title: '영원한 삶',
+        desc: '어느 날, 알 수 없는 존재가 나타나 말한다.\n\n"영생을 주겠다. 당신은 절대 죽지 않는다. 병도, 노화도, 사고도 당신을 죽일 수 없다.\n\n단, 한 번 받으면 취소할 수 없다. 영원히."\n\n당신의 대답은?',
+        highlight: '영생을 받겠는가?',
+        choices: [
+          {
+            id: 'accept',
+            text: '받는다',
+            subtext: '죽음이 두려웠으니까',
+            meaning: '죽음에 대한 공포가 영생의 대가를 감수하게 만든다. 인간의 가장 원초적인 두려움.',
+            principle: {
+              name: '죽음 공포',
+              desc: '에피쿠로스는 죽음을 두려워할 이유가 없다고 했다. 하지만 대부분의 인간은 죽음을 두려워한다.',
+              icon: '💀'
+            },
+            quote: '"죽음은 우리에게 아무것도 아니다. 우리가 있을 때 죽음은 없고, 죽음이 있을 때 우리는 없다." - 에피쿠로스'
+          },
+          {
+            id: 'reject',
+            text: '거절한다',
+            subtext: '영원은 원하지 않는다',
+            meaning: '죽음이 삶에 의미를 준다는 것을 안다. 끝이 있기에 지금이 소중하다.',
+            principle: {
+              name: '유한성의 가치',
+              desc: '하이데거는 죽음을 향한 존재만이 진정으로 살 수 있다고 했다. 유한함이 삶의 의미를 만든다.',
+              icon: '⏳'
+            },
+            quote: '"죽음을 향한 존재만이 본래적으로 실존한다." - 마르틴 하이데거'
+          },
+          {
+            id: 'condition',
+            text: '조건을 묻는다',
+            subtext: '끝낼 수 있는 방법은?',
+            meaning: '신중함. 영원한 계약의 빠져나갈 구멍을 찾는다. 하지만 영원은 영원이다.',
+            principle: {
+              name: '비가역성의 두려움',
+              desc: '돌이킬 수 없는 결정은 두렵다. 영생은 가장 돌이킬 수 없는 결정이다.',
+              icon: '🔒'
+            },
+            quote: '"되돌릴 수 없는 것에 대한 두려움은 합리적이다." - 버나드 윌리엄스'
+          },
+          {
+            id: 'later',
+            text: '나중에 결정한다',
+            subtext: '지금은 모르겠다',
+            meaning: '결정 회피. 하지만 이 기회는 지금뿐이다. 결정하지 않는 것도 결정이다.',
+            principle: {
+              name: '결정의 회피',
+              desc: '사르트르는 선택하지 않는 것도 선택이라 했다. 미루는 것은 거절하는 것과 같다.',
+              icon: '⏸️'
+            },
+            quote: '"선택하지 않는 것도 선택이다." - 장 폴 사르트르'
+          },
+          {
+            id: 'share',
+            text: '사랑하는 사람과 함께라면',
+            subtext: '혼자는 싫다',
+            meaning: '관계의 중요성. 영원해도 혼자라면 의미 없다. 하지만 상대도 원할까?',
+            principle: {
+              name: '공유된 영원',
+              desc: '인간은 관계 속에서만 의미를 찾는다. 혼자의 영생은 고독한 감옥일 수 있다.',
+              icon: '💑'
+            },
+            quote: '"지옥은 타인이다. 그러나 천국도 타인이다." - 사르트르 재해석'
+          }
+        ]
+      },
+      
+      // Stage 2: 100년 후
+      {
+        badge: 'STAGE 2: 100년 후',
+        title: '모두가 떠났다',
+        desc: '영생을 선택했다. (또는 선택한 것으로 가정한다.)\n\n100년이 지났다. 당신이 사랑했던 모든 사람이 죽었다.\n\n부모, 친구, 연인, 자녀까지.\n\n당신은 여전히 30대의 몸으로 그들의 장례식에 섰다.\n\n이제 어떻게 할 것인가?',
+        highlight: '당신의 선택은?',
+        choices: [
+          {
+            id: 'new_bonds',
+            text: '새로운 관계를 맺는다',
+            subtext: '잃는 것을 알면서도',
+            meaning: '시지프스의 용기. 돌이 굴러 떨어질 것을 알면서도 다시 밀어올린다.',
+            principle: {
+              name: '반복의 용기',
+              desc: '카뮈의 시지프스. 무의미한 것을 알면서도 계속하는 것. 그것이 부조리에 대한 반항이다.',
+              icon: '🪨'
+            },
+            quote: '"우리는 시지프스가 행복하다고 상상해야 한다." - 알베르 카뮈'
+          },
+          {
+            id: 'isolation',
+            text: '더 이상 가까워지지 않는다',
+            subtext: '상실이 너무 아프다',
+            meaning: '자기 보호. 상처받지 않기 위해 거리를 둔다. 하지만 그것은 삶인가?',
+            principle: {
+              name: '회피적 애착',
+              desc: '상실의 고통을 피하기 위해 애착을 회피한다. 하지만 고통 없는 삶은 삶이 아니다.',
+              icon: '🛡️'
+            },
+            quote: '"사랑했기에 슬픈 것이다. 슬픔은 사랑의 대가다." - C.S. 루이스'
+          },
+          {
+            id: 'purpose',
+            text: '사명을 찾는다',
+            subtext: '인류를 위해 무언가를 한다',
+            meaning: '의미의 전환. 개인적 관계 대신 더 큰 목적에서 의미를 찾는다.',
+            principle: {
+              name: '초월적 목적',
+              desc: '빅터 프랭클은 의미를 찾으면 어떤 고통도 견딜 수 있다고 했다. 영생도 마찬가지.',
+              icon: '🎯'
+            },
+            quote: '"삶의 의미를 찾으면 어떤 것도 견딜 수 있다." - 빅터 프랭클'
+          },
+          {
+            id: 'memory',
+            text: '떠난 사람들의 기억을 지킨다',
+            subtext: '나만이 기억할 수 있다',
+            meaning: '기억의 수호자. 영생자만이 할 수 있는 역할. 사라지는 것들의 증인.',
+            principle: {
+              name: '기억의 의무',
+              desc: '잊히면 진짜로 죽는다. 영생자는 사라진 이들의 마지막 기억 장소가 된다.',
+              icon: '📖'
+            },
+            quote: '"사람은 두 번 죽는다. 한 번은 숨이 멎을 때, 한 번은 잊힐 때." - 멕시코 속담'
+          },
+          {
+            id: 'regret',
+            text: '영생을 후회한다',
+            subtext: '차라리 함께 죽고 싶었다',
+            meaning: '선택에 대한 후회. 영원한 삶이 영원한 상실을 의미한다는 것을 깨달았다.',
+            principle: {
+              name: '영생의 역설',
+              desc: '버나드 윌리엄스는 영생이 지루하고 무의미해질 것이라 주장했다. 죽음이 삶을 의미있게 만든다.',
+              icon: '😢'
+            },
+            quote: '"영원한 삶은 영원한 지루함이다." - 버나드 윌리엄스'
+          }
+        ]
+      },
+      
+      // Stage 3: 1000년 후
+      {
+        badge: 'STAGE 3: 1000년 후',
+        title: '모든 것을 보았다',
+        desc: '1000년.\n\n문명이 흥하고 망하는 것을 보았다. 제국이 세워지고 무너졌다.\n\n당신은 역사의 목격자가 되었다.\n\n하지만 이제 모든 것이 반복처럼 느껴진다.\n\n전쟁, 평화, 사랑, 배신 — 인간은 변하지 않는다.',
+        highlight: '1000년을 산 당신의 결론은?',
+        choices: [
+          {
+            id: 'wisdom',
+            text: '"그래도 희망이 있다"',
+            subtext: '조금씩 나아지고 있다',
+            meaning: '낙관적 역사관. 1000년을 보면 진보가 보인다. 느리지만 인류는 전진한다.',
+            principle: {
+              name: '역사의 진보',
+              desc: '헤겔은 역사가 자유를 향해 진보한다고 믿었다. 1000년의 관찰자는 이것을 확인할 수 있을까?',
+              icon: '📈'
+            },
+            quote: '"역사는 자유 의식의 진보다." - G.W.F. 헤겔'
+          },
+          {
+            id: 'cycle',
+            text: '"모든 것은 반복된다"',
+            subtext: '새로운 것은 없다',
+            meaning: '순환적 역사관. 니체의 영원회귀처럼 모든 것은 돌고 돈다.',
+            principle: {
+              name: '영원회귀',
+              desc: '니체는 모든 것이 무한히 반복된다고 상상했다. 영생자에게 이것은 상상이 아니라 현실이다.',
+              icon: '🔄'
+            },
+            quote: '"이 삶을 영원히 반복해도 좋다고 말할 수 있는가?" - 프리드리히 니체'
+          },
+          {
+            id: 'absurd',
+            text: '"의미 없다, 하지만 괜찮다"',
+            subtext: '부조리를 받아들인다',
+            meaning: '부조리의 수용. 의미가 없다는 것을 알면서도 계속 산다. 그것이 반항이다.',
+            principle: {
+              name: '부조리 수용',
+              desc: '카뮈의 부조리 철학. 의미를 찾지 못해도 살아가는 것 자체가 반항이다.',
+              icon: '🎭'
+            },
+            quote: '"부조리를 인식한 채 살아가는 것, 그것이 반항이다." - 알베르 카뮈'
+          },
+          {
+            id: 'detach',
+            text: '"더 이상 상관없다"',
+            subtext: '무심해졌다',
+            meaning: '초연함. 1000년의 시간이 모든 감정을 닳게 만들었다.',
+            principle: {
+              name: '감정의 마모',
+              desc: '시간은 모든 것을 닳게 한다. 무한한 시간은 무한한 무감각을 만들 수 있다.',
+              icon: '😶'
+            },
+            quote: '"시간이 지나면 모든 것이 지루해진다." - 버나드 윌리엄스'
+          },
+          {
+            id: 'guide',
+            text: '"인류를 이끌어야 한다"',
+            subtext: '나만이 긴 안목을 가졌다',
+            meaning: '지도자 의식. 1000년의 경험이 지혜를 주었다면, 인류를 올바른 방향으로 이끌 책임이 있다.',
+            principle: {
+              name: '철인왕',
+              desc: '플라톤의 이상. 지혜로운 자가 통치해야 한다. 1000년을 산 자보다 지혜로운 자가 있을까?',
+              icon: '👑'
+            },
+            quote: '"철학자가 왕이 되거나, 왕이 철학자가 되어야 한다." - 플라톤'
+          }
+        ]
+      },
+      
+      // Stage 4: 우주의 끝
+      {
+        badge: 'STAGE 4: 영겁',
+        title: '마지막 별이 꺼진 후',
+        desc: '상상할 수 없는 시간이 지났다.\n\n태양이 꺼졌다. 지구가 사라졌다. 모든 별이 죽었다.\n\n우주는 차갑고 어두운 공허만 남았다.\n\n당신만 남았다. 영원히.\n\n생각할 것도, 볼 것도, 느낄 것도 없는 무한한 시간.',
+        highlight: '이 순간 당신은 무엇을 생각하는가?',
+        choices: [
+          {
+            id: 'peace',
+            text: '"드디어 평화다"',
+            subtext: '더 이상 변화가 없다',
+            meaning: '완전한 수용. 변화 없는 영원을 평화로 받아들인다. 불교적 적멸의 경지.',
+            principle: {
+              name: '적멸',
+              desc: '불교에서 말하는 열반. 모든 욕망과 고통이 사라진 상태. 영원한 고요.',
+              icon: '🕊️'
+            },
+            quote: '"적멸을 보고 또 적멸을 본다." - 열반경'
+          },
+          {
+            id: 'horror',
+            text: '"이것이 지옥이다"',
+            subtext: '끝없는 고독',
+            meaning: '절대적 공포. 존재하지만 존재할 이유가 없는 상태. 가장 완전한 형태의 지옥.',
+            principle: {
+              name: '존재의 공포',
+              desc: '키르케고르가 말한 절망. 자기 자신이기를 원하지 않지만 자기 자신일 수밖에 없는 상태.',
+              icon: '😱'
+            },
+            quote: '"절망은 죽고 싶지만 죽을 수 없는 상태다." - 쇠렌 키르케고르'
+          },
+          {
+            id: 'create',
+            text: '"새로운 우주를 만든다"',
+            subtext: '시작할 수 있다면',
+            meaning: '창조의 의지. 무에서 유를 만들어낸다. 영생자가 신이 되는 순간.',
+            principle: {
+              name: '창조의 의지',
+              desc: '니체의 초인은 새로운 가치를 창조한다. 우주가 끝나면 새 우주를 만드는 것.',
+              icon: '✨'
+            },
+            quote: '"나는 창조하는 자들을 사랑한다." - 프리드리히 니체'
+          },
+          {
+            id: 'sleep',
+            text: '"잠든다"',
+            subtext: '깨어날 일이 생길 때까지',
+            meaning: '의식의 정지. 존재하지만 인식하지 않는다. 기다림의 영원한 형태.',
+            principle: {
+              name: '의식의 보류',
+              desc: '존재와 의식은 다르다. 의식 없이 존재할 수 있다면, 영원도 견딜 수 있다.',
+              icon: '💤'
+            },
+            quote: '"잠은 작은 죽음이다." - 알베르토 모라비아'
+          },
+          {
+            id: 'wait',
+            text: '"기다린다"',
+            subtext: '무언가 일어날 것이다',
+            meaning: '희망의 끈. 무한한 시간에서 불가능한 것은 없다. 새로운 빅뱅이 일어날지도.',
+            principle: {
+              name: '무한한 가능성',
+              desc: '무한한 시간 안에서 확률 0이 아닌 모든 것은 반드시 일어난다. 볼츠만 뇌 이론.',
+              icon: '🌟'
+            },
+            quote: '"무한한 시간 안에서 모든 것은 일어난다." - 볼츠만 뇌 이론'
+          }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${stages.length}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / stages.length) * 100}%`;
+      
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          ${choice.subtext ? `<span class="sim-choice-subtext">${choice.subtext}</span>` : ''}
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id,
+        choiceText: choice.text
+      });
+      
+      if (choice.principle) {
+        principles.push(choice.principle);
+      }
+      
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = `${choice.principle.icon} ${choice.principle.name}`;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) {
+        showResult();
+      } else {
+        renderStage();
+      }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      
+      const stage1 = choiceIds[0]; // 영생 수락
+      const stage2 = choiceIds[1]; // 100년 후
+      const stage3 = choiceIds[2]; // 1000년 후
+      const stage4 = choiceIds[3]; // 우주의 끝
+      
+      // 거부자: 영생 거절
+      if (stage1 === 'reject') {
+        return {
+          icon: '⏳',
+          title: '유한의 수호자',
+          desc: '당신은 영생을 거절했다. 죽음이 삶에 의미를 준다는 것을 알았기 때문이다. 끝이 있기에 지금이 소중하다. 하이데거가 말한 본래적 실존을 선택한 사람.',
+          rarity: '상위 12%'
+        };
+      }
+      
+      // 관계 중심: 함께라면, 새로운 관계
+      if (stage1 === 'share' || stage2 === 'new_bonds') {
+        return {
+          icon: '💕',
+          title: '영원한 사랑꾼',
+          desc: '당신은 관계 속에서 의미를 찾는다. 영원히 잃을 것을 알면서도 사랑한다. 시지프스처럼, 돌이 굴러떨어질 것을 알면서도 다시 밀어올린다. 이것이 부조리에 대한 반항이다.',
+          rarity: '상위 18%'
+        };
+      }
+      
+      // 허무주의: 후회, 무심, 공포
+      if (stage2 === 'regret' || stage3 === 'detach' || stage4 === 'horror') {
+        return {
+          icon: '🕳️',
+          title: '영생의 허무주의자',
+          desc: '당신은 영생의 어두운 면을 보았다. 영원한 삶은 영원한 상실, 영원한 지루함, 영원한 고독을 의미한다. 버나드 윌리엄스가 옳았다. 죽음은 선물이다.',
+          rarity: '상위 15%'
+        };
+      }
+      
+      // 목적 지향: 사명, 인도자
+      if (stage2 === 'purpose' || stage3 === 'guide') {
+        return {
+          icon: '🎯',
+          title: '영원한 사명자',
+          desc: '당신은 영생에서 목적을 찾았다. 개인적 관계를 넘어 인류 전체를 위한 사명. 1000년의 지혜로 세상을 이끈다. 플라톤이 꿈꾼 철인왕의 모습.',
+          rarity: '상위 9%'
+        };
+      }
+      
+      // 초월자: 평화, 부조리 수용
+      if (stage3 === 'absurd' || stage4 === 'peace') {
+        return {
+          icon: '🧘',
+          title: '초월적 존재',
+          desc: '당신은 영원을 수용했다. 의미가 없다는 것을 알면서도 평화를 찾았다. 불교의 열반이든, 카뮈의 부조리 수용이든 — 당신은 영원과 화해했다.',
+          rarity: '상위 7%'
+        };
+      }
+      
+      // 창조자: 새로운 우주
+      if (stage4 === 'create') {
+        return {
+          icon: '✨',
+          title: '창조자',
+          desc: '당신은 끝에서 새로운 시작을 꿈꾼다. 우주가 끝나면 새 우주를 만든다. 니체의 초인처럼, 새로운 가치와 세계를 창조하는 자. 영생의 궁극적 의미를 찾은 사람.',
+          rarity: '상위 5%'
+        };
+      }
+      
+      // 기다리는 자: 희망
+      if (stage4 === 'wait' || stage3 === 'wisdom') {
+        return {
+          icon: '🌟',
+          title: '영원한 희망주의자',
+          desc: '당신은 끝없이 희망한다. 우주가 끝나도 새로운 시작이 올 것이라 믿는다. 무한한 시간 안에서 모든 것은 가능하다. 희망은 당신의 영원한 동반자.',
+          rarity: '상위 14%'
+        };
+      }
+      
+      // 기본: 복잡한 존재
+      return {
+        icon: '♾️',
+        title: '복잡한 영생자',
+        desc: '당신의 영생관은 단순하지 않다. 희망과 절망, 사랑과 고독, 의미와 무의미 사이를 오간다. 하지만 그것이 정상이다. 영원은 인간이 상상할 수 있는 범위를 넘어선다.',
+        rarity: '상위 20%'
+      };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = `
+            <span class="sim-principles-item-icon">${p.icon}</span>
+            <div>
+              <div class="sim-principles-item-name">${p.name}</div>
+              <div class="sim-principles-item-desc">${p.desc}</div>
+            </div>
+          `;
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      saveProgress(result);
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      
+      if (!profile) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      if (!profile.completedSims.includes('immortality')) {
+        profile.completedSims.push('immortality');
+        profile.exp = (profile.exp || 0) + 30;
+      }
+      
+      principles.forEach(p => {
+        if (!profile.principles.includes(p.name)) {
+          profile.principles.push(p.name);
+        }
+      });
+      
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level++;
+      }
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 이미지 생성
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      // 배경 (보라색/우주 느낌)
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1a0a2e');
+      gradient.addColorStop(0.5, '#0d0514');
+      gradient.addColorStop(1, '#16082a');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 별 효과
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      for (let i = 0; i < 80; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // 타이틀
+      ctx.fillStyle = '#8b5cf6';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('영생', canvas.width / 2, 200);
+      
+      // 아이콘
+      ctx.font = '180px sans-serif';
+      ctx.fillText(result.icon, canvas.width / 2, 500);
+      
+      // 희귀도
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(result.rarity).width + 40;
+      
+      const badgeGradient = ctx.createLinearGradient(
+        canvas.width / 2 - rarityWidth / 2, 580,
+        canvas.width / 2 + rarityWidth / 2, 620
+      );
+      badgeGradient.addColorStop(0, '#f59e0b');
+      badgeGradient.addColorStop(1, '#ef4444');
+      
+      ctx.fillStyle = badgeGradient;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillText(result.rarity, canvas.width / 2, 617);
+      
+      // 결과
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText(result.title, canvas.width / 2, 750);
+      
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2 - 150, 820);
+      ctx.lineTo(canvas.width / 2 + 150, 820);
+      ctx.stroke();
+      
+      // 설명
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900;
+      const lineHeight = 54;
+      const words = result.desc.split(' ');
+      let line = '';
+      let y = 900;
+      
+      for (let word of words) {
+        const testLine = line + word + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && line !== '') {
+          ctx.fillText(line.trim(), canvas.width / 2, y);
+          line = word + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      
+      // 하단 CTA
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('영원히 살 수 있다면', canvas.width / 2, 1650);
+      ctx.fillText('축복일까, 저주일까?', canvas.width / 2, 1700);
+      
+      ctx.fillStyle = '#8b5cf6';
+      ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      
+      return canvas;
+    }
+    
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      const link = document.createElement('a');
+      link.download = '영생_결과.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = `${result.icon} 나는 "${result.title}"래
+
+영원히 살 수 있다면, 축복일까 저주일까?
+
+▶ 테스트 해보기
+https://bit.ly/mindlab-immortal`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: '영생', text });
+          return;
+        } catch (e) {}
+      }
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('복사 완료! 친구에게 보내보세요 💬');
+          return;
+        } catch (e) {}
+      }
+      
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        alert('복사 완료! 친구에게 보내보세요 💬');
+      } catch (e) {
+        alert('복사 실패. 직접 복사해주세요:\n\n' + text);
+      }
+      document.body.removeChild(textarea);
+    });
+    
+    // 시작
+    renderStage();
+  </script>
+</body>
+</html>
