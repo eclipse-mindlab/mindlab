@@ -612,27 +612,27 @@
     const dilemmas = [
       {
         category: '철학 · 윤리',
-        situation: '폭주하는 트롤리가 5명을 향해 달려가고 있다. 당신 앞에 레버가 있다. 당기면 트롤리가 다른 선로로 바뀌지만, 그 선로에는 1명이 있다.',
-        question: '레버를 당겨 1명을 희생시키고 5명을 구할 것인가?',
+        situation: '완벽한 유토피아 "오멜라스".\n\n모든 시민이 행복하다. 질병도, 가난도, 전쟁도 없다. 하지만 비밀이 있다.\n\n도시 어딘가 지하실에 한 아이가 갇혀 있다. 평생 어둠 속에서 고통받는다. 이 아이의 고통이 도시 전체의 행복을 유지한다.\n\n아이를 구하면 유토피아는 무너진다.',
+        question: '당신은 오멜라스에 남겠는가?',
         choices: [
-          { text: '레버를 당긴다 (1명 희생, 5명 구함)', percent: 85, type: '결과주의자', typeDesc: '결과가 옳다면 수단도 정당화될 수 있다고 봅니다.', philosopher: '제러미 벤담', philoEmoji: '⚖️', philoQuote: '"최대 다수의 최대 행복"' },
-          { text: '레버를 당기지 않는다', percent: 15, type: '의무론자', typeDesc: '어떤 결과가 나오든, 직접 해치는 것은 잘못입니다.', philosopher: '임마누엘 칸트', philoEmoji: '📜', philoQuote: '"인간을 수단으로만 대하지 말라"' }
+          { text: '남는다 (수백만의 행복을 위해)', percent: 38, type: '공리주의자', typeDesc: '한 명의 고통으로 수백만이 행복하다면, 그것이 "더 큰 선"일까요? 벤담은 그렇다고 말할 것입니다. 하지만 당신의 행복은 아이의 고통 위에 세워진 것입니다.', philosopher: '제러미 벤담', philoEmoji: '📊', philoQuote: '"최대 다수의 최대 행복"' },
+          { text: '떠난다 (이런 행복은 원치 않는다)', percent: 62, type: '의무론자', typeDesc: '르 귄의 원작에서 일부 시민들은 오멜라스를 떠납니다. 어디로 가는지는 모릅니다. 하지만 그들은 아이의 희생 위에 세워진 행복을 거부합니다.', philosopher: '임마누엘 칸트', philoEmoji: '🚶', philoQuote: '"인간을 수단으로만 대하지 말라"' }
         ],
-        principle: '이중효과 원칙',
-        explanation: '대부분의 사람들(약 85%)이 레버를 당기겠다고 답한다. 하지만 "다리에서 사람을 밀어서 트롤리를 멈추는" 상황에서는 오직 10%만 그렇게 한다.',
-        source: 'Judith Jarvis Thomson, 1985 / Joshua Greene fMRI 연구'
+        principle: '공리주의의 한계',
+        explanation: '르 귄의 소설은 묻는다: 모든 사람의 행복이 한 명의 절대적 고통 위에 세워진다면, 그것은 정당한가? 우리 사회도 마찬가지 아닌가? 누군가의 희생 위에 내 행복이 있다면?',
+        source: 'Ursula K. Le Guin, "The Ones Who Walk Away from Omelas", 1973'
       },
       {
-        category: '심리 · 행동경제학',
-        situation: '10만원이 주어졌다. 모르는 상대방이 "1만원만 주겠다"고 제안했다. 거절하면 둘 다 0원.',
-        question: '불공정한 제안(1만원)을 받아들일 것인가?',
+        category: '철학 · 의식',
+        situation: '당신은 방 안에 갇혀 있다.\n\n중국어를 전혀 모른다. 하지만 완벽한 규칙서가 있다. 중국어 질문이 들어오면, 규칙서대로 중국어 답변을 내보낸다.\n\n밖에서 보면 당신은 중국어를 완벽하게 "이해"하는 것처럼 보인다.\n\n하지만 당신은 한 글자도 이해하지 못한다.',
+        question: 'AI가 "이해한다"고 말할 때, 정말 이해하는 것일까?',
         choices: [
-          { text: '거절한다 (둘 다 0원)', percent: 50, type: '정의 추구자', typeDesc: '손해를 보더라도 불공정함을 처벌합니다.', philosopher: '존 롤스', philoEmoji: '⚔️', philoQuote: '"공정으로서의 정의"' },
-          { text: '받아들인다 (1만원이라도)', percent: 50, type: '현실적 이기주의자', typeDesc: '감정보다 실리를 추구합니다.', philosopher: '애덤 스미스', philoEmoji: '💰', philoQuote: '"보이지 않는 손"' }
+          { text: '이해하는 것이다 (행동이 곧 이해)', percent: 42, type: '기능주의자', typeDesc: '튜링 테스트를 통과하면 지능이다. 내부에서 무슨 일이 일어나든, 결과가 같으면 같은 것 아닌가? 하지만... 당신도 뇌의 뉴런이 "이해"하는지 모른다.', philosopher: '앨런 튜링', philoEmoji: '🤖', philoQuote: '"기계가 생각할 수 있는가?"' },
+          { text: '이해가 아니다 (시뮬레이션일 뿐)', percent: 58, type: '의식 실재론자', typeDesc: '설의 주장: 구문론(규칙)은 의미론(이해)을 만들지 못한다. 그런데 당신의 뇌도 결국 뉴런의 규칙적 발화 아닌가? 뇌와 컴퓨터의 차이는 무엇인가?', philosopher: '존 설', philoEmoji: '🧠', philoQuote: '"구문론만으로는 의미론이 충분하지 않다"' }
         ],
-        principle: '최후통첩 게임',
-        explanation: '경제학적으로 합리적인 선택은 1원이라도 받는 것이다. 하지만 약 50%가 불공정한 제안을 거절한다.',
-        source: 'Güth, Schmittberger & Schwarze, 1982'
+        principle: '중국어 방 논증',
+        explanation: '설의 유명한 사고 실험. AI 시대에 더 절실한 질문이 되었다. ChatGPT가 "이해한다"고 할 때, 정말 이해하는가? 더 무서운 질문: 당신이 "이해한다"고 느낄 때, 당신의 뇌는 정말 이해하는가, 아니면 더 복잡한 중국어 방일 뿐인가?',
+        source: 'John Searle, "Minds, Brains, and Programs", 1980'
       },
       {
         category: '심리 · 사회',
@@ -805,28 +805,28 @@
         source: 'Benjamin Libet, "Time of Conscious Intention to Act", Brain, 1983'
       },
       {
-        category: '심리 · 기억',
-        situation: '차가운 물 실험. A: 60초간 14°C / B: 60초간 14°C + 30초간 15°C',
-        question: '다시 한다면 어떤 것을 선택할까?',
+        category: '철학 · 인식',
+        situation: '당신이 보는 "빨강"이 내가 보는 "빨강"과 같을까?\n\n우리 둘 다 사과를 보고 "빨갛다"고 말한다. 하지만 당신 뇌 속에서 경험되는 빨강이 내 뇌 속의 빨강과 같다는 보장이 있는가?\n\n어쩌면 당신의 빨강은 내 파랑일 수도 있다. 단지 우리 모두 그것을 "빨강"이라 배웠을 뿐.',
+        question: '우리는 같은 세계를 경험하고 있는가?',
         choices: [
-          { text: 'A (더 짧다)', percent: 31, type: '논리적 계산형', typeDesc: '총 고통의 양을 계산하는 합리적 성향입니다.', philosopher: '제러미 벤담', philoEmoji: '🧮', philoQuote: '"쾌락 계산법"' },
-          { text: 'B (끝이 덜 고통스럽다)', percent: 69, type: '경험 기억형', typeDesc: '경험의 절정과 끝을 기억하는 성향입니다.', philosopher: '대니얼 카너먼', philoEmoji: '📈', philoQuote: '"피크엔드 법칙"' }
+          { text: '같은 경험이다 (뇌 구조가 같으니까)', percent: 45, type: '물리주의자', typeDesc: '같은 파장, 같은 뇌 구조라면 같은 경험일 것이다. 하지만 "경험 자체"를 비교할 방법이 없다. 당신의 의식 안으로 들어갈 수 없으니까.', philosopher: '대니얼 데닛', philoEmoji: '🧠', philoQuote: '"의식은 뇌의 작동일 뿐이다"' },
+          { text: '알 수 없다 (확인 불가능)', percent: 55, type: '현상학적 회의론자', typeDesc: '주관적 경험(퀄리아)은 제3자가 접근할 수 없다. 나는 오직 내 경험만 알 수 있다. 타인의 내면은 영원히 블랙박스다.', philosopher: '토마스 네이글', philoEmoji: '🦇', philoQuote: '"박쥐가 된다는 것은 어떤 것일까?"' }
         ],
-        principle: '피크엔드 법칙',
-        explanation: 'B가 더 오래 고통받지만 69%가 B를 선택한다. 기억은 "절정"과 "끝"에 의해 결정된다.',
-        source: 'Kahneman et al., 1993'
+        principle: '역전 스펙트럼 / 퀄리아',
+        explanation: '철학에서 가장 풀리지 않는 문제 중 하나. 당신과 내가 "같은" 빨강을 본다고 확신할 방법이 없다. 더 나아가: 다른 사람에게 의식이 있다는 것조차 증명할 수 없다. 모두가 좀비(행동만 하고 내면 경험이 없는 존재)일 수도 있다.',
+        source: 'John Locke, 1690 / Thomas Nagel, "What Is It Like to Be a Bat?", 1974'
       },
       {
-        category: '심리 · 프레이밍',
-        situation: '600명이 죽을 질병. A: 200명 확실히 살림. B: 1/3 확률로 600명 생존, 2/3로 전원 사망.',
-        question: '어떤 프로그램을 선택할 것인가?',
+        category: '철학 · 정의',
+        situation: '당신은 태어나기 전이다.\n\n사회의 모든 규칙을 정할 수 있다. 하지만 한 가지 조건: 당신이 그 사회에서 어떤 위치로 태어날지 모른다.\n\n부자일 수도, 빈자일 수도, 장애인일 수도, 천재일 수도 있다.\n\n당신은 어떤 규칙을 세우겠는가?',
+        question: '불평등을 허용하겠는가?',
         choices: [
-          { text: 'A (확실히 200명)', percent: 72, type: '확실성 선호형', typeDesc: '불확실성을 피하고 확실한 결과를 선호합니다.', philosopher: '에피쿠로스', philoEmoji: '🛡️', philoQuote: '"아타락시아"' },
-          { text: 'B (도박)', percent: 28, type: '기대값 추구형', typeDesc: '확률적 기대값을 계산하는 도전적 성향입니다.', philosopher: '블레즈 파스칼', philoEmoji: '🎰', philoQuote: '"파스칼의 내기"' }
+          { text: '완전한 평등 (모두 같게)', percent: 35, type: '평등주의자', typeDesc: '누가 될지 모르니 모두를 같게. 하지만 롤스도 완전한 평등은 주장하지 않았습니다. 왜일까요?', philosopher: '장 자크 루소', philoEmoji: '⚖️', philoQuote: '"인간은 자유롭게 태어났으나 어디서나 사슬에 묶여 있다"' },
+          { text: '불평등 허용 (단, 최하층에 이득이 되는 경우만)', percent: 65, type: '차등 원칙 지지자', typeDesc: '롤스의 답: 불평등은 허용되지만, 오직 그것이 가장 불리한 사람에게 이익이 될 때만. 이것이 "정의"입니다.', philosopher: '존 롤스', philoEmoji: '🎭', philoQuote: '"무지의 베일 뒤에서 선택하라"' }
         ],
-        principle: '프레이밍 효과',
-        explanation: '"200명 살린다"와 "400명 죽는다"는 같은 말이지만 선택이 달라진다.',
-        source: 'Tversky & Kahneman, 1981'
+        principle: '무지의 베일',
+        explanation: '롤스의 사고 실험. 자신이 누구인지 모르는 상태에서 사회를 설계하면 어떻게 될까? 대부분 "최악의 경우"를 대비한다. 이것이 공정한 사회의 원칙이다. 당신의 기득권을 빼면, 당신은 어떤 세상을 원하는가?',
+        source: 'John Rawls, "A Theory of Justice", 1971'
       },
       {
         category: '심리 · 선택',

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>이별 시뮬레이터 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="이별 시뮬레이터 - 이클립스 마인드랩">
+  <meta property="og:description" content="사랑이 식어간다. 당신은 어떻게 이별하는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #e11d48;
+      --sim-primary-light: #fb7185;
+      --sim-primary-bg: rgba(225, 29, 72, 0.1);
+      --sim-primary-border: rgba(225, 29, 72, 0.3);
+    }
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">이별 시뮬레이터</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">💔</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 이별 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      {
+        badge: 'STAGE 1: 징후',
+        title: '식어가는 마음',
+        desc: '3년을 함께한 연인.\n\n요즘 이상하다. 같이 있어도 외롭다. 대화가 줄었다. 설렘은 사라진 지 오래다.\n\n예전엔 하루 종일 붙어 있어도 모자랐는데, 지금은 혼자 있고 싶을 때가 더 많다.\n\n이 감정, 어떻게 할 것인가?',
+        highlight: '당신의 선택은?',
+        choices: [
+          { id: 'confront', text: '상대에게 솔직히 말한다', subtext: '"요즘 우리 관계가 좀 이상한 것 같아"', meaning: '불편한 진실을 직면하는 용기. 사르트르는 자기기만을 가장 경계했다.', principle: { name: '급진적 정직', desc: '관계에서 불편한 진실을 피하지 않는 것.', icon: '🪞' }, quote: '"인간은 자기 자신에게 거짓말할 때 가장 비겁해진다." - 사르트르' },
+          { id: 'endure', text: '참고 기다린다', subtext: '권태기겠지. 다 그럴 때 있잖아...', meaning: '시간이 해결해주길 바란다. 하지만 기다림은 해결책인가, 회피인가?', principle: { name: '수동적 희망', desc: '행동 없이 상황이 나아지길 바라는 것.', icon: '⏳' }, quote: '"희망이 너를 기다리게 하는 동안, 삶은 지나간다." - 세네카' },
+          { id: 'distract', text: '다른 일에 몰두한다', subtext: '바쁘면 신경 안 쓰이겠지', meaning: '회피는 단기적으로 효과적이다. 하지만 직면하지 않은 문제는 사라지지 않는다.', principle: { name: '회피 기제', desc: '불편한 감정을 피하기 위해 다른 것에 몰두하는 것.', icon: '🏃' }, quote: '"우리가 직면하지 않는 것은 운명이 된다." - 융' },
+          { id: 'doubt', text: '내가 이상한 건가 고민한다', subtext: '다른 커플들은 안 그런 것 같은데...', meaning: '자신의 감정을 불신한다. 하지만 당신의 감정은 당신의 진실이다.', principle: { name: '감정 부정', desc: '자신의 감정을 믿지 않고 외부 기준으로 판단하는 것.', icon: '❓' }, quote: '"당신이 느끼는 것은 진짜다." - 칼 로저스' },
+          { id: 'test', text: '상대를 떠보듯 행동한다', subtext: '연락 안 하면 먼저 하나 보자', meaning: '수동 공격적 방식. 상대를 시험한다. 하지만 관계는 게임이 아니다.', principle: { name: '관계의 게임화', desc: '사랑을 시험과 테스트로 만드는 것.', icon: '🎮' }, quote: '"사랑은 받는 것이 아니라 주는 능력이다." - 에리히 프롬' }
+        ]
+      },
+      {
+        badge: 'STAGE 2: 결정',
+        title: '갈림길',
+        desc: '시간이 지났다. 노력도 해봤다.\n\n하지만 마음은 돌아오지 않는다.\n\n상대를 볼 때 드는 감정은 사랑보다 미안함에 가깝다.\n\n니체의 질문이 떠오른다.\n"이 순간을 영원히 반복해도 괜찮겠는가?"',
+        highlight: '이 관계를 어떻게 할 것인가?',
+        choices: [
+          { id: 'end', text: '끝내기로 결심한다', subtext: '더 끌면 서로에게 잔인하다', meaning: '고통스럽지만 결단을 내린다. 키르케고르는 말했다. 선택의 순간에 인간의 본질이 드러난다고.', principle: { name: '결단의 윤리', desc: '결정을 미루는 것은 불안 속에 사는 것이다. 선택이 인간을 만든다.', icon: '⚔️' }, quote: '"불안은 자유의 현기증이다." - 키르케고르' },
+          { id: 'try_again', text: '한 번만 더 노력해본다', subtext: '3년인데... 이렇게 끝내기엔...', meaning: '매몰비용의 오류? 아니면 진심 어린 헌신? 경계가 모호하다.', principle: { name: '매몰비용과 헌신', desc: '이미 투자한 시간이 미래 결정에 영향을 주는 것.', icon: '💎' }, quote: '"사랑은 느끼는 것이 아니라 하는 것이다." - 에리히 프롬' },
+          { id: 'wait', text: '상대가 먼저 끝내길 기다린다', subtext: '내가 나쁜 사람 되긴 싫어...', meaning: '이별의 책임을 상대에게 전가한다. 기다림은 또 다른 형태의 잔인함이다.', principle: { name: '책임의 회피', desc: '결정의 짐을 타인에게 미루는 것.', icon: '🙈' }, quote: '"자유에는 책임이 따른다." - 사르트르' },
+          { id: 'open', text: '솔직하게 현재 감정을 공유한다', subtext: '결론은 모르지만, 함께 이야기해보자', meaning: '상대를 동등한 존재로 대한다. 부버가 말한 "나-너" 관계.', principle: { name: '나-너 관계', desc: '상대를 대상이 아닌 주체로 대하는 것.', icon: '🤝' }, quote: '"모든 참된 삶은 만남이다." - 마르틴 부버' }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 방식',
+        title: '이별의 말',
+        desc: '결국 이 순간이 왔다.\n\n더 이상 미룰 수 없다. 말해야 한다.\n\n마주 앉았다. 상대의 눈을 본다.\n\n어떤 말로 시작해야 할까.',
+        highlight: '이별을 어떻게 전할 것인가?',
+        choices: [
+          { id: 'honest', text: '솔직하게 전부 말한다', subtext: '"내 마음이 변했어. 정말 미안해."', meaning: '가장 아프지만 가장 정직한 방법. 칸트는 말했다. 거짓말은 어떤 상황에서도 잘못이라고.', principle: { name: '정언명령', desc: '인간을 수단이 아닌 목적으로 대하라.', icon: '📜' }, quote: '"네 의지의 격률이 보편적 법칙이 될 수 있도록 행위하라." - 칸트' },
+          { id: 'excuse', text: '핑계를 댄다', subtext: '"지금 내 일에 집중해야 할 것 같아서..."', meaning: '상대를 덜 아프게 하려는 의도. 하지만 거짓 이유는 상대에게 거짓 희망을 준다.', principle: { name: '선의의 거짓말', desc: '상대를 보호하려는 거짓. 좋은 의도지만 상대의 알 권리를 박탈한다.', icon: '🎭' }, quote: '"선의의 거짓말은 여전히 거짓말이다." - 무명' },
+          { id: 'ghost', text: '연락을 끊는다', subtext: '말로 하기가 너무 힘들다...', meaning: '잠수. 가장 쉬운 방법이지만 가장 잔인한 방법. 상대는 이유도 모른 채 버려진다.', principle: { name: '고스팅', desc: '설명 없이 사라지는 것. 상대에게 미해결의 트라우마를 남긴다.', icon: '👻' }, quote: '"가장 잔인한 것은 아무 말도 하지 않는 것이다." - 무명' },
+          { id: 'blame', text: '상대 탓을 한다', subtext: '"네가 변했어. 예전 같지 않아."', meaning: '책임을 상대에게 전가한다. 하지만 관계는 혼자 망가지지 않는다.', principle: { name: '투사', desc: '자신의 책임을 타인에게 돌리는 방어기제.', icon: '👉' }, quote: '"타인에게서 불쾌한 점은 자기 안의 무언가를 반영한다." - 융' },
+          { id: 'kind', text: '충분히 위로하며 말한다', subtext: '"네 잘못이 아니야. 정말 고마웠어."', meaning: '이별에도 품위가 있다. 끝이지만, 3년의 시간을 존중한다.', principle: { name: '품위 있는 이별', desc: '끝내면서도 상대를 존중하는 것.', icon: '🌸' }, quote: '"어떻게 끝내느냐가 중요하다." - 무명' }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 이후',
+        title: '그 다음',
+        desc: '끝났다.\n\n며칠이 지났다. 어쩌면 몇 주.\n\n문득 그 사람 생각이 난다. 지금 뭐 하고 있을까.\n\nSNS에 들어가면 볼 수 있다.\n연락처도 아직 있다.',
+        highlight: '당신은 어떻게 할 것인가?',
+        choices: [
+          { id: 'cut', text: '완전히 차단한다', subtext: '연락처, SNS 전부 삭제', meaning: '깨끗한 단절. 불교에서 말하는 무집착. 집착을 끊어야 새 시작이 가능하다.', principle: { name: '무집착', desc: '집착이 고통의 근원이다. 놓아야 자유로워진다.', icon: '✂️' }, quote: '"놓아주는 것이 가장 강한 사랑이다." - 틱낫한' },
+          { id: 'friend', text: '친구로 남으려 한다', subtext: '좋은 사람인 건 변함없으니까', meaning: '성숙해 보이는 선택. 하지만 대부분 실패한다. 감정이 정리되지 않으면 친구 관계는 고통의 연장일 뿐이다.', principle: { name: '관계의 전환', desc: '연인에서 친구로. 가능하지만 충분한 거리와 시간이 필요하다.', icon: '🔄' }, quote: '"친구가 되려면 먼저 충분히 멀어져야 한다." - 무명' },
+          { id: 'check', text: '가끔 SNS를 확인한다', subtext: '뭐하나 궁금해서... 한 번만...', meaning: '미련. 놓지 못하는 마음. 하지만 지켜보기만 하면 앞으로 나아갈 수 없다.', principle: { name: '미완의 집착', desc: '완전히 끝내지 못한 관계. 새로운 시작을 방해한다.', icon: '👀' }, quote: '"끝나지 않은 것들이 우리를 잡아둔다." - 제이가르닉' },
+          { id: 'return', text: '다시 연락한다', subtext: '역시 안 되겠어... 다시 만나자', meaning: '이별의 번복. 같은 문제가 해결되지 않으면 같은 결말로 간다.', principle: { name: '반복 강박', desc: '프로이트가 발견한 무의식적 패턴. 해결되지 않은 문제는 반복된다.', icon: '🔁' }, quote: '"해결되지 않은 것은 반복된다." - 프로이트' },
+          { id: 'grow', text: '나 자신에게 집중한다', subtext: '이 경험에서 배울 게 있어', meaning: '이별을 성장의 기회로 삼는다. 니체의 아모르 파티 — 운명을 사랑하라.', principle: { name: '아모르 파티', desc: '고통까지 포함한 삶 전체를 긍정하는 것.', icon: '🌱' }, quote: '"나를 죽이지 못하는 것은 나를 더 강하게 만든다." - 니체' }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      document.getElementById('stageLabel').textContent = 'STAGE ' + (currentStageIndex + 1);
+      document.getElementById('stageCount').textContent = (currentStageIndex + 1) + '/' + stages.length;
+      document.getElementById('progressFill').style.width = ((currentStageIndex + 1) / stages.length * 100) + '%';
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) { highlightEl.textContent = stage.highlight; highlightEl.classList.remove('hidden'); } 
+      else { highlightEl.classList.add('hidden'); }
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = '<span class="sim-choice-text">' + choice.text + '</span>' + (choice.subtext ? '<span class="sim-choice-subtext">' + choice.subtext + '</span>' : '');
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({ stage: currentStageIndex, choiceId: choice.id, choiceText: choice.text });
+      if (choice.principle) { principles.push(choice.principle); }
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) { document.getElementById('choiceMeaning').textContent = choice.meaning; meaningCard.classList.remove('hidden'); } 
+      else { meaningCard.classList.add('hidden'); }
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) { document.getElementById('principleName').textContent = choice.principle.icon + ' ' + choice.principle.name; document.getElementById('principleDesc').textContent = choice.principle.desc; principleCard.classList.remove('hidden'); } 
+      else { principleCard.classList.add('hidden'); }
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) { document.getElementById('quoteText').textContent = choice.quote; quoteCard.classList.remove('hidden'); } 
+      else { quoteCard.classList.add('hidden'); }
+      document.getElementById('nextBtn').textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) { showResult(); } else { renderStage(); }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      const stage1 = choiceIds[0], stage2 = choiceIds[1], stage3 = choiceIds[2], stage4 = choiceIds[3];
+      
+      if ((stage1 === 'confront' || stage3 === 'honest') && stage2 === 'end' && (stage4 === 'cut' || stage4 === 'grow')) {
+        return { icon: '🌅', title: '깨끗한 이별주의자', desc: '당신은 이별에서도 용기와 정직을 선택한다. 아프더라도 회피하지 않는다. 끝을 인정하고 앞으로 나아간다. 이것은 나약함이 아니라 강함이다.', rarity: '상위 7%' };
+      }
+      if (stage4 === 'grow') {
+        return { icon: '🌱', title: '성장하는 실존주의자', desc: '당신은 이별을 끝이 아닌 시작으로 본다. 니체의 아모르 파티 — 운명을 사랑하라. 상처도 삶의 일부다.', rarity: '상위 10%' };
+      }
+      if (stage4 === 'return' || stage4 === 'check') {
+        return { icon: '🌙', title: '미련의 철학자', desc: '놓지 못하는 마음. 이것은 약함이 아니다. 깊이 사랑했다는 증거다. 하지만 집착은 고통을 연장한다.', rarity: '상위 24%' };
+      }
+      if (stage3 === 'ghost' || stage1 === 'distract' || stage2 === 'wait') {
+        return { icon: '💨', title: '회피하는 자유인', desc: '직면보다 회피를 선택한다. 단기적으로 덜 아프다. 하지만 융이 말했다. 직면하지 않은 것은 운명이 된다고.', rarity: '상위 19%' };
+      }
+      if (stage3 === 'kind' && (stage4 === 'friend' || stage4 === 'grow')) {
+        return { icon: '🌸', title: '따뜻한 마무리꾼', desc: '이별에도 품위가 있다. 당신은 끝내면서도 상대를 존중한다. 3년의 시간에 감사한다.', rarity: '상위 11%' };
+      }
+      if ((stage1 === 'confront' || stage2 === 'open') && stage3 === 'honest') {
+        return { icon: '💬', title: '정직한 대화주의자', desc: '당신은 어려운 대화를 피하지 않는다. 부버의 나-너 관계. 결과가 어떻든 진실 안에서 관계한다.', rarity: '상위 8%' };
+      }
+      if ((stage1 === 'doubt' || stage1 === 'endure') && stage2 === 'try_again') {
+        return { icon: '🤔', title: '신중한 사색가', desc: '쉽게 결정하지 않는다. 충분히 고민하고 노력한다. 프롬이 말했다. 사랑은 감정이 아니라 의지라고.', rarity: '상위 14%' };
+      }
+      return { icon: '💔', title: '이별 앞의 인간', desc: '당신의 선택은 일관되지 않았다. 하지만 그것이 인간이다. 이별 앞에서 누가 완벽할 수 있는가?', rarity: '상위 22%' };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = '<span class="sim-principles-item-icon">' + p.icon + '</span><div><div class="sim-principles-item-name">' + p.name + '</div><div class="sim-principles-item-desc">' + p.desc + '</div></div>';
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      saveProgress(result);
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function saveProgress(result) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!profile) { profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] }; }
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      if (!profile.completedSims.includes('breakup')) { profile.completedSims.push('breakup'); profile.exp = (profile.exp || 0) + 30; }
+      principles.forEach(p => { if (!profile.principles.includes(p.name)) { profile.principles.push(p.name); } });
+      const expNeeded = profile.level * 100;
+      while (profile.exp >= expNeeded) { profile.exp -= expNeeded; profile.level++; }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    function generateImage() {
+      const result = calculateResult();
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1080; canvas.height = 1920;
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1f0a0f'); gradient.addColorStop(0.5, '#0f0508'); gradient.addColorStop(1, '#1a0a10');
+      ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(225, 29, 72, 0.08)'; ctx.beginPath(); ctx.arc(540, 400, 200, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e11d48'; ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('이별 시뮬레이터', canvas.width / 2, 200);
+      ctx.font = '180px sans-serif'; ctx.fillText(result.icon, canvas.width / 2, 500);
+      ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
+      const rarityWidth = ctx.measureText(result.rarity).width + 40;
+      const badgeGradient = ctx.createLinearGradient(canvas.width / 2 - rarityWidth / 2, 580, canvas.width / 2 + rarityWidth / 2, 620);
+      badgeGradient.addColorStop(0, '#f59e0b'); badgeGradient.addColorStop(1, '#ef4444');
+      ctx.fillStyle = badgeGradient; ctx.beginPath(); ctx.roundRect(canvas.width / 2 - rarityWidth / 2, 580, rarityWidth, 50, 25); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.fillText(result.rarity, canvas.width / 2, 617);
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 64px -apple-system, BlinkMacSystemFont, sans-serif'; ctx.fillText(result.title, canvas.width / 2, 750);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width / 2 - 150, 820); ctx.lineTo(canvas.width / 2 + 150, 820); ctx.stroke();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.font = '36px -apple-system, BlinkMacSystemFont, sans-serif';
+      const maxWidth = 900, lineHeight = 54; const words = result.desc.split(' '); let line = '', y = 900;
+      for (let word of words) { const testLine = line + word + ' '; const metrics = ctx.measureText(testLine); if (metrics.width > maxWidth && line !== '') { ctx.fillText(line.trim(), canvas.width / 2, y); line = word + ' '; y += lineHeight; } else { line = testLine; } }
+      ctx.fillText(line.trim(), canvas.width / 2, y);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; ctx.font = '32px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillText('사랑이 식어간다.', canvas.width / 2, 1650); ctx.fillText('당신은 어떻게 이별하는가?', canvas.width / 2, 1700);
+      ctx.fillStyle = '#e11d48'; ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif'; ctx.fillText('▶ 테스트 해보기', canvas.width / 2, 1800);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.font = '28px -apple-system, BlinkMacSystemFont, sans-serif'; ctx.fillText('eclipse-mindlab.github.io/mindlab', canvas.width / 2, 1860);
+      return canvas;
+    }
+    
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = generateImage();
+      const link = document.createElement('a'); link.download = '이별시뮬레이터_결과.png'; link.href = canvas.toDataURL('image/png'); link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const result = calculateResult();
+      const text = result.icon + ' 나의 이별 유형: "' + result.title + '"\n\n사랑이 식어간다.\n당신은 어떻게 이별하는가?\n\n▶ 테스트 해보기\nhttps://bit.ly/sim-breakup';
+      if (navigator.share) { try { await navigator.share({ title: '이별 시뮬레이터', text }); return; } catch (e) {} }
+      if (navigator.clipboard && navigator.clipboard.writeText) { try { await navigator.clipboard.writeText(text); alert('복사 완료! 친구에게 보내보세요 💬'); return; } catch (e) {} }
+      const textarea = document.createElement('textarea'); textarea.value = text; textarea.style.position = 'fixed'; textarea.style.opacity = '0';
+      document.body.appendChild(textarea); textarea.select();
+      try { document.execCommand('copy'); alert('복사 완료! 친구에게 보내보세요 💬'); } catch (e) { alert('복사 실패. 직접 복사해주세요:\n\n' + text); }
+      document.body.removeChild(textarea);
+    });
+    
+    renderStage();
+  </script>
+</body>
+</html>
