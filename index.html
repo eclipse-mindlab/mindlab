@@ -1360,7 +1360,10 @@
               }
               resolve();
             } else {
-              // 익명 로그인
+              // 로그아웃 상태 - 익명 로그인 시도
+              const backupWarning = document.getElementById('backupWarning');
+              if (backupWarning) backupWarning.classList.remove('hidden');
+              
               try {
                 await signInAnonymously(auth);
                 console.log('익명 로그인 성공');
