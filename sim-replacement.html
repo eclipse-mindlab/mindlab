@@ -391,9 +391,9 @@
     document.getElementById('shareBtn').addEventListener('click', async () => {
       const url = 'https://bit.ly/perfect-substitute';
       const result = document.getElementById('resultTitle').textContent;
-      const text = `[완벽한 대체자 시뮬레이터]\n나보다 모든 면에서 나은 사람이 나타났을 때, 나는 어떻게 반응할까?\n\n내 결과: ${result}\n\n`;
-      if (navigator.share) { try { await navigator.share({ title: '완벽한 대체자', text, url }); } catch {} }
-      else { navigator.clipboard.writeText(text + url); document.getElementById('shareBtn').textContent = '링크 복사됨!'; }
+      const text = `나보다 모든 면에서 나은 사람이 나타났을 때, 나는 어떻게 반응할까?\n\n내 결과: ${result}\n\n`;
+      if (navigator.share) { try { await navigator.share({ title: '완벽한 대체자 시뮬레이터', text, url }); } catch {} }
+      else { navigator.clipboard.writeText('[완벽한 대체자 시뮬레이터]\n' + text + url); document.getElementById('shareBtn').textContent = '링크 복사됨!'; }
     });
     
     renderStage();
