@@ -173,6 +173,10 @@ body {
   margin-bottom: 4px;
 }
 
+.sim-choice-text {
+  margin-right: 12px;
+}
+
 .sim-choice-subtext {
   font-size: 13px;
   color: #71717a;

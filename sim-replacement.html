@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>완벽한 대체자 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="완벽한 대체자 - 이클립스 마인드랩">
+  <meta property="og:description" content="나보다 모든 면에서 나은 사람이 나타났다. 나의 가치는 무엇인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #6366f1;
+      --sim-primary-light: #818cf8;
+      --sim-primary-bg: rgba(99, 102, 241, 0.1);
+      --sim-primary-border: rgba(99, 102, 241, 0.3);
+    }
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">완벽한 대체자</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🪞</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 정체성 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sim-template.js"></script>
+  <script>
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      {
+        badge: 'STAGE 1: 등장',
+        title: '완벽한 존재',
+        desc: '월요일 아침, 팀 회의.\n\n팀장이 말한다. "새로 합류한 분을 소개할게요."\n\n그가 들어온다. 첫인상부터 눈에 띈다. 모두의 시선이 그에게 향한다.\n\n자기소개가 시작된다. 해외 명문대 출신. 글로벌 기업에서 굵직한 프로젝트들. 영어로 농담까지 던진다. 다들 웃는다.\n\n"앞으로 잘 부탁드립니다." 미소까지 완벽하다.\n\n동료가 속삭인다. "스펙 미쳤다..."\n\n묘한 기분이 든다.',
+        highlight: '당신의 첫 반응은?',
+        choices: [
+          { id: 'welcome', text: '진심으로 환영한다', subtext: '유능한 동료는 팀에 좋은 일이지', meaning: '자신감 있는 반응. 타인의 능력이 나를 위협하지 않는다. 하지만 이 자신감이 언제까지 유지될까?', principle: { name: '협력적 자존감', desc: '타인의 성공이 나의 가치를 깎지 않는다는 믿음.', icon: '🤝' }, quote: '"남의 촛불을 꺼도 내 촛불이 밝아지진 않는다." - 무명' },
+          { id: 'compare', text: '나와 비교하게 된다', subtext: '저 정도면... 나보다 훨씬 낫네', meaning: '페스팅거의 사회비교 이론. 인간은 자연스럽게 타인과 비교한다. 문제는 비교가 멈추지 않을 때 시작된다.', principle: { name: '사회적 비교', desc: '타인과 자신을 비교하려는 본능적 충동. 상향 비교는 동기부여가 되지만, 자주 열등감을 낳는다.', icon: '📊' }, quote: '"비교는 기쁨의 도둑이다." - 테오도어 루스벨트' },
+          { id: 'threat', text: '위협을 느낀다', subtext: '내 자리가... 흔들릴 수도 있겠다', meaning: '직관적 위기 감지. 변화에 대한 경계심. 생존 본능이 작동한다.', principle: { name: '지위 불안', desc: '자신의 위치가 위협받는다고 느끼는 불안. 알랭 드 보통이 현대 사회의 핵심 고통으로 지목한 감정.', icon: '⚠️' }, quote: '"우리는 평등해졌기에 더 불안해졌다." - 알랭 드 보통' },
+          { id: 'indifferent', text: '별 생각이 없다', subtext: '새 사람이 왔구나. 그냥 그렇네', meaning: '무관심. 방어기제일 수도, 진짜 초연함일 수도 있다. 하지만 정말 아무 감정도 없는가?', principle: { name: '정서적 거리두기', desc: '감정적 영향을 최소화하기 위해 심리적 거리를 두는 것.', icon: '🧊' }, quote: '"무관심은 가장 정교한 방어다." - 무명' }
+        ]
+      },
+      {
+        badge: 'STAGE 2: 비교',
+        title: '그림자 속에서',
+        desc: '한 달이 지났다.\n\n그는 기대 이상이었다. 모든 업무를 완벽하게 해낸다.\n\n회의에서 그의 발언은 항상 핵심을 찌른다. 팀장은 그를 칭찬하느라 바쁘다.\n\n점심시간, 동료들이 그 주변에 모인다. 웃음소리가 들린다.\n\n그리고 당신은 — 예전과 같은 일을 예전과 같이 하고 있다. 아무도 뭐라 하지 않는다. 하지만 어느새 당신은 "그"와 비교당하고 있다.\n\n거울을 본다. 같은 얼굴인데 왠지 초라해 보인다.',
+        highlight: '이 상황에서 당신은?',
+        choices: [
+          { id: 'effort', text: '더 열심히 한다', subtext: '나도 인정받을 수 있어. 더 노력하면 돼', meaning: '경쟁 본능. 아들러가 말한 "우월을 향한 추구". 하지만 그가 아닌 나만의 우월함이어야 한다.', principle: { name: '보상적 노력', desc: '열등감을 극복하기 위해 더 노력하는 것. 건강한 동기지만, 끝없는 레이스가 될 수 있다.', icon: '🏃' }, quote: '"인간은 열등감을 극복하려는 존재다." - 알프레드 아들러' },
+          { id: 'different', text: '다른 강점을 찾는다', subtext: '그와 같은 판에서 싸울 필요 없어', meaning: '전략적 차별화. 레드오션을 피해 블루오션으로. 하지만 이것이 도피인가, 지혜인가?', principle: { name: '비교 우위', desc: '경쟁에서 이기려면 모든 면에서 뛰어날 필요 없다. 나만의 영역에서 우위를 가지면 된다.', icon: '🎯' }, quote: '"모든 것을 잘할 필요는 없다. 한 가지만 최고면 된다." - 무명' },
+          { id: 'accept', text: '인정한다', subtext: '그가 나보다 낫다. 그게 사실이야', meaning: '현실 수용. 가장 어렵지만 가장 성숙한 반응. 자기기만 없이 현실을 직면한다.', principle: { name: '현실 수용', desc: '있는 그대로의 현실을 직면하는 것. 변화의 첫 걸음.', icon: '🪨' }, quote: '"진실이 너희를 자유케 하리라." - 요한복음' },
+          { id: 'resent', text: '억울하다', subtext: '난 5년을 일했는데... 저 사람은 한 달 만에...', meaning: '상대적 박탈감. 공정성에 대한 분노. 자연스러운 감정이지만, 여기 머물면 독이 된다.', principle: { name: '상대적 박탈감', desc: '타인과 비교해 불공정하다고 느끼는 감정. 분노와 무력감을 동반한다.', icon: '😤' }, quote: '"분노는 자신을 태우면서 타인에게 던지는 석탄이다." - 부처' },
+          { id: 'avoid', text: '피한다', subtext: '저 사람이랑 같이 있으면 기분이 나빠져', meaning: '회피. 비교 상황 자체를 피한다. 단기적으로 효과적이지만, 장기적으로 성장을 막는다.', principle: { name: '비교 회피', desc: '불쾌한 비교 상황을 피하려는 행동. 자존감 보호 전략이지만 고립을 부른다.', icon: '🚪' }, quote: '"피하는 것은 잠시 편하지만, 피해지는 것은 없다." - 무명' }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 위기',
+        title: '대체 가능',
+        desc: '팀장이 당신을 부른다.\n\n"다음 프로젝트 말이야..."\n\n당신이 맡기로 했던 프로젝트다. 6개월을 준비했다.\n\n"이번엔 새로 온 친구한테 맡기려고."\n\n심장이 철렁한다. 팀장이 말을 잇는다.\n\n"그 친구가 관련 경험이 많아서. 미안하지만 서포트 역할 어때?"\n\n서포트. 내가. 내 프로젝트에서.\n\n머릿속이 하얘진다. "네, 알겠습니다"라고 말했지만 목소리가 떨린다.\n\n돌아서는데 생각이 든다.\n\n\'나는... 대체 가능한 존재인가?\'',
+        highlight: '당신은 어떻게 반응하는가?',
+        choices: [
+          { id: 'fight', text: '항의한다', subtext: '"제가 6개월을 준비한 프로젝트입니다"', meaning: '자기 주장. 정당한 권리를 요구한다. 하지만 결과가 바뀔까? 그리고 바뀌지 않으면?', principle: { name: '자기 옹호', desc: '자신의 가치와 권리를 주장하는 것. 목소리를 내지 않으면 아무도 들어주지 않는다.', icon: '📢' }, quote: '"입 다물면 존재하지 않는 것과 같다." - 오드리 로드' },
+          { id: 'support', text: '서포트를 받아들인다', subtext: '어쩔 수 없지. 팀을 위해서...', meaning: '양보. 팀을 위한 희생? 아니면 갈등 회피? 경계가 모호하다.', principle: { name: '자기 축소', desc: '갈등을 피하기 위해 자신의 가치를 줄이는 것. 평화를 사지만 자존감을 판다.', icon: '📉' }, quote: '"자신을 작게 만들어도 세상은 커지지 않는다." - 무명' },
+          { id: 'collaborate', text: '협력을 제안한다', subtext: '"제가 그 친구랑 같이 리드하면 어떨까요?"', meaning: '윈-윈 시도. 경쟁 대신 협력. 하지만 상대가 같은 생각일까?', principle: { name: '협력적 경쟁', desc: '제로섬을 넘어서는 해결책. 파이를 키우면 모두가 더 가질 수 있다.', icon: '🤜🤛' }, quote: '"혼자 가면 빨리 가고, 함께 가면 멀리 간다." - 아프리카 속담' },
+          { id: 'quit', text: '사표를 생각한다', subtext: '이런 대접을 받을 바엔...', meaning: '극단적 선택. 도피인가 자존심인가? 떠나도 그 질문은 따라온다.', principle: { name: '자존적 이탈', desc: '모욕적인 상황을 피해 떠나는 것. 자존심을 지키지만 기회를 잃는다.', icon: '🚶' }, quote: '"떠나는 것도 용기지만, 남아서 싸우는 것도 용기다." - 무명' },
+          { id: 'reflect', text: '혼자 생각에 잠긴다', subtext: '대체 가능... 그게 나라는 건가?', meaning: '실존적 질문. 키르케고르의 "죽음에 이르는 병"은 자기 자신이 아닌 것이 되려는 절망이다.', principle: { name: '실존적 위기', desc: '자기 존재의 의미에 대한 근본적 물음. 고통스럽지만 성장의 시작점이 될 수 있다.', icon: '🌑' }, quote: '"가장 큰 위험은 아무 위험도 감수하지 않는 것이다." - 키르케고르' }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 선택',
+        title: '너라는 우주',
+        desc: '깊은 밤, 혼자 생각에 잠긴다.\n\n그가 나보다 유능한 건 사실이다.\n학벌, 경력, 능력, 외모. 객관적 지표로 그가 앞선다.\n\n하지만 문득 깨닫는다.\n\n그에게는 없는 것들이 있다.\n\n내가 야근하며 울던 밤들.\n처음 프로젝트를 망쳐서 팀원들에게 미안했던 기억.\n그걸 딛고 다시 일어났던 순간.\n5년간 쌓아온 동료들과의 신뢰.\n\n그건 이력서에 없다.\n하지만 분명히 나만의 것이다.\n\n"너라는 우주를 대신할 우주는 이 세상에 없다."',
+        highlight: '당신은 무엇을 깨닫는가?',
+        choices: [
+          { id: 'unique', text: '나는 대체 불가능하다', subtext: '능력이 아니라 존재 자체로', meaning: '레비나스의 철학. 타자는 절대적 타자. 나도 마찬가지. 너라는 우주를 대신할 우주는 없다.', principle: { name: '존재의 유일성', desc: '능력, 성과, 스펙이 아닌 존재 자체의 대체 불가능성. 당신의 경험, 관계, 역사는 오직 당신만의 것이다.', icon: '✨' }, quote: '"타인의 얼굴은 나에게 말한다: 나를 죽이지 말라." - 레비나스' },
+          { id: 'growth', text: '이 경험이 나를 성장시킨다', subtext: '고통도 나의 일부가 된다', meaning: '니체의 아모르 파티. 운명을 사랑하라. 열등감마저 성장의 연료로 삼는다.', principle: { name: '변환적 고통', desc: '고통을 회피하지 않고 성장의 재료로 삼는 것. 상처받은 곳이 가장 강해진다.', icon: '🔥' }, quote: '"나를 죽이지 못하는 것은 나를 더 강하게 만든다." - 니체' },
+          { id: 'relation', text: '내 가치는 관계 속에 있다', subtext: '나를 아끼는 사람들이 증명하는 것', meaning: '우분투 — 나는 우리이기에 존재한다. 개인의 가치는 관계 속에서 빛난다.', principle: { name: '관계적 정체성', desc: '나는 혼자 완성되지 않는다. 타인과의 관계 속에서 나의 의미가 만들어진다.', icon: '🕸️' }, quote: '"나는 우리이기에 존재한다." - 우분투' },
+          { id: 'accept_limit', text: '한계를 인정하고 살아간다', subtext: '더 나은 사람은 항상 있다. 그래도 괜찮아', meaning: '스토아 철학의 핵심. 통제할 수 없는 것을 받아들이고, 통제할 수 있는 것에 집중한다.', principle: { name: '한계의 수용', desc: '완벽하지 않아도 괜찮다. 인간의 유한함을 받아들일 때 비로소 자유로워진다.', icon: '🌅' }, quote: '"통제할 수 없는 것에 평화를, 통제할 수 있는 것에 용기를." - 니버의 기도' },
+          { id: 'meaning', text: '비교 자체가 무의미하다', subtext: '그와 나는 다른 존재. 비교할 수 없다', meaning: '비트겐슈타인 — 비교할 수 없는 것을 비교하려 할 때 철학적 오류가 생긴다.', principle: { name: '비교 불가능성', desc: '사과와 오렌지를 비교할 수 없듯, 한 인간을 다른 인간과 비교할 수 없다.', icon: '🍎🍊' }, quote: '"각자의 삶은 각자의 척도로만 잴 수 있다." - 무명' }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      document.getElementById('stageLabel').textContent = 'STAGE ' + (currentStageIndex + 1);
+      document.getElementById('stageCount').textContent = (currentStageIndex + 1) + '/' + stages.length;
+      document.getElementById('progressFill').style.width = ((currentStageIndex + 1) / stages.length * 100) + '%';
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) { highlightEl.textContent = stage.highlight; highlightEl.classList.remove('hidden'); } 
+      else { highlightEl.classList.add('hidden'); }
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = '<span class="sim-choice-text">' + choice.text + '</span>' + (choice.subtext ? '<span class="sim-choice-subtext">' + choice.subtext + '</span>' : '');
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({ stage: currentStageIndex, choiceId: choice.id, choiceText: choice.text });
+      if (choice.principle) { principles.push(choice.principle); }
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) { document.getElementById('choiceMeaning').textContent = choice.meaning; meaningCard.classList.remove('hidden'); } 
+      else { meaningCard.classList.add('hidden'); }
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) { document.getElementById('principleName').textContent = choice.principle.icon + ' ' + choice.principle.name; document.getElementById('principleDesc').textContent = choice.principle.desc; principleCard.classList.remove('hidden'); } 
+      else { principleCard.classList.add('hidden'); }
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) { document.getElementById('quoteText').textContent = choice.quote; quoteCard.classList.remove('hidden'); } 
+      else { quoteCard.classList.add('hidden'); }
+      document.getElementById('nextBtn').textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) { showResult(); } else { renderStage(); }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      const stage1 = choiceIds[0], stage2 = choiceIds[1], stage3 = choiceIds[2], stage4 = choiceIds[3];
+      
+      // 존재의 발견자: 유일성을 깨달음
+      if (stage4 === 'unique' && (stage2 === 'accept' || stage1 === 'welcome')) {
+        return { icon: '🌟', title: '존재의 발견자', desc: '당신은 깨달았다. 능력과 스펙은 대체될 수 있지만, "나"라는 존재는 대체될 수 없다. 당신의 경험, 관계, 상처, 성장 — 그 모든 것이 오직 당신만의 것이다. 너라는 우주를 대신할 우주는 없다.', rarity: '상위 5%' };
+      }
+      
+      // 성장하는 전사: 고통을 연료로
+      if (stage4 === 'growth' && (stage2 === 'effort' || stage3 === 'fight')) {
+        return { icon: '🔥', title: '성장하는 전사', desc: '당신은 열등감을 도피가 아닌 연료로 선택했다. 니체가 말했다. "나를 죽이지 못하는 것은 나를 더 강하게 만든다." 비교의 고통이 성장의 씨앗이 된다.', rarity: '상위 8%' };
+      }
+      
+      // 관계의 철학자: 연결 속에서 의미 찾기
+      if (stage4 === 'relation') {
+        return { icon: '🕸️', title: '관계의 철학자', desc: '당신은 안다. 인간은 혼자 완성되지 않는다. 당신의 가치는 스펙 시트에 있지 않다. 당신을 사랑하는 사람들, 당신이 웃게 한 사람들, 당신이 도운 사람들. 그 관계의 총합이 당신이다.', rarity: '상위 10%' };
+      }
+      
+      // 스토아의 현자: 한계 수용
+      if (stage4 === 'accept_limit' && stage2 === 'accept') {
+        return { icon: '🌅', title: '스토아의 현자', desc: '당신은 가장 어려운 것을 해냈다. 있는 그대로를 받아들이는 것. 더 나은 사람은 항상 있다. 하지만 그래도 괜찮다. 완벽하지 않아도 충분하다.', rarity: '상위 12%' };
+      }
+      
+      // 초월적 비교: 비교 자체를 초월
+      if (stage4 === 'meaning') {
+        return { icon: '🍎🍊', title: '비교 초월자', desc: '당신은 게임 자체를 거부했다. 사과와 오렌지를 비교할 수 없듯, 한 인간을 다른 인간과 비교할 수 없다. 각자의 삶은 각자의 척도로만 측정될 수 있다.', rarity: '상위 9%' };
+      }
+      
+      // 협력적 공존자
+      if (stage3 === 'collaborate' && stage1 === 'welcome') {
+        return { icon: '🤝', title: '협력적 공존자', desc: '당신은 경쟁 대신 협력을 선택했다. 제로섬 게임을 거부하고 윈-윈을 추구한다. 혼자 가면 빨리 가지만, 함께 가면 멀리 간다.', rarity: '상위 15%' };
+      }
+      
+      // 끊임없는 경쟁자
+      if (stage2 === 'effort' && stage3 === 'fight') {
+        return { icon: '🏃', title: '끝없는 레이스', desc: '당신은 멈추지 않는다. 더 노력하고, 더 달린다. 하지만 질문이 남는다. 언제까지? 누구를 위해? 경쟁의 끝에 무엇이 있는가?', rarity: '상위 22%' };
+      }
+      
+      // 회피하는 자
+      if (stage2 === 'avoid' || stage3 === 'quit') {
+        return { icon: '🚶', title: '전장을 떠난 자', desc: '당신은 비교의 전장에서 걸어 나왔다. 도피인가 지혜인가? 정답은 없다. 하지만 기억하라. 떠나도 질문은 따라온다. "나는 누구인가?"', rarity: '상위 18%' };
+      }
+      
+      // 분노의 포로
+      if (stage2 === 'resent' && (stage3 === 'fight' || stage3 === 'quit')) {
+        return { icon: '🔗', title: '분노의 포로', desc: '억울함이 당신을 지배한다. 정당한 분노다. 하지만 부처가 말했다. 분노는 자신을 태우면서 타인에게 던지는 석탄이라고. 분노를 놓아야 자유로워진다.', rarity: '상위 20%' };
+      }
+      
+      // 기본 결과
+      return { icon: '🪞', title: '자기 탐색자', desc: '당신은 아직 여정 중이다. 대체 가능과 대체 불가능 사이에서. 비교와 수용 사이에서. 이것은 실패가 아니다. 질문을 품고 있다는 것 자체가 답을 향해 가고 있다는 증거다.', rarity: '상위 25%' };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = '<span class="sim-principles-item-icon">' + p.icon + '</span><div><div class="sim-principles-item-name">' + p.name + '</div><div class="sim-principles-item-desc">' + p.desc + '</div></div>';
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // 프로필 저장
+      saveToProfile(result);
+    }
+    
+    function saveToProfile(result) {
+      try {
+        const STORAGE_KEY = 'eclipse_mindlab_profile';
+        let profile = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (!profile) return;
+        
+        if (!profile.completedSims) profile.completedSims = [];
+        if (!profile.completedSims.includes('replacement')) {
+          profile.completedSims.push('replacement');
+          profile.exp = (profile.exp || 0) + 30;
+        }
+        
+        if (!profile.principles) profile.principles = [];
+        principles.forEach(p => {
+          if (!profile.principles.some(existing => (typeof existing === 'string' ? existing : existing.name) === p.name)) {
+            profile.principles.push(p.name);
+          }
+        });
+        
+        const expToLevel = exp => { let l = 1, req = 100; while (exp >= req) { exp -= req; l++; req = 100 * l; } return l; };
+        profile.level = expToLevel(profile.exp);
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      } catch (e) { console.error(e); }
+    }
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(1, '#16213e');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 360, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#a78bfa';
+      ctx.fillText(document.getElementById('resultRarity').textContent, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 260;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#6366f1';
+      ctx.fillText('완벽한 대체자 시뮬레이터', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '완벽한_대체자_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const url = 'https://eclipse-mindlab.github.io/mindlab/sim-replacement.html';
+      const text = `나보다 모든 면에서 나은 사람이 나타났다면? 나의 결과: ${document.getElementById('resultTitle').textContent}`;
+      if (navigator.share) { try { await navigator.share({ title: '완벽한 대체자', text, url }); } catch {} }
+      else { navigator.clipboard.writeText(url); document.getElementById('shareBtn').textContent = '링크 복사됨!'; }
+    });
+    
+    renderStage();
+  </script>
+</body>
+</html>
