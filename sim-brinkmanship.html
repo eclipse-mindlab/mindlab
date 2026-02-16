@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>벼랑 끝 협상 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="벼랑 끝 협상 - 이클립스 마인드랩">
+  <meta property="og:description" content="안 올려주면 나간다. 블러핑인가, 진심인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #f59e0b;
+      --sim-primary-light: #fbbf24;
+      --sim-primary-bg: rgba(245, 158, 11, 0.1);
+      --sim-primary-border: rgba(245, 158, 11, 0.3);
+    }
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">벼랑 끝 협상</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🎯</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 협상 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      {
+        badge: 'STAGE 1: 기로',
+        title: '갈림길',
+        desc: '이 회사에서 5년을 일했다.\n\n입사 동기들은 다 떠났다. 남은 건 당신뿐. 연봉은 3년째 제자리.\n\n"네가 없으면 팀이 안 돌아가"라는 말을 들을 때마다 생각했다.\n그렇게 중요하면 왜 연봉은 그대로지?\n\n어제, 경쟁사에서 연락이 왔다.\n현재보다 40% 높은 연봉. 더 좋은 직급.\n\n"일주일 안에 답 주세요."',
+        highlight: '당신은 어떻게 하겠는가?',
+        choices: [
+          { id: 'quiet_leave', text: '조용히 이직한다', subtext: '굳이 협상할 필요 있나? 그냥 가지 뭐', meaning: '깔끔한 선택. 하지만 현 회사가 카운터 오퍼를 할 기회를 주지 않는다. 어쩌면 더 좋은 조건을 놓치는 것일 수도.', principle: { name: '기회비용', desc: '하나를 선택하면 다른 것을 포기해야 한다. 협상 없이 떠나면 카운터 오퍼의 가능성을 잃는다.', icon: '🚪' }, quote: '"떠나는 자는 협상력이 없다." - 협상학 격언' },
+          { id: 'negotiate', text: '연봉 협상을 요청한다', subtext: '이직 얘기는 안 하고, 순수하게 인상 요청', meaning: '정직한 접근. 하지만 레버리지 없는 협상은 약하다. 상대가 거절해도 당신은 카드가 없다.', principle: { name: '협상 레버리지', desc: '협상력은 대안(BATNA)에서 나온다. 대안을 숨기면 협상력도 숨겨진다.', icon: '⚖️' }, quote: '"테이블에서 가장 강한 사람은 떠날 수 있는 사람이다." - 허브 코헨' },
+          { id: 'bluff', text: '"안 올려주면 나간다"고 말한다', subtext: '이직 제의 받은 거 들이밀어야지', meaning: '벼랑 끝 전술. 가장 강력하지만 가장 위험하다. 상대가 "그럼 나가세요"라고 하면?', principle: { name: '치킨 게임', desc: '두 차가 서로를 향해 달린다. 먼저 피하면 치킨(겁쟁이). 둘 다 안 피하면 충돌. 협상도 마찬가지다.', icon: '🐔' }, quote: '"벼랑 끝까지 가야 진짜 협상이 시작된다." - 존 내쉬' },
+          { id: 'hint', text: '은근히 흘린다', subtext: '"요즘 헤드헌터 연락이 많네요..."', meaning: '간접적 신호. 직접 말하지 않고 상대가 알아채게 한다. 하지만 상대가 못 알아챌 수도, 무시할 수도 있다.', principle: { name: '신호 이론', desc: '직접 말하지 않고 행동이나 힌트로 의도를 전달하는 것. 성공하면 체면도 지키고 목적도 달성한다.', icon: '📡' }, quote: '"말하지 않고 말하는 기술이 진짜 기술이다." - 무명' },
+          { id: 'wait', text: '일단 기다린다', subtext: '회사에서 먼저 알아봐 주겠지...', meaning: '수동적 선택. 5년을 기다렸는데 바뀐 게 없다면, 앞으로도 바뀔까?', principle: { name: '현상 유지 편향', desc: '변화보다 현재 상태를 유지하려는 심리. 익숙함은 편하지만, 기회는 기다려주지 않는다.', icon: '⏳' }, quote: '"같은 일을 하면서 다른 결과를 기대하는 것은 미친 짓이다." - 아인슈타인' }
+        ]
+      },
+      {
+        badge: 'STAGE 2: 패',
+        title: '카드를 꺼내다',
+        desc: '팀장에게 면담을 요청했다.\n\n회의실 문을 닫고 앉았다. 팀장이 묻는다.\n"무슨 일이야?"\n\n심장이 빠르게 뛴다. 여기서 어떤 카드를 꺼내느냐에 따라 게임이 달라진다.\n\n당신이 가진 패:\n• 5년간의 성과와 회사에 대한 기여\n• 경쟁사 오퍼 (40% 인상, 더 좋은 직급)\n• "나 없으면 팀이 안 돌아간다"는 사실',
+        highlight: '어떤 카드를 먼저 꺼낼 것인가?',
+        choices: [
+          { id: 'contribution', text: '성과와 기여를 먼저 말한다', subtext: '"제가 5년간 이만큼 했습니다"', meaning: '논리적 접근. 정당한 근거를 제시한다. 하지만 회사는 이미 알고 있다. 알면서 안 올려준 거다.', principle: { name: '정보 비대칭', desc: '협상에서 양측이 가진 정보가 다르다. 상대가 이미 아는 것을 말하면 협상력이 생기지 않는다.', icon: '📊' }, quote: '"협상에서 새로운 정보만이 판을 바꾼다." - 무명' },
+          { id: 'offer_reveal', text: '경쟁사 오퍼를 바로 공개한다', subtext: '"솔직히 말씀드리면, 다른 데서 이런 조건이 왔습니다"', meaning: '올인. 가장 강한 패를 바로 꺼낸다. 상대는 이제 선택해야 한다. 매칭할 것인가, 보낼 것인가.', principle: { name: '최후통첩 게임', desc: '한 쪽이 조건을 제시하고 다른 쪽은 수락 또는 거부만 가능한 상황. 중간이 없다.', icon: '🎴' }, quote: '"카드를 보여주는 순간, 블러핑은 끝난다." - 포커 격언' },
+          { id: 'emotion', text: '감정에 호소한다', subtext: '"솔직히 저 지쳤습니다. 5년인데..."', meaning: '인간적 접근. 하지만 비즈니스에서 감정은 약점이 될 수 있다. 상대가 이용할 수도 있다.', principle: { name: '감정과 협상', desc: '감정은 양날의 검. 공감을 얻을 수도, 약점을 노출할 수도 있다.', icon: '💔' }, quote: '"협상 테이블에서 울면 진다." - 협상학 격언' },
+          { id: 'silence', text: '침묵한다', subtext: '(팀장이 먼저 말하게 한다)', meaning: '고급 전술. 침묵은 압박이다. 먼저 말하는 쪽이 정보를 노출한다. 하지만 어색함을 견뎌야 한다.', principle: { name: '침묵의 힘', desc: '협상에서 침묵은 무기다. 상대가 침묵을 채우려 정보를 흘린다.', icon: '🤐' }, quote: '"침묵은 가장 큰 소리다." - 마일스 데이비스' },
+          { id: 'question', text: '먼저 질문한다', subtext: '"제 연봉이 3년째 그대로인 이유가 뭘까요?"', meaning: '주도권 확보. 질문하는 사람이 대화를 이끈다. 상대의 입장을 먼저 파악한다.', principle: { name: '질문의 힘', desc: '좋은 협상가는 말하기보다 묻는다. 질문은 정보를 얻고 상대를 생각하게 만든다.', icon: '❓' }, quote: '"답을 가진 자가 아니라 질문을 가진 자가 이긴다." - 소크라테스' }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 충돌',
+        title: '예상 밖의 반응',
+        desc: '팀장의 표정이 굳었다.\n\n"그래서... 안 올려주면 나가겠다는 거야?"\n\n직접적이다. 피할 수 없다.\n\n당신이 뭐라고 대답하든, 팀장은 이미 알고 있다.\n이건 협상이 아니라 치킨 게임이라는 걸.\n\n누가 먼저 꺾이느냐의 싸움.\n\n팀장이 말한다.\n"솔직히 지금 회사 사정이 어려워. 올해는 힘들어."',
+        highlight: '당신은 어떻게 반응하는가?',
+        choices: [
+          { id: 'push', text: '"그럼 전 가야겠네요"', subtext: '끝까지 간다', meaning: '풀 블러핑. 벼랑 끝까지 차를 몬다. 상대가 피하면 당신이 이긴다. 하지만 상대도 안 피하면?', principle: { name: '브링크맨십', desc: '벼랑 끝 전술. 상대가 양보할 때까지 위험을 높인다. 쿠바 미사일 위기가 대표적 사례.', icon: '🌋' }, quote: '"벼랑 끝에서 한 발짝 물러서지 않는 자가 이긴다." - 존 포스터 덜레스' },
+          { id: 'soften', text: '"꼭 그런 건 아닌데... 좀 고려해주실 수 없을까요"', subtext: '약간 물러선다', meaning: '신호를 보낸다. "나는 협상할 의향이 있다." 하지만 이미 카드를 보여줬기에 협상력이 약해졌다.', principle: { name: '양보의 타이밍', desc: '너무 빨리 양보하면 약해 보인다. 너무 늦으면 협상이 깨진다. 타이밍이 전부다.', icon: '⏱️' }, quote: '"먼저 양보하는 자가 더 많이 양보하게 된다." - 협상학 격언' },
+          { id: 'counter', text: '"그럼 최소한 이 정도는요"', subtext: '대안을 제시한다', meaning: '협상의 여지를 남긴다. 올인 대신 점진적 접근. 서로 체면을 살릴 수 있는 출구를 만든다.', principle: { name: '황금 다리', desc: '손자병법의 가르침. 적에게 퇴로를 주어라. 궁지에 몰린 상대는 예측 불가능해진다.', icon: '🌉' }, quote: '"포위된 적에게는 반드시 출구를 열어두어라." - 손자' },
+          { id: 'time', text: '"생각할 시간을 주세요"', subtext: '결정을 미룬다', meaning: '시간은 협상의 변수다. 급한 쪽이 진다. 하지만 경쟁사 오퍼는 일주일이다. 시간이 많지 않다.', principle: { name: '시간 압박', desc: '데드라인은 협상력을 바꾼다. 급한 쪽이 불리하다. 하지만 너무 끌면 기회를 잃는다.', icon: '⏰' }, quote: '"시간은 항상 급한 쪽의 적이다." - 무명' },
+          { id: 'emotion_burst', text: '"5년인데 이게 말이 됩니까!"', subtext: '감정이 터진다', meaning: '억눌렀던 감정이 폭발한다. 인간적이지만, 협상에서 감정 폭발은 통제력 상실로 보인다.', principle: { name: '감정 폭발의 비용', desc: '분노는 순간의 해소감을 주지만, 관계와 협상력을 손상시킨다.', icon: '💥' }, quote: '"화가 날 때 한 말은 후회할 최고의 연설이 된다." - 앰브로즈 비어스' }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 벼랑 끝',
+        title: '최후의 선택',
+        desc: '며칠이 지났다.\n\n회사에서 답이 왔다.\n\n"15% 인상, 그게 최선이야. 더는 힘들어."\n\n경쟁사 오퍼는 40%다.\n하지만 현 회사에는 5년의 관계가 있다. 익숙함이 있다. 안정감이 있다.\n\n경쟁사는 연봉은 좋지만, 새로운 곳이다. 잘 맞을지 모른다.\n\n결정의 순간이다.\n\n어떤 선택을 하든, 돌이킬 수 없다.',
+        highlight: '당신의 최종 결정은?',
+        choices: [
+          { id: 'leave', text: '떠난다', subtext: '40%를 포기할 수 없다', meaning: '처음 협상을 시작한 이유를 기억한다. 15%로는 부족하다. 떠나는 것이 합리적이다.', principle: { name: '매몰비용 무시', desc: '5년의 시간은 이미 지났다. 미래의 결정에 과거의 투자가 영향을 주면 안 된다.', icon: '✈️' }, quote: '"떠날 때 떠나지 않으면, 떠나야 할 때 떠나지 못한다." - 무명' },
+          { id: 'stay', text: '남는다', subtext: '15%라도 올랐으니까', meaning: '익숙함의 가치를 선택한다. 새로운 곳의 불확실성보다 현재의 확실성을 택한다.', principle: { name: '불확실성 회피', desc: '인간은 불확실한 큰 이득보다 확실한 작은 이득을 선호한다. 안전 본능이다.', icon: '🏠' }, quote: '"아는 악마가 모르는 악마보다 낫다." - 서양 속담' },
+          { id: 're_negotiate', text: '다시 협상한다', subtext: '"25%는 되어야 합니다"', meaning: '아직 게임은 끝나지 않았다. 한 번 더 밀어본다. 하지만 상대의 인내심에도 한계가 있다.', principle: { name: '반복 게임', desc: '일회성 협상과 반복 협상은 전략이 다르다. 계속 밀면 관계가 손상된다.', icon: '🔄' }, quote: '"한 번은 전술이고, 두 번은 패턴이다." - 무명' },
+          { id: 'both', text: '두 곳 모두에 시간을 달라고 한다', subtext: '더 좋은 조건을 만들어본다', meaning: '경쟁 상황을 유지한다. 두 회사가 서로 경쟁하게 만든다. 고급 전술이지만 양쪽 다 잃을 수도 있다.', principle: { name: '경매 효과', desc: '여러 구매자를 경쟁시키면 가격이 올라간다. 하지만 판매자가 신뢰를 잃을 수 있다.', icon: '🎪' }, quote: '"두 마리 토끼를 쫓으면 한 마리도 못 잡는다." - 러시아 속담' },
+          { id: 'honest', text: '솔직하게 상황을 공유한다', subtext: '"사실 이런 상황입니다. 어떻게 하면 좋을까요?"', meaning: '게임을 그만두고 진심으로 대화한다. 협상이 아니라 관계로 접근한다.', principle: { name: '진정성의 힘', desc: '때로는 전략을 버리고 진심을 보여주는 것이 가장 강력한 전략이 된다.', icon: '💎' }, quote: '"진실은 가장 좋은 협상 전략이다." - 로저 피셔' }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      document.getElementById('stageLabel').textContent = 'STAGE ' + (currentStageIndex + 1);
+      document.getElementById('stageCount').textContent = (currentStageIndex + 1) + '/' + stages.length;
+      document.getElementById('progressFill').style.width = ((currentStageIndex + 1) / stages.length * 100) + '%';
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) { highlightEl.textContent = stage.highlight; highlightEl.classList.remove('hidden'); } 
+      else { highlightEl.classList.add('hidden'); }
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = '<span class="sim-choice-text">' + choice.text + '</span>' + (choice.subtext ? '<span class="sim-choice-subtext">' + choice.subtext + '</span>' : '');
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({ stage: currentStageIndex, choiceId: choice.id, choiceText: choice.text });
+      if (choice.principle) { principles.push(choice.principle); }
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) { document.getElementById('choiceMeaning').textContent = choice.meaning; meaningCard.classList.remove('hidden'); } 
+      else { meaningCard.classList.add('hidden'); }
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) { document.getElementById('principleName').textContent = choice.principle.icon + ' ' + choice.principle.name; document.getElementById('principleDesc').textContent = choice.principle.desc; principleCard.classList.remove('hidden'); } 
+      else { principleCard.classList.add('hidden'); }
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) { document.getElementById('quoteText').textContent = choice.quote; quoteCard.classList.remove('hidden'); } 
+      else { quoteCard.classList.add('hidden'); }
+      document.getElementById('nextBtn').textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) { showResult(); } else { renderStage(); }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      const s1 = choiceIds[0], s2 = choiceIds[1], s3 = choiceIds[2], s4 = choiceIds[3];
+      
+      // 벼랑 끝 승부사: 끝까지 밀어붙이고 떠남
+      if (s1 === 'bluff' && s3 === 'push' && s4 === 'leave') {
+        return { icon: '🔥', title: '벼랑 끝 승부사', desc: '당신은 치킨 게임에서 끝까지 핸들을 꺾지 않았다. 블러핑이 아니었다. 진심이었다. 이런 사람은 협상에서 강하다. 상대가 당신을 시험할 수 없기 때문이다. 하지만 기억하라. 벼랑 끝 전술은 한 번 실패하면 끝이다.', rarity: '상위 8%' };
+      }
+      
+      // 전략적 협상가: 적절한 압박과 타협
+      if ((s2 === 'offer_reveal' || s2 === 'question') && s3 === 'counter') {
+        return { icon: '🎯', title: '전략적 협상가', desc: '당신은 협상의 본질을 안다. 패를 보여주되 전부 보여주지 않는다. 밀되 끝까지 밀지 않는다. 상대에게 출구를 남겨둔다. 최고의 협상은 양쪽 다 이겼다고 느끼는 것이다.', rarity: '상위 12%' };
+      }
+      
+      // 관계 중시형: 감정과 진정성
+      if (s2 === 'emotion' || s4 === 'honest') {
+        return { icon: '🤝', title: '관계 중시 협상가', desc: '당신은 협상을 거래가 아니라 관계로 본다. 단기적으로는 약해 보일 수 있다. 하지만 장기적으로 신뢰는 모든 전술보다 강하다. 문제는 상대가 같은 가치를 가졌는지 알 수 없다는 것.', rarity: '상위 15%' };
+      }
+      
+      // 블러핑 실패자: 밀었다가 꺾임
+      if (s1 === 'bluff' && (s3 === 'soften' || s4 === 'stay')) {
+        return { icon: '😰', title: '꺾인 블러퍼', desc: '벼랑 끝까지 갔다가 결국 꺾였다. 협상에서 이것은 최악의 결과다. 상대는 이제 당신의 위협이 블러핑임을 알았다. 다음 협상에서 당신의 말은 힘을 잃는다.', rarity: '상위 25%' };
+      }
+      
+      // 현실적 타협가: 조용히 결정
+      if (s1 === 'quiet_leave' || (s1 === 'negotiate' && s4 === 'stay')) {
+        return { icon: '🧘', title: '현실적 결단자', desc: '당신은 불필요한 충돌을 피한다. 게임을 하지 않는 것도 하나의 선택이다. 에너지를 아끼고 깔끔하게 움직인다. 하지만 때로는 부딪혀야 얻는 것도 있다.', rarity: '상위 20%' };
+      }
+      
+      // 수동적 대기자
+      if (s1 === 'wait' || s3 === 'time') {
+        return { icon: '⏳', title: '신중한 관망자', desc: '당신은 성급하게 움직이지 않는다. 기다림도 전략이다. 하지만 기다림이 습관이 되면 기회는 지나간다. 5년을 기다렸다. 5년 더 기다릴 것인가?', rarity: '상위 22%' };
+      }
+      
+      // 감정적 협상가
+      if (s3 === 'emotion_burst') {
+        return { icon: '🌪️', title: '감정의 폭풍', desc: '억눌렀던 감정이 터졌다. 인간적이다. 하지만 협상 테이블에서 감정 폭발은 통제력 상실로 보인다. 분노는 정당하다. 하지만 분노를 도구로 쓰는 법을 배워야 한다.', rarity: '상위 18%' };
+      }
+      
+      // 양쪽 다 쫓는 자
+      if (s4 === 'both') {
+        return { icon: '🎪', title: '줄타기의 명수', desc: '두 마리 토끼를 쫓는다. 성공하면 대박이다. 실패하면 둘 다 잃는다. 고급 전술이지만 리스크도 크다. 당신은 도박을 두려워하지 않는다.', rarity: '상위 10%' };
+      }
+      
+      // 끈질긴 협상가
+      if (s4 === 're_negotiate') {
+        return { icon: '🔄', title: '끈질긴 협상가', desc: '한 번의 "아니오"로 포기하지 않는다. 협상은 끝날 때까지 끝난 게 아니다. 하지만 너무 밀면 관계가 상한다. 언제 멈춰야 하는지도 중요하다.', rarity: '상위 15%' };
+      }
+      
+      // 기본 결과
+      return { icon: '🎲', title: '균형 잡힌 협상가', desc: '당신은 극단을 피한다. 너무 밀지도, 너무 물러서지도 않는다. 안전한 선택이다. 하지만 기억하라. 때로는 위험을 감수해야 원하는 것을 얻는다.', rarity: '상위 30%' };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = '<span class="sim-principles-item-icon">' + p.icon + '</span><div><div class="sim-principles-item-name">' + p.name + '</div><div class="sim-principles-item-desc">' + p.desc + '</div></div>';
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      saveToProfile(result);
+    }
+    
+    function saveToProfile(result) {
+      try {
+        let profile = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (!profile) return;
+        
+        if (!profile.completedSims) profile.completedSims = [];
+        if (!profile.completedSims.includes('brinkmanship')) {
+          profile.completedSims.push('brinkmanship');
+          profile.exp = (profile.exp || 0) + 30;
+        }
+        
+        if (!profile.principles) profile.principles = [];
+        principles.forEach(p => {
+          if (!profile.principles.some(existing => (typeof existing === 'string' ? existing : existing.name) === p.name)) {
+            profile.principles.push(p.name);
+          }
+        });
+        
+        const expToLevel = exp => { let l = 1, req = 100; while (exp >= req) { exp -= req; l++; req = 100 * l; } return l; };
+        profile.level = expToLevel(profile.exp);
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      } catch (e) { console.error(e); }
+    }
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#1a1a2e');
+      gradient.addColorStop(1, '#16213e');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillText(document.getElementById('resultRarity').textContent, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 260;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('벼랑 끝 협상 시뮬레이터', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '벼랑끝협상_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const url = 'https://bit.ly/brinkmanship-sim';
+      const result = document.getElementById('resultTitle').textContent;
+      const text = `"안 올려주면 나갑니다" - 블러핑인가, 진심인가?\n\n내 결과: ${result}\n\n`;
+      if (navigator.share) { try { await navigator.share({ title: '벼랑 끝 협상 시뮬레이터', text, url }); } catch {} }
+      else { navigator.clipboard.writeText('[벼랑 끝 협상 시뮬레이터]\n' + text + url); document.getElementById('shareBtn').textContent = '링크 복사됨!'; }
+    });
+    
+    renderStage();
+  </script>
+</body>
+</html>
