@@ -783,26 +783,11 @@
 
     <div class="map-section">
       <div class="section-header">
-        <div class="section-title"><span class="icon">🔬</span> 사회 시뮬레이터</div>
-        <div class="section-progress">0/2</div>
+        <div class="section-title"><span class="icon">🎯</span> 전략 시뮬레이터</div>
+        <div class="section-progress" id="strategyProgress">0/1</div>
       </div>
       <div class="category-card">
-        <div class="sim-list">
-          <div class="sim-item locked">
-            <div class="sim-status">🔒</div>
-            <div class="sim-info">
-              <div class="sim-title">죄수의 딜레마</div>
-              <div class="sim-desc">Coming Soon</div>
-            </div>
-          </div>
-          <div class="sim-item locked">
-            <div class="sim-status">🔒</div>
-            <div class="sim-info">
-              <div class="sim-title">방관자 효과</div>
-              <div class="sim-desc">Coming Soon</div>
-            </div>
-          </div>
-        </div>
+        <div class="sim-list" id="strategyList"></div>
       </div>
     </div>
 
@@ -934,13 +919,15 @@
         { id: 'breakup', title: '이별 시뮬레이터', desc: '사랑이 끝날 때, 당신은 어떤 선택을 하는가?', url: 'sim-breakup.html', locked: true, unlockDate: '2026-02-04T09:00:00+09:00' },
         { id: 'shadow', title: '내면의 그림자', desc: '당신이 숨기고 있는 또 다른 자아는?', url: 'sim-shadow.html', locked: true, unlockDate: '2026-02-07T09:00:00+09:00' },
         { id: 'replacement', title: '완벽한 대체자', desc: '나보다 모든 면에서 나은 사람이 나타났다', url: 'sim-replacement.html' },
-        { id: 'brinkmanship', title: '벼랑 끝 협상', desc: '안 올려주면 나갑니다. 블러핑인가, 진심인가?', url: 'sim-brinkmanship.html' },
         { id: 'left-on-read', title: '읽씹 시뮬레이터', desc: '읽음. 그리고 침묵. 당신은 어떻게 반응하나요?', url: 'sim-left-on-read.html' },
         { id: 'revenge', title: '복수 시뮬레이터', desc: '복수할 기회가 왔다. 당신은 어떻게 할 것인가?', url: 'sim-revenge.html' },
         { id: 'gossip', title: '뒷담화 현장', desc: '동료들이 내 뒷담화를 하고 있다', url: 'sim-gossip.html' },
         { id: 'idea_thief', title: '아이디어 도둑 동료', desc: '네 아이디어를 가로챈 동료', url: 'sim-idea-thief.html' },
         { id: 'money_friend', title: '돈 안 갚는 친구', desc: '3개월째 30만원을 안 갚는 친구', url: 'sim-money-friend.html' },
         { id: 'survival_test', title: '생존자의 선택', desc: '무인도에서 당신은 어떤 선택을 하는가?', url: 'sim-survival-test.html' }
+      ],
+      strategy: [
+        { id: 'brinkmanship', title: '벼랑 끝 협상', desc: '안 올려주면 나갑니다. 블러핑인가, 진심인가?', url: 'sim-brinkmanship.html' }
       ]
     };
 
@@ -1224,6 +1211,49 @@
       document.getElementById('psychProgress').textContent = `${completedPsych}/${SIMULATIONS.psych.length}`;
       
       psychList.innerHTML = SIMULATIONS.psych.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const now = new Date();
+        const unlockTime = sim.unlockDate ? new Date(sim.unlockDate) : null;
+        const isLocked = sim.locked && unlockTime && now < unlockTime;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          const unlockDateStr = unlockTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">${unlockDateStr} 오픈</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 전략 시뮬레이션 목록
+      const strategyList = document.getElementById('strategyList');
+      const completedStrategy = SIMULATIONS.strategy.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('strategyProgress').textContent = `${completedStrategy}/${SIMULATIONS.strategy.length}`;
+      
+      strategyList.innerHTML = SIMULATIONS.strategy.map(sim => {
         const isCompleted = profile.completedSims.includes(sim.id);
         const now = new Date();
         const unlockTime = sim.unlockDate ? new Date(sim.unlockDate) : null;
