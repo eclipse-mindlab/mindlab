@@ -845,7 +845,21 @@
 
     function loadDailyData() {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) dailyData = JSON.parse(saved);
+      if (saved) {
+        dailyData = JSON.parse(saved);
+        // 기존 사용자 마이그레이션: maxStreak이 없으면 현재 streak으로 초기화
+        if (!dailyData.maxStreak && dailyData.streak > 0) {
+          dailyData.maxStreak = dailyData.streak;
+          saveDailyData();
+          // 프로필에도 반영
+          const ps = localStorage.getItem(PROFILE_KEY);
+          if (ps) {
+            const p = JSON.parse(ps);
+            p.maxStreak = dailyData.maxStreak;
+            localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+          }
+        }
+      }
     }
 
     function saveDailyData() {

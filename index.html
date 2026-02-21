@@ -988,6 +988,22 @@
           }
         }
         
+        // maxStreak 마이그레이션: dailyData에서 가져오기
+        if (!p.maxStreak) {
+          const dailySaved = localStorage.getItem('eclipse_mindlab_daily');
+          if (dailySaved) {
+            const dailyData = JSON.parse(dailySaved);
+            if (dailyData.maxStreak) {
+              p.maxStreak = dailyData.maxStreak;
+            } else if (dailyData.streak > 0) {
+              p.maxStreak = dailyData.streak;
+            }
+            if (p.maxStreak) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+            }
+          }
+        }
+        
         profile = p;
         return true;
       }
@@ -1144,8 +1160,14 @@
       const validPrinciples = principleNames.filter(name => VALID_PRINCIPLES.includes(name));
       document.getElementById('statPrinciples').textContent = validPrinciples.length;
       
-      // 최대 연속 참여
-      document.getElementById('statMaxStreak').textContent = profile.maxStreak || 0;
+      // 최대 연속 참여 - dailyData에서 직접 가져오기
+      const dailySaved = localStorage.getItem('eclipse_mindlab_daily');
+      let maxStreak = profile.maxStreak || 0;
+      if (dailySaved) {
+        const dailyData = JSON.parse(dailySaved);
+        maxStreak = Math.max(maxStreak, dailyData.maxStreak || 0, dailyData.streak || 0);
+      }
+      document.getElementById('statMaxStreak').textContent = maxStreak;
 
       // 마인드 스토리 목록
       const storyList = document.getElementById('storyList');
