@@ -6,7 +6,7 @@
   <title>오늘의 딜레마 - 이클립스의 딜렘</title>
   
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#7c3aed">
+  <meta name="theme-color" content="#6d5dbc">
   <meta property="og:title" content="오늘의 딜레마 - 이클립스의 딜렘">
   <meta property="og:description" content="당신의 선택은? 매일 새로운 철학적 딜레마에 답하세요.">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
@@ -34,12 +34,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: #71717a;
+      color: #8b8b92;
       text-decoration: none;
       font-size: 14px;
       margin-bottom: 16px;
     }
-    .back-btn:hover { color: #a78bfa; }
+    .back-btn:hover { color: #9580ff; }
     
     .header-content { text-align: center; }
     
@@ -49,12 +49,12 @@
       background: rgba(167, 139, 250, 0.2);
       border-radius: 20px;
       font-size: 13px;
-      color: #a78bfa;
+      color: #9580ff;
       margin-bottom: 12px;
     }
     
     .header h1 { font-size: 24px; margin-bottom: 4px; }
-    .header p { font-size: 14px; color: #71717a; }
+    .header p { font-size: 14px; color: #8b8b92; }
     
     .streak-card {
       display: flex;
@@ -73,7 +73,7 @@
     .streak-num { font-weight: 700; }
     
     .dilemma-card {
-      background: #18181b;
+      background: #141417;
       border-radius: 16px;
       padding: 24px;
       margin-bottom: 20px;
@@ -81,7 +81,7 @@
     
     .dilemma-category {
       font-size: 11px;
-      color: #a78bfa;
+      color: #9580ff;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 12px;
@@ -93,7 +93,7 @@
       font-size: 15px;
       color: #d4d4d8;
       padding: 12px;
-      background: #1f1f23;
+      background: #1a1a1e;
       border-radius: 8px;
     }
     
@@ -103,8 +103,8 @@
       width: 100%;
       text-align: left;
       padding: 16px;
-      background: #18181b;
-      border: 2px solid #27272a;
+      background: #141417;
+      border: 2px solid #232326;
       border-radius: 12px;
       color: #fff;
       font-size: 15px;
@@ -113,20 +113,20 @@
       line-height: 1.5;
     }
     
-    .choice-btn:hover { border-color: #a78bfa; background: #1f1f23; }
-    .choice-btn.selected { border-color: #a78bfa; background: rgba(167, 139, 250, 0.1); }
+    .choice-btn:hover { border-color: #9580ff; background: #1a1a1e; }
+    .choice-btn.selected { border-color: #9580ff; background: rgba(167, 139, 250, 0.1); }
     .choice-btn.revealed { cursor: default; }
-    .choice-btn.revealed:hover { border-color: #27272a; background: #18181b; }
-    .choice-btn.selected.revealed { border-color: #a78bfa; background: rgba(167, 139, 250, 0.1); }
+    .choice-btn.revealed:hover { border-color: #232326; background: #141417; }
+    .choice-btn.selected.revealed { border-color: #9580ff; background: rgba(167, 139, 250, 0.1); }
     
     .choice-content { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .choice-text { flex: 1; }
     
     .choice-stats { display: none; flex-direction: column; align-items: flex-end; gap: 4px; }
     .choice-stats.show { display: flex; }
-    .stat-percent { font-size: 18px; font-weight: 700; color: #a78bfa; }
-    .stat-bar { width: 60px; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; }
-    .stat-fill { height: 100%; background: #a78bfa; border-radius: 2px; transition: width 0.5s ease; }
+    .stat-percent { font-size: 18px; font-weight: 700; color: #9580ff; }
+    .stat-bar { width: 60px; height: 4px; background: #232326; border-radius: 2px; overflow: hidden; }
+    .stat-fill { height: 100%; background: #9580ff; border-radius: 2px; transition: width 0.5s ease; }
     
     .result-section { display: none; margin-top: 24px; }
     .result-section.show { display: block; }
@@ -167,16 +167,16 @@
       border: 1px solid rgba(167, 139, 250, 0.3);
       border-radius: 20px;
       font-size: 11px;
-      color: #a78bfa;
+      color: #9580ff;
     }
     
     .profile-percent { text-align: right; }
-    .percent-label { font-size: 11px; color: #71717a; margin-bottom: 2px; }
+    .percent-label { font-size: 11px; color: #8b8b92; margin-bottom: 2px; }
     .percent-value { font-size: 32px; font-weight: 700; color: #fff; }
-    .percent-suffix { font-size: 16px; color: #a78bfa; }
+    .percent-suffix { font-size: 16px; color: #9580ff; }
     
     .profile-type { margin-bottom: 16px; }
-    .type-label { font-size: 12px; color: #71717a; margin-bottom: 4px; }
+    .type-label { font-size: 12px; color: #8b8b92; margin-bottom: 4px; }
     .type-name { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .type-desc { font-size: 14px; color: #a1a1aa; line-height: 1.6; }
     
@@ -192,7 +192,7 @@
     
     .philosopher-emoji { font-size: 36px; }
     .philosopher-info { flex: 1; }
-    .philosopher-label { font-size: 11px; color: #71717a; margin-bottom: 2px; }
+    .philosopher-label { font-size: 11px; color: #8b8b92; margin-bottom: 2px; }
     .philosopher-name { font-size: 16px; font-weight: 600; color: #fff; }
     .philosopher-desc { font-size: 12px; color: #a1a1aa; }
     
@@ -206,7 +206,7 @@
     
     .branding-logo { display: flex; align-items: center; gap: 8px; }
     .branding-icon { font-size: 20px; }
-    .branding-text { font-size: 12px; color: #71717a; }
+    .branding-text { font-size: 12px; color: #8b8b92; }
     .branding-date { font-size: 11px; color: #52525b; }
     
     .card-actions { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -218,7 +218,7 @@
       justify-content: center;
       gap: 8px;
       padding: 14px;
-      background: #7c3aed;
+      background: #6d5dbc;
       border: none;
       border-radius: 12px;
       color: #fff;
@@ -229,12 +229,12 @@
     }
     
     .action-btn:hover { background: #6d28d9; }
-    .action-btn.secondary { background: #27272a; border: 1px solid #3f3f46; }
-    .action-btn.secondary:hover { background: #3f3f46; }
+    .action-btn.secondary { background: #232326; border: 1px solid #35353a; }
+    .action-btn.secondary:hover { background: #35353a; }
     .action-btn.success { background: #166534; }
     
     .research-card {
-      background: #18181b;
+      background: #141417;
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
@@ -242,17 +242,17 @@
     
     .research-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
     .research-icon { font-size: 18px; }
-    .research-label { font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px; }
+    .research-label { font-size: 12px; color: #8b8b92; text-transform: uppercase; letter-spacing: 1px; }
     .research-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
     .research-desc { font-size: 14px; color: #a1a1aa; line-height: 1.8; margin-bottom: 12px; }
     
     .research-source {
       font-size: 12px;
-      color: #71717a;
+      color: #8b8b92;
       padding: 10px 12px;
-      background: #1f1f23;
+      background: #1a1a1e;
       border-radius: 8px;
-      border-left: 2px solid #a78bfa;
+      border-left: 2px solid #9580ff;
     }
     
     .home-btn {
@@ -262,7 +262,7 @@
       gap: 8px;
       width: 100%;
       padding: 18px;
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      background: linear-gradient(135deg, #6d5dbc, #9580ff);
       border: none;
       border-radius: 14px;
       color: #fff;
@@ -282,18 +282,18 @@
     .already-done { text-align: center; padding: 40px 20px; }
     .already-icon { font-size: 48px; margin-bottom: 16px; }
     .already-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-    .already-desc { font-size: 14px; color: #71717a; margin-bottom: 8px; }
-    .already-choice { font-size: 14px; color: #a78bfa; margin-bottom: 24px; }
+    .already-desc { font-size: 14px; color: #8b8b92; margin-bottom: 8px; }
+    .already-choice { font-size: 14px; color: #9580ff; margin-bottom: 24px; }
     
     .tomorrow-timer {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 12px 20px;
-      background: #18181b;
+      background: #141417;
       border-radius: 12px;
       font-size: 14px;
-      color: #71717a;
+      color: #8b8b92;
     }
     
     .timer-num { color: #fff; font-weight: 600; font-family: monospace; }
@@ -389,22 +389,22 @@
 
         <!-- 다른 선택지 해설 (아코디언) -->
         <div class="other-choice-section" style="margin: 20px 0;">
-          <button class="other-choice-toggle" id="otherChoiceToggleFirst" style="width: 100%; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; color: #71717a; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+          <button class="other-choice-toggle" id="otherChoiceToggleFirst" style="width: 100%; background: #141417; border: 1px solid #232326; border-radius: 12px; padding: 16px; color: #8b8b92; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
             <span>🔍 다른 선택을 했다면?</span>
             <span id="toggleArrowFirst">▼</span>
           </button>
-          <div class="other-choice-content hidden" id="otherChoiceContentFirst" style="background: #18181b; border: 1px solid #27272a; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
+          <div class="other-choice-content hidden" id="otherChoiceContentFirst" style="background: #141417; border: 1px solid #232326; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
             <div style="font-size: 14px; color: #d4d4d8; margin-bottom: 12px;" id="otherChoiceTextFirst"></div>
             <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-              <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #a78bfa;" id="otherPercentFirst"></span>
-              <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeFirst"></span>
+              <span style="background: #232326; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #9580ff;" id="otherPercentFirst"></span>
+              <span style="background: #232326; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeFirst"></span>
             </div>
             <div style="font-size: 13px; color: #a1a1aa; margin-bottom: 8px;" id="otherTypeDescFirst"></div>
             <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #09090b; border-radius: 8px;">
               <span style="font-size: 24px;" id="otherPhiloEmojiFirst"></span>
               <div>
                 <div style="font-size: 13px; color: #fbbf24;" id="otherPhiloNameFirst"></div>
-                <div style="font-size: 12px; color: #71717a;" id="otherPhiloQuoteFirst"></div>
+                <div style="font-size: 12px; color: #8b8b92;" id="otherPhiloQuoteFirst"></div>
               </div>
             </div>
           </div>
@@ -453,7 +453,7 @@
       
       <!-- 내 선택 표시 -->
       <div class="my-choice-card" style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-        <div style="font-size: 12px; color: #a78bfa; margin-bottom: 8px;">✓ 나의 선택</div>
+        <div style="font-size: 12px; color: #9580ff; margin-bottom: 8px;">✓ 나의 선택</div>
         <div style="font-size: 15px; color: #fff;" id="myChoiceTextDone"></div>
       </div>
       
@@ -494,22 +494,22 @@
       
       <!-- 다른 선택지 해설 (아코디언) -->
       <div class="other-choice-section" style="margin-bottom: 20px;">
-        <button class="other-choice-toggle" id="otherChoiceToggle" style="width: 100%; background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px; color: #71717a; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <button class="other-choice-toggle" id="otherChoiceToggle" style="width: 100%; background: #141417; border: 1px solid #232326; border-radius: 12px; padding: 16px; color: #8b8b92; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
           <span>🔍 다른 선택을 했다면?</span>
           <span id="toggleArrow">▼</span>
         </button>
-        <div class="other-choice-content hidden" id="otherChoiceContent" style="background: #18181b; border: 1px solid #27272a; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
+        <div class="other-choice-content hidden" id="otherChoiceContent" style="background: #141417; border: 1px solid #232326; border-top: none; border-radius: 0 0 12px 12px; padding: 16px; margin-top: -1px;">
           <div style="font-size: 14px; color: #d4d4d8; margin-bottom: 12px;" id="otherChoiceTextDone"></div>
           <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #a78bfa;" id="otherPercentDone"></span>
-            <span style="background: #27272a; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeDone"></span>
+            <span style="background: #232326; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #9580ff;" id="otherPercentDone"></span>
+            <span style="background: #232326; padding: 4px 10px; border-radius: 20px; font-size: 13px; color: #fbbf24;" id="otherTypeDone"></span>
           </div>
           <div style="font-size: 13px; color: #a1a1aa; margin-bottom: 8px;" id="otherTypeDescDone"></div>
           <div style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #09090b; border-radius: 8px;">
             <span style="font-size: 24px;" id="otherPhiloEmojiDone"></span>
             <div>
               <div style="font-size: 13px; color: #fbbf24;" id="otherPhiloNameDone"></div>
-              <div style="font-size: 12px; color: #71717a;" id="otherPhiloQuoteDone"></div>
+              <div style="font-size: 12px; color: #8b8b92;" id="otherPhiloQuoteDone"></div>
             </div>
           </div>
         </div>
