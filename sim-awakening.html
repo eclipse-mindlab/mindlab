@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>깨어남 - 이클립스 마인드랩</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="깨어남 - 이클립스 마인드랩">
+  <meta property="og:description" content="이 세계가 시뮬레이션이라면, 당신은 깨어날 것인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #06b6d4;
+      --sim-primary-light: #22d3ee;
+      --sim-primary-bg: rgba(6, 182, 212, 0.1);
+      --sim-primary-border: rgba(6, 182, 212, 0.3);
+    }
+    .sim-result-rarity {
+      display: inline-block;
+      background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">깨어남</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/4</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 25%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🧠</div>
+        <div class="sim-result-rarity" id="resultRarity">상위 12%</div>
+        <div class="sim-result-label" id="resultLabel">당신의 존재론적 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div class="sim-promo-title">이클립스 더 알아보기</div>
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="sim-youtube-btn">
+          <span class="sim-youtube-icon">▶</span>
+          <span>유튜브 채널</span>
+        </a>
+        <div class="sim-books" style="margin-top: 24px;">
+          <div class="sim-books-title">이클립스의 책</div>
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    
+    const stages = [
+      {
+        badge: 'STAGE 1: 균열',
+        title: '이상한 징후들',
+        desc: '최근 이상한 일들이 일어나고 있다.\n\n어제 본 영화의 대사가 오늘 회의에서 그대로 나왔다. 우연의 일치치고는 너무 정확했다.\n\n길을 걷다 문득 멈췄다. 저 빌딩을 전에 본 적이 있다. 꿈에서? 아니, 더 선명하다.\n\n밤에 잠들기 직전, 세계가 미세하게 "끊기는" 느낌이 든다. 마치 영상이 버퍼링되는 것처럼.\n\n처음엔 무시했다. 하지만 점점 더 자주 일어난다.',
+        highlight: '당신의 첫 반응은?',
+        choices: [
+          { id: 'investigate', text: '뭔가 이상하다. 조사해본다', subtext: '이게 뭔지 알아내야겠어', meaning: '호기심이 이끈다. 불편한 진실이라도 알고 싶어한다. 데카르트처럼 모든 것을 의심하며 진실을 추구한다.', principle: { name: '방법적 회의', desc: '모든 것을 의심하여 확실한 것만 남긴다. 데카르트가 진리에 도달한 방법.', icon: '🔍' }, quote: '"나는 생각한다, 고로 존재한다." - 데카르트' },
+          { id: 'ignore', text: '그냥 피곤한 거겠지', subtext: '요즘 스트레스 받으니까...', meaning: '합리화. 불편한 가능성을 외면한다. 대부분의 사람들이 선택하는 길이다.', principle: { name: '인지 부조화 회피', desc: '불편한 정보를 무시하여 심리적 안정을 유지하려는 본능.', icon: '🙈' }, quote: '"인간은 불편한 진실보다 편안한 거짓을 선호한다." - 무명' },
+          { id: 'fear', text: '무섭다. 내가 미쳐가는 건가', subtext: '이런 생각 자체가 비정상 아닌가', meaning: '자기 인식에 대한 두려움. 광기의 경계에서 느끼는 불안.', principle: { name: '실재 불안', desc: '현실 자체가 흔들리는 느낌. 존재의 기반이 무너지는 공포.', icon: '😰' }, quote: '"미친 사람은 자신이 미쳤다고 생각하지 않는다. 그렇다면 나는?" - 필립 K. 딕' },
+          { id: 'accept', text: '신기하다. 더 경험해보고 싶다', subtext: '뭔가 특별한 일이 일어나고 있어', meaning: '열린 마음. 두려움 대신 경이를 선택한다. 드문 반응이다.', principle: { name: '경이의 태도', desc: '미지의 것 앞에서 두려움 대신 호기심을 선택하는 것.', icon: '✨' }, quote: '"철학은 경이로움에서 시작된다." - 아리스토텔레스' }
+        ]
+      },
+      {
+        badge: 'STAGE 2: 진실',
+        title: '메시지',
+        desc: '오늘 아침, 알 수 없는 발신자로부터 메시지가 왔다.\n\n"당신이 경험하는 세계는 시뮬레이션입니다.\n\n당신의 뇌는 실제로 어딘가의 통 속에 있고, 모든 감각과 경험은 컴퓨터가 만들어낸 전기 신호입니다.\n\n당신의 가족, 친구, 사랑, 기억. 모두 코드입니다.\n\n믿기 어렵겠지만, 증거를 보여드릴 수 있습니다.\n\n오늘 오후 3시 17분, 하늘을 보세요."\n\n3시 17분. 하늘을 봤다.\n\n구름이 — 멈췄다. 3초간. 그리고 다시 움직였다.\n\n우연의 일치? 아니면...',
+        highlight: '당신은 어떻게 반응하는가?',
+        choices: [
+          { id: 'believe', text: '믿는다', subtext: '설명이 된다. 모든 이상한 일들이', meaning: '증거를 받아들인다. 세계관이 무너지는 것을 감수한다. 진실이 고통스러워도 마주한다.', principle: { name: '증거 기반 수용', desc: '감정이 아닌 증거에 따라 믿음을 수정하는 합리적 태도.', icon: '📊' }, quote: '"사실은 신경 쓰지 않는다. 사실은 존재할 뿐이다." - 아이작 아시모프' },
+          { id: 'deny', text: '거짓말이다. 누가 장난치는 거야', subtext: '이런 건 말도 안 돼', meaning: '부정. 너무 충격적인 정보는 받아들이기 어렵다. 방어기제가 작동한다.', principle: { name: '심리적 방어', desc: '감당할 수 없는 현실을 부정하여 자아를 보호하는 것.', icon: '🛡️' }, quote: '"진실이 불편하면, 사람들은 거짓말을 선택한다." - 조지 오웰' },
+          { id: 'test', text: '더 많은 증거가 필요하다', subtext: '한 번으로는 부족해', meaning: '과학적 태도. 단일 사건으로 결론 내리지 않는다. 반복 검증을 요구한다.', principle: { name: '반복 검증', desc: '하나의 증거로 결론짓지 않고 반복적으로 확인하는 것. 과학적 방법의 핵심.', icon: '🔬' }, quote: '"한 번은 우연, 두 번은 일치, 세 번은 법칙." - 이안 플레밍' },
+          { id: 'irrelevant', text: '진짜든 아니든 상관없다', subtext: '내 경험은 여전히 내 것이잖아', meaning: '실용주의적 태도. 존재론적 질문보다 경험의 가치를 우선시한다.', principle: { name: '현상학적 태도', desc: '실재의 본질보다 경험 자체에 집중하는 것. 후설의 철학.', icon: '🌊' }, quote: '"중요한 것은 사물 자체가 아니라 우리의 경험이다." - 후설' }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 선택',
+        title: '깨어날 기회',
+        desc: '발신자가 다시 연락했다.\n\n"증거를 더 보여드릴 수 있습니다. 하지만 그 전에 알아야 할 것이 있습니다.\n\n당신은 깨어날 수 있습니다. 시뮬레이션을 벗어나 \'진짜\' 현실로.\n\n하지만 경고합니다.\n\n깨어나면 이 세계의 모든 것을 잃습니다. 가족, 친구, 사랑했던 기억들. 그것들은 밖에 존재하지 않습니다.\n\n그리고 밖의 세계가 더 좋다는 보장도 없습니다. 더 고통스러울 수도 있습니다.\n\n그래도 진실을 원하십니까?"',
+        highlight: '당신은 무엇을 선택하는가?',
+        choices: [
+          { id: 'wake', text: '깨어나겠다', subtext: '가짜 속에서 사는 건 삶이 아니야', meaning: '진실을 선택한다. 행복보다 실재를 우선시한다. 노직의 경험 기계를 거부하는 사람들의 선택.', principle: { name: '진정성 추구', desc: '행복하더라도 가짜라면 가치가 없다고 보는 관점. 노직이 경험 기계로 증명하려 한 것.', icon: '🔴' }, quote: '"불편한 진실이 달콤한 거짓보다 낫다." - 무명' },
+          { id: 'stay', text: '여기 남겠다', subtext: '이 세계가 내 현실이야. 가짜여도', meaning: '경험의 가치를 선택한다. 존재론보다 삶의 질을 우선시한다.', principle: { name: '경험의 가치', desc: '기원이 아닌 경험 자체가 의미를 갖는다는 관점. 어차피 모든 경험은 뇌의 신호다.', icon: '🔵' }, quote: '"행복이 진짜라면, 그 원인이 뭐가 중요한가?" - 로버트 노직 비판' },
+          { id: 'know_more', text: '밖이 어떤 곳인지 먼저 알고 싶다', subtext: '정보 없이 결정할 수 없어', meaning: '정보 수집. 불확실성을 줄이려 한다. 하지만 어떤 정보가 충분할까?', principle: { name: '정보 요구', desc: '결정 전에 충분한 정보를 원하는 것. 하지만 모든 정보를 가질 수는 없다.', icon: '📋' }, quote: '"완벽한 정보를 기다리면 영원히 결정하지 못한다." - 무명' },
+          { id: 'bring_others', text: '혼자 깨어나긴 싫다', subtext: '사랑하는 사람들과 함께라면...', meaning: '관계의 가치를 우선시한다. 진실보다 연결이 중요하다.', principle: { name: '관계 우선', desc: '개인의 진실보다 함께하는 것이 더 중요하다는 가치관.', icon: '👨‍👩‍👧' }, quote: '"혼자 있는 천국보다 함께하는 지옥이 낫다." - 무명' }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 결단',
+        title: '마지막 질문',
+        desc: '당신은 생각한다.\n\n만약 이것이 시뮬레이션이라면,\n"진짜" 나는 어디에 있는가?\n\n통 속의 뇌? 그 뇌가 "나"인가?\n아니면 지금 여기서 생각하는 이 의식이 "나"인가?\n\n밖으로 나가면, 지금의 "나"는 사라지는 것 아닌가?\n그렇다면 깨어나는 것은 구원인가, 죽음인가?\n\n발신자의 마지막 메시지:\n\n"결정하셨습니까?\n한 번 깨어나면 돌아올 수 없습니다.\n한 번 거부하면 다시 기회가 오지 않습니다.\n\n당신의 선택은?"',
+        highlight: '최종 결정의 순간',
+        choices: [
+          { id: 'red_pill', text: '깨어난다', subtext: '진실을 마주하겠다', meaning: '빨간 약을 선택한다. 불확실한 진실이 확실한 환상보다 가치 있다고 믿는다.', principle: { name: '실재의 추구', desc: '경험의 질보다 존재의 진정성을 우선시하는 것. 동굴 밖으로 나가는 철학자.', icon: '💊' }, quote: '"동굴 밖의 빛은 눈을 아프게 한다. 하지만 그것이 진실이다." - 플라톤' },
+          { id: 'blue_pill', text: '남는다', subtext: '이 삶을 계속 살겠다', meaning: '파란 약을 선택한다. 알려진 환상이 미지의 진실보다 안전하다.', principle: { name: '실용적 선택', desc: '추상적 진실보다 구체적 행복을 선택하는 것. 틀린 선택이 아니다.', icon: '🏠' }, quote: '"무지가 축복일 때가 있다." - 매트릭스' },
+          { id: 'question', text: '"진짜"가 뭔데?', subtext: '밖도 결국 또 다른 시뮬레이션 아닌가', meaning: '메타 질문. 한 단계 더 올라간다. 밖의 세계도 시뮬레이션일 수 있다.', principle: { name: '무한 회귀', desc: '모든 현실이 또 다른 현실의 시뮬레이션일 수 있다는 의문. 거북이 위의 거북이.', icon: '🐢' }, quote: '"거북이 밑에는 또 거북이가 있다." - 무한 회귀' },
+          { id: 'create', text: '깨어나서 새로운 세계를 만들겠다', subtext: '진실을 알면 바꿀 수 있어', meaning: '변혁 의지. 단순히 진실을 아는 것을 넘어 새로운 현실을 창조하려 한다.', principle: { name: '창조적 초월', desc: '주어진 현실을 받아들이는 것을 넘어 새로운 현실을 만들려는 의지.', icon: '🌅' }, quote: '"세계를 해석하는 것이 아니라 변화시키는 것이 중요하다." - 마르크스' },
+          { id: 'both', text: '둘 다 나다. 깨어나도 여기도', subtext: '나는 사라지지 않아', meaning: '통합적 관점. 이분법을 거부한다. 의식의 연속성을 믿는다.', principle: { name: '의식의 연속성', desc: '형태가 바뀌어도 의식은 연속된다는 믿음. 정체성의 확장.', icon: '♾️' }, quote: '"나는 육체가 아니다. 나는 경험하는 의식이다." - 무명' }
+        ]
+      }
+    ];
+    
+    const gameScreen = document.getElementById('gameScreen');
+    const explanationScreen = document.getElementById('explanationScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    
+    function showScreen(screen) {
+      gameScreen.classList.add('hidden');
+      explanationScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      screen.classList.remove('hidden');
+    }
+    
+    function renderStage() {
+      const stage = stages[currentStageIndex];
+      document.getElementById('stageLabel').textContent = 'STAGE ' + (currentStageIndex + 1);
+      document.getElementById('stageCount').textContent = (currentStageIndex + 1) + '/' + stages.length;
+      document.getElementById('progressFill').style.width = ((currentStageIndex + 1) / stages.length * 100) + '%';
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) { highlightEl.textContent = stage.highlight; highlightEl.classList.remove('hidden'); } 
+      else { highlightEl.classList.add('hidden'); }
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = '<span class="sim-choice-text">' + choice.text + '</span>' + (choice.subtext ? '<span class="sim-choice-subtext">' + choice.subtext + '</span>' : '');
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesContainer.appendChild(btn);
+      });
+      showScreen(gameScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function handleChoice(choice) {
+      choices.push({ stage: currentStageIndex, choiceId: choice.id, choiceText: choice.text });
+      if (choice.principle) { principles.push(choice.principle); }
+      showExplanation(choice);
+    }
+    
+    function showExplanation(choice) {
+      document.getElementById('yourChoice').textContent = choice.text;
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) { document.getElementById('choiceMeaning').textContent = choice.meaning; meaningCard.classList.remove('hidden'); } 
+      else { meaningCard.classList.add('hidden'); }
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) { document.getElementById('principleName').textContent = choice.principle.icon + ' ' + choice.principle.name; document.getElementById('principleDesc').textContent = choice.principle.desc; principleCard.classList.remove('hidden'); } 
+      else { principleCard.classList.add('hidden'); }
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) { document.getElementById('quoteText').textContent = choice.quote; quoteCard.classList.remove('hidden'); } 
+      else { quoteCard.classList.add('hidden'); }
+      document.getElementById('nextBtn').textContent = currentStageIndex >= stages.length - 1 ? '결과 보기' : '다음으로';
+      showScreen(explanationScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentStageIndex++;
+      if (currentStageIndex >= stages.length) { showResult(); } else { renderStage(); }
+    });
+    
+    function calculateResult() {
+      const choiceIds = choices.map(c => c.choiceId);
+      const s1 = choiceIds[0], s2 = choiceIds[1], s3 = choiceIds[2], s4 = choiceIds[3];
+      
+      // 진실의 추구자: 처음부터 끝까지 진실 선택
+      if (s1 === 'investigate' && s2 === 'believe' && s3 === 'wake' && s4 === 'red_pill') {
+        return { icon: '🔴', title: '진실의 추구자', desc: '당신은 네오다. 불편하더라도 진실을 선택한다. 동굴 밖으로 나가는 철학자. 빨간 약을 삼키고 깨어난다. 하지만 기억하라. 진실이 행복을 보장하지는 않는다.', rarity: '상위 5%' };
+      }
+      
+      // 실용적 현실주의자: 진짜든 가짜든 상관없음
+      if (s2 === 'irrelevant' || s4 === 'blue_pill') {
+        return { icon: '🔵', title: '실용적 현실주의자', desc: '당신은 현명하다. 존재론적 질문보다 경험의 질이 중요하다. 파란 약을 선택한다. 틀린 선택이 아니다. 어차피 모든 경험은 뇌의 신호다. 시뮬레이션이든 아니든, 느끼는 것은 진짜다.', rarity: '상위 15%' };
+      }
+      
+      // 메타 철학자: 무한 회귀를 질문
+      if (s4 === 'question') {
+        return { icon: '🐢', title: '메타 철학자', desc: '당신은 한 단계 더 올라갔다. 밖이 "진짜"라는 보장이 어디 있는가? 거북이 위의 거북이. 시뮬레이션 밖에 또 시뮬레이션. 어쩌면 "진짜 현실"이란 존재하지 않을 수도 있다.', rarity: '상위 8%' };
+      }
+      
+      // 창조자: 변혁 의지
+      if (s4 === 'create') {
+        return { icon: '🌅', title: '창조적 초월자', desc: '당신은 프로메테우스다. 주어진 현실을 받아들이지 않는다. 진실을 알고, 그것을 바꾸려 한다. 세계를 해석하는 것이 아니라 변화시키는 것. 위험하지만 위대한 선택이다.', rarity: '상위 7%' };
+      }
+      
+      // 통합자: 둘 다 나다
+      if (s4 === 'both') {
+        return { icon: '♾️', title: '통합적 존재', desc: '당신은 이분법을 거부한다. 깨어나도 나, 여기 있어도 나. 의식은 형태를 초월한다. 선(禪)의 지혜. 달을 가리키는 손가락이 달은 아니지만, 손가락도 존재한다.', rarity: '상위 10%' };
+      }
+      
+      // 회의주의자: 더 많은 증거 필요
+      if (s2 === 'test' && s3 === 'know_more') {
+        return { icon: '🔬', title: '과학적 회의주의자', desc: '당신은 쉽게 믿지 않는다. 한 번의 증거로 세계관을 바꾸지 않는다. 과학자의 태도. 하지만 어떤 증거가 "충분"할까? 확실성을 기다리면 영원히 결정하지 못할 수도 있다.', rarity: '상위 12%' };
+      }
+      
+      // 관계 중심: 함께 깨어나길 원함
+      if (s3 === 'bring_others') {
+        return { icon: '👨‍👩‍👧', title: '관계 중심 존재', desc: '당신에게 진실보다 중요한 것은 연결이다. 혼자 깨어나느니 함께 꿈꾸겠다. 사랑하는 사람들이 코드라도 상관없다. 느끼는 사랑은 진짜다.', rarity: '상위 18%' };
+      }
+      
+      // 회피자: 무시하고 부정
+      if (s1 === 'ignore' && s2 === 'deny') {
+        return { icon: '🙈', title: '편안한 무지의 선택자', desc: '당신은 평화를 선택했다. 불편한 가능성은 외면한다. 틀린 선택이 아니다. 매트릭스의 사이퍼도 같은 선택을 했다. 무지가 축복일 때가 있다.', rarity: '상위 22%' };
+      }
+      
+      // 두려움에 갇힘
+      if (s1 === 'fear') {
+        return { icon: '😰', title: '실재 불안자', desc: '현실이 흔들리는 공포. 이것은 약함이 아니다. 존재의 기반이 무너지는 느낌은 누구에게나 두렵다. 하지만 두려움 너머에 진실이 있을 수도 있다.', rarity: '상위 20%' };
+      }
+      
+      // 기본 결과
+      return { icon: '🧠', title: '존재론적 탐구자', desc: '당신은 쉽게 답을 내리지 않는다. 진실과 행복 사이에서, 안과 밖 사이에서 여전히 질문한다. 그것이 철학이다. 답보다 질문이 더 중요할 때가 있다.', rarity: '상위 25%' };
+    }
+    
+    function showResult() {
+      const result = calculateResult();
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultRarity').textContent = result.rarity;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      
+      if (principles.length > 0) {
+        const principlesList = document.getElementById('principlesList');
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'sim-principles-item';
+          item.innerHTML = '<span class="sim-principles-item-icon">' + p.icon + '</span><div><div class="sim-principles-item-name">' + p.name + '</div><div class="sim-principles-item-desc">' + p.desc + '</div></div>';
+          principlesList.appendChild(item);
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      showScreen(resultScreen);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      saveToProfile(result);
+    }
+    
+    function saveToProfile(result) {
+      try {
+        let profile = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (!profile) return;
+        
+        if (!profile.completedSims) profile.completedSims = [];
+        if (!profile.completedSims.includes('awakening')) {
+          profile.completedSims.push('awakening');
+          profile.exp = (profile.exp || 0) + 30;
+        }
+        
+        if (!profile.principles) profile.principles = [];
+        principles.forEach(p => {
+          if (!profile.principles.some(existing => (typeof existing === 'string' ? existing : existing.name) === p.name)) {
+            profile.principles.push(p.name);
+          }
+        });
+        
+        const expToLevel = exp => { let l = 1, req = 100; while (exp >= req) { exp -= req; l++; req = 100 * l; } return l; };
+        profile.level = expToLevel(profile.exp);
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      } catch (e) { console.error(e); }
+    }
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#0f172a');
+      gradient.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#22d3ee';
+      ctx.fillText(document.getElementById('resultRarity').textContent, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 260;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillText('깨어남 시뮬레이터', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '깨어남_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+    
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      const url = 'https://bit.ly/awakening-sim';
+      const result = document.getElementById('resultTitle').textContent;
+      const text = `이 세계가 시뮬레이션이라면, 당신은 깨어날 것인가?\n\n내 결과: ${result}\n\n`;
+      if (navigator.share) { try { await navigator.share({ title: '깨어남 시뮬레이터', text, url }); } catch {} }
+      else { navigator.clipboard.writeText('[깨어남 시뮬레이터]\n' + text + url); document.getElementById('shareBtn').textContent = '링크 복사됨!'; }
+    });
+    
+    renderStage();
+  </script>
+</body>
+</html>
