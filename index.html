@@ -707,6 +707,10 @@
             <div class="journey-stat-value" id="statPrinciples">0</div>
             <div class="journey-stat-label">발견한 원칙</div>
           </div>
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statMaxStreak">0</div>
+            <div class="journey-stat-label">최대 연속</div>
+          </div>
         </div>
       </div>
 
@@ -1139,6 +1143,9 @@
       const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
       const validPrinciples = principleNames.filter(name => VALID_PRINCIPLES.includes(name));
       document.getElementById('statPrinciples').textContent = validPrinciples.length;
+      
+      // 최대 연속 참여
+      document.getElementById('statMaxStreak').textContent = profile.maxStreak || 0;
 
       // 마인드 스토리 목록
       const storyList = document.getElementById('storyList');
