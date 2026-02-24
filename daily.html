@@ -424,16 +424,17 @@
           <div class="research-source" id="resultSource"></div>
         </div>
         
-        <!-- 책 프로모션 (특정 딜레마에서만) -->
-        <div class="book-promo-card hidden" id="bookPromoFirst" style="margin-top: 32px; text-align: center;">
+        <!-- 책 프로모션 -->
+        <div class="book-promo-card" id="bookPromoFirst" style="margin-top: 32px; padding: 20px; background: #141417; border-radius: 16px;">
+          <div style="font-size: 13px; color: #8b8b92; margin-bottom: 16px; text-align: center;">📚 더 깊이 탐구하고 싶다면</div>
           <div style="display: flex; justify-content: center; gap: 20px;">
             <a href="https://litt.ly/eclipse.thinker" target="_blank" style="text-decoration: none; text-align: center;">
-              <img src="book-psychology.png" alt="" style="width: 100px; height: auto; border-radius: 8px; margin-bottom: 8px;">
-              <div style="font-size: 11px; color: #a1a1aa;">세계척학전집: 훔친 심리학 편</div>
+              <img src="book-psychology.png" alt="" style="width: 90px; height: auto; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+              <div style="font-size: 11px; color: #a1a1aa;">훔친 심리학</div>
             </a>
             <a href="https://litt.ly/eclipse.thinker" target="_blank" style="text-decoration: none; text-align: center;">
-              <img src="book-philosophy.png" alt="" style="width: 100px; height: auto; border-radius: 8px; margin-bottom: 8px;">
-              <div style="font-size: 11px; color: #a1a1aa;">세계척학전집: 훔친 철학 편</div>
+              <img src="book-philosophy.png" alt="" style="width: 90px; height: auto; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+              <div style="font-size: 11px; color: #a1a1aa;">훔친 철학</div>
             </a>
           </div>
         </div>
@@ -555,16 +556,17 @@
         <span class="timer-num" id="timerDisplay">--:--:--</span>
       </div>
       
-      <!-- 책 프로모션 (특정 딜레마에서만) - 타이머 아래 -->
-      <div class="book-promo-card hidden" id="bookPromoDone" style="margin-top: 32px; text-align: center;">
+      <!-- 책 프로모션 -->
+      <div class="book-promo-card" id="bookPromoDone" style="margin-top: 32px; padding: 20px; background: #141417; border-radius: 16px;">
+        <div style="font-size: 13px; color: #8b8b92; margin-bottom: 16px; text-align: center;">📚 더 깊이 탐구하고 싶다면</div>
         <div style="display: flex; justify-content: center; gap: 20px;">
           <a href="https://litt.ly/eclipse.thinker" target="_blank" style="text-decoration: none; text-align: center;">
-            <img src="book-psychology.png" alt="" style="width: 100px; height: auto; border-radius: 8px; margin-bottom: 8px;">
-            <div style="font-size: 11px; color: #a1a1aa;">세계척학전집: 훔친 심리학 편</div>
+            <img src="book-psychology.png" alt="" style="width: 90px; height: auto; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <div style="font-size: 11px; color: #a1a1aa;">훔친 심리학</div>
           </a>
           <a href="https://litt.ly/eclipse.thinker" target="_blank" style="text-decoration: none; text-align: center;">
-            <img src="book-philosophy.png" alt="" style="width: 100px; height: auto; border-radius: 8px; margin-bottom: 8px;">
-            <div style="font-size: 11px; color: #a1a1aa;">세계척학전집: 훔친 철학 편</div>
+            <img src="book-philosophy.png" alt="" style="width: 90px; height: auto; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <div style="font-size: 11px; color: #a1a1aa;">훔친 철학</div>
           </a>
         </div>
       </div>
@@ -982,11 +984,6 @@
       document.getElementById('resultDescDone').textContent = dilemma.explanation;
       document.getElementById('resultSourceDone').textContent = '출처: ' + dilemma.source;
       
-      // 책 프로모션 (bookPromo가 있는 딜레마만)
-      if (dilemma.bookPromo) {
-        document.getElementById('bookPromoDone').classList.remove('hidden');
-      }
-      
       // 아코디언 토글
       const toggleBtn = document.getElementById('otherChoiceToggle');
       const toggleContent = document.getElementById('otherChoiceContent');
@@ -1144,11 +1141,6 @@
       document.getElementById('resultTitle').textContent = dilemma.principle;
       document.getElementById('resultDesc').textContent = dilemma.explanation;
       document.getElementById('resultSource').textContent = '📚 ' + dilemma.source;
-      
-      // 책 프로모션 (bookPromo가 있는 딜레마만)
-      if (dilemma.bookPromo) {
-        document.getElementById('bookPromoFirst').classList.remove('hidden');
-      }
       
       setTimeout(() => {
         document.getElementById('resultSection').classList.add('show');
