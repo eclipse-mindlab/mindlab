@@ -556,6 +556,17 @@
         <span class="timer-num" id="timerDisplay">--:--:--</span>
       </div>
       
+      <!-- 지난 딜레마 히스토리 -->
+      <div id="historySection" class="hidden" style="margin-top: 24px;">
+        <button id="historyToggleBtn" style="width: 100%; background: #141417; border: 1px solid #232326; border-radius: 12px; padding: 16px; color: #a1a1aa; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s ease; -webkit-tap-highlight-color: transparent;">
+          <span>📅 지난 딜레마 보기</span>
+          <span id="historyArrow">▼</span>
+        </button>
+        <div id="historyContent" class="hidden" style="margin-top: -1px;">
+          <div id="historyList"></div>
+        </div>
+      </div>
+
       <!-- 책 프로모션 -->
       <div class="book-promo-card" id="bookPromoDone" style="margin-top: 32px; padding: 20px; background: #141417; border-radius: 16px;">
         <div style="font-size: 13px; color: #8b8b92; margin-bottom: 16px; text-align: center;">📚 더 깊이 탐구하고 싶다면</div>
@@ -999,8 +1010,99 @@
       document.getElementById('shareBtnDone').addEventListener('click', () => shareResultDone(idx));
       
       startTimer();
+      
+      // 지난 딜레마 히스토리 렌더링
+      renderHistory();
     }
     
+    function renderHistory() {
+      const today = getTodayString();
+      const entries = Object.entries(dailyData.history || {})
+        .filter(([date]) => date !== today)
+        .sort((a, b) => b[0].localeCompare(a[0]));
+      
+      if (entries.length === 0) return;
+      
+      document.getElementById('historySection').classList.remove('hidden');
+      
+      const historyList = document.getElementById('historyList');
+      
+      function getDilemmaForDate(dateStr) {
+        const d = new Date(dateStr);
+        const start = new Date(d.getFullYear(), 0, 0);
+        const dayOfYear = Math.floor((d - start) / 86400000);
+        return dilemmas[dayOfYear % dilemmas.length];
+      }
+      
+      function formatHistDate(dateStr) {
+        const d = new Date(dateStr);
+        const days = ['일','월','화','수','목','금','토'];
+        return (d.getMonth()+1) + '/' + d.getDate() + ' (' + days[d.getDay()] + ')';
+      }
+      
+      function truncSituation(text) {
+        const lines = text.split('\n').filter(l => l.trim());
+        const first = lines[0] || '';
+        return first.length > 40 ? first.slice(0, 40) + '...' : first;
+      }
+      
+      historyList.innerHTML = entries.map(([date, choiceIdx], i) => {
+        const d = getDilemmaForDate(date);
+        if (!d) return '';
+        const c = d.choices[choiceIdx];
+        if (!c) return '';
+        const otherIdx = choiceIdx === 0 ? 1 : 0;
+        const other = d.choices[otherIdx];
+        const uid = 'hist_' + i;
+        
+        return '<div style="background: #141417; border: 1px solid #232326; border-radius: 12px; margin-top: 8px; overflow: hidden;">' +
+          '<button onclick="document.getElementById(\'' + uid + '\').classList.toggle(\'hidden\'); this.querySelector(\'.hist-arrow\').textContent = document.getElementById(\'' + uid + '\').classList.contains(\'hidden\') ? \'▼\' : \'▲\';" style="width: 100%; background: none; border: none; padding: 16px; cursor: pointer; text-align: left; -webkit-tap-highlight-color: transparent;">' +
+            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">' +
+              '<span style="font-size: 12px; color: #8b8b92;">' + formatHistDate(date) + '</span>' +
+              '<span class="hist-arrow" style="font-size: 11px; color: #8b8b92;">▼</span>' +
+            '</div>' +
+            '<div style="font-size: 13px; color: #8b8b92; margin-bottom: 6px;">' + truncSituation(d.situation) + '</div>' +
+            '<div style="font-size: 14px; color: #d4d4d8; margin-bottom: 6px;">' + d.question + '</div>' +
+            '<div style="font-size: 13px; color: #9580ff;">→ ' + c.text + '</div>' +
+          '</button>' +
+          '<div id="' + uid + '" class="hidden" style="padding: 0 16px 16px; border-top: 1px solid #232326;">' +
+            '<div style="padding-top: 12px;">' +
+              '<div style="display: flex; gap: 8px; margin-bottom: 10px;">' +
+                '<span style="background: rgba(167,139,250,0.15); padding: 3px 8px; border-radius: 10px; font-size: 11px; color: #9580ff;">' + d.category + '</span>' +
+                '<span style="background: #232326; padding: 3px 8px; border-radius: 10px; font-size: 11px; color: #fbbf24;">' + c.type + '</span>' +
+                '<span style="background: #232326; padding: 3px 8px; border-radius: 10px; font-size: 11px; color: #a1a1aa;">' + c.percent + '%가 같은 선택</span>' +
+              '</div>' +
+              '<div style="font-size: 13px; color: #a1a1aa; line-height: 1.6; margin-bottom: 12px;">' + c.typeDesc + '</div>' +
+              '<div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #09090b; border-radius: 8px; margin-bottom: 12px;">' +
+                '<span style="font-size: 22px;">' + c.philoEmoji + '</span>' +
+                '<div>' +
+                  '<div style="font-size: 12px; color: #fbbf24;">' + c.philosopher + '</div>' +
+                  '<div style="font-size: 11px; color: #8b8b92;">' + c.philoQuote + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="padding: 12px; background: #1a1a1e; border-radius: 8px; border-left: 2px solid #9580ff; margin-bottom: 10px;">' +
+                '<div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px;">📊 ' + d.principle + '</div>' +
+                '<div style="font-size: 12px; color: #a1a1aa; line-height: 1.6;">' + d.explanation + '</div>' +
+              '</div>' +
+              '<div style="font-size: 12px; color: #52525b; margin-bottom: 8px;">다른 선택: ' + other.text + ' (' + other.percent + '%)</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+      
+      // 참여 통계
+      historyList.innerHTML = '<div style="text-align: center; padding: 8px 0 4px; font-size: 13px; color: #8b8b92;">총 <span style="color: #9580ff; font-weight: 600;">' + entries.length + '</span>개의 딜레마에 참여했어요</div>' + historyList.innerHTML;
+      
+      // 토글
+      const toggleBtn = document.getElementById('historyToggleBtn');
+      const content = document.getElementById('historyContent');
+      const arrow = document.getElementById('historyArrow');
+      toggleBtn.addEventListener('click', () => {
+        content.classList.toggle('hidden');
+        arrow.textContent = content.classList.contains('hidden') ? '▼' : '▲';
+      });
+    }
+
     function saveImageDone(idx) {
       const card = document.getElementById('profileCardDone');
       const btn = document.getElementById('saveImageBtnDone');
