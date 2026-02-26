@@ -21,93 +21,77 @@
 </head>
 <body>
   <div class="sim-container">
-    <!-- 헤더 -->
     <div class="sim-header">
-      <a href="index.html" class="sim-back">← 돌아가기</a>
-      <div class="sim-header-content">
-        <div class="sim-category">심리 · 진실</div>
-        <h1 class="sim-title">거짓말 없는 하루</h1>
-        <p class="sim-subtitle">24시간 동안 진실만 말해야 한다</p>
-      </div>
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">거짓말 없는 하루</div>
     </div>
-    
-    <!-- 진행바 -->
-    <div class="sim-progress">
-      <div class="sim-progress-info">
-        <span id="stageLabel">STAGE 1</span>
-        <span id="stageCount">1/5</span>
-      </div>
-      <div class="sim-progress-bar">
-        <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
-      </div>
-    </div>
-    
-    <!-- 게임 화면 -->
     <div id="gameScreen">
-      <div class="sim-situation">
-        <div class="sim-badge" id="stageBadge">AM 8:00</div>
-        <h2 class="sim-situation-title" id="situationTitle"></h2>
-        <p class="sim-situation-desc" id="situationDesc"></p>
-        <div class="sim-highlight hidden" id="situationHighlight"></div>
-        <div class="sim-quote hidden" id="situationQuote"></div>
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
       </div>
-      
+      <div class="sim-stage-badge" id="stageBadge">AM 8:00</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle"></div>
+        <div class="sim-situation-desc" id="situationDesc"></div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
       <div class="sim-choices" id="choices"></div>
     </div>
-    
-    <!-- 해설 화면 -->
     <div id="explanationScreen" class="hidden">
-      <div class="sim-explanation">
-        <div class="sim-your-choice">
-          <div class="sim-your-choice-label">당신의 선택</div>
-          <div class="sim-your-choice-text" id="yourChoice"></div>
-        </div>
-        
-        <div class="sim-meaning-card" id="meaningCard">
-          <div class="sim-meaning-title">이 선택의 의미</div>
-          <p class="sim-meaning-desc" id="choiceMeaning"></p>
-        </div>
-        
-        <div class="sim-principle-card hidden" id="principleCard">
-          <div class="sim-principle-icon">💡</div>
-          <div class="sim-principle-label">발견한 원칙</div>
-          <div class="sim-principle-name" id="principleName"></div>
-          <p class="sim-principle-desc" id="principleDesc"></p>
-        </div>
-        
-        <div class="sim-quote-card hidden" id="quoteCard">
-          <p id="quoteText"></p>
-        </div>
-        
-        <button class="sim-next-btn" id="nextBtn">다음으로</button>
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice"></div>
       </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning"></div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName"></div>
+        <div class="sim-principle-desc" id="principleDesc"></div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText"></span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
     </div>
-    
-    <!-- 결과 화면 -->
     <div id="resultScreen" class="hidden">
-      <div class="sim-result show">
-        <div class="sim-result-card">
-          <div class="sim-result-icon" id="resultIcon">🎭</div>
-          <div class="sim-result-label" id="resultLabel">당신의 진실 유형</div>
-          <h2 class="sim-result-title" id="resultTitle"></h2>
-          <p class="sim-result-desc" id="resultDesc"></p>
-          <div class="sim-result-stats hidden" id="resultStats"></div>
-        </div>
-        
-        <div class="sim-principles-list hidden" id="principlesList"></div>
-        
-        <div class="sim-actions">
-          <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
-          <a href="index.html" class="sim-action-btn secondary">홈으로</a>
-        </div>
-        
-        <!-- 프로모션 -->
-        <div class="sim-promo">
-          <p class="sim-promo-title">이 시뮬레이터가 재미있었다면?</p>
-          <div class="sim-promo-links">
-            <a href="https://www.youtube.com/@dilemchannel" target="_blank" class="sim-promo-link">
-              <span>🎬</span>
-              <span>유튜브 채널 구경하기</span>
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🎭</div>
+        <div class="sim-result-label" id="resultLabel">당신의 진실 유형</div>
+        <div class="sim-result-title" id="resultTitle"></div>
+        <div class="sim-result-desc" id="resultDesc"></div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+      <div class="sim-promo">
+        <div class="sim-promo-title">이 시뮬레이터의 바탕이 된 철학과 심리학이 궁금하다면</div>
+        <div class="sim-books" style="margin-top: 24px;">
+          
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
             </a>
           </div>
         </div>
