@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>가스라이팅 시뮬레이터 - 이클립스의 딜렘</title>
+  <title>가스라이팅: 연인편 - 이클립스의 딜렘</title>
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
   
   <!-- SEO -->
   <meta name="description" content="연인이 말한다. '네가 예민한 거야.' 정말 그럴까?">
-  <meta property="og:title" content="가스라이팅 시뮬레이터 - 이클립스의 딜렘">
+  <meta property="og:title" content="가스라이팅: 연인편 - 이클립스의 딜렘">
   <meta property="og:description" content="연인이 말한다. '네가 예민한 거야.' 정말 그럴까?">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
   
@@ -23,7 +23,7 @@
   <div class="sim-container">
     <div class="sim-header">
       <a href="index.html" class="sim-back-btn">←</a>
-      <div class="sim-header-title">가스라이팅</div>
+      <div class="sim-header-title">가스라이팅: 연인편</div>
     </div>
     <div id="gameScreen">
       <div class="sim-progress">
@@ -103,9 +103,9 @@
   <script>
     const CONFIG = {
       id: 'gaslighting',
-      title: '가스라이팅 시뮬레이터',
+      title: '가스라이팅: 연인편',
       shareIcon: '🪞',
-      shareUrl: 'https://eclipse-mindlab.github.io/mindlab/sim-gaslighting.html',
+      shareUrl: 'https://bit.ly/gaslighting-sim',
       
       stages: [
         {
@@ -347,7 +347,7 @@
       
       getShareText(resultTitle, choices, principles) {
         const principleNames = principles.map(p => p.name).slice(0, 3).join(', ');
-        return '🪞 가스라이팅 시뮬레이터\n\n나의 대응 유형: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n연인이 말한다. "네가 예민한 거야."\n정말 그럴까?\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-gaslighting.html';
+        return '🪞 가스라이팅: 연인편\n\n나의 대응 유형: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n연인이 말한다. "네가 예민한 거야."\n정말 그럴까?\n\nhttps://bit.ly/gaslighting-sim';
       }
     };
     
