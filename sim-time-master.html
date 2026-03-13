@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>시간의 주인 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="시간의 주인 - 이클립스의 딜렘">
+  <meta property="og:description" content="당신은 시간을 어떻게 바라보는 사람인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #6d9dc5;
+      --sim-primary-light: #8bb8db;
+      --sim-primary-bg: rgba(109, 157, 197, 0.1);
+      --sim-primary-border: rgba(109, 157, 197, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">시간의 주인</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle"></div>
+        <div class="sim-situation-desc" id="situationDesc"></div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice"></div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning"></div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName"></div>
+        <div class="sim-principle-desc" id="principleDesc"></div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText"></span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">⏳</div>
+        <div class="sim-result-label" id="resultLabel">당신의 유형</div>
+        <div class="sim-result-title" id="resultTitle"></div>
+        <div class="sim-result-desc" id="resultDesc"></div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #6d9dc5; font-weight: 600; margin-bottom: 8px; letter-spacing: 1px;">이 시뮬레이터의 바탕이 된 생각들이 궁금하다면</div>
+        </div>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display: block; text-decoration: none; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #101520 0%, #182030 50%, #101520 100%); border: 1px solid rgba(109, 157, 197, 0.3); border-radius: 16px; padding: 24px; text-align: center;">
+            <img src="book-philosophy.png" alt="훔친 철학 편" style="width: 200px; height: auto; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 8px 32px rgba(109, 157, 197, 0.2);">
+            <div style="font-size: 17px; font-weight: 700; color: #6d9dc5; margin-bottom: 6px;">세계척학전집 — 훔친 철학 편</div>
+            <div style="font-size: 12px; color: #71717a;">있어 보이는 척하기 좋은 철학의 문법</div>
+          </div>
+        </a>
+
+        <div style="font-size: 12px; color: #52525b; text-align: center; margin-bottom: 12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 심리학 편</div>
+          </a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-wealth.png" alt="훔친 부 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 부 편</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="sim-template.js"></script>
+  <script>
+    const CONFIG = {
+      id: 'time-master',
+      title: '시간의 주인',
+      shareIcon: '⏳',
+      shareUrl: 'https://bit.ly/time-master-sim',
+      version: 5,
+      
+      stages: [
+        {
+          badge: '속도',
+          title: '사라진 1년',
+          desc: `당신은 직장인이다. 매일 같은 시간에 출근하고, 같은 시간에 퇴근한다.
+
+어느 날 문득 깨달았다.
+
+지난 1년이 기억나지 않는다. 분명 365일을 살았는데, 돌아보면 하루 같다.
+
+월요일과 금요일의 차이를 모르겠다. 1월과 11월의 차이도 모르겠다.
+
+뇌는 새로운 자극이 없으면 시간을 압축한다. 어릴 적 여름방학이 영원 같았던 건, 모든 게 낯설었기 때문이다.
+
+당신의 시간이 빨리 흐르는 건, 삶에서 경이로움이 사라졌다는 신호다.`,
+          highlight: '1년이 하루처럼 사라졌다. 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'quit1',
+              text: '환경을 바꾼다.',
+              subtext: '새로운 곳으로 간다.',
+              meaning: '퇴사했다. 새로운 도시, 새로운 사람들. 처음 한 달은 하루가 일주일 같다. 모든 게 낯설고, 시간이 느려진 것 같다. 하지만 6개월이 지나면? 새로운 일상도 결국 일상이 된다. 환경을 바꿔도 뇌는 다시 적응한다. 그때 또 바꿀 것인가?',
+              principle: { name: '생물학적 시간', desc: '뇌는 새로운 자극을 처리할 때 시간을 길게 느낀다. 모든 게 낯선 아이의 하루는 수만 장의 사진으로 저장된다. 반복에 매몰된 어른의 1년은 한 장으로 압축된다. 시간을 늘리는 방법은 시계를 멈추는 게 아니라, 낯선 경험으로 뇌를 깨우는 것이다.', icon: '🧠' },
+              quote: '"시간은 모든 사람에게 같은 속도로 흐르지 않는다. 뇌가 경험하는 밀도가 시간의 체감 속도를 결정한다."'
+            },
+            {
+              id: 'awake1',
+              text: '같은 일상을 다르게 본다.',
+              subtext: '바꿀 건 환경이 아니라 시선이다.',
+              meaning: '오늘 출근길에 처음으로 하늘을 올려다봤다. 구름이 어제와 다르다. 점심에 매일 가던 식당에서 처음으로 사장님과 대화했다. 같은 하루인데 다르게 느껴진다. 하지만 이게 얼마나 갈까? 깨어있으려는 노력은 지치게 만든다.',
+              principle: { name: '찰나의 각성', desc: '불교는 말한다. 눈 한 번 깜빡이는 순간에도 우주가 수십 번 생겨나고 사라진다. 같은 하루도 깨어있으면 매 순간이 다르다. 시간이 빨리 가는 건 시간의 문제가 아니라, 당신이 잠들어 있기 때문이다. 지금 이 순간에 깨어있는 것, 그것이 찰나의 본질이다.', icon: '👁️' },
+              quote: '"과거에 얽매이지 말고, 미래를 걱정하지 말라. 오직 현재만이 있다." - 붓다'
+            },
+            {
+              id: 'accept1',
+              text: '기다린다. 겨울이 지나면 봄이 온다.',
+              subtext: '지금은 바닥일 뿐이다.',
+              meaning: '무기력한 시기가 있다. 모든 게 회색으로 보이는 계절. 하지만 봄이 오지 않은 겨울은 없었다. 지금 시간이 빨리 흐르는 건, 아직 변화의 계절이 오지 않았을 뿐이다. 자연은 서두르지 않는다. 문제는 — 당신이 그만큼 기다릴 수 있느냐다.',
+              principle: { name: '순환적 시간', desc: '동양에서 시간은 직선이 아니라 원이다. 봄, 여름, 가을, 겨울. 끝은 곧 시작이고, 시작은 곧 끝이다. 서양이 시간을 정복하라고 외칠 때, 동양은 흐름에 몸을 맡기라고 속삭인다. 지금이 겨울이라면, 봄은 반드시 온다.', icon: '🔄' },
+              quote: '"겨울이 오면, 봄이 멀겠는가?" - 셸리'
+            }
+          ]
+        },
+        {
+          badge: '후회',
+          title: '10년 전의 갈림길',
+          desc: `가끔 생각한다.
+
+10년 전, 그때 다른 선택을 했으면 지금 어떤 삶이었을까.
+
+그때 그 사람에게 고백했으면.
+그때 그 회사에 갔으면.
+그때 포기하지 않았으면.
+
+지금과 완전히 다른 삶이 펼쳐졌을 것이다.
+
+타임머신이 있다면 돌아가겠는가?
+
+단, 조건이 있다. 돌아가면 지금의 기억은 사라진다. 새로운 타임라인의 당신이 될 뿐이다. 지금의 당신은 사라진다.`,
+          highlight: '과거로 돌아갈 수 있다면, 돌아가겠는가?',
+          choices: [
+            {
+              id: 'goback2',
+              text: '돌아간다.',
+              subtext: '다시 시작하면 더 잘할 수 있다.',
+              meaning: '돌아갔다. 하지만 당신은 기억이 없다. 10년 전의 당신은 같은 정보, 같은 감정, 같은 미숙함을 가지고 있다. 그때의 당신이 "더 나은 선택"을 할 거라는 보장이 어디에 있는가? 후회하는 건 지금의 당신이다. 그때의 당신은 그게 최선이었다.',
+              principle: { name: '직선적 시간의 함정', desc: '서양의 직선적 시간관은 진보를 약속한다. 과거에서 미래로, 항상 더 나은 방향으로. 하지만 이 직선은 영원한 조바심을 안긴다. 뒤처지면 안 된다, 시간을 낭비하면 안 된다. 과거를 고치면 미래가 나아질 거라는 믿음도 이 직선 위에 있다. 하지만 직선 위의 어디로 가든, 조바심은 따라온다.', icon: '➡️' },
+              quote: '"시간은 화살처럼 날아간다. 하지만 화살은 과녁을 알지 못한다."'
+            },
+            {
+              id: 'stay2',
+              text: '돌아가지 않는다.',
+              subtext: '그 선택이 지금의 나를 만들었다.',
+              meaning: '후회스러운 선택이 있다. 하지만 그 선택이 없었으면 지금의 당신도 없다. 실패가 가르쳐준 것, 상처가 단단하게 만든 것, 돌아간 길에서 만난 사람. 그 모든 걸 지우고 싶은가? 니체는 말했다. 이 삶을 영원히 반복해도 기꺼이 받아들일 수 있느냐고. 그것이 운명을 사랑하는 것이라고.',
+              principle: { name: '아모르 파티', desc: '니체의 영원회귀. 지금 이 순간이 영원히 반복된다면? 모든 고통도, 모든 기쁨도. 이 질문에 기꺼이 "좋다"고 답할 수 있는 삶을 살라고 니체는 말한다. 후회란 "다른 삶이 가능했다"는 믿음이다. 하지만 이 삶만이 당신의 삶이다.', icon: '♾️' },
+              quote: '"네 삶을 영원히 반복해도 좋다고 말할 수 있는가? 그것이 아모르 파티다." - 니체'
+            },
+            {
+              id: 'question2',
+              text: '과거는 존재하지 않는다. 돌아갈 곳이 없다.',
+              subtext: '후회 자체가 착각이다.',
+              meaning: '과거는 어디에 있는가? 당신의 기억 속에만 있다. 하지만 기억은 지금 당신의 뇌에서 일어나는 일이다. 과거 자체는 이미 사라졌다. 돌아갈 "그때"는 존재하지 않는다. 존재하는 건 지금뿐이다. 후회란 존재하지 않는 장소를 그리워하는 것이다.',
+              principle: { name: '현재주의', desc: '과거와 미래는 실재하지 않는다. 오직 지금만 존재한다. 과거는 기억이라는 현재의 활동이고, 미래는 기대라는 현재의 활동이다. 우리는 존재하지 않는 두 유령 사이에 끼어 산다. 어제의 후회, 내일의 불안. 유일하게 실재하는 현재를 탕진하면서.', icon: '📍' },
+              quote: '"실재하는 것은 현재뿐이다. 과거와 미래는 현재 안에 있는 심리적 상태일 뿐이다." - 아우구스티누스'
+            }
+          ]
+        },
+        {
+          badge: '압박',
+          title: '부족한 24시간',
+          desc: `하루 24시간이 부족하다.
+
+할 일 목록은 끝없이 늘어난다. 메일, 회의, 보고서, 운동, 공부, 연락, 약속.
+
+기술이 발전했다. 이동은 빨라졌고, 소통은 즉각적이 됐다. 시간이 남아야 정상인데 — 왜 과거보다 더 바쁜가?
+
+해야 할 일이 늘어나는 속도가, 기술이 절약해주는 속도보다 빠르기 때문이다.
+
+우리는 더 빠르게 달리고 있지만, 목적지와의 거리는 줄어들지 않는다.`,
+          highlight: '만성적으로 시간이 부족하다. 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'manage3',
+              text: '더 효율적으로 관리한다.',
+              subtext: '시간을 쪼개고 최적화한다.',
+              meaning: '타임블록, 포모도로, 투두리스트. 분 단위로 하루를 쪼갠다. 효율은 올라갔다. 하지만 이상하다. 시간을 더 잘 쓰는데, 여유는 더 없다. 빈틈이 생기면 즉시 다른 할 일로 채워진다. 효율적으로 사는 건 자유가 아니라, 더 정교한 감옥이다.',
+              principle: { name: '규율적 시간', desc: '1시간이라는 단위는 자연에 존재하지 않는다. 산업혁명 이전 인간은 해가 뜨면 일어나고 배고프면 먹었다. 분 단위로 쪼개진 시간표는 자본가가 노동력을 관리하기 위해 만든 것이다. 시간을 관리한다는 건, 시스템이 설계한 규율 안에서 더 열심히 뛰겠다는 뜻이다.', icon: '⏰' },
+              quote: '"시계탑은 마을 어디서나 보이게 높이 세워졌다. 감시를 위해서."'
+            },
+            {
+              id: 'reduce3',
+              text: '할 일을 줄인다. 중요한 것만 남긴다.',
+              subtext: '전부 할 필요 없다.',
+              meaning: '할 일 목록의 절반을 지웠다. "안 해도 되는 일"이 이렇게 많았나. 저녁에 아무것도 안 하고 앉아 있었다. 이상하게 불안하다. 뭔가 해야 할 것 같다. 아무것도 안 하는 게 이렇게 어려운 일이었나. 파스칼은 말했다. 인간의 모든 불행은 방에 조용히 앉아 있지 못하는 데서 온다고.',
+              principle: { name: '카이로스', desc: '고대 그리스인은 두 종류의 시간을 구분했다. 크로노스는 시계가 재는 객관적 시간. 카이로스는 의미 있는 순간, 살아있다고 느끼는 시간. 사랑에 빠진 순간, 아이가 태어난 순간. 시계로 잴 수 없다. 인생의 길이는 크로노스의 총합이 아니라, 카이로스를 얼마나 태웠느냐로 결정된다.', icon: '✨' },
+              quote: '"인간의 모든 불행은 방에 조용히 앉아 있지 못하는 데서 온다." - 파스칼'
+            },
+            {
+              id: 'resist3',
+              text: '시스템의 속도를 따라갈 필요 없다.',
+              subtext: '이건 내 무능이 아니다. 시스템의 문제다.',
+              meaning: '느리게 가기로 했다. 급하지 않은 메일은 다음 날 답한다. 야근을 멈췄다. 처음에는 불안했지만, 아무도 죽지 않았다. 세상은 당신이 느려져도 돌아간다. 하지만 평가에서 밀린다. 승진에서 밀린다. 시스템은 느린 사람을 기다려주지 않는다.',
+              principle: { name: '사회적 가속', desc: '하르트무트 로자의 진단. 기술이 시간을 절약해주는 속도보다, 시스템이 요구하는 할 일의 목록이 더 빨리 늘어난다. 만성적 시간 부족은 당신의 무능이 아니다. 끝없이 속도를 높여야만 유지되는 시스템의 생존 방식이다. 문제는 이 시스템에서 혼자 느려지면, 도태된다는 것이다.', icon: '🏃' },
+              quote: '"우리는 더 빠르게 달리고 있지만, 목적지와의 거리는 줄어들지 않는다." - 하르트무트 로자'
+            }
+          ]
+        },
+        {
+          badge: '영원',
+          title: '악마의 질문',
+          desc: `악마가 나타났다.
+
+"너에게 질문이 하나 있다.
+
+지금까지 살아온 인생을 영원히 반복해야 한다. 모든 기쁨도, 모든 고통도. 시험에서 떨어진 그 절망도, 배신당한 그 분노도. 하지만 첫사랑의 설렘도, 꿈을 이뤘을 때의 기쁨도.
+
+전부 처음부터 다시. 영원히.
+
+네 대답은?"`,
+          highlight: '이 삶을 영원히 반복한다면?',
+          choices: [
+            {
+              id: 'yes4',
+              text: '좋다. 받아들인다.',
+              subtext: '이 삶을 사랑한다.',
+              meaning: '기꺼이 받아들인다. 고통스러운 순간도 있었다. 하지만 그 고통이 지금의 당신을 만들었다. 니체는 이 태도를 아모르 파티라고 불렀다. 운명을 사랑하라. 다만 질문이 남는다. 정말 매 순간을 사랑하는 건가, 아니면 사랑한다고 자기를 설득하는 건가?',
+              principle: { name: '영원회귀', desc: '니체가 던진 가장 무서운 질문. 이 삶이 영원히 반복된다면? 이것은 형벌이 아니라 리트머스 시험지다. 지금 살고 있는 이 삶을 영원히 반복해도 좋다고 말할 수 있는가? 그렇다면 당신은 삶을 긍정하는 것이다. 그렇지 않다면, 바꿔야 할 것이 있다는 뜻이다.', icon: '♾️' },
+              quote: '"이 삶을 다시 한 번, 그리고 무수히 반복해서 살아야 한다. 네가 원하는가?" - 니체'
+            },
+            {
+              id: 'no4',
+              text: '싫다. 한 번이면 충분하다.',
+              subtext: '끝이 있어서 의미 있다.',
+              meaning: '거부한다. 삶이 의미 있는 건 끝이 있기 때문이다. 영원히 반복되면 어떤 순간도 특별하지 않다. 첫사랑의 설렘도 100번째 반복이면 일상이다. 유한하기에 아름답다. 꽃이 아름다운 건 지기 때문이다.',
+              principle: { name: '유한성의 의미', desc: '시간이 영원하다면, 어떤 순간도 귀하지 않다. 내일이 무한하면 오늘을 낭비해도 된다. 하지만 시간이 유한하기에 지금 이 순간이 돌아오지 않는다. 죽음이 삶에 의미를 부여한다. 끝이 있어서 시작이 소중하다.', icon: '🌸' },
+              quote: '"죽음이 없다면, 삶도 없다."'
+            },
+            {
+              id: 'ask4',
+              text: '질문한다. "나는 반복을 기억하는가?"',
+              subtext: '기억 못 하면, 반복이 아니다.',
+              meaning: '악마에게 되묻는다. "반복할 때마다 기억하는가?" 만약 기억하지 못한다면, 매번 처음이다. 반복이 아니다. 첫사랑의 설렘은 매번 진짜 설렘이다. 그렇다면 영원히 반복해도 매번 새로운 인생이다. 하지만 기억한다면? 두 번째부터는 연극이다.',
+              principle: { name: '시간과 기억', desc: '아우구스티누스는 말했다. 시간은 기억이다. 과거는 기억이라는 현재의 활동이고, 미래는 기대라는 현재의 활동이다. 기억이 사라지면 시간도 사라진다. 치매 환자에게 과거는 존재하지 않는다. 반복을 기억하지 못하면, 영원회귀는 무의미하다. 시간의 무게는 기억이 결정한다.', icon: '🧠' },
+              quote: '"시간이란 무엇인가? 기억이다." - 아우구스티누스'
+            }
+          ]
+        },
+        {
+          badge: '본질',
+          title: '시간이란 무엇인가',
+          desc: `마지막 질문이다.
+
+물리학자 카를로 로벨리는 말했다.
+"시간은 우주의 법칙이 아니다. 인간 뇌의 한계다."
+
+양자중력 이론의 방정식에는 시간 변수가 없다. 우주의 가장 근본적인 수준에서 시간은 존재하지 않는다. 뇌가 사건들 사이의 관계를 인과관계로 해석하고, 그것을 "시간의 흐름"이라고 착각하는 것이다.
+
+시간은 세상에 있는 게 아니라, 당신 머릿속에 있다.
+
+유용한 환상이다. 하지만 환상이다.
+
+그렇다면 — 당신에게 시간이란 무엇인가?`,
+          highlight: '시간은 환상이다. 당신은 이 환상을 어떻게 쓰겠는가?',
+          choices: [
+            {
+              id: 'use5',
+              text: '환상이어도 상관없다. 이 환상 덕분에 나는 서사를 가진다.',
+              subtext: '어제를 반성하고, 내일을 꿈꿀 수 있다.',
+              meaning: '시간이 환상이라 해도, 그 환상이 당신에게 이야기를 준다. 과거의 실패에서 배우고, 미래의 꿈을 향해 걸을 수 있다. 환상이 없다면 모든 순간이 낱개의 점일 뿐이다. 점을 이어 선으로 만드는 것, 그것이 시간이라는 환상의 선물이다.',
+              principle: { name: '서사로서의 시간', desc: '시간은 허구일 수 있다. 하지만 그 허구 덕분에 우리는 서사를 가질 수 있다. 과거의 나를 반성하고 미래의 나를 꿈꾸는 이 능력은, 시간이라는 환상 위에 세워져 있다. 환상에 쫓기는 노예가 될 것인가, 환상을 이용하는 감독이 될 것인가.', icon: '📖' },
+              quote: '"당신은 필름 위의 배우가 아니라, 이 필름을 어떻게 감상할지 결정하는 감독이다."'
+            },
+            {
+              id: 'free5',
+              text: '환상이라면, 더 이상 쫓기지 않겠다.',
+              subtext: '시간의 노예를 그만둔다.',
+              meaning: '시간이 환상이라면, 시간에 쫓기는 것도 환상이다. 늦었다는 공포, 시간을 낭비했다는 죄책감. 전부 환상이다. 당신의 시간은 당신이 믿는 만큼만 존재한다. 하지만 사회는 환상을 공유한다. 혼자만 시계를 버리면, 세상이 당신을 버린다.',
+              principle: { name: '양자적 시간', desc: '물리학자 카를로 로벨리는 말한다. 양자중력 이론의 방정식에는 시간 변수가 없다. 우주의 가장 근본적인 수준에서 시간은 존재하지 않는다. 시간은 뇌가 만들어낸 유용한 환상이다. 이 환상에 지배당할 것인가, 이 환상을 도구로 쓸 것인가.', icon: '⚛️' },
+              quote: '"시간은 우주의 법칙이 아니다. 인간 뇌의 한계다." - 카를로 로벨리'
+            },
+            {
+              id: 'now5',
+              text: '환상이든 아니든, 지금 이 순간만 진짜다.',
+              subtext: '과거도 미래도 없다. 지금뿐이다.',
+              meaning: '시간의 본질이 뭐든, 확실한 건 하나다. 지금, 이 순간은 존재한다. 당신이 이 문장을 읽고 있는 이 순간. 이것만큼은 환상이 아니다. 과거는 기억이고, 미래는 상상이다. 진짜인 건 지금뿐이다. 그렇다면 지금을 어떻게 쓸 것인가?',
+              principle: { name: '영원한 현재', desc: '모든 시간관을 관통하는 하나의 진실. 과거가 직선이든 원이든, 시간이 환상이든 실재든, 지금 이 순간만큼은 당신 앞에 있다. 찰나가 영겁이고 영겁이 찰나라면, 지금 이 순간이 곧 영원이다. 시간의 주인은 시간을 정복하는 사람이 아니라, 지금에 깨어있는 사람이다.', icon: '🌟' },
+              quote: '"영원이란 긴 시간이 아니다. 시간이 없는 순간이다." - 마이스터 에크하르트'
+            }
+          ]
+        }
+      ],
+      
+      calculateResult(choices, principles) {
+        // 시간관 성향 추적
+        const timeViews = {
+          quit1: 'biological', awake1: 'present', accept1: 'cyclical',
+          goback2: 'linear', stay2: 'eternal', question2: 'present',
+          manage3: 'disciplinary', reduce3: 'kairos', resist3: 'acceleration',
+          yes4: 'eternal', no4: 'finite', ask4: 'cognitive',
+          use5: 'narrative', free5: 'quantum', now5: 'present'
+        };
+        
+        const counts = {};
+        choices.forEach(c => {
+          const view = timeViews[c.choiceId];
+          counts[view] = (counts[view] || 0) + 1;
+        });
+        
+        // present 계열 (찰나, 현재주의, 지금)
+        const presentCount = (counts.present || 0);
+        // eternal 계열 (영원회귀, 아모르파티)
+        const eternalCount = (counts.eternal || 0);
+        // linear/disciplinary 계열 (직선, 규율, 관리)
+        const linearCount = (counts.linear || 0) + (counts.disciplinary || 0);
+        // cyclical/biological 계열
+        const naturalCount = (counts.cyclical || 0) + (counts.biological || 0);
+        
+        if (presentCount >= 2) {
+          return {
+            icon: '📍',
+            label: '당신의 시간관',
+            title: '지금을 사는 사람',
+            desc: '당신은 과거에도 미래에도 매이지 않습니다.\n\n후회하지 않고, 불안해하지 않습니다. 지금 이 순간에 깨어있으려 합니다.\n\n불교의 찰나, 아우구스티누스의 현재주의, 에크하르트의 영원한 현재. 당신의 시간관은 가장 오래된 지혜와 닿아 있습니다.\n\n다만, 지금에만 사는 사람은 미래를 준비하지 않을 수 있습니다. 현재와 미래 사이의 균형을 찾는 것이 과제입니다.',
+            stats: [
+              { value: '현재주의', label: '지배적 시간관' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else if (eternalCount >= 2) {
+          return {
+            icon: '♾️',
+            label: '당신의 시간관',
+            title: '운명을 사랑하는 사람',
+            desc: '당신은 삶을 있는 그대로 긍정합니다.\n\n후회도, 원망도, 아쉬움도 삶의 일부로 받아들입니다. 니체가 말한 아모르 파티. 운명을 사랑하는 태도.\n\n이것은 체념이 아닙니다. 모든 순간을 자기 것으로 끌어안겠다는 의지입니다.\n\n다만, 수용과 체념의 경계는 생각보다 가깝습니다.',
+            stats: [
+              { value: '영원회귀', label: '지배적 시간관' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else if (linearCount >= 2) {
+          return {
+            icon: '➡️',
+            label: '당신의 시간관',
+            title: '앞으로 가는 사람',
+            desc: '당신은 시간을 관리하고, 계획하고, 앞으로 나아가려 합니다.\n\n과거를 고치고 싶고, 미래를 더 낫게 만들고 싶습니다. 서양의 직선적 시간관, 산업혁명이 만든 규율적 시간 위에 서 있습니다.\n\n이 태도가 문명을 만들었습니다. 하지만 동시에 영원한 조바심도 만들었습니다.\n\n때로는 멈추는 것이 가장 빠른 길입니다.',
+            stats: [
+              { value: '직선적 시간관', label: '지배적 시간관' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else if (naturalCount >= 2) {
+          return {
+            icon: '🔄',
+            label: '당신의 시간관',
+            title: '흐름에 맡기는 사람',
+            desc: '당신은 시간을 정복하려 하지 않습니다.\n\n겨울이 오면 봄이 온다는 걸 압니다. 뇌가 새로운 자극을 원한다는 걸 압니다. 자연의 리듬에 몸을 맡기는 태도.\n\n동양의 순환적 시간관, 생물학적 시간의 지혜가 당신 안에 있습니다.\n\n다만, 흐름에 맡긴다는 건 때로 수동성이 될 수 있습니다.',
+            stats: [
+              { value: '순환적 시간관', label: '지배적 시간관' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else {
+          return {
+            icon: '🌀',
+            label: '당신의 시간관',
+            title: '시간의 탐색자',
+            desc: '당신은 하나의 시간관에 매이지 않습니다.\n\n상황에 따라 다른 시간관으로 세상을 봅니다. 때로는 지금에 집중하고, 때로는 미래를 계획하고, 때로는 흐름에 맡깁니다.\n\n이것은 혼란이 아닙니다. 유연함입니다. 시간을 하나의 렌즈로만 보는 사람보다, 여러 렌즈를 가진 사람이 더 자유롭습니다.',
+            stats: [
+              { value: '다중 시간관', label: '지배적 시간관' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        }
+      },
+      
+      getShareText(resultTitle, choices, principles) {
+        const principleNames = principles.map(p => p.name).slice(0, 3).join(', ');
+        return '⏳ 시간의 주인\n\n나의 시간관: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n당신은 시간을 어떻게 바라보는 사람인가?\n\nhttps://bit.ly/time-master-sim';
+      }
+    };
+    
+    SimTemplate.init(CONFIG);
+    
+    const oldShareBtn = document.getElementById('shareBtn');
+    const newShareBtn = oldShareBtn.cloneNode(true);
+    oldShareBtn.parentNode.replaceChild(newShareBtn, oldShareBtn);
+    newShareBtn.addEventListener('click', async () => {
+      const url = CONFIG.shareUrl;
+      const result = document.getElementById('resultTitle').textContent;
+      const text = '⏳ 시간의 주인\n\n나의 시간관: ' + result + '\n\n당신은 시간을 어떻게 바라보는 사람인가?\n\n' + url;
+      if (navigator.share) { try { await navigator.share({ title: '시간의 주인', text, url }); } catch {} }
+      else { 
+        try { await navigator.clipboard.writeText(text); } catch(e) {
+          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        newShareBtn.textContent = '링크 복사됨!';
+        setTimeout(() => { newShareBtn.textContent = '친구한테 시켜보기'; }, 2000);
+      }
+    });
+
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#101520');
+      gradient.addColorStop(1, '#182030');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#6d9dc5';
+      ctx.fillText(document.getElementById('resultLabel').textContent, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 250;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      if (line) ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#6d9dc5';
+      ctx.fillText('시간의 주인', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '시간의주인_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>
