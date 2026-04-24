@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>사고의 층 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="사고의 층 - 이클립스의 딜렘">
+  <meta property="og:description" content="당신은 몇 층에서 생각하는 사람인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #00d4aa;
+      --sim-primary-light: #33e0be;
+      --sim-primary-bg: rgba(0, 212, 170, 0.1);
+      --sim-primary-border: rgba(0, 212, 170, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">사고의 층</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle"></div>
+        <div class="sim-situation-desc" id="situationDesc"></div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice"></div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning"></div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName"></div>
+        <div class="sim-principle-desc" id="principleDesc"></div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText"></span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🧠</div>
+        <div class="sim-result-label" id="resultLabel">당신의 사고 유형</div>
+        <div class="sim-result-title" id="resultTitle"></div>
+        <div class="sim-result-desc" id="resultDesc"></div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #00d4aa; font-weight: 600; margin-bottom: 8px; letter-spacing: 1px;">이 시뮬레이터의 바탕이 된 생각들이 궁금하다면</div>
+        </div>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display: block; text-decoration: none; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #101a18 0%, #152520 50%, #101a18 100%); border: 1px solid rgba(0, 212, 170, 0.3); border-radius: 16px; padding: 24px; text-align: center;">
+            <img src="book-psychology.png" alt="훔친 심리학 편" style="width: 200px; height: auto; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 8px 32px rgba(0, 212, 170, 0.2);">
+            <div style="font-size: 17px; font-weight: 700; color: #00d4aa; margin-bottom: 6px;">세계척학전집 — 훔친 심리학 편</div>
+            <div style="font-size: 12px; color: #71717a;">있어 보이는 척하기 좋은 심리학의 문법</div>
+          </div>
+        </a>
+        <div style="font-size: 12px; color: #52525b; text-align: center; margin-bottom: 12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 철학 편</div>
+          </a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-wealth.png" alt="훔친 부 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 부 편</div>
+          </a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-love.png" alt="사랑은 오해다" class="sim-book-cover">
+            <div class="sim-book-title">사랑은 오해다</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="sim-template.js"></script>
+  <script>
+    const CONFIG = {
+      id: 'think-layer',
+      title: '사고의 층',
+      shareIcon: '🧠',
+      shareUrl: 'https://bit.ly/think-layer-sim',
+      version: 5,
+      
+      stages: [
+        {
+          badge: '직장',
+          title: '무시당한 아이디어',
+          desc: `회의에서 당신이 제안한 아이디어를 상사가 무시했다.
+
+"음... 그건 좀 아닌 것 같은데."
+
+한마디로 끝났다. 동료들이 당신을 본다. 회의는 다음 안건으로 넘어갔다.
+
+당신은 분명 좋은 아이디어라고 생각했다.`,
+          highlight: '상사에게 아이디어가 무시당했다. 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'angry1',
+              text: '화가 난다. 왜 저렇게 말하지?',
+              subtext: '기분이 나쁘다.',
+              meaning: '얼굴이 달아오른다. "뭐가 아닌데?" 속으로 욕이 나온다. 회의 내내 아무것도 안 들린다. 이 반응은 자연스럽다. 하지만 감정은 상황을 바꾸지 않는다. 화가 풀리면 남는 건 — 여전히 무시당한 아이디어뿐이다.',
+              principle: { name: '반응의 층', desc: '사고의 첫 번째 층. 자극에 대한 즉각적 감정 반응. 분노, 수치심, 좌절. 인간의 가장 원초적인 사고 방식이다. 나쁜 것이 아니다. 하지만 여기서 멈추면 감정의 노예가 된다. 반응은 시작이지 결론이 아니다.', icon: '⚡' },
+              quote: '"화가 나는 건 자연스럽다. 화에 머무는 건 선택이다." - 무명'
+            },
+            {
+              id: 'analyze1',
+              text: '왜 무시당했는지 분석한다.',
+              subtext: '내 제안에 문제가 있었나?',
+              meaning: '복기한다. 타이밍이 안 좋았나? 근거가 부족했나? 표현이 잘못됐나? 아이디어 자체보다 전달 방식의 문제였을 수 있다. 분석하면 개선점이 보인다. 하지만 모든 것을 분석으로 해결할 수 있는 건 아니다. 상사가 그냥 기분이 나빴을 수도 있다.',
+              principle: { name: '분석의 층', desc: '사고의 두 번째 층. "왜?"를 묻는다. 원인을 파악하고, 주어진 문제를 잘 풀려고 한다. 효율적이고 실용적이다. 대부분의 교육이 여기까지 가르친다. 하지만 분석은 주어진 프레임 안에서만 작동한다. 프레임 자체를 의심하지 않는다.', icon: '🔍' },
+              quote: '"올바른 답을 찾는 것보다 올바른 질문을 찾는 것이 어렵다." - 아인슈타인'
+            },
+            {
+              id: 'strategy1',
+              text: '상사가 왜 저런 반응을 보이는지 파악한다.',
+              subtext: '이 사람의 의도가 뭐지?',
+              meaning: '생각한다. 상사가 무시한 건 아이디어가 나빠서가 아니라, 자기 아이디어와 충돌하기 때문일 수 있다. 또는 당신이 돋보이는 게 불편할 수 있다. 의도를 읽으면 대응이 달라진다. 다음에는 상사의 아이디어에 붙여서 제안하면 통과될 수 있다.',
+              principle: { name: '전략의 층', desc: '사고의 세 번째 층. "왜?"가 아니라 "이 사람의 의도는 무엇인가?"를 묻는다. 상대의 동기, 맥락, 권력 구조를 읽는다. 체스에서 상대의 다음 수를 예측하는 것과 같다. 같은 판 위에 있지만, 보이는 수가 다르다.', icon: '♟️' },
+              quote: '"보이는 대로 반응하는 사람은 1수를 본다. 의도를 읽는 사람은 3수를 본다." - 무명'
+            },
+            {
+              id: 'meta1',
+              text: '"무시당했다"고 느끼는 나를 관찰한다.',
+              subtext: '왜 나는 이 상황에서 이렇게 반응하는가?',
+              meaning: '멈춘다. "무시당했다"는 해석은 누가 했는가? 상사는 "아닌 것 같다"고 말했을 뿐이다. 그것을 "무시"로 해석한 건 당신이다. 왜? 인정받고 싶은 욕구가 있기 때문이다. 그 욕구는 어디서 왔는가? 이 질문을 던지는 순간, 상황이 아니라 자기 자신을 보게 된다.',
+              principle: { name: '철학의 층', desc: '사고의 네 번째 층. 상황이 아니라 자기 자신의 사고 과정을 관찰한다. "왜 나는 이것을 문제로 느끼는가?" "나의 전제는 무엇인가?" 메타인지. 생각에 대한 생각. 소크라테스가 말한 "너 자신을 알라"의 실천이다. 가장 느리지만 가장 깊다.', icon: '🔮' },
+              quote: '"성찰하지 않는 삶은 살 가치가 없다." - 소크라테스'
+            }
+          ]
+        },
+        {
+          badge: '관계',
+          title: '친구의 뒷담화',
+          desc: `친한 친구가 당신 뒷담화를 했다는 걸 알게 됐다.
+
+"걔는 좀 예민해서..."
+
+다른 친구가 슬쩍 알려줬다.
+
+믿었던 사람이다.`,
+          highlight: '친구가 뒷담화를 했다. 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'angry2',
+              text: '배신감이 든다. 바로 연락한다.',
+              subtext: '"나한테 할 말 있지?"',
+              meaning: '"나 뒷담화 한 거 다 들었어." 전화를 걸었다. 목소리가 떨린다. 친구가 당황한다. "그게... 그런 뜻이 아니라..." 말다툼이 시작된다. 감정이 쏟아진다. 시원할 수 있다. 하지만 쏟아진 말은 주워 담을 수 없다.',
+              principle: { name: '감정적 즉각 반응', desc: '배신감, 분노, 상처. 이 감정들이 행동을 지배한다. 생각하기 전에 몸이 먼저 움직인다. 편도체가 전두엽보다 빠르기 때문이다. 감정적 반응은 솔직하지만, 최적의 결과를 가져오는 경우는 드물다.', icon: '💥' },
+              quote: '"분노는 당신이 마시고 상대가 죽기를 바라는 독약이다." - 무명'
+            },
+            {
+              id: 'analyze2',
+              text: '뒷담화의 내용을 정확히 파악한다.',
+              subtext: '"정확히 뭐라고 했는데?"',
+              meaning: '"정확히 뭐라고 했어?" 알려준 친구에게 묻는다. 내용을 확인한다. "예민하다"는 말이 악의였는지, 사실 확인이었는지에 따라 대응이 달라진다. 정보가 부족한 상태에서 판단하면 오판한다.',
+              principle: { name: '사실 확인의 사고', desc: '감정이 아니라 사실부터 확인한다. "뭐라고 했는가" "어떤 맥락이었는가" "누구에게 했는가." 분석적 사고는 감정적 반응보다 정확한 대응을 가능하게 한다. 하지만 사실만으로 감정이 해결되지는 않는다.', icon: '📋' },
+              quote: '"판단하기 전에 이해하라." - 스피노자'
+            },
+            {
+              id: 'strategy2',
+              text: '이 상황을 어떻게 활용할지 생각한다.',
+              subtext: '알려준 친구의 의도도 파악해야 한다.',
+              meaning: '생각한다. 뒷담화를 한 친구도 문제지만, "슬쩍 알려준" 친구의 의도도 읽어야 한다. 왜 알려줬을까? 걱정에서? 이간질에서? 두 사람의 관계를 읽고, 자신에게 유리한 위치를 잡는다. 인간관계는 감정이 아니라 역학이다.',
+              principle: { name: '관계 역학 파악', desc: '모든 인간관계에는 보이지 않는 역학이 있다. 누가 누구 편인지, 누가 정보를 흘리는지, 누가 이득을 보는지. 전략적 사고는 감정을 넘어 구조를 읽는다. 하지만 모든 관계를 전략으로 바라보면, 진심을 주고받는 관계가 사라진다.', icon: '🕸️' },
+              quote: '"적을 아는 것보다 아군을 아는 것이 어렵다." - 무명'
+            },
+            {
+              id: 'meta2',
+              text: '"배신당했다"고 느끼는 내 기준을 점검한다.',
+              subtext: '뒷담화는 정말 배신인가?',
+              meaning: '멈춘다. "예민하다"는 말이 뒷담화인가? 사실일 수 있다. 당신이 예민한 사람일 수 있다. 그렇다면 친구가 다른 사람에게 "좀 예민해서"라고 말한 건 악의가 아니라 사실 공유였을 수 있다. "뒷담화 = 배신"이라는 등식은 누가 만들었는가? 당신이다.',
+              principle: { name: '전제에 대한 의심', desc: '"뒷담화는 나쁘다"는 전제가 진짜인가? 모든 사람은 뒤에서 이야기한다. 그것이 악의인지 소통인지는 내용과 맥락에 달렸다. 자신의 전제를 의심하는 것은 불편하지만, 가장 정확한 사고에 도달하는 길이다.', icon: '🪞' },
+              quote: '"문제는 답이 아니라 질문에 있다. 질문을 바꾸면 답이 바뀐다." - 무명'
+            }
+          ]
+        },
+        {
+          badge: '실패',
+          title: '시험에 떨어졌다',
+          desc: `준비한 시험에 떨어졌다.
+
+6개월을 투자했다. 주말도 반납했다. "이번엔 된다"고 확신했다.
+
+결과를 확인했다. 불합격.
+
+주변에서 말한다. "다음에 다시 하면 돼."
+
+그 말이 위로가 되지 않는다.`,
+          highlight: '6개월을 투자한 시험에 떨어졌다. 어떻게 반응하겠는가?',
+          choices: [
+            {
+              id: 'angry3',
+              text: '좌절한다. 6개월이 날아갔다.',
+              subtext: '아무것도 하기 싫다.',
+              meaning: '이불 속에 들어간다. 핸드폰을 끈다. 아무것도 하기 싫다. 6개월이 무의미했다는 생각이 머리를 채운다. 이 좌절은 자연스럽다. 하지만 좌절에 머물면, 실패가 정체성이 된다. "나는 실패한 사람"이라는 라벨이 붙는다.',
+              principle: { name: '감정에 머무는 사고', desc: '실패 후 감정에 빠지는 건 자연스럽다. 문제는 시간이다. 하루 좌절하는 건 건강하다. 한 달 좌절하면 우울이 된다. 감정의 층에서는 "무엇이 잘못됐는가"를 묻지 못한다. 왜냐하면 아직 아프니까.', icon: '😞' },
+              quote: '"넘어진 것은 실패가 아니다. 누워 있는 것이 실패다." - 무명'
+            },
+            {
+              id: 'analyze3',
+              text: '어디서 틀렸는지 분석한다.',
+              subtext: '공부 방법에 문제가 있었나?',
+              meaning: '성적표를 펼친다. 어떤 과목에서 감점됐는지 확인한다. 공부 시간 배분을 복기한다. 약점을 찾았다. 다음에는 이 부분을 보완하면 된다. 효율적이다. 하지만 "왜 시험을 치는가"는 묻지 않는다.',
+              principle: { name: '개선 중심 사고', desc: '실패를 데이터로 본다. 감정이 아니라 원인을 찾고, 해결책을 설계한다. 매우 유용하다. 하지만 분석의 층은 "더 잘하는 법"은 알려주지만, "이것을 해야 하는 이유"는 알려주지 않는다. 주어진 게임을 잘 하는 것과, 게임 자체를 선택하는 것은 다르다.', icon: '📊' },
+              quote: '"같은 방법으로 반복하면서 다른 결과를 기대하는 것은 미친 짓이다." - 아인슈타인'
+            },
+            {
+              id: 'strategy3',
+              text: '시험 자체의 구조를 파악한다.',
+              subtext: '출제자가 원하는 게 뭔지 읽어야 한다.',
+              meaning: '기출문제를 다시 본다. 단순히 내용이 아니라, 출제자의 의도를 읽는다. "이 문제는 왜 이렇게 냈을까?" "어떤 능력을 보려는 걸까?" 시험은 지식 테스트가 아니라 소통이다. 출제자와 대화하는 법을 알면, 같은 지식으로 더 높은 점수를 받는다.',
+              principle: { name: '의도 파악의 사고', desc: '주어진 문제를 푸는 것이 아니라, 문제를 낸 사람의 의도를 읽는다. 같은 정보를 가지고 더 높은 성과를 내는 사람은 대부분 이 층에 있다. 시험, 면접, 협상 — 상대의 의도를 읽으면 게임이 달라진다.', icon: '🎯' },
+              quote: '"정답을 아는 것보다 출제자를 아는 것이 낫다." - 무명'
+            },
+            {
+              id: 'meta3',
+              text: '"왜 이 시험을 쳐야 하는가?"를 묻는다.',
+              subtext: '6개월을 바친 이유가 진짜 내 것인가?',
+              meaning: '멈춘다. 이 시험을 왜 치려고 했는가? 정말 원해서? 아니면 부모님 기대? 사회적 기준? "이걸 따면 인정받을 수 있다"는 생각? 만약 이 시험이 당신의 진짜 목표가 아니었다면, 합격해도 공허할 것이다. 실패가 알려주는 건 실력 부족이 아니라, 방향의 재검토일 수 있다.',
+              principle: { name: '목적에 대한 메타 사고', desc: '"왜?"를 끝까지 파고든다. 시험에 떨어졌다 → 왜 시험을 치는가 → 왜 그 직업을 원하는가 → 왜 그 삶을 원하는가. 대부분은 두 번째 "왜"에서 멈춘다. 끝까지 간 사람만이 진짜 자신의 방향을 찾는다.', icon: '🔮' },
+              quote: '"사다리를 빨리 오르는 것보다, 그 사다리가 올바른 벽에 기대어 있는지 확인하는 것이 먼저다." - 스티븐 코비'
+            }
+          ]
+        },
+        {
+          badge: '갈등',
+          title: '부당한 지시',
+          desc: `팀장이 지시한다.
+
+"이 보고서, 수치를 좀 올려서 보내."
+
+실적이 안 좋다. 팀장도 압박받고 있다. 수치를 올리면 팀이 살아남는다.
+
+하지만 이건 조작이다.
+
+거부하면 팀에서 밀려날 수 있다.`,
+          highlight: '보고서 수치를 조작하라는 지시. 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'angry4',
+              text: '화가 난다. "왜 나한테 이래요?"',
+              subtext: '부당하다.',
+              meaning: '"왜 저한테 이런 걸 시키세요?" 팀장이 굳어진다. "... 하라면 해." 분위기가 얼어붙는다. 당신의 분노는 정당하다. 하지만 감정적 저항은 상대에게 "다루기 어려운 사람"이라는 인상만 남긴다. 옳은 감정이 옳은 결과를 보장하지 않는다.',
+              principle: { name: '정의로운 분노의 한계', desc: '부당함에 분노하는 건 도덕적으로 옳다. 하지만 분노만으로는 부당함이 바뀌지 않는다. "왜 이래요?"는 감정의 표출이지 문제 해결이 아니다. 분노 뒤에 무엇을 할 것인가가 진짜 질문이다.', icon: '🔥' },
+              quote: '"분노 없는 정의는 무기력하고, 정의 없는 분노는 위험하다." - 무명'
+            },
+            {
+              id: 'analyze4',
+              text: '조작이 들킬 경우의 리스크를 계산한다.',
+              subtext: '들키면 나만 책임진다.',
+              meaning: '계산한다. 조작이 감사에서 걸리면? 팀장은 "난 모른다"고 할 것이다. 보고서에 이름이 적힌 건 당신이다. 이득은 팀장이 가져가고, 리스크는 당신이 진다. 구조적으로 불리한 거래다.',
+              principle: { name: '리스크 분석', desc: '감정이 아니라 구조를 본다. 누가 이득을 보는가, 누가 리스크를 지는가, 들킬 확률은 얼마인가. 분석의 층에서는 도덕이 아니라 손익으로 판단한다. 효율적이지만, "옳고 그름"의 판단은 빠져 있다.', icon: '📉' },
+              quote: '"도덕적으로 안 해야 하는 일은, 대개 실용적으로도 안 해야 하는 일이다." - 무명'
+            },
+            {
+              id: 'strategy4',
+              text: '팀장의 상사가 원하는 게 무엇인지 파악한다.',
+              subtext: '진짜 압박의 출처를 읽는다.',
+              meaning: '팀장이 왜 조작을 시키는지 파악한다. 팀장도 위에서 압박받고 있다. 그렇다면 팀장의 상사가 원하는 건 "좋은 수치"가 아니라 "문제 해결 의지"일 수 있다. 수치를 올리는 대신, 현실적인 개선 계획서를 만들면 팀장도 살고 당신도 산다.',
+              principle: { name: '구조 너머의 의도', desc: '보이는 지시 뒤에 숨겨진 의도를 읽는다. 팀장이 "수치를 올려라"고 한 건, 수치 자체가 목적이 아니라 생존이 목적이다. 진짜 목적을 파악하면, 조작 없이도 같은 결과를 만들 수 있는 경로가 보인다.', icon: '🔭' },
+              quote: '"명령을 따르는 사람은 1류다. 명령의 의도를 파악하는 사람은 특급이다." - 무명'
+            },
+            {
+              id: 'meta4',
+              text: '"이 조직에서 나는 어떤 사람이고 싶은가?"',
+              subtext: '이 선택이 나를 어떤 사람으로 만드는가.',
+              meaning: '한 발 물러선다. 수치를 올리면 지금은 살아남는다. 하지만 한 번 하면 두 번째는 쉬워진다. 조작하는 사람이 되는 것은 한순간이다. "이 조직에서 나는 어떤 사람으로 살 것인가?" 이 질문에 답하면, 행동은 자연스럽게 따라온다.',
+              principle: { name: '정체성 기반 의사결정', desc: '"무엇을 할 것인가" 대신 "어떤 사람이 될 것인가"를 묻는다. 행동 하나하나가 정체성을 만든다. 오늘 조작하는 사람은 내일도 조작하는 사람이다. 철학의 층에서 의사결정은 상황이 아니라 자아에 기반한다.', icon: '🪞' },
+              quote: '"매 순간의 선택이 당신이 누구인지를 결정한다." - 장 폴 사르트르'
+            }
+          ]
+        },
+        {
+          badge: '인생',
+          title: '10년의 질문',
+          desc: `30대 중반이 됐다.
+
+커리어도 쌓았고, 돈도 벌었다. 나쁘지 않다.
+
+하지만 일요일 밤, 이불 속에서 생각한다.
+
+"나는 왜 이걸 하고 있지?"
+
+내일 월요일. 또 출근한다. 하던 일을 한다. 잘한다.
+
+하지만 "잘한다"와 "하고 싶다"는 다른 문장이다.`,
+          highlight: '"나는 왜 이걸 하고 있지?" 이 질문에 어떻게 답하겠는가?',
+          choices: [
+            {
+              id: 'angry5',
+              text: '그냥 피곤한 거다. 쉬면 괜찮아진다.',
+              subtext: '원래 일요일 밤은 우울하다.',
+              meaning: '넷플릭스를 켠다. 잠들 때까지 본다. 월요일 아침, 알람 소리에 일어난다. 출근한다. 괜찮다. 대부분의 날은 괜찮다. 하지만 다음 일요일 밤에도 같은 생각이 든다. 회피는 해결이 아니라 연기다.',
+              principle: { name: '감정 회피', desc: '불편한 감정을 느끼면 즉시 다른 것으로 덮는다. 넷플릭스, 술, 쇼핑, 게임. 감정을 마주하면 아프기 때문이다. 하지만 덮인 감정은 사라지지 않는다. 곪는다. 그리고 어느 날 한꺼번에 터진다.', icon: '🙈' },
+              quote: '"가장 큰 위험은 위험 없는 삶을 사는 것이다." - 무명'
+            },
+            {
+              id: 'analyze5',
+              text: '현실적으로 따져본다. 지금 관두면 뭐가 남는가?',
+              subtext: '대안 없이 의미를 찾는 건 사치다.',
+              meaning: '계산한다. 통장 잔고, 대출, 월세, 이력서. 현실적으로 지금 관두면 6개월 안에 다른 곳을 찾아야 한다. 대안이 없으면 불만을 견디는 게 합리적이다. 맞는 말이다. 하지만 "합리적"이라는 말 뒤에 숨은 건 두려움이다.',
+              principle: { name: '현실 제약 분석', desc: '감정이 아니라 조건을 본다. 대안이 있는가, 재정적으로 가능한가, 리스크는 감수할 수 있는가. 매우 실용적이지만, "왜?"라는 질문은 다루지 않는다. 현실 제약 안에서 최적화하는 것과, 제약 자체를 바꾸는 것은 다른 차원이다.', icon: '📊' },
+              quote: '"현실적이라는 말은 종종 꿈을 포기하라는 말의 동의어로 쓰인다." - 무명'
+            },
+            {
+              id: 'strategy5',
+              text: '지금 위치에서 원하는 방향으로 이동할 경로를 설계한다.',
+              subtext: '한 번에 바꾸는 게 아니라 단계적으로.',
+              meaning: '현재 위치에서 원하는 곳까지의 거리를 측정한다. 바로 뛰어내리는 게 아니라, 다리를 놓는다. 퇴근 후 2시간씩 준비한다. 6개월 뒤 사이드 프로젝트가 돌아가면 그때 결정한다. 전략적이다. 하지만 "원하는 곳"이 정말 원하는 곳인지는 확인했는가?',
+              principle: { name: '경로 설계', desc: '감정도, 분석도 넘어 실제 행동 계획을 세운다. 현재와 목표 사이의 경로를 설계하고, 단계적으로 이동한다. 대부분의 성공한 전환은 이 방식을 따른다. 다만, 목적지가 맞는지는 별개의 질문이다.', icon: '🗺️' },
+              quote: '"방향이 맞으면 속도는 문제가 되지 않는다." - 무명'
+            },
+            {
+              id: 'meta5',
+              text: '"하고 싶은 것"이라는 개념 자체를 의심한다.',
+              subtext: '정말 하고 싶은 것이 있어야 하는가?',
+              meaning: '"하고 싶은 일을 찾아야 한다"는 전제가 진짜인가? 대부분의 인류 역사에서 사람들은 "하고 싶은 일"을 하지 않았다. 먹고살기 위해 일했다. "꿈을 찾아라"는 현대의 발명품이다. 하고 싶은 일이 없어도 괜찮을 수 있다. 문제는 "없는 것"이 아니라, "있어야 한다"는 압박이다.',
+              principle: { name: '프레임에 대한 질문', desc: '가장 깊은 사고의 층. 문제 자체를 의심한다. "하고 싶은 일을 찾아야 한다"는 누가 정한 규칙인가? 이 질문을 바꾸면 고통이 사라질 수 있다. "의미 있는 일을 하라"가 아니라 "하는 일에서 의미를 찾으라"로 바꾸면, 지금 이 자리에서도 충분하다.', icon: '🔮' },
+              quote: '"질문을 바꾸면 답이 바뀌고, 답이 바뀌면 삶이 바뀐다." - 무명'
+            }
+          ]
+        }
+      ],
+      
+      calculateResult(choices, principles) {
+        const layers = {
+          angry1: 1, analyze1: 2, strategy1: 3, meta1: 4,
+          angry2: 1, analyze2: 2, strategy2: 3, meta2: 4,
+          angry3: 1, analyze3: 2, strategy3: 3, meta3: 4,
+          angry4: 1, analyze4: 2, strategy4: 3, meta4: 4,
+          angry5: 1, analyze5: 2, strategy5: 3, meta5: 4
+        };
+        
+        let total = 0;
+        const counts = {1: 0, 2: 0, 3: 0, 4: 0};
+        choices.forEach(c => {
+          const layer = layers[c.choiceId];
+          total += layer;
+          counts[layer]++;
+        });
+        
+        const avg = total / 5;
+        const dominant = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+        
+        if (avg >= 3.5) {
+          return {
+            icon: '🔮', label: '당신의 사고 유형', title: '철학가의 층',
+            desc: '당신은 상황이 아니라 자기 자신의 사고를 관찰하는 사람입니다.\n\n"왜?"를 끝까지 파고듭니다. 문제가 아니라 전제를 의심합니다. 질문을 바꾸면 답이 바뀐다는 걸 알고 있습니다.\n\n가장 깊은 사고의 층입니다. 하지만 항상 이 층에 있으면 행동이 느려질 수 있습니다. 생각하느라 움직이지 못하는 것도 위험합니다.\n\n최고의 사고는 상황에 따라 층을 오가는 것입니다.',
+            stats: [{ value: '4층', label: '지배적 사고 층' }, { value: (avg).toFixed(1), label: '평균 사고 깊이' }]
+          };
+        } else if (avg >= 2.8) {
+          return {
+            icon: '♟️', label: '당신의 사고 유형', title: '전략가의 층',
+            desc: '당신은 보이는 것 너머의 의도를 읽는 사람입니다.\n\n상대가 왜 그렇게 행동하는지, 구조가 어떻게 작동하는지 파악합니다. 같은 정보를 가지고 더 나은 결과를 만들어냅니다.\n\n강력한 사고 능력입니다. 하지만 모든 것을 전략으로 바라보면, 순수한 관계와 감정을 잃을 수 있습니다.\n\n때로는 계산 없이 느끼는 것도 필요합니다.',
+            stats: [{ value: '3층', label: '지배적 사고 층' }, { value: (avg).toFixed(1), label: '평균 사고 깊이' }]
+          };
+        } else if (avg >= 1.8) {
+          return {
+            icon: '🔍', label: '당신의 사고 유형', title: '분석가의 층',
+            desc: '당신은 문제를 논리적으로 파악하고 해결하는 사람입니다.\n\n감정에 휘둘리지 않고, 원인을 찾고, 개선점을 도출합니다. 주어진 과제를 잘 수행하는 데 탁월합니다.\n\n실용적이고 효율적인 사고입니다. 하지만 분석은 주어진 프레임 안에서만 작동합니다. 가끔 프레임 자체를 의심해볼 필요가 있습니다.\n\n"더 잘하는 법"이 아니라 "왜 하는가"를 물어보세요.',
+            stats: [{ value: '2층', label: '지배적 사고 층' }, { value: (avg).toFixed(1), label: '평균 사고 깊이' }]
+          };
+        } else {
+          return {
+            icon: '⚡', label: '당신의 사고 유형', title: '반응의 층',
+            desc: '당신은 감정에 솔직한 사람입니다.\n\n화가 나면 화를 내고, 슬프면 슬퍼합니다. 가식이 없습니다. 감정은 인간의 가장 원초적인 지혜입니다.\n\n하지만 감정은 시작이지 결론이 아닙니다. 화가 난 뒤에 "왜 화가 났는가"를 한 번만 물어보면, 같은 상황에서 다른 선택을 할 수 있습니다.\n\n감정 위에 한 층만 올리면 세상이 달라 보입니다.',
+            stats: [{ value: '1층', label: '지배적 사고 층' }, { value: (avg).toFixed(1), label: '평균 사고 깊이' }]
+          };
+        }
+      },
+      
+      getShareText(resultTitle, choices, principles) {
+        const principleNames = principles.map(p => p.name).slice(0, 3).join(', ');
+        return '🧠 사고의 층\n\n나의 사고 유형: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n당신은 몇 층에서 생각하는 사람인가?\n\nhttps://bit.ly/think-layer-sim';
+      }
+    };
+    
+    SimTemplate.init(CONFIG);
+    
+    const oldShareBtn = document.getElementById('shareBtn');
+    const newShareBtn = oldShareBtn.cloneNode(true);
+    oldShareBtn.parentNode.replaceChild(newShareBtn, oldShareBtn);
+    newShareBtn.addEventListener('click', async () => {
+      const url = CONFIG.shareUrl;
+      const result = document.getElementById('resultTitle').textContent;
+      const text = '🧠 사고의 층\n\n나의 사고 유형: ' + result + '\n\n당신은 몇 층에서 생각하는 사람인가?\n\n' + url;
+      if (navigator.share) { try { await navigator.share({ title: '사고의 층', text, url }); } catch {} }
+      else { 
+        try { await navigator.clipboard.writeText(text); } catch(e) {
+          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        newShareBtn.textContent = '링크 복사됨!';
+        setTimeout(() => { newShareBtn.textContent = '친구한테 시켜보기'; }, 2000);
+      }
+    });
+
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#101a18');
+      gradient.addColorStop(1, '#152520');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#00d4aa';
+      ctx.fillText(document.getElementById('resultLabel').textContent, 400, 205);
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 250;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      if (line) ctx.fillText(line, 400, y);
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#00d4aa';
+      ctx.fillText('사고의 층', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      const link = document.createElement('a');
+      link.download = '사고의층_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>
