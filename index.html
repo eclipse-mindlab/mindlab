@@ -624,6 +624,142 @@
     .modal-buttons .modal-btn {
       flex: 1;
     }
+
+    /* 페이지 전환 애니메이션 */
+    .container {
+      animation: fadeSlideIn 0.4s ease-out;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a[href$=".html"]:not([target="_blank"]) {
+      transition: transform 0.15s ease;
+    }
+    a[href$=".html"]:not([target="_blank"]):active {
+      transform: scale(0.97);
+    }
+
+    /* 오늘의 딜레마 하이라이트 */
+    .daily-banner-main {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(149, 128, 255, 0.15), rgba(109, 93, 188, 0.08));
+      border: 1.5px solid rgba(149, 128, 255, 0.4);
+      border-radius: 16px;
+      text-decoration: none;
+      margin-bottom: 16px;
+      animation: pulseGlow 3s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+    .daily-banner-main:active { transform: scale(0.98); }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(149, 128, 255, 0); }
+      50% { box-shadow: 0 0 20px rgba(149, 128, 255, 0.15); }
+    }
+    .daily-banner-main .daily-icon { font-size: 32px; }
+    .daily-banner-main .daily-title { font-size: 17px; font-weight: 700; color: #fff; }
+    .daily-banner-main .daily-desc { font-size: 13px; color: #9580ff; margin-top: 2px; }
+    .daily-banner-main .daily-arrow { font-size: 20px; color: #9580ff; margin-left: auto; }
+    .daily-streak { 
+      display: inline-block; 
+      background: rgba(251, 191, 36, 0.2); 
+      color: #fbbf24; 
+      font-size: 11px; 
+      padding: 2px 8px; 
+      border-radius: 6px; 
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* 나의 사고 성향 차트 */
+    .mindset-card {
+      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #232326;
+    }
+    .mindset-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #9580ff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mindset-empty {
+      text-align: center;
+      padding: 20px;
+      color: #52525b;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .mindset-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mindset-axis {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mindset-label {
+      font-size: 11px;
+      color: #8b8b92;
+      width: 60px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .mindset-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #232326;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .mindset-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+    .mindset-percent {
+      font-size: 11px;
+      color: #fff;
+      width: 36px;
+      font-weight: 600;
+    }
+    .mindset-summary {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #232326;
+      font-size: 12px;
+      color: #8b8b92;
+      line-height: 1.7;
+    }
+    .mindset-dominant {
+      color: #9580ff;
+      font-weight: 600;
+    }
+
+    /* 추천 시뮬레이터 */
+    .recommend-section {
+      background: linear-gradient(135deg, rgba(149, 128, 255, 0.08), rgba(109, 93, 188, 0.04));
+      border: 1px solid rgba(149, 128, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .recommend-title {
+      font-size: 13px;
+      color: #9580ff;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 <body>
@@ -747,7 +883,24 @@
       </div>
     </div>
 
-    <a href="daily.html" class="daily-banner">
+    <!-- 오늘의 딜레마 - 최상단 하이라이트 -->
+    <a href="daily.html" class="daily-banner-main" id="dailyMainBanner">
+      <div class="daily-icon">🤔</div>
+      <div class="daily-content">
+        <div class="daily-title">오늘의 딜레마</div>
+        <div class="daily-desc" id="dailyMainDesc">오늘의 질문이 기다리고 있습니다</div>
+        <div class="daily-streak hidden" id="dailyMainStreak">🔥 연속 0일</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
+
+    <!-- 추천 시뮬레이터 -->
+    <div class="recommend-section hidden" id="recommendSection">
+      <div class="recommend-title">💡 아직 안 해본 시뮬레이터</div>
+      <div class="sim-list" id="recommendList"></div>
+    </div>
+
+    <a href="daily.html" class="daily-banner" style="display:none;">
       <div class="daily-icon">🤔</div>
       <div class="daily-content">
         <div class="daily-title">오늘의 딜레마</div>
@@ -770,6 +923,14 @@
       <span class="my-challenges-text">내 도전장 현황</span>
       <span class="my-challenges-count" id="myChallengesCount">0</span>
     </a>
+
+    <!-- 나의 사고 성향 -->
+    <div class="mindset-card" id="mindsetCard">
+      <div class="mindset-title">🧬 나의 사고 성향</div>
+      <div id="mindsetContent">
+        <div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>
+      </div>
+    </div>
 
     <div class="map-section">
       <div class="section-header">
@@ -867,6 +1028,10 @@
     <div class="books-section">
       <div class="books-section-title">이클립스의 책</div>
       <div class="books-grid">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-fight.png" alt="싸움의 교양">
+          <div class="book-item-title">싸움의 교양</div>
+        </a>
         <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
           <img src="book-love.png" alt="사랑은 오해다">
           <div class="book-item-title">사랑은 오해다</div>
@@ -1362,6 +1527,15 @@
       const dexCount = dexPrincipleNames.length;
       document.getElementById('dexCount').textContent = `${dexCount}/${DEX_TOTAL}`;
       document.getElementById('dexProgressFill').style.width = `${(dexCount/DEX_TOTAL)*100}%`;
+
+      // === 나의 사고 성향 분석 ===
+      renderMindset(profile);
+
+      // === 추천 시뮬레이터 ===
+      renderRecommendations(profile);
+
+      // === 오늘의 딜레마 상태 ===
+      renderDailyStatus();
 
       // 티어 진행도
       TIERS.forEach(t => {
@@ -1871,6 +2045,162 @@
         .then(() => console.log('SW registered'))
         .catch(err => console.log('SW registration failed:', err));
     }
+
+    // === 사고 성향 분석 시스템 ===
+    function renderMindset(profile) {
+      const content = document.getElementById('mindsetContent');
+      if (!profile.completedSims || profile.completedSims.length === 0) {
+        content.innerHTML = '<div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>';
+        return;
+      }
+
+      const principles = profile.principles || [];
+      if (principles.length === 0) {
+        content.innerHTML = '<div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>';
+        return;
+      }
+
+      // 원칙 → 성향 매핑 (포괄적)
+      const mapping = {
+        // 결과주의: 결과, 효용, 실용, 손익 중심
+        결과주의: ['결과', '공리', '효용', '계산', '프라그마', '리스크', '비용', '이득', '쳇바퀴', '매몰', '손절', '팃포탯', '투자', '현상 유지', '경매', '신호 이론', '정보 비대칭', '불확실성 회피', '브링크맨십', '양보', '시간 압박', '황금 다리', '현실 제약', '경로 설계', '비교 우위', '실용적', '손익', '절박함의 경제학', '자유의 가격', '호혜성', '가치의 수량화', '타협', '시장가격', '기회비용', '면허 효과', '점진적 수용','합리적 이기주의','습관의 힘','시스템의 벽','빚의 시간','미끄러운 비탈길','비가역성','생존 우선','돈으로 살 수 없는','경고의 기능','합리화','신중한 대기'],
+        // 원칙주의: 도덕, 규칙, 의무, 정의 중심
+        원칙주의: ['의무', '원칙', '도덕', '양심', '정의', '신성', '절대', '정언명령', '보편적 공정', '동의 기반', '행위자 중심', '스토아', '결단의 윤리', '책임', '보호적 진실', '건설적 진실', '균형 잡힌 진실', '선의의 거짓말', '보호하는 거짓말', '진실의 무게', '카르페 디엠', '부재자의 의사', '생명 가치', '품위 있는', '관계 보호','임계점 윤리','자유의지 방어','국지적 선','극단적 공정','행위의 직접성','가치 기반 결정','회피적 정직','점진적 진실','보호적 거짓말','판단 유보','주제 전환','타이밍의 지혜','힘의 절제','회복적 접근','결단의 순간'],
+        // 감정주의: 감정, 본능, 관계, 애착 중심  
+        감정주의: ['감정', '불안', '에로스', '마니아', '분노', '반응', '직관', '집착', '독점', '심리적 방어', '회피 기제', '반복 강박', '인지 부조화', '공포', '냉소', '현실 부정', '자아 침식', '인지적 안개', '학습된 침묵', '관계 우선', '고스팅', '관계의 전환', '간헐적 강화', '좌절', '확인 추구', '스토르게', '회피적 애착', '안정형 애착', '불안형 애착', '사회적 동조', '상대적 박탈', '원한', '용서', '응보', '억압', '그림자', '페르소나', '아니마', '열등감', '감정 회피', '정서적 거리', '보상적 노력', '사회적 비교', '연결의 힘', '생존 본능', '통제 욕구','사회적 고립','피해자 역할','외부 현실','탈출의 결단','경계의 재설정','회피적 대처','사회적 지지','관계 지향적','직접 소통','회피형 애착','협력적 자존감','현실 수용','협력적 경쟁','자존적 이탈','변환적 고통','한계의 수용','수동적 희망','고독한 죽음','사회적 자아','정서적','보상적','연결','공유된 영원','반복의 용기','꿈의 보상','능동적 상상','협력의 가치'],
+        // 전략가: 구조, 의도, 전략, 권력 파악
+        전략가: ['전략', '게임', '권력', '루두스', '협상', '의도', '구조', '역학', '분석', '사실 확인', '개선 중심', '의도 파악', '리스크 분석', '구조 너머', '경로', '비교', '레버리지', '관망', '침묵의 힘', '질문의 힘', '브링크맨십', '규율적 시간', '사회적 가속', '관계 역학','증거 기반','반복 검증','정보 요구','증거 무력화','조건부 허용','지식의 저주','세뇌의 역설','불확실성 내성','경험의 가치','비교 불가능성'],
+        // 성찰가: 메타인지, 자기 관찰, 존재, 의미
+        성찰가: ['성찰', '메타', '철학', '현재', '자기', '프레임', '정체성', '존재', '찰나', '아가페', '방법적 회의', '현상학', '실재', '경이', '아모르 파티', '유한성', '진정성', '의식', '무한', '초월', '나-너', '관계의 본질', '부조리', '허무', '본질', '개성화', '카이로스', '영원회귀', '순환적 시간', '블록', '양자적 시간', '서사로서', '시간과 기억', '생물학적 시간', '영원한 현재', '현재주의', '사랑의 철회', '거리의 지혜', '필리아', '삶의 긍정', '자율성', '전제에 대한 의심', '목적에 대한', '정체성 기반', '프레임에 대한', '자존심의 유통기한', '시대의 속도','죽음 앞의 자유','불멸 프로젝트','유물론적 죽음관','영혼 불멸','불가지론','죽음의 망각','삶에의 의지','윤회적 희망','신정론의 도전','신의 침묵','한계의 인정','계시의 한계','신적 관조','지혜의 보존','행위자의 후회','신적 사랑의 역설','경험적 무신론','신비의 수용','영생의 역설','역사의 진보','철인왕','창조의 의지','희망의 원리','실존적 절망','욕망의 해방','인류의 대리자','경계의 해체','삶의 긍정','급진적 정직','직선적 시간의 함정','상대적 박탈감']
+      };
+
+      const axes = {
+        결과주의: { count: 0, color: '#f59e0b' },
+        원칙주의: { count: 0, color: '#3b82f6' },
+        감정주의: { count: 0, color: '#ef4444' },
+        전략가: { count: 0, color: '#10b981' },
+        성찰가: { count: 0, color: '#8b5cf6' }
+      };
+
+      principles.forEach(p => {
+        const name = typeof p === 'string' ? p : (p.name || '');
+        let matched = false;
+        for (const [axis, keywords] of Object.entries(mapping)) {
+          if (keywords.some(k => name.includes(k))) {
+            axes[axis].count++;
+            matched = true;
+            break;
+          }
+        }
+        // 매칭 안 되면 성찰가로 (철학적 원칙이 많으므로)
+        if (!matched && name.length > 2) axes['성찰가'].count++;
+      });
+
+      const total = Object.values(axes).reduce((s, a) => s + a.count, 0) || 1;
+      const sorted = Object.entries(axes).sort((a, b) => b[1].count - a[1].count);
+      const dominant = sorted[0];
+
+      let chartHTML = '<div class="mindset-chart">';
+      sorted.forEach(([name, data]) => {
+        const pct = Math.round((data.count / total) * 100);
+        chartHTML += `
+          <div class="mindset-axis">
+            <div class="mindset-label">${name}</div>
+            <div class="mindset-bar-bg">
+              <div class="mindset-bar-fill" style="width: ${pct}%; background: ${data.color};"></div>
+            </div>
+            <div class="mindset-percent" style="color: ${data.color}">${pct}%</div>
+          </div>`;
+      });
+      chartHTML += '</div>';
+
+      const summaries = {
+        결과주의: '결과를 중시합니다. 행동의 옳고 그름을 결과로 판단하는 경향이 있습니다.',
+        원칙주의: '원칙을 중시합니다. 결과와 관계없이 옳은 것은 옳다고 판단하는 경향이 있습니다.',
+        감정주의: '감정에 솔직합니다. 관계와 느낌을 우선시하는 경향이 있습니다.',
+        전략가: '구조를 읽습니다. 상황의 이면과 상대의 의도를 파악하려는 경향이 있습니다.',
+        성찰가: '깊이 생각합니다. 자기 자신의 사고 과정을 관찰하는 경향이 있습니다.'
+      };
+
+      chartHTML += `<div class="mindset-summary">지배적 성향: <span class="mindset-dominant">${dominant[0]}</span><br>${summaries[dominant[0]]}<br><span style="color:#52525b;font-size:11px;">시뮬레이터를 더 할수록 정교해집니다 · ${profile.completedSims.length}개 완료</span></div>`;
+
+      content.innerHTML = chartHTML;
+    }
+
+    // === 추천 시뮬레이터 ===
+    function renderRecommendations(profile) {
+      const section = document.getElementById('recommendSection');
+      const list = document.getElementById('recommendList');
+      const completed = profile.completedSims || [];
+
+      const allSims = [...SIMULATIONS.philosophy, ...SIMULATIONS.psych, ...SIMULATIONS.strategy, ...SIMULATIONS.story];
+      const notDone = allSims.filter(s => !completed.includes(s.id) && !s.locked);
+
+      if (notDone.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      const picks = notDone.slice(0, 2);
+      list.innerHTML = picks.map(sim => `
+        <a href="${sim.url}" class="sim-item" style="animation: fadeSlideIn 0.5s ease-out;">
+          <div class="sim-status">★</div>
+          <div class="sim-info">
+            <div class="sim-title">${sim.title}</div>
+            <div class="sim-desc">${sim.desc}</div>
+          </div>
+          <div class="sim-reward">+30 EXP</div>
+        </a>
+      `).join('');
+    }
+
+    // === 오늘의 딜레마 상태 ===
+    function renderDailyStatus() {
+      const dailyData = localStorage.getItem('eclipse_mindlab_daily');
+      const desc = document.getElementById('dailyMainDesc');
+      const streak = document.getElementById('dailyMainStreak');
+
+      if (dailyData) {
+        try {
+          const data = JSON.parse(dailyData);
+          const today = new Date().toISOString().split('T')[0];
+
+          if (data.lastDate === today) {
+            desc.textContent = '오늘의 딜레마를 완료했습니다 ✓';
+            desc.style.color = '#10b981';
+          } else {
+            desc.textContent = '오늘의 질문이 기다리고 있습니다';
+          }
+
+          if (data.streak && data.streak > 0) {
+            streak.classList.remove('hidden');
+            streak.textContent = '🔥 연속 ' + data.streak + '일';
+          }
+          if (data.maxStreak && data.maxStreak > 0) {
+            streak.classList.remove('hidden');
+            streak.textContent += ' · 최대 ' + data.maxStreak + '일';
+          }
+        } catch(e) {}
+      }
+    }
+
+    // === 페이지 전환 효과 ===
+    document.querySelectorAll('a[href$=".html"]:not([target="_blank"])').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const href = this.href;
+        document.querySelector('.container').style.animation = 'none';
+        document.querySelector('.container').offsetHeight; // reflow
+        document.querySelector('.container').style.animation = 'fadeSlideOut 0.2s ease-in forwards';
+        setTimeout(() => { window.location.href = href; }, 180);
+      });
+    });
+
+    // fadeSlideOut 애니메이션
+    const fadeOutStyle = document.createElement('style');
+    fadeOutStyle.textContent = '@keyframes fadeSlideOut { to { opacity: 0; transform: translateY(-8px); } }';
+    document.head.appendChild(fadeOutStyle);
   </script>
 </body>
 </html>
