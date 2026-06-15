@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>초월자의 자격 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <style>:root{--sim-primary:#c9a84c;--sim-primary-light:#e0c068;--sim-primary-bg:rgba(201,168,76,0.1);--sim-primary-border:rgba(201,168,76,0.3);}</style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header"><a href="index.html" class="sim-back-btn">←</a><div class="sim-header-title">초월자의 자격</div></div>
+    <div id="gameScreen">
+      <div class="sim-progress"><div class="sim-progress-label"><span id="stageLabel">STAGE 1</span><span id="stageCount">1/5</span></div><div class="sim-progress-bar"><div class="sim-progress-fill" id="progressFill" style="width:20%"></div></div></div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation"><div class="sim-situation-title" id="situationTitle"></div><div class="sim-situation-desc" id="situationDesc"></div><div class="sim-situation-highlight hidden" id="situationHighlight"></div><div class="sim-situation-quote hidden" id="situationQuote"></div></div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card"><div class="sim-explanation-label">당신의 선택</div><div class="sim-explanation-title" id="yourChoice"></div></div>
+      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">이 선택이 의미하는 것</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
+      <div class="sim-principle-card hidden" id="principleCard"><div class="sim-principle-header"><span class="sim-principle-icon">💡</span><span>발견한 원칙</span></div><div class="sim-principle-name" id="principleName"></div><div class="sim-principle-desc" id="principleDesc"></div></div>
+      <div class="sim-quote-card hidden" id="quoteCard"><span class="sim-quote-icon">💬</span><span class="sim-quote-text" id="quoteText"></span></div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card"><div class="sim-result-icon" id="resultIcon">🏔️</div><div class="sim-result-label" id="resultLabel">당신의 위치</div><div class="sim-result-title" id="resultTitle"></div><div class="sim-result-desc" id="resultDesc"></div><div class="sim-result-stats hidden" id="resultStats"></div></div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions"><button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button><button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button><a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a></div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display:block;text-decoration:none;margin-bottom:24px;">
+          <div style="background:linear-gradient(135deg,#141210 0%,#1e1a14 50%,#141210 100%);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:24px;text-align:center;">
+            <img src="book-transcend.png" alt="초월자의 조건" style="width:200px;height:auto;border-radius:8px;margin-bottom:16px;box-shadow:0 8px 32px rgba(201,168,76,0.2);">
+            <div style="font-size:17px;font-weight:700;color:#c9a84c;margin-bottom:6px;">초월자의 조건</div>
+            <div style="font-size:12px;color:#71717a;">야망은 큰데 왜 아직도 평범한가</div>
+          </div>
+        </a>
+        <div style="font-size:12px;color:#52525b;text-align:center;margin-bottom:12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-fight.png" class="sim-book-cover"><div class="sim-book-title">싸움의 교양</div></a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-love.png" class="sim-book-cover"><div class="sim-book-title">사랑은 오해다</div></a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-wealth.png" class="sim-book-cover"><div class="sim-book-title">훔친 부 편</div></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="sim-template.js"></script>
+  <script>
+const CONFIG={id:'transcend',title:'초월자의 자격',shareIcon:'🏔️',shareUrl:'https://bit.ly/transcend-sim',version:5,
+stages:[
+{badge:'죽음',title:'2주',desc:`핸드폰이 울린다. 병원이다.\n\n"검사 결과에 이상 소견이 있습니다. 정밀 검사가 필요합니다."\n\n"언제 올 수 있으세요?"\n\n"2주 뒤에 자리가 있습니다."\n\n전화를 끊었다. 손이 미세하게 떨린다.\n\n2주. 결과가 나올 때까지 14일. 아무것도 확정되지 않았다.\n\n하지만 머릿속에서 최악의 시나리오가 시작된다.`,highlight:'2주 동안 어떻게 살겠는가?',
+choices:[
+{id:'deny1',text:'생각하지 않는다. 결과 나올 때까지.',subtext:'아직 확정된 게 아니니까.',meaning:'결과 나올 때까지 안 생각하기로 했다. 출근하고, 밥 먹고, 잠을 잔다. 평소대로. 하지만 새벽 3시에 눈이 떠진다. 생각하지 않겠다고 한 그것을 생각하고 있다. 생각하지 않으려는 노력 자체가, 이미 생각하고 있다는 증거다.',principle:{name:'죽음의 부정',desc:'인간은 자신의 죽음을 직시하지 못한다. 어니스트 베커는 말했다. 인간 문명 자체가 죽음의 공포를 덮기 위한 프로젝트라고. 우리는 바쁘게 살면서 죽음을 잊는다. 하지만 잊은 것과 없는 것은 다르다.',icon:'🙈'},quote:'"인간이 하는 모든 일은 죽음의 공포를 덮기 위한 것이다." - 어니스트 베커'},
+{id:'live1',text:'미뤄뒀던 것들을 한다.',subtext:'후회 없이 살겠다.',meaning:'미뤄뒀던 여행을 예약한다. 말 못했던 고백을 한다. 사고 싶었던 걸 산다. 매일이 선명하다. 2주가 이렇게 빛날 수 있다니. 그런데 — 2주 뒤, 음성이다. 아무 이상 없다. 안도한다. 한 달 뒤. 다시 원래대로다. 여행도, 고백도, 선명함도 사라졌다. 죽음이 떠나자 삶도 원래대로 돌아갔다.',principle:{name:'일시적 각성',desc:'죽음 앞에서만 삶이 선명해진다면, 당신은 죽음에 의존해서 살고 있는 것이다. 진짜 각성은 죽음이 떠난 뒤에도 유지되는 것이다. 2주간의 선명함이 평생으로 이어지지 않으면, 그것은 각성이 아니라 흥분이다.',icon:'⚡'},quote:'"죽음을 기억하라. 하지만 죽음 없이도 살 수 있어야 한다."'},
+{id:'already1',text:'달라지는 게 없다. 원래 이렇게 살고 있었다.',subtext:'후회할 게 없다.',meaning:'달라지는 게 없다고 답했다. 두 가지 중 하나다. 정말로 매 순간을 자기 뜻대로 살고 있거나 — 아직 죽음이 와닿지 않아서 달라질 게 없다고 느끼는 것이다. 진짜 죽음 앞에 섰을 때도 같은 말을 할 수 있는가? 대부분은 할 수 없다.',principle:{name:'죽음의 거리',desc:'죽음이 추상적일 때와 구체적일 때, 인간의 반응은 완전히 다르다. "후회 없이 살고 있다"는 말은, 죽음이 충분히 멀리 있을 때만 가능한 문장일 수 있다. 진짜 시험은 죽음이 2주 앞에 왔을 때다.',icon:'📏'},quote:'"죽음은 항상 가능성이다. 하지만 가능성으로 느끼는 동안은 아무것도 바꾸지 못한다."'}
+]},
+{badge:'파괴',title:'알을 깨는 순간',desc:`당신은 10년째 같은 일을 하고 있다.\n\n잘한다. 인정받는다. 부모님은 "우리 아들/딸 뭐 한다"고 소개한다. 명함을 내밀면 사람들이 고개를 끄덕인다.\n\n그런데 거울을 본다. 이 명함이 나인가?\n\n다른 것을 하고 싶다. 전혀 다른 것을. 그곳에서 당신은 1년차 신입이다. 잘하는 것이 없다. 아는 사람도 없다.\n\n가려면 지금의 당신을 부숴야 한다.`,highlight:'"지금의 나"를 부술 수 있는가?',
+choices:[
+{id:'destroy2',text:'부순다. 새로 시작한다.',subtext:'명함 없이도 나는 나다.',meaning:'사표를 냈다. 명함이 사라졌다. 사람들이 묻는다. "요즘 뭐 해?" 대답할 수 없다. 10년 동안 명함이 곧 정체성이었다. 명함을 버리니, 자기 소개를 할 수 없다. "나는 누구인가?"를 명함 없이 답할 수 있는가. 대부분은 할 수 없다. 여기가 진짜 시작이다.',principle:{name:'알을 깨는 자',desc:'헤세는 말했다. "새는 알에서 나오려고 투쟁한다. 알은 세계다." 당신의 알은 직업, 직함, 정체성이다. 깨지 않으면 태어나지 못한다. 하지만 깨는 순간, 보호막도 사라진다.',icon:'🥚'},quote:'"새는 알에서 나오려고 투쟁한다. 알은 세계다. 태어나려는 자는 하나의 세계를 파괴해야 한다." - 헤르만 헤세'},
+{id:'both2',text:'한 발씩 두 세계에 둔다.',subtext:'리스크를 줄이면서 전환한다.',meaning:'현명해 보인다. 낮에는 기존 직업, 밤에는 새로운 도전. 하지만 두 세계에 발을 걸친 사람은, 어느 쪽에서도 진짜가 되지 못한다. 새로운 세계의 사람들은 당신을 "취미로 하는 사람"으로 본다. 기존 세계의 사람들은 "한눈파는 사람"으로 본다. 안전하지만, 영원히 관광객이다.',principle:{name:'관광객의 딜레마',desc:'두 세계에 속하려는 사람은 어디에도 속하지 못한다. 진짜 변화는 돌아갈 곳을 없앨 때 시작된다. 퇴로가 있으면 전진이 느려진다. 이것은 무모함을 권하는 것이 아니라, 결단의 무게를 말하는 것이다.',icon:'🚪'},quote:'"두 의자에 앉으려는 자는 바닥에 앉게 된다."'},
+{id:'stay2',text:'남는다. 이미 투자한 것이 너무 크다.',subtext:'10년을 버릴 수 없다.',meaning:'남았다. 10년의 경력, 쌓아온 인맥, 안정된 수입. 버리기엔 너무 크다. 이것을 경제학에서는 매몰 비용이라 한다. 이미 쓴 비용은 회수할 수 없는데, 미래의 결정을 과거의 투자가 지배한다. 10년을 바쳤으니 10년을 더 바치는 것. 과거가 미래를 인질로 잡고 있다.',principle:{name:'매몰 비용의 감옥',desc:'이미 투자한 것이 클수록 떠나기 어렵다. 하지만 과거에 쓴 시간은, 미래에 쓸 시간과 관계가 없다. "여기까지 왔는데"가 "여기서 평생을"이 되는 순간, 과거가 미래를 지배하기 시작한다.',icon:'⛓️'},quote:'"이미 쓴 돈 때문에 더 쓰는 것. 이미 산 시간 때문에 더 사는 것. 구조는 같다."'}
+]},
+{badge:'상실',title:'남겨진 사람들',desc:`변하기 시작했다.\n\n새벽에 일어나고, 새로운 것을 배우고, 다른 세계의 사람들을 만난다.\n\n오랜 친구에게서 연락이 왔다. 10년 넘게 함께한 사람이다. 힘들 때 옆에 있어준 사람이다.\n\n"너 요즘 왜 그래? 예전의 너가 좋았어."\n\n나쁜 사람이 아니다. 진심으로 걱정하는 것이다.\n\n다만 — 지금 당신이 가는 방향에는 관심이 없다.`,highlight:'오래된 관계와 새로운 방향. 어떻게 하겠는가?',
+choices:[
+{id:'back3',text:'"맞아, 나 좀 오버했나봐."',subtext:'관계를 지킨다.',meaning:'돌아갔다. 친구가 웃는다. "역시 네가 맞아." 금요일 밤, 같이 술을 마신다. 편하다. 하지만 새벽에 집에 돌아와서 거울을 본다. 이 편안함은 진짜인가, 항복인가. 관계를 지키기 위해 자기를 접는 것. 이것을 몇 번이나 반복했는가.',principle:{name:'자발적 후퇴',desc:'에리히 프롬은 말했다. 자유가 두려워서 복종을 선택하는 사람이 있다고. 관계를 잃는 것이 두려워서 자기를 접는 것도 같은 구조다. 편안함은 때로 항복의 다른 이름이다.',icon:'🏳️'},quote:'"자유보다 소속이 편한 순간, 당신은 자기를 팔고 있다."'},
+{id:'go3',text:'"미안. 나 좀 바뀌었어."',subtext:'거리가 생기는 걸 감수한다.',meaning:'"나 좀 바뀌었어." 친구의 표정이 굳는다. 대화가 줄어든다. 연락이 뜸해진다. 1년 뒤, 이 친구와 마지막으로 연락한 게 언제인지 기억나지 않는다. 잃었다. 이것은 배신이 아니라 성장의 비용이다. 하지만 비용이라는 걸 아는 것과 그 무게를 감당하는 것은 다르다.',principle:{name:'성장의 비용',desc:'변하면 잃는 관계가 있다. 모든 성장에는 상실이 따른다. 새로운 자아가 태어나면 옛 자아가 죽는다. 옛 자아와 함께했던 관계도 함께 죽을 수 있다. 이것을 견딜 수 있는가.',icon:'💔'},quote:'"새로운 세계로 가는 문은 좁다. 모든 것을 가지고 통과할 수 없다."'},
+{id:'pull3',text:'"같이 가자. 너도 해봐."',subtext:'친구도 변할 수 있다.',meaning:'"같이 해보자." 진심이다. 하지만 친구의 눈에 부담이 보인다. "아... 나는 괜찮아." 거절당한다. 한 번 더 권한다. "진짜 좋거든?" 분위기가 어색해진다. 변화는 전염되지 않는다. 준비 안 된 사람을 끌고 가면 관계만 망가진다. "같이 가자"는 대부분 "내가 옳다는 걸 인정해줘"의 다른 표현이다.',principle:{name:'구원자 콤플렉스',desc:'남을 변화시키려는 욕구. 이타적으로 보이지만, 실제로는 자기 선택을 확인받으려는 것일 수 있다. 진짜 존중은 상대의 속도를 인정하는 것이다. 당신이 옳다고 해서 상대가 따라와야 하는 것은 아니다.',icon:'🦸'},quote:'"구원하려는 자가 가장 먼저 구원받아야 할 사람이다."'}
+]},
+{badge:'불안',title:'벼랑 위의 떨림',desc:`성과가 보이기 시작했다. 조금씩.\n\n그런데 이상하다.\n\n기쁘지 않다. 오히려 불안하다. 원하던 것에 가까워질수록 손이 떨린다.\n\n"이게 진짜 되면 어떡하지?"\n\n실패가 무서웠는데, 성공이 더 무섭다. 성공하면 더 이상 숨을 곳이 없다. "아직 준비 중이야"라는 변명이 사라진다.`,highlight:'원하던 것에 가까워질수록 불안하다. 어떻게 하겠는가?',
+choices:[
+{id:'retreat4',text:'속도를 줄인다. 뭔가 잘못되고 있다.',subtext:'불안은 경고 신호다.',meaning:'속도를 줄였다. 합리적으로 보인다. "불안하면 멈추라"고 모두가 말하니까. 하지만 이 불안은 잘못된 방향의 신호가 아니다. 올바른 방향의 증거다. 인생에서 진짜 의미 있는 일은 전부 불안을 동반한다. 불안이 사라지면 편하지만, 창조도 멈춘다.',principle:{name:'불안의 역설',desc:'불안은 위험의 신호가 아니라 의미의 신호일 수 있다. 정말 중요한 일 앞에서만 떨린다. 시험 전, 고백 전, 도약 전. 떨림이 없으면 그것은 당신에게 중요하지 않다는 뜻이다.',icon:'⚡'},quote:'"불안 없는 삶은 안전하지만, 의미도 없다."'},
+{id:'push4',text:'밀어붙인다. 불안은 극복해야 하는 것이다.',subtext:'멈추면 다시 원점이다.',meaning:'밀어붙였다. 불안을 무시하고 전진한다. 강해 보인다. 하지만 불안은 무시한다고 사라지지 않는다. 억누르면 다른 형태로 나타난다. 불면, 과식, 짜증, 번아웃. 불안과 싸우면 불안이 이긴다. 싸움의 대상이 아니기 때문이다.',principle:{name:'억압된 불안',desc:'불안을 억누르면 사라지는 것이 아니라 변형된다. 몸으로, 관계로, 습관으로. 불안과 싸우는 것은 파도와 싸우는 것과 같다. 이길 수 없다. 할 수 있는 건 파도 위에 서는 법을 배우는 것이다.',icon:'🌊'},quote:'"불안과 싸우면 불안이 이긴다. 불안과 함께 가면 당신이 이긴다."'},
+{id:'sit4',text:'떨리면서 간다.',subtext:'불안을 느끼면서 계속한다.',meaning:'떨린다. 손이 떨리고, 가슴이 뛰고, 밤에 잠이 안 온다. 하지만 멈추지 않는다. 도망치지도, 싸우지도 않는다. 떨리면서 간다. 이것이 가장 어렵다. 용기는 불안의 부재가 아니다. 불안 속에서 행동하는 것이다. 떨리지 않는 사람은 용감한 것이 아니라, 중요한 일을 하지 않는 것이다.',principle:{name:'존재의 용기',desc:'폴 틸리히는 말했다. 용기란 불안에도 불구하고 자기를 긍정하는 것이라고. 불안이 사라진 뒤에 행동하는 건 용기가 아니다. 불안 한가운데서 행동하는 것이 용기다. 떨리면서 가는 것. 이것이 초월의 조건이다.',icon:'🔥'},quote:'"용기란 불안이 없는 것이 아니라, 불안에도 불구하고 자기를 긍정하는 것이다." - 폴 틸리히'}
+]},
+{badge:'영원',title:'니체의 질문',desc:`여기까지 왔다.\n\n어떤 선택을 했든, 지금 이 자리에 있다.\n\n돌아보면 — 잃은 것이 있다. 안정, 관계, 시간.\n얻은 것도 있다. 자유, 깊이, 자기 자신.\n\n니체의 악마가 나타나서 말한다.\n\n"네가 살아온 이 삶을. 모든 고통, 모든 실패, 모든 고독을 포함해서. 똑같이 다시 살아야 한다. 영원히. 한 글자도 바꿀 수 없다."\n\n"네 대답은?"`,highlight:'이 삶을 다시 살겠는가?',
+choices:[
+{id:'yes5',text:'그렇다. 이 삶을 다시 산다. 똑같이.',subtext:'고통까지 포함해서.',meaning:'고통도, 실패도, 고독도 전부 다시. 바꾸지 않고. 이것이 니체가 말한 아모르 파티다. 운명을 사랑하라. "좋은 부분만 다시"가 아니라 "전부 다시." 이 삶을 영원히 반복해도 좋다고 말할 수 있는 사람. 니체는 이것이 초월자의 최종 자격이라 했다.',principle:{name:'아모르 파티',desc:'운명을 사랑하라. 좋은 일만이 아니라 나쁜 일도. 실패도, 고통도, 수치도. 전부 포함해서 이 삶을 긍정하는 것. 이것은 낙관이 아니다. 고통을 알면서도 긍정하는 것이다. 가장 무거운 긍정.',icon:'♾️'},quote:'"이 삶을 다시 한 번, 그리고 무수히 반복해서 살고 싶은가? 이것이 모든 행위의 최종 시험이다." - 니체'},
+{id:'diff5',text:'다시 살되, 다르게 산다.',subtext:'같은 실수를 반복하고 싶지 않다.',meaning:'"다르게"를 원했다. 대부분이 이것을 고른다. 하지만 니체의 시험에서, 이것은 탈락이다. 왜? "다르게 살고 싶다"는 것은 이 삶의 고통이 틀렸다는 뜻이다. 하지만 그 고통이 없었으면 지금의 당신도 없다. 실패가 없었으면 배움도 없었다. 고독이 없었으면 깊이도 없었다. "다르게"를 원하는 순간, 지금의 자신을 부정하는 것이다.',principle:{name:'영원회귀의 시험',desc:'영원회귀는 "더 잘 살기"의 기회가 아니다. "이대로 다시"의 시험이다. 고통을 포함해서. 실수를 포함해서. 이 시험의 목적은 합격이 아니라, 질문 자체가 당신의 삶을 비추는 거울이 되는 것이다.',icon:'🪞'},quote:'"과거를 바꾸고 싶다는 것은, 지금의 자신을 거부하는 것이다."'},
+{id:'no5',text:'다시 살지 않는다.',subtext:'한 번이면 충분하다.',meaning:'거부했다. 이것은 약함이 아니다. 솔직함이다. 대부분의 인간은 이 질문 앞에서 "아니오"다. 니체도 알고 있었다. 이 질문에 "예"라고 답할 수 있는 사람은 극소수라고. 하지만 이 질문을 받은 것만으로 달라지는 것이 있다. "이 삶을 다시 살 수 있는가?"를 한 번이라도 진지하게 물어본 사람은, 내일부터 다르게 산다.',principle:{name:'질문의 무게',desc:'영원회귀에 "아니오"라고 답했다면, 질문이 남는다. 이 삶의 어떤 부분이 반복하기 싫은가? 그 부분을 바꿀 수 있는가? 바꿀 수 있다면 바꿔라. 바꿀 수 없다면 받아들여라. 이 질문 자체가 삶의 나침반이 된다.',icon:'🧭'},quote:'"질문에 답하지 못해도 괜찮다. 질문을 안고 사는 것만으로 삶이 달라진다."'}
+]}
+],
+calculateResult(choices,principles){
+const scores={deny1:0,live1:1,already1:2,destroy2:3,both2:1,stay2:0,back3:0,go3:3,pull3:1,retreat4:0,push4:1,sit4:3,yes5:3,diff5:1,no5:1};
+let total=0;choices.forEach(c=>{total+=scores[c.choiceId]||0;});
+if(total>=12)return{icon:'🌅',label:'당신의 위치',title:'초월자',desc:'당신은 도약하고, 잃고, 견디고, 긍정한 사람입니다.\n\n안전을 버리고, 관계를 잃고, 침묵을 견디고, 이 삶을 다시 살겠다고 말한 사람.\n\n하지만 니체는 경고합니다. 초월은 도착이 아니라 과정입니다. 내일 다시 르상티망에 빠질 수 있고, 다시 갑옷을 입을 수 있습니다. 중요한 건 다시 일어서는 것입니다.',stats:[{value:total+'/15',label:'초월 지수'},{value:principles.length,label:'발견한 원칙'}],bookHook:'안전, 관계, 확신을 버린 자리에서 자기를 세운 사람들의 사유.'};
+if(total>=8)return{icon:'🚪',label:'당신의 위치',title:'문 앞의 사람',desc:'당신은 문 앞에 서 있습니다.\n\n갈 준비는 됐지만, 아직 한 발이 남았습니다. 두려운 건 당연합니다.\n\n대부분의 사람은 문 앞에서 평생을 보냅니다. 문을 열지 않아도 괜찮습니다. 하지만 열 수 있다는 걸 아는 것. 그것만으로 당신은 문을 모르는 사람과 다릅니다.',stats:[{value:total+'/15',label:'초월 지수'},{value:principles.length,label:'발견한 원칙'}],bookHook:'문 앞에서 평생을 보내는 사람과, 여는 사람의 차이.'};
+if(total>=4)return{icon:'🔥',label:'당신의 위치',title:'불 속의 사람',desc:'당신은 이미 뛰어들었지만, 방향을 찾지 못한 상태입니다.\n\n열정은 있었지만 길이 보이지 않습니다. 태우고 있지만 뭘 태우는지 모릅니다.\n\n하지만 불 속에 있다는 것 자체가 시작입니다. 불 밖에서 구경하는 사람보다, 불 속에서 허우적대는 사람이 출구에 더 가깝습니다.',stats:[{value:total+'/15',label:'초월 지수'},{value:principles.length,label:'발견한 원칙'}],bookHook:'불 속에서 방향을 찾은 사람들의 기록.'};
+return{icon:'🏠',label:'당신의 위치',title:'돌아간 사람',desc:'당신은 안전을 택했습니다.\n\n이것은 실패가 아닙니다. 안전에도 용기가 필요합니다. 세상이 "뛰어내려라"고 외칠 때 자기 자리를 지키는 것도 선택입니다.\n\n다만, 한 가지만 확인하세요. 안전을 택한 건 원해서인가, 두려워서인가. 이유가 다르면 의미도 다릅니다.',stats:[{value:total+'/15',label:'초월 지수'},{value:principles.length,label:'발견한 원칙'}],bookHook:'돌아간 자리에서 다시 출발하는 법.'};
+},
+getShareText(t){return'🏔️ 초월자의 자격\n\n'+t+'\n\nhttps://bit.ly/transcend-sim';}
+};
+SimTemplate.init(CONFIG);
+
+// bookHook 렌더링
+const _origCalc=CONFIG.calculateResult;
+CONFIG._lastBookHook='';
+CONFIG.calculateResult=function(c,p){const r=_origCalc(c,p);CONFIG._lastBookHook=r.bookHook||'';return r;};
+const obs=new MutationObserver(()=>{
+  const rs=document.getElementById('resultScreen');
+  if(rs&&!rs.classList.contains('hidden')&&CONFIG._lastBookHook){
+    const promo=document.querySelector('.sim-promo');
+    if(promo&&!document.getElementById('bookHookText')){
+      const d=document.createElement('div');
+      d.id='bookHookText';
+      d.style.cssText='text-align:center;padding:20px 16px;margin-bottom:8px;font-size:15px;color:#c9a84c;line-height:1.8;font-weight:500;';
+      d.textContent=CONFIG._lastBookHook;
+      promo.insertBefore(d,promo.firstChild);
+    }
+  }
+});
+obs.observe(document.getElementById('resultScreen'),{attributes:true});
+
+document.getElementById('shareBtn').addEventListener('click',async()=>{const t='🏔️ 초월자의 자격\n\n'+document.getElementById('resultTitle').textContent+'\n\nhttps://bit.ly/transcend-sim';if(navigator.share){try{await navigator.share({title:'초월자의 자격',text:t});}catch{}}else{navigator.clipboard.writeText(t).then(()=>{document.getElementById('shareBtn').textContent='링크 복사됨!';setTimeout(()=>{document.getElementById('shareBtn').textContent='친구한테 시켜보기';},2000);});}});
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#141210';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#c9a84c';x.fillText('초월자의 자격',400,205);const l=document.createElement('a');l.download='초월자의자격_결과.png';l.href=c.toDataURL();l.click();});
+  </script>
+</body>
+</html>

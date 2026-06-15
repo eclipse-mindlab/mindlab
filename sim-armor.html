@@ -18,7 +18,7 @@
     </div>
     <div id="explanationScreen" class="hidden">
       <div class="sim-explanation-card"><div class="sim-explanation-label">당신의 선택</div><div class="sim-explanation-title" id="yourChoice"></div></div>
-      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">이 선택이 의미하는 것</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
+      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">그 다음 벌어지는 일</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
       <div class="sim-principle-card hidden" id="principleCard"><div class="sim-principle-header"><span class="sim-principle-icon">💡</span><span>발견한 원칙</span></div><div class="sim-principle-name" id="principleName"></div><div class="sim-principle-desc" id="principleDesc"></div></div>
       <div class="sim-quote-card hidden" id="quoteCard"><span class="sim-quote-icon">💬</span><span class="sim-quote-text" id="quoteText"></span></div>
       <button class="sim-next-btn" id="nextBtn">다음으로</button>
@@ -29,7 +29,7 @@
       <div class="sim-actions"><button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button><button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button><a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a></div>
       <canvas id="shareCanvas" style="display:none;"></canvas>
       <div class="sim-promo">
-        
+        <div style="text-align:center;padding:20px 16px;margin-bottom:8px;font-size:15px;color:#fb923c;line-height:1.8;font-weight:500;">두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.</div>
         <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display:block;text-decoration:none;margin-bottom:24px;">
           <div style="background:linear-gradient(135deg,#1a1008 0%,#281810 50%,#1a1008 100%);border:1px solid rgba(249,115,22,0.3);border-radius:16px;padding:24px;text-align:center;">
             <img src="book-transcend.png" alt="초월자의 조건" style="width:200px;height:auto;border-radius:8px;margin-bottom:16px;box-shadow:0 8px 32px rgba(249,115,22,0.2);">
@@ -50,76 +50,55 @@
   <script>
 const CONFIG={id:'armor',title:'성격 갑옷',shareIcon:'🛡️',shareUrl:'https://bit.ly/armor-sim',version:5,
 stages:[
-{badge:'비판',title:'공개적 지적',desc:`회의에서 당신의 실수가 드러났다.\n\n팀장이 모든 사람 앞에서 말한다.\n"이 부분 완전히 틀렸는데요. 확인 안 하고 보낸 거예요?"\n\n동료 10명이 당신을 보고 있다.\n\n얼굴이 달아오른다.`,highlight:'공개적으로 비판당했다. 어떻게 반응하겠는가?',
+{badge:'비판',title:'회의실',desc:'월요일 오전 회의.\n\n팀장이 당신의 보고서를 펼친다.\n\n"이 부분, 완전히 틀렸는데요. 확인 안 하고 보낸 거예요?"\n\n동료 10명이 당신을 본다.\n\n얼굴이 달아오른다. 시간이 멈춘 것 같다.',highlight:'10명이 보고 있다. 당신은 —',
 choices:[
-{id:'joke1',text:'웃으며 넘긴다.',subtext:'"아, 제가 눈이 침침해서..."',meaning:'웃었다. 분위기가 풀렸다. 하지만 속은 뒤집어져 있다. 유머로 덮는 건 상황을 수습하는 데는 탁월하지만, 감정을 처리하는 데는 최악이다. 집에 돌아가서 샤워하면서 그 장면을 열 번 반복 재생할 것이다.',principle:{name:'유머의 갑옷',desc:'불안한 환경에서 "웃기면 안전했던" 경험이 뿌리인 경우가 많다. 분위기는 살리지만 진짜 감정은 죽인다. 매번 웃으면 아무도 당신이 아픈 줄 모른다.',icon:'😂'},quote:'"광대의 가면 뒤에는 가장 깊은 상처가 있다."'},
-{id:'defend1',text:'"그건 제가 맡은 부분이 아니었는데요."',subtext:'사실을 바로잡는다.',meaning:'방어했다. 동료들 눈에는 "변명하는 사람"으로 보였다. 방어가 습관이 되면 모든 피드백이 공격으로 느껴진다. 배울 기회가 사라진다.',principle:{name:'방어의 갑옷',desc:'비판이 들어오면 자동으로 방패를 든다. 이 갑옷이 두꺼워지면 "내 잘못일 수 있다"는 가능성 자체가 차단된다. 성장이 멈춘다.',icon:'🛡️'},quote:'"방어가 습관이 되면 세상 전체가 적이 된다."'},
-{id:'freeze1',text:'아무 말도 못 한다.',subtext:'머리가 하얘진다.',meaning:'얼어붙었다. 회의가 끝나고 화장실에 가서야 "이렇게 말할 걸"이 떠오른다. 이것은 약함이 아니라 과잉 각성이다. 위협 앞에서 몸이 정지 모드로 들어간 것이다.',principle:{name:'동결 반응',desc:'투쟁-도피-동결 중 세 번째. 어린 시절 비난받을 때 "가만히 있으면 지나간다"를 학습한 경우 굳어진다. 갑옷이 아니라 투명 망토다.',icon:'🧊'},quote:'"얼어붙는 것도 생존 전략이다. 다만 영원히 얼어붙으면 살아있는 것이 아니다."'}
+{id:'joke1',text:'웃으며 "아, 제가 눈이 침침해서..." 농담을 던진다.',subtext:'분위기부터 풀어야 한다.',meaning:'웃었다. 동료 몇 명이 따라 웃는다. 분위기가 풀렸다. 팀장도 넘어간다. 위기 모면. 하지만 자리에 돌아와서 손을 본다. 떨리고 있다. 웃는 동안 속은 뒤집어져 있었다. 오늘 밤 샤워하면서 이 장면을 다섯 번은 반복 재생할 것이다.',principle:{name:'유머의 갑옷',desc:'웃음으로 불편한 감정을 덮는 패턴. 분위기는 살리지만 진짜 감정은 죽인다. 매번 웃으면 아무도 당신이 아픈 줄 모른다. 가장 사교적인 갑옷.',icon:'😂'},quote:'"광대의 가면 뒤에는 가장 깊은 상처가 있다."'},
+{id:'argue1',text:'"그 부분은 자료가 늦게 와서 확인이 어려웠습니다."',subtext:'사실관계를 말해야 한다.',meaning:'설명했다. 팀장이 멈칫한다. "그래도 확인은 했어야죠." 동료들이 불편한 표정을 짓는다. 당신은 사실을 말한 거다. 하지만 사람들 눈에는 "변명하는 사람"이다. 다음 회의에서 당신의 발언에 무게가 줄어든다.',principle:{name:'방어의 자동화',desc:'비판이 들어오면 반사적으로 방패를 든다. 맞는 말이어도 일단 방어부터. 이게 반복되면 "저 사람은 피드백을 못 받는 사람"이 된다. 방어가 습관이 되면 배울 기회가 사라진다.',icon:'🛡️'},quote:'"방어가 습관이 되면 세상 전체가 적이 된다."'},
+{id:'silent1',text:'아무 말도 안 한다. 고개만 끄덕인다.',subtext:'... 할 말이 떠오르지 않는다.',meaning:'끄덕였다. 회의가 끝났다. 화장실에 간다. 거울을 본다. 그제야 떠오른다. "그렇게 말할 걸." "이렇게 대응할 걸." 항상 이렇다. 상황에서는 얼어붙고, 끝나고 나서 후회한다. 약한 게 아니다. 위협 앞에서 몸이 정지하는 것이다.',principle:{name:'동결 반응',desc:'위협이 오면 몸이 멈춘다. 투쟁-도피-동결 중 세 번째. 어린 시절 가만히 있으면 안전했던 경험이 이 패턴을 만든다. 갑옷이 아니라 투명 망토다.',icon:'🧊'},quote:'"얼어붙는 것도 생존 전략이다. 다만 영원히 얼어붙으면 살아있는 것이 아니다."'},
+{id:'note1',text:'"네, 수정하겠습니다." 메모를 꺼내 적는다.',subtext:'프로답게 처리한다.',meaning:'"수정하겠습니다." 침착하게 메모한다. 프로페셔널하다. 회의 후 바로 수정본을 보낸다. 완벽한 대응. 하지만 퇴근길에 이어폰을 꽂는다. 음악을 크게 튼다. 아무 생각도 하고 싶지 않다. 낮에 침착했던 만큼 밤에 감정이 온다. 처리한 게 아니라 연기한 것이다.',principle:{name:'프로의 가면',desc:'침착하게 처리하는 것과 괜찮은 것은 다르다. 프로페셔널함은 직장에서 배운 가장 세련된 갑옷이다. 효과적이지만 감정을 처리하지 않는다. 낮의 침착함은 밤의 불면으로 돌아온다.',icon:'😐'},quote:'"프로답게 넘기는 것과 괜찮은 것은 다르다. 겉만 같고 속이 다르다."'}
 ]},
-{badge:'거절',title:'거절당한 제안',desc:`용기를 내서 제안했다. 며칠 밤을 새서 준비했다.\n\n상사가 말한다.\n"좋은 시도인데, 지금은 아닌 것 같아요."\n\n정중한 거절이다. 합리적인 이유도 있다.\n\n하지만 아프다.`,highlight:'제안이 거절당했다. 이후에 어떻게 하겠는가?',
+{badge:'거절',title:'제안',desc:'며칠 밤을 새서 준비한 기획안을 냈다.\n\n상사가 읽더니 말한다.\n\n"좋은 시도인데, 지금은 아닌 것 같아요."\n\n정중한 거절이다. 이유도 합리적이다.\n\n하지만 며칠의 밤이 떠오른다.',highlight:'거절당했다. 자리에 돌아와서 —',
 choices:[
-{id:'never2',text:'다시는 제안하지 않는다.',subtext:'괜히 나섰다.',meaning:'"괜히 나섰다." 이후로 회의에서 조용해진다. 1년 뒤 후배가 비슷한 아이디어로 칭찬받는 걸 본다. 거절당한 건 아이디어지 당신이 아니다. 하지만 뇌는 이 구분을 잘 못한다.',principle:{name:'학습된 무기력',desc:'반복된 거절이 "뭘 해도 안 된다"는 믿음을 만든다. 한 번의 거절이 평생의 침묵이 된다.',icon:'📦'},quote:'"멈추는 것이 가장 큰 실패다."'},
-{id:'perfect2',text:'다음에는 완벽하게 준비해서 낸다.',subtext:'부족했던 거다.',meaning:'3개월이 지났다. 아직 제출하지 않았다. 완벽하지 않으니까. "완벽하게 준비하겠다"는 "다시는 거절당하지 않겠다"의 다른 표현이다.',principle:{name:'완벽주의의 갑옷',desc:'완벽주의는 높은 기준이 아니라 거절에 대한 공포다. 완벽은 불가능하므로 결과적으로 아무것도 하지 않게 된다.',icon:'💎'},quote:'"완벽주의는 자기 보호의 가장 세련된 형태다." - 브레네 브라운'},
-{id:'rage2',text:'"지금이 아니면 언제가 맞는 건데요?"',subtext:'속이 부글부글한다.',meaning:'따졌다. 당신이 지킨 건 아이디어가 아니라 자존심이다. 거절을 공격으로 해석하고 반격한 것이다. 모든 "아니요"가 전쟁 선포가 된다.',principle:{name:'공격의 갑옷',desc:'위협을 느끼면 즉시 반격한다. 강해 보이지만 관계를 파괴한다. 아무도 솔직한 피드백을 주지 않게 된다.',icon:'⚔️'},quote:'"최선의 방어는 방어가 필요 없는 상태다."'}
+{id:'quiet2',text:'기획안 파일을 닫는다. 다시는 안 연다.',subtext:'괜히 나섰다.',meaning:'파일을 닫았다. 폴더 깊숙이 넣었다. 1년이 지났다. 그 뒤로 한 번도 새 기획을 내지 않았다. 시키는 일만 한다. 안전하다. 하지만 후배가 비슷한 아이디어로 칭찬받는 걸 본다. 입을 열면 거절당할 수 있다. 그래서 입을 닫았다. 한 번의 거절이 평생의 침묵이 됐다.',principle:{name:'학습된 침묵',desc:'거절의 고통이 너무 크면 시도 자체를 멈춘다. 한 번 데인 아이가 불을 피하듯. 하지만 불을 피하면 따뜻함도 사라진다.',icon:'🤐'},quote:'"한 번의 거절이 평생의 침묵이 되지 않도록."'},
+{id:'revise2',text:'바로 수정을 시작한다. 완벽하게 만들어서 다시 낸다.',subtext:'부족했던 거다.',meaning:'수정을 시작했다. 3일 뒤 다시 본다. 부족하다. 일주일 더. 아직 부족하다. 한 달이 지났다. 여전히 제출하지 않았다. "완벽해지면"은 "다시 거절당하지 않으면"의 다른 표현이다. 완벽은 도달 불가능하므로 결과적으로 아무것도 내지 않는다.',principle:{name:'완벽의 방패',desc:'완벽주의는 높은 기준이 아니라 거절에 대한 공포다. 완벽해야 안전하다는 환상. 가장 생산적으로 보이는 갑옷이 가장 많은 것을 막는다.',icon:'💎'},quote:'"완벽주의는 자기 보호의 가장 세련된 형태다." - 브레네 브라운'},
+{id:'shrug2',text:'"괜찮아." 커피를 마시러 간다.',subtext:'별일 아니다.',meaning:'"괜찮아." 5분 만에 넘겼다. 커피를 마시고 돌아왔다. 다음 일을 한다. 아무 일도 없었다는 듯이. 정말 괜찮은 건가? 며칠 밤을 새운 건데. "별일 아니야"로 넘기면, 다음에도 별일이 아닌 것만 하게 된다. 상처받을 만한 일을 피하는 것. 이것도 갑옷이다.',principle:{name:'무감의 갑옷',desc:'중요하지 않은 척한다. 상처받을 가능성 자체를 차단한다. 가장 가벼워 보이는 갑옷이 가장 많은 것을 포기하게 만든다.',icon:'🤷'},quote:'"별일 아닌 척하는 건, 별일이 될 만한 것을 포기하는 것이다."'},
+{id:'ask2',text:'상사에게 다시 찾아간다. "구체적으로 어디가 부족했을까요?"',subtext:'이유를 알아야 한다.',meaning:'다시 찾아갔다. 상사가 놀란다. "음... 타이밍이 문제였어요. 내용은 괜찮았는데." 구체적 피드백을 받았다. 다음에 뭘 고칠지 안다. 떨렸지만 물었다. 거절을 끝이 아니라 정보로 바꾼 것이다. 이 행동이 갑옷 없이 서는 연습이다.',principle:{name:'갑옷 없는 질문',desc:'거절당한 뒤 다시 찾아가는 것. 갑옷을 벗어야 가능한 행동이다. 방어도, 공격도, 회피도 아닌 — 있는 그대로 서는 것.',icon:'💧'},quote:'"거절을 끝으로 받아들이느냐, 정보로 받아들이느냐가 성장을 결정한다."'}
 ]},
-{badge:'친밀',title:'마음을 여는 순간',desc:`가까운 사람이 묻는다.\n\n"너 요즘 힘든 거 아니야? 표정이 안 좋아."\n\n맞다. 힘들다. 직장도, 관계도, 미래도.\n\n하지만 말하면 약해 보인다. 말하면 짐이 된다.`,highlight:'진심을 말할 수 있는가?',
+{badge:'친밀',title:'귀가',desc:'금요일 밤. 집에 왔다.\n\n한 주가 길었다. 회사에서 지치고, 사람들에게 지치고.\n\n같이 사는 사람이 묻는다.\n\n"너 요즘 표정이 안 좋아. 무슨 일 있어?"\n\n맞다. 있다. 많다.',highlight:'"무슨 일 있어?" — 당신은',
 choices:[
-{id:'fine3',text:'"아니야, 괜찮아."',subtext:'원래 이 정도는 괜찮다.',meaning:'"괜찮아"를 반복할수록, 진짜 괜찮지 않을 때도 아무도 물어보지 않게 된다. 당신이 만든 벽을 당신이 원망하게 된다.',principle:{name:'자기 충족적 고립',desc:'"괜찮다"고 말할수록 주변이 물러난다. 그러면 "역시 아무도 관심 없어"라고 느낀다. 하지만 관심을 차단한 건 당신이다.',icon:'🏔️'},quote:'"괜찮다는 말을 가장 많이 하는 사람이, 가장 괜찮지 않은 사람이다."'},
-{id:'logic3',text:'상황을 설명한다. 감정은 빼고.',subtext:'"직장에서 이런 일이 있었어."',meaning:'"직장에서 프로젝트가 엎어졌어. 3개월 날렸지." 상대가 말한다. "그럼 다음에는 리스크를 분산시켜봐." 조언이 돌아왔다. 정확한 조언이다. 하지만 당신이 원한 건 "힘들었겠다"라는 한마디였다. 감정을 빼고 말하면, 감정을 담은 반응은 돌아오지 않는다.',principle:{name:'지성화의 갑옷',desc:'감정을 분석으로 대체하는 방어기제. 이해받지만 공감받지 못하는 관계가 된다.',icon:'🧊'},quote:'"감정을 분석하는 것은 감정을 느끼는 것의 대체물이 아니다."'},
-{id:'open3',text:'"... 사실 좀 힘들어."',subtext:'처음으로 말한다.',meaning:'"힘들어." 한마디가 이렇게 어렵다. 상대가 가만히 듣는다. 이상하게 가벼워진다. 하지만 동시에 무섭다. 약한 모습을 보여줬으니까.',principle:{name:'취약성의 용기',desc:'약함을 보여주는 것이 진짜 용기다. 갑옷을 벗는 순간이 가장 무방비하지만, 동시에 가장 진짜인 순간이다.',icon:'💧'},quote:'"취약성은 약함이 아니라, 우리가 가진 가장 정확한 용기의 척도다." - 브레네 브라운'}
+{id:'fine3',text:'"아니, 괜찮아. 좀 피곤해서."',subtext:'걱정 끼치기 싫다.',meaning:'"괜찮아." 말하는 순간 상대가 물러난다. "그래, 쉬어." 거실이 조용해진다. 원한 건 이게 아닌데. "괜찮아"를 반복할수록 상대가 묻지 않게 된다. 1년 뒤에는 "저 사람은 원래 괜찮은 사람"이 된다. 당신이 만든 벽을 당신이 원망하게 된다.',principle:{name:'자동화된 괜찮음',desc:'"괜찮아"는 가장 자주 쓰이는 거짓말이다. 반복하면 상대가 정말 물러난다. 그리고 혼자가 된다. 괜찮다고 말한 자신이 만든 고립.',icon:'🏔️'},quote:'"괜찮다는 말을 가장 많이 하는 사람이, 가장 괜찮지 않은 사람이다."'},
+{id:'facts3',text:'상황을 설명한다. "회사에서 이런 일이 있었어."',subtext:'팩트 위주로.',meaning:'"프로젝트가 엎어졌어. 3개월 날렸지." 상대가 듣더니 말한다. "그럼 다음에는 리스크를 분산시켜봐." 조언이 돌아왔다. 정확한 조언이다. 하지만 원한 건 "힘들었겠다"라는 한마디였다. 감정을 빼고 말하면, 감정을 담은 반응은 돌아오지 않는다.',principle:{name:'감정 없는 보고',desc:'감정을 분석으로 대체하는 것. 상황은 전달하되 느낌은 뺀다. 이해받지만 공감받지 못하는 관계가 된다. 가장 안전하지만 가장 외로운 소통.',icon:'📋'},quote:'"감정을 빼고 말하면, 감정을 담은 대답은 돌아오지 않는다."'},
+{id:'open3',text:'"... 사실 요즘 좀 힘들어."',subtext:'처음으로 말한다.',meaning:'"힘들어." 한마디가 이렇게 어렵다. 상대가 멈춘다. 리모컨을 내려놓는다. "... 왜?" 묻지 않아도 된다. 그냥 듣는다. 이상하게 가벼워진다. 말한 것뿐인데. 동시에 무섭다. 약한 모습을 보여줬으니까. 하지만 이 무서움이 연결의 시작이다.',principle:{name:'갑옷 벗는 순간',desc:'약함을 보여주는 것이 진짜 용기다. 갑옷을 벗는 순간이 가장 무방비하지만, 동시에 가장 진짜인 순간이다. 모든 깊은 관계는 여기서 시작된다.',icon:'💧'},quote:'"취약성은 약함이 아니라, 우리가 가진 가장 정확한 용기의 척도다." - 브레네 브라운'},
+{id:'deflect3',text:'TV를 켠다. "아 배고프다, 뭐 먹을까?"',subtext:'화제를 바꾼다.',meaning:'TV를 켰다. 배달 앱을 연다. 화제가 바뀌었다. 상대가 따라온다. "치킨 어때?" 위기 모면. 하지만 "무슨 일 있어?"는 사라지지 않았다. 연기됐을 뿐이다. 상대가 다음에 또 물을까? 아마 안 물을 것이다. 두 번 물어서 두 번 피하면, 세 번째는 없다.',principle:{name:'화제 전환의 기술',desc:'불편한 대화를 가장 자연스럽게 피하는 법. 아무도 눈치 못 챈다. 하지만 피할수록 "물어봐도 안 말해"가 되고, 결국 아무도 묻지 않는 미래가 온다.',icon:'📺'},quote:'"화제를 바꾸는 건 대화의 기술이 아니라, 지금은 감정의 도피다."'}
 ]},
-{badge:'실패',title:'무너진 계획',desc:`1년간 준비한 것이 무너졌다.\n\n시험이든, 사업이든, 관계든 — 공들인 무언가가 실패했다.\n\n주변에서 말한다. "다음에 다시 하면 돼."\n\n위로가 되지 않는다.`,highlight:'무너진 뒤, 당신은 어떻게 일어서는가?',
+{badge:'실패',title:'붕괴',desc:'큰 것이 무너졌다.\n\n1년을 바친 것이다. 시험이든, 프로젝트든, 관계든.\n\n결과가 나왔다. 실패.\n\n주변에서 말한다. "다음에 다시 하면 돼."\n\n위로가 되지 않는다.',highlight:'무너진 다음 날 아침. 당신은 —',
 choices:[
-{id:'busy4',text:'바로 다음 일을 시작한다.',subtext:'멈추면 무너진다.',meaning:'바로 움직인다. 주변에서는 "대단하다"고 한다. 하지만 이것은 강함이 아니라 회피다. 6개월 뒤 예고 없이 무너진다.',principle:{name:'과잉 활동의 갑옷',desc:'바쁘면 아프지 않다. 일이 감정을 덮는다. 가장 생산적으로 보이는 갑옷. 하지만 처리되지 않은 감정은 이자가 붙는다.',icon:'🏃'},quote:'"바쁨은 가장 합법적인 도피다."'},
-{id:'numb4',text:'아무것도 느끼지 않는다.',subtext:'의외로 괜찮다.',meaning:'아프지 않다. 슬프지도 않다. 이것은 강함이 아니라 해리다. 감정이 너무 크면 뇌가 차단기를 내린다. 기쁨도 차단되기 때문에 좋은 일에도 무감해진다.',principle:{name:'감정 차단의 갑옷',desc:'감정을 느끼지 않는 것이 최고의 방어. 기쁨도 차단되기 때문에 좋은 일에도 무감해진다.',icon:'🧊'},quote:'"아무것도 느끼지 않는 것은 평온이 아니라 마비다."'},
-{id:'feel4',text:'울고 싶으면 운다.',subtext:'아프면 아픈 거다.',meaning:'울었다. 3일째 되니 조금 나아졌다. 일주일 뒤 다시 생각할 수 있게 됐다. 감정을 통과한 것이다. 가장 느리지만 가장 건강한 경로다.',principle:{name:'감정 통과',desc:'감정은 파도와 같다. 저항하면 휩쓸리고, 통과하면 지나간다. 울면 끝나는 것이 참으면 쌓인다.',icon:'🌊'},quote:'"감정은 삼키지 않는다. 통과할 뿐이다."'},
-{id:'blame4',text:'"전부 내 탓이다. 내가 부족해서."',subtext:'더 잘했어야 했다.',meaning:'"내가 부족해서." 분노를 밖으로 돌리면 공격이 된다. 안으로 돌리면 자기 비난이 된다. 겸손처럼 보이지만, 자기 파괴다. "내가 부족해서"를 반복하면, 다음에 도전할 자격이 없다고 스스로 선고한다. 실패의 원인은 여러 가지인데, 전부 자기 탓으로 돌리는 것도 왜곡이다.',principle:{name:'자기 공격의 갑옷',desc:'분노를 안으로 돌리는 방어기제. 자기 비난은 겸손이 아니라 자기 파괴다. 가장 착해 보이는 갑옷이 가장 위험하다.',icon:'🗡️'},quote:'"자기 자신에게 가장 잔인한 사람이, 남에게 가장 착한 사람이다."'}
+{id:'run4',text:'바로 다음 계획을 세운다.',subtext:'멈추면 무너진다.',meaning:'다음 날 아침 6시에 일어났다. 새로운 계획표를 만든다. 새로운 목표를 세운다. 주변에서 "대단하다"고 한다. 하지만 이건 강함이 아니다. 멈추면 감정이 올라오니까 멈추지 않는 것이다. 6개월 뒤 예고 없이 무너진다. 처리하지 않은 감정은 이자가 붙는다.',principle:{name:'과잉 활동의 갑옷',desc:'바쁘면 아프지 않다. 일이 감정을 덮는다. 가장 생산적으로 보이는 갑옷. 하지만 멈추는 순간 전부 한꺼번에 온다.',icon:'🏃'},quote:'"바쁨은 가장 합법적인 도피다."'},
+{id:'numb4',text:'아무것도 느끼지 않는다.',subtext:'의외로 괜찮다.',meaning:'괜찮다. 아프지 않다. 슬프지도 않다. 1년을 바쳤는데 아무것도 못 느끼는 것. 이것은 강함이 아니라 차단이다. 감정이 너무 크면 뇌가 스위치를 내린다. 지금은 편하지만, 기쁨도 함께 차단된다. 좋은 일이 와도 무감하다.',principle:{name:'감정 차단',desc:'감정을 느끼지 않는 것이 최고의 방어. 모든 감정이 꺼진다. 고통도, 기쁨도. 마비는 평온이 아니다.',icon:'🧊'},quote:'"아무것도 느끼지 않는 것은 평온이 아니라 마비다."'},
+{id:'cry4',text:'이불을 뒤집어쓴다. 울고 싶으면 운다.',subtext:'아프면 아픈 거다.',meaning:'울었다. 하루 종일. 다음 날도. 3일째 되니 조금 나아졌다. 일주일 뒤 다시 생각할 수 있게 됐다. 감정을 통과한 것이다. 우회하지 않고. 가장 느리지만 가장 건강한 경로. 처리된 감정은 돌아오지 않는다.',principle:{name:'감정 통과',desc:'감정은 파도와 같다. 저항하면 휩쓸리고 통과하면 지나간다. 울면 끝나는 것이 참으면 쌓인다. 통과가 처리다.',icon:'🌊'},quote:'"감정은 삼키지 않는다. 통과할 뿐이다."'},
+{id:'blame4',text:'"전부 내 탓이다."',subtext:'내가 부족해서 이렇게 됐다.',meaning:'"내가 부족해서." 분노가 밖으로 나가지 않고 안으로 향한다. 자기 비난. 겸손처럼 보이지만 자기 파괴다. "내가 부족해서"를 반복하면 다음에 도전할 자격이 없다고 스스로 선고한다. 실패의 원인은 여러 가지인데 전부 자기 탓으로 돌리는 것도 왜곡이다.',principle:{name:'자기 공격',desc:'분노를 안으로 돌리는 방어. 가장 착해 보이는 갑옷이 가장 위험하다. 자기를 때리면 남이 때리지 않을 것이라는 무의식.',icon:'🗡️'},quote:'"자기 자신에게 가장 잔인한 사람이, 남에게 가장 착한 사람이다."'}
 ]},
-{badge:'정체',title:'갑옷의 무게',desc:`여기까지 오면서, 자기 패턴이 보이기 시작했는가?\n\n웃으며 넘기거나, 방어하거나, 얼어붙거나.\n완벽해지려 하거나, 바쁘게 움직이거나, 감정을 꺼버리거나.\n\n이 모든 것이 한때는 당신을 살렸다. 그 시절에는 이 갑옷이 없으면 버틸 수 없었다.\n\n하지만 지금도 필요한가?`,highlight:'갑옷을 벗을 수 있는가?',
+{badge:'정체',title:'거울',desc:'여기까지 오면서, 패턴이 보이기 시작했는가?\n\n웃으며 넘기거나, 방어하거나, 얼어붙거나.\n완벽해지려 하거나, 바쁘게 움직이거나, 감정을 꺼버리거나.\n\n이 모든 것이 한때는 당신을 살렸다.\n그 시절에는 이 갑옷이 없으면 버틸 수 없었다.\n\n하지만 지금도 필요한가?',highlight:'갑옷을 인식했다. 어떻게 하겠는가?',
 choices:[
-{id:'keep5',text:'아직은 벗을 수 없다.',subtext:'세상이 안전하지 않으니까.',meaning:'벗을 수 없다. 이것은 약함이 아니다. 솔직함이다. 중요한 건 "갑옷을 입고 있다는 걸 아는 것"이다.',principle:{name:'갑옷의 인식',desc:'갑옷을 벗는 첫 단계는 입고 있다는 걸 아는 것이다. 대부분은 갑옷을 자기 성격이라고 착각한다. 인식하면 선택할 수 있다.',icon:'👁️'},quote:'"갑옷을 벗는 첫 단계는 입고 있다는 것을 아는 것이다." - 빌헬름 라이히'},
-{id:'try5',text:'조금씩 벗어보겠다.',subtext:'안전한 사람 앞에서부터.',meaning:'가장 안전한 한 사람 앞에서 갑옷을 벗어본다. 떨릴 것이다. 하지만 그 한 번이 시작이다. 한 겹씩, 천천히.',principle:{name:'점진적 해체',desc:'안전한 관계에서 한 번 취약해져 보고, 그래도 괜찮다는 경험을 쌓는 것. 이 경험이 반복되면 갑옷이 느슨해진다.',icon:'🧅'},quote:'"치유는 갑옷을 부수는 것이 아니라, 안전한 곳에서 벗어놓는 연습이다."'},
-{id:'question5',text:'"갑옷 없이도 내가 나일 수 있을까?"',subtext:'갑옷을 벗으면 뭐가 남는지 모르겠다.',meaning:'가장 깊은 질문이다. 갑옷을 너무 오래 입으면 갑옷이 곧 자신이 된다. 갑옷을 벗으면 아무것도 남지 않을 것 같은 공포. 하지만 남는다. 갑옷 아래에 있던 것. 그게 진짜 당신이다.',principle:{name:'진짜 자아의 공포',desc:'진짜 자아는 갑옷 아래에 있다. 하지만 본 적이 없으니 거기에 뭐가 있는지 모른다. 그 미지에 대한 공포가 갑옷을 벗지 못하게 한다.',icon:'🫥'},quote:'"당신이 두려워하는 건 갑옷을 벗는 것이 아니라, 갑옷 없이 존재하는 것이다." - 카렌 호나이'}
+{id:'keep5',text:'아직은 벗을 수 없다.',subtext:'세상이 안전하지 않으니까.',meaning:'벗을 수 없다. 이것은 약함이 아니라 솔직함이다. 갑옷을 벗으려면 안전한 환경이 필요하다. 전쟁터에서 갑옷을 벗으라는 건 자살 명령이다. 중요한 건 지금 벗는 것이 아니라, 입고 있다는 걸 아는 것이다. 인식하면 선택할 수 있다.',principle:{name:'갑옷의 인식',desc:'벗는 첫 단계는 입고 있다는 걸 아는 것이다. 대부분은 갑옷을 자기 성격이라고 착각한다. "나는 원래 이런 사람이야." 아니다. 당신이 만든 것이다.',icon:'👁️'},quote:'"갑옷을 벗는 첫 단계는 입고 있다는 것을 아는 것이다." - 빌헬름 라이히'},
+{id:'try5',text:'안전한 한 사람 앞에서 벗어본다.',subtext:'조금씩.',meaning:'한 사람을 떠올린다. 가장 안전한 사람. 그 사람 앞에서 갑옷을 벗어본다. 떨린다. 하지만 벗어도 괜찮았다는 경험이 쌓이면 갑옷이 느슨해진다. 사라지는 게 아니라, 필요할 때만 입는 것이 된다.',principle:{name:'한 겹씩',desc:'갑옷은 한 번에 벗을 수 없다. 안전한 관계에서 한 겹씩 벗는 것이다. 벗어도 괜찮다는 경험의 반복이 갑옷을 녹인다.',icon:'🧅'},quote:'"치유는 갑옷을 부수는 것이 아니라, 안전한 곳에서 벗어놓는 연습이다."'},
+{id:'who5',text:'"갑옷 없이도 내가 나일 수 있을까?"',subtext:'벗으면 뭐가 남는지 모르겠다.',meaning:'가장 깊은 질문이다. "유머 있는 나", "강한 나", "냉정한 나" — 이것이 갑옷인지 진짜인지 구분이 안 된다. 갑옷을 벗으면 아무것도 안 남을 것 같다. 하지만 남는다. 갑옷 아래에 있던 것. 그게 진짜 당신이다. 아직 만난 적 없을 뿐이다.',principle:{name:'갑옷 아래의 자아',desc:'진짜 자아는 갑옷 아래에 있다. 본 적이 없으니 두렵다. 하지만 갑옷을 쌓기 전의 당신이 어딘가에 있다. 만나려면 벗어야 한다.',icon:'🫥'},quote:'"두려워하는 건 갑옷을 벗는 것이 아니라, 갑옷 없이 존재하는 것이다." - 카렌 호나이'}
 ]}
 ],
 calculateResult(choices,principles){
-const types={joke1:'humor',defend1:'defense',freeze1:'freeze',never2:'avoidance',perfect2:'perfectionism',rage2:'attack',fine3:'isolation',logic3:'intellect',open3:'vulnerability',busy4:'hyperactivity',numb4:'shutdown',feel4:'feeling',blame4:'selfblame',keep5:'awareness',try5:'growth',question5:'depth'};
+const types={joke1:'humor',argue1:'defense',silent1:'freeze',note1:'mask',quiet2:'avoidance',revise2:'perfectionism',shrug2:'dismissal',ask2:'open',fine3:'isolation',facts3:'intellect',open3:'open',deflect3:'deflect',run4:'hyperactivity',numb4:'shutdown',cry4:'open',blame4:'selfblame',keep5:'awareness',try5:'open',who5:'depth'};
 const counts={};choices.forEach(c=>{const t=types[c.choiceId];counts[t]=(counts[t]||0)+1;});
-const armorTypes=['humor','defense','freeze','avoidance','perfectionism','attack','isolation','intellect','hyperactivity','shutdown'];
-const openTypes=['vulnerability','feeling','awareness','growth','depth'];
-let openCount=0;choices.forEach(c=>{if(openTypes.includes(types[c.choiceId]))openCount++;});
-if(openCount>=3)return{icon:'🌿',label:'갑옷 유형',title:'갑옷을 벗기 시작한 사람',desc:'당신은 감정을 직면하고, 취약함을 보여줄 수 있는 사람입니다.\n\n갑옷이 있지만 벗을 수 있다는 것. 모든 깊은 관계는 갑옷을 벗는 순간에서 시작됩니다.\n\n다만, "나는 갑옷이 없다"고 생각하는 것 자체가 갑옷일 수 있습니다.',stats:[{value:openCount+'/5',label:'개방 횟수'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
-if(counts.humor||counts.intellect)return{icon:'🎭',label:'갑옷 유형',title:'가면의 갑옷',desc:'당신의 갑옷은 유머와 지성입니다.\n\n불편한 감정을 웃음이나 논리로 처리합니다. 주변에서는 "강하다", "쿨하다"고 평가합니다.\n\n하지만 대가는 고독입니다. 아무도 당신의 진짜 감정을 모릅니다.',stats:[{value:'가면형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
-if(counts.defense||counts.attack)return{icon:'⚔️',label:'갑옷 유형',title:'전투의 갑옷',desc:'당신의 갑옷은 방어와 반격입니다.\n\n비판이 들어오면 즉시 방패를 들거나 반격합니다. 강해 보이지만 관계를 소모시킵니다.\n\n"비판 = 공격"이라는 등식을 점검해보세요.',stats:[{value:'전투형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
-if(counts.avoidance||counts.freeze||counts.shutdown||counts.selfblame)return{icon:'🫥',label:'갑옷 유형',title:'투명의 갑옷',desc:'당신의 갑옷은 회피와 차단입니다.\n\n위협이 오면 존재감을 줄입니다. 가장 눈에 띄지 않는 갑옷이지만, 대가가 큽니다.\n\n당신은 사라져서 살아남는 법을 배웠습니다. 이제 존재하면서도 안전할 수 있다는 걸 배울 차례입니다.',stats:[{value:'투명형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
-if(counts.perfectionism||counts.hyperactivity)return{icon:'💎',label:'갑옷 유형',title:'완벽의 갑옷',desc:'당신의 갑옷은 완벽주의와 과잉 활동입니다.\n\n가장 생산적으로 보이는 갑옷입니다. 하지만 멈추면 무너집니다.\n\n"불완전한 채로도 괜찮다"는 경험이 이 갑옷을 느슨하게 합니다.',stats:[{value:'완벽형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
-return{icon:'🌀',label:'갑옷 유형',title:'복합 갑옷',desc:'당신의 갑옷은 하나가 아닙니다.\n\n상황에 따라 다른 갑옷을 입습니다. 적응력이 높다는 뜻이기도 합니다.\n\n어떤 상황에서 어떤 갑옷이 작동하는지 관찰해보세요. 패턴이 보이면 선택할 수 있습니다.',stats:[{value:'복합형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}],bookHook:'두려움, 방어, 자기혐오의 한복판에서 갑옷을 벗은 자들의 기록.'};
+const openCount=(counts.open||0)+(counts.awareness||0)+(counts.depth||0);
+if(openCount>=3)return{icon:'🌿',label:'갑옷 유형',title:'갑옷을 벗기 시작한 사람',desc:'당신은 감정을 직면하고 취약함을 보여줄 수 있는 사람입니다.\n\n갑옷이 있지만 벗을 수 있다는 것. 모든 깊은 관계는 갑옷을 벗는 순간에서 시작됩니다.\n\n다만, "나는 갑옷이 없다"는 생각 자체가 갑옷일 수 있습니다.',stats:[{value:openCount+'/5',label:'개방 횟수'},{value:principles.length,label:'발견한 원칙'}]};
+if(counts.humor||counts.intellect||counts.mask)return{icon:'🎭',label:'갑옷 유형',title:'가면의 갑옷',desc:'당신의 갑옷은 유머, 지성, 프로페셔널함입니다.\n\n불편한 감정을 웃음이나 논리로 처리합니다. 주변에서는 "쿨하다", "강하다"고 평가합니다.\n\n하지만 대가는 고독입니다. 아무도 당신의 진짜 감정을 모릅니다.',stats:[{value:'가면형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}]};
+if(counts.defense||counts.deflect)return{icon:'⚔️',label:'갑옷 유형',title:'전투의 갑옷',desc:'당신의 갑옷은 방어와 회피입니다.\n\n비판이 오면 방패를 들거나 화제를 돌립니다. 위협을 정면으로 받지 않습니다.\n\n효과적이지만, 솔직한 말을 해주는 사람이 사라집니다.',stats:[{value:'전투형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}]};
+if(counts.avoidance||counts.freeze||counts.shutdown||counts.selfblame||counts.dismissal)return{icon:'🫥',label:'갑옷 유형',title:'투명의 갑옷',desc:'당신의 갑옷은 침묵, 차단, 자기 비난입니다.\n\n위협이 오면 존재감을 줄이거나, 감정을 꺼버리거나, 자기를 탓합니다.\n\n당신은 사라져서 살아남는 법을 배웠습니다. 이제 존재하면서도 안전할 수 있다는 걸 배울 차례입니다.',stats:[{value:'투명형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}]};
+if(counts.perfectionism||counts.hyperactivity)return{icon:'💎',label:'갑옷 유형',title:'완벽의 갑옷',desc:'당신의 갑옷은 완벽주의와 과잉 활동입니다.\n\n가장 생산적으로 보이는 갑옷. 멈추면 무너지니까 멈추지 않습니다.\n\n"불완전한 채로도 괜찮다"는 경험이 이 갑옷을 느슨하게 합니다.',stats:[{value:'완벽형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}]};
+return{icon:'🌀',label:'갑옷 유형',title:'복합 갑옷',desc:'당신의 갑옷은 하나가 아닙니다.\n\n상황에 따라 다른 갑옷을 입습니다. 적응력이 높다는 뜻이기도 합니다.\n\n어떤 상황에서 어떤 갑옷이 작동하는지 관찰해보세요.',stats:[{value:'복합형',label:'주요 방어'},{value:principles.length,label:'발견한 원칙'}]};
 },
 getShareText(t){return'🛡️ 성격 갑옷\n\n'+t+'\n\nhttps://bit.ly/armor-sim';}
 };
 SimTemplate.init(CONFIG);
-
-const _origCalc2 = CONFIG.calculateResult;
-CONFIG._lastBookHook = '';
-CONFIG.calculateResult = function(choices, principles) {
-  const result = _origCalc2(choices, principles);
-  CONFIG._lastBookHook = result.bookHook || '';
-  return result;
-};
-const observer2 = new MutationObserver(() => {
-  const resultScreen = document.getElementById('resultScreen');
-  if (resultScreen && !resultScreen.classList.contains('hidden') && CONFIG._lastBookHook) {
-    const promo = document.querySelector('.sim-promo');
-    if (promo && !document.getElementById('bookHookText')) {
-      const hookDiv = document.createElement('div');
-      hookDiv.id = 'bookHookText';
-      hookDiv.style.cssText = 'text-align:center;padding:20px 16px;margin-bottom:8px;font-size:15px;color:#fb923c;line-height:1.8;font-weight:500;';
-      hookDiv.textContent = CONFIG._lastBookHook;
-      promo.insertBefore(hookDiv, promo.firstChild);
-    }
-  }
-});
-observer2.observe(document.getElementById('resultScreen'), {attributes:true});
 document.getElementById('shareBtn').addEventListener('click',async()=>{const t='🛡️ 성격 갑옷\n\n'+document.getElementById('resultTitle').textContent+'\n\nhttps://bit.ly/armor-sim';if(navigator.share){try{await navigator.share({title:'성격 갑옷',text:t});}catch{}}else{navigator.clipboard.writeText(t).then(()=>{document.getElementById('shareBtn').textContent='링크 복사됨!';setTimeout(()=>{document.getElementById('shareBtn').textContent='친구한테 시켜보기';},2000);});}});
 document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#1a1008';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#f97316';x.fillText('성격 갑옷',400,205);const l=document.createElement('a');l.download='성격갑옷_결과.png';l.href=c.toDataURL();l.click();});
   </script>
