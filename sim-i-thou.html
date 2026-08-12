@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>도구인가, 사람인가 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <style>:root{--sim-primary:#d946ef;--sim-primary-light:#e879f9;--sim-primary-bg:rgba(217,70,239,0.1);--sim-primary-border:rgba(217,70,239,0.3);}</style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header"><a href="index.html" class="sim-back-btn">←</a><div class="sim-header-title">도구인가, 사람인가</div></div>
+    <div id="gameScreen">
+      <div class="sim-progress"><div class="sim-progress-label"><span id="stageLabel">STAGE 1</span><span id="stageCount">1/5</span></div><div class="sim-progress-bar"><div class="sim-progress-fill" id="progressFill" style="width:20%"></div></div></div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation"><div class="sim-situation-title" id="situationTitle"></div><div class="sim-situation-desc" id="situationDesc"></div><div class="sim-situation-highlight hidden" id="situationHighlight"></div><div class="sim-situation-quote hidden" id="situationQuote"></div></div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card"><div class="sim-explanation-label">당신의 선택</div><div class="sim-explanation-title" id="yourChoice"></div></div>
+      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">그 다음 벌어지는 일</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
+      <div class="sim-principle-card hidden" id="principleCard"><div class="sim-principle-header"><span class="sim-principle-icon">💡</span><span>발견한 원칙</span></div><div class="sim-principle-name" id="principleName"></div><div class="sim-principle-desc" id="principleDesc"></div></div>
+      <div class="sim-quote-card hidden" id="quoteCard"><span class="sim-quote-icon">💬</span><span class="sim-quote-text" id="quoteText"></span></div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card"><div class="sim-result-icon" id="resultIcon">🪞</div><div class="sim-result-label" id="resultLabel">당신의 관계 방식</div><div class="sim-result-title" id="resultTitle"></div><div class="sim-result-desc" id="resultDesc"></div><div class="sim-result-stats hidden" id="resultStats"></div></div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions"><button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button><button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button><a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a></div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div style="text-align:center;padding:20px 16px;margin-bottom:8px;font-size:15px;color:#e879f9;line-height:1.8;font-weight:500;">서열, 지위, 체면의 한복판에서 사람을 다시 본 자들의 사유.</div>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display:block;text-decoration:none;margin-bottom:24px;">
+          <div style="background:linear-gradient(135deg,#1a0e1e 0%,#261430 50%,#1a0e1e 100%);border:1px solid rgba(217,70,239,0.3);border-radius:16px;padding:24px;text-align:center;">
+            <img src="book-hierarchy.png" alt="서열의 교양" style="width:200px;height:auto;border-radius:8px;margin-bottom:16px;box-shadow:0 8px 32px rgba(217,70,239,0.2);">
+            <div style="font-size:17px;font-weight:700;color:#d946ef;margin-bottom:6px;">서열의 교양</div>
+            <div style="font-size:12px;color:#71717a;">알고도 모른 척해야 하는 지위의 법칙</div>
+          </div>
+        </a>
+        <div style="font-size:12px;color:#52525b;text-align:center;margin-bottom:12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-transcend.png" class="sim-book-cover"><div class="sim-book-title">초월자의 조건</div></a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-fight.png" class="sim-book-cover"><div class="sim-book-title">싸움의 교양</div></a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item"><img src="book-wealth.png" class="sim-book-cover"><div class="sim-book-title">훔친 부 편</div></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="sim-template.js"></script>
+  <script>
+const CONFIG={id:'i-thou',title:'도구인가, 사람인가',shareIcon:'🪞',shareUrl:'https://bit.ly/i-thou-sim',version:5,
+stages:[
+{badge:'아침',title:'택시',desc:'택시를 탔다. 목적지를 말했다.\n\n기사님이 말을 건다.\n\n"요즘은 다들 이어폰 끼고 타시더라고요. 말 한마디 없이."\n\n웃으며 말한다. 외로워서가 아니라 그냥 그렇다는 듯이.\n\n당신의 손에는 이어폰이 있다.',highlight:'이어폰을 끼려던 참이었다. 당신은 —',
+choices:[
+{id:'plug1',text:'이어폰을 끼고 창밖을 본다.',subtext:'조용히 가고 싶다.',meaning:'이어폰을 꽂았다. 조용하다. 편하다. 15분 뒤 내렸다. 뒤를 돌아보지 않았다. 이름도, 얼굴도, 아까 그 말도 기억나지 않는다. 20년을 운전한 사람이었다. 하지만 당신에게는 출발지에서 목적지까지의 15분이었다.',principle:{name:'기능으로서의 인간',desc:'부버는 말했다. 상대를 "그것"으로 대하면, 상대는 사라진다고. 택시 기사, 편의점 직원, 배달 기사. 하루에 수십 명을 만나지만, 기능만 보면 한 명도 만나지 않은 것이다.',icon:'⚙️'},quote:'"나-그것의 세계에서 상대는 사용된다. 나-너의 세계에서만 만남이 일어난다." - 부버'},
+{id:'talk1',text:'이어폰을 내려놓는다. "그러게요, 요즘 다들 바쁘니까요."',subtext:'대화를 한다.',meaning:'대화가 시작됐다. 20년째 운전한다고 한다. 예전에는 손님들이 말이 많았다고. 요즘은 앱으로 부르고, 이어폰 끼고, 별점 누르고 끝이라고. "사람이 아니라 앱 한 칸이 된 기분이에요." 목적지에 도착했다. 내리면서 이 사람의 이름이 궁금해졌다.',principle:{name:'투명한 존재',desc:'앱 뒤에, 시스템 뒤에, 서비스 뒤에 사람이 있다. 하지만 시스템이 효율적일수록 사람은 투명해진다. 별점은 있지만 이름은 없다. 편리하지만, 편리해질수록 만남이 사라진다.',icon:'👤'},quote:'"시스템이 완벽해질수록 사람은 보이지 않게 된다."'},
+{id:'short1',text:'"네~" 짧게 대답하고 핸드폰을 본다.',subtext:'대답은 하는데 대화는 안 한다.',meaning:'"네~" 웃으며 대답했다. 핸드폰을 봤다. 기사님이 한 번 더 말한다. "요즘 날씨가..." "아 네네." 거기서 끝이다. 거절하지도, 받아들이지도 않았다. 문을 반만 열어놓은 것이다. 반만 열린 문이 닫힌 문보다 잔인하다. 기대하게 만들기 때문이다.',principle:{name:'예의 바른 거절',desc:'대놓고 거절하지 않는다. 적당히 반응하되 깊이 들어가지 않는다. 가장 세련된 "나-그것". 상대는 거절당한 줄도 모른다. 하지만 대화가 이어지지 않으니, 결과는 같다.',icon:'🚪'},quote:'"반만 열린 문은 닫힌 문보다 잔인하다. 기대하게 만들기 때문이다."'},
+{id:'curious1',text:'"20년이요? 그동안 기억나는 손님 있으세요?"',subtext:'궁금해서 물어본다.',meaning:'물어봤다. 기사님의 표정이 달라진다. "있죠, 한 분은 매일 같은 시간에 타셨는데..." 이야기가 쏟아진다. 15분이 순식간이다. 내리면서 생각한다. 이 사람에게 20년의 이야기가 있었다. 탔다 내리는 수만 명의 손님 사이에서, 누군가 물어봐준 건 얼마 만인지. 질문 하나가 사람을 꺼낸다.',principle:{name:'질문이 사람을 꺼낸다',desc:'모든 사람에게는 이야기가 있다. 하지만 아무도 물어보지 않으면 그 이야기는 없는 것과 같다. 질문은 상대를 기능에서 사람으로 전환하는 열쇠다.',icon:'🔑'},quote:'"물어보는 것은 관심의 시작이고, 관심은 만남의 시작이다."'}
+]},
+{badge:'오전',title:'관심 없는 이야기',desc:'회사. 별로 안 친한 동료가 말을 건다.\n\n"주말에 가족이랑 강릉 갔다 왔는데 진짜 좋더라, 숙소가 바다 바로 앞이라서..."\n\n관심 없다. 솔직히.\n\n하지만 이 사람은 신나서 말하고 있다.',highlight:'관심 없는 이야기가 계속된다. 당신은 —',
+choices:[
+{id:'nod2',text:'"아 진짜?" 하면서 핸드폰을 슬쩍 본다.',subtext:'적당히 반응한다.',meaning:'"아 진짜?" 핸드폰을 슬쩍 봤다. 동료는 계속 말한다. 당신이 핸드폰을 봤는지 모를 수도 있다. 모를 수도 있지만 — 이야기가 짧아진다. "아 뭐 그랬어." 신나있던 목소리가 줄어든다. 모를 수도 있다. 하지만 사람은 안다.',principle:{name:'듣는 척의 비용',desc:'듣는 척은 상대를 속이지 못한다. 상대의 무의식은 알고 있다. "이 사람은 듣고 있지 않다." 그래서 대화가 줄어든다. 그래서 관계가 얇아진다. 듣는 척의 비용은 관계의 깊이로 지불된다.',icon:'👂'},quote:'"듣는 것은 귀로 하는 게 아니다. 존재로 하는 것이다."'},
+{id:'escape2',text:'적당한 타이밍에 "나 잠깐 화장실" 하고 빠진다.',subtext:'끝이 안 보인다.',meaning:'빠졌다. 자연스럽게. 돌아오면 이야기는 끝나 있을 거다. 효율적이다. 하지만 이 순간 결정된 것이 있다. 이 동료에게 당신은 "이야기를 들어주지 않는 사람"이 됐다. 다음에는 말을 걸지 않을 것이다. 당신은 편하다. 하지만 한 명의 사람이 당신의 세계에서 사라졌다.',principle:{name:'효율적 단절',desc:'관심 없는 사람을 효율적으로 피하는 것. 합리적이다. 하지만 반복하면 주변에 "쓸모 있는 사람"만 남는다. 관계가 기능으로 정렬된다. 부버가 경고한 세계 — 모든 것이 "나-그것"인 세계.',icon:'✂️'},quote:'"쓸모로 사람을 분류하면, 쓸모없는 자신도 분류당할 날이 온다."'},
+{id:'listen2',text:'핸드폰을 뒤집어놓고 듣는다.',subtext:'관심은 없지만 이 사람이 신나있으니까.',meaning:'핸드폰을 뒤집었다. 듣는다. 강릉, 바다, 횟집. 솔직히 관심 없다. 하지만 이 사람의 들뜬 표정은 보인다. 이야기가 아니라 사람을 보고 있는 것이다. 5분 뒤 이야기가 끝난다. "야 고마워, 오늘 너밖에 관심 있게 안 들어줬어." 당신도 몰랐다. 5분이 누군가에게 하루를 바꿀 수 있다는 걸.',principle:{name:'5분의 선물',desc:'관심 없는 이야기를 듣는 건 고역이다. 하지만 그 5분은 상대에게 "나는 존재한다"는 확인이 된다. 당신에게는 5분이지만, 상대에게는 "오늘 누군가 내 말을 들어줬다"가 된다.',icon:'🎁'},quote:'"듣는다는 것은 시간을 주는 게 아니라 존재를 주는 것이다."'},
+{id:'turn2',text:'"아 나도! 나 지난주에..." 내 얘기로 바꾼다.',subtext:'나도 할 말이 있다.',meaning:'"나도 지난주에 속초 갔는데—" 자연스럽게 내 이야기가 시작됐다. 상대가 끄덕인다. 이제 당신이 말하고 있다. 5분 뒤, 동료가 자리로 돌아간다. 돌아보면 — 그 사람의 강릉 이야기가 어떻게 끝났는지 모른다. 끝나지 않았다. 당신이 끊었다.',principle:{name:'위장된 관심',desc:'"나도"는 가장 흔한 대화 탈취다. 공감의 형태를 띠지만, 실제로는 상대의 무대를 자기 것으로 바꾸는 것이다. 대화에서 "나도"를 얼마나 자주 쓰는지 세어보면 자기 대화 패턴이 보인다.',icon:'🎤'},quote:'"나도 — 공감일까, 탈취일까. 그 다음에 누가 말하고 있는지 보면 답이 나온다."'}
+]},
+{badge:'점심',title:'호의의 가격',desc:'후배가 부탁을 한다.\n\n"선배, 이거 좀 도와주실 수 있어요? 제가 잘 모르는 부분이라서..."\n\n당신이 30분만 도와주면 끝나는 일이다.\n\n하지만 당신 일도 밀려 있다.',highlight:'30분짜리 부탁. 당신은 —',
+choices:[
+{id:'deal3',text:'도와준다. 그리고 기억해둔다.',subtext:'나중에 쓸 일이 있을 거다.',meaning:'도와줬다. "별거 아니야." 진심이다. 3개월 뒤, 당신이 바쁠 때 이 후배가 떠오른다. "그때 내가 도와줬으니." 별거 아니라고 했는데, 기억하고 있다.',principle:{name:'호의의 장부',desc:'도와주고 기억해두는 것. 사회적으로 현명하다. 하지만 모든 호의에 장부가 달리면, 관계는 거래가 된다. "나-너"에서 호의는 대가가 없다. "나-그것"에서 호의는 투자다.',icon:'📒'},quote:'"대가를 기억하는 순간, 선물은 거래가 된다."'},
+{id:'pure3',text:'도와준다. 기억하지 않는다.',subtext:'30분이면 되는 거니까.',meaning:'도와줬다. 끝났다. 잊었다. 다음 주에 후배가 커피를 사왔다. "저번에 감사해서요." 당신은 뭘 도와줬는지 잠깐 기억이 안 난다. "아 그거?" 뭘 도와줬는지 기억도 안 난다. 어쩌면 그게 제일 좋은 도움이다.',principle:{name:'잊혀지는 호의',desc:'진짜 호의는 기억에 남지 않는다. 대가를 기대하지 않았으니 기록할 필요가 없다. 오래 기억나는 호의는 아직 회수되지 않은 투자일 수 있다.',icon:'🕊️'},quote:'"진짜 선물은 준 사람이 먼저 잊는다."'},
+{id:'busy3',text:'"미안 나도 지금 밀려서." 거절한다.',subtext:'진짜 바쁘다.',meaning:'거절했다. 후배가 "아 네, 알겠습니다." 돌아간다. 당신은 자기 일을 한다. 합리적이다. 하지만 질문이 남는다. "진짜 30분도 없었는가?" 대부분의 경우, 30분은 있다. 없는 건 30분이 아니라 관심이다. 이 사람의 문제에 30분을 쓸 만큼 이 사람이 중요하지 않은 것이다.',principle:{name:'시간의 서열',desc:'시간을 누구에게 쓰느냐가 그 사람의 서열을 보여준다. "바빠서"는 대부분 "당신에게 쓸 시간은 없어서"의 점잖은 버전이다. 우리는 시간으로 사람의 순위를 매긴다.',icon:'⏰'},quote:'"바쁘다는 말은 시간이 없다는 뜻이 아니라, 당신이 우선순위에 없다는 뜻이다."'},
+{id:'teach3',text:'"이리 와봐, 내가 방법을 알려줄게."',subtext:'다음에는 혼자 할 수 있게.',meaning:'"여기 보면 이렇게 하는 거야." 알려줬다. 30분이 걸렸지만, 다음에는 혼자 할 수 있게 됐다. 당신은 문제를 해결한 게 아니라, 사람을 믿은 것이다. "이 사람은 배울 수 있다"고 본 것이다. 대신 해주는 건 편하지만, 가르쳐주는 건 상대를 믿어야 가능하다.',principle:{name:'능력의 인정',desc:'대신 해주는 것과 가르쳐주는 것은 다르다. 대신 해주면 상대는 의존자가 된다. 가르쳐주면 상대는 독립자가 된다. 전자는 상대를 약한 존재로 보는 것이고, 후자는 가능성 있는 존재로 보는 것이다.',icon:'🌱'},quote:'"도움은 두 종류다. 약하게 만드는 도움과 강하게 만드는 도움."'}
+]},
+{badge:'저녁',title:'엄마의 전화',desc:'퇴근길. 핸드폰이 울린다. 엄마다.\n\n"밥은 먹었어?"\n\n피곤하다. 오늘 하루가 길었다.\n\n엄마는 당신의 하루를 모른다. 엄마의 세계에서 가장 중요한 것은 당신이 밥을 먹었는지다.',highlight:'엄마의 전화. 당신은 —',
+choices:[
+{id:'short4',text:'"응 먹었어. 엄마도 먹었어? 나 지금 바빠, 끊을게."',subtext:'짧게 끝낸다.',meaning:'15초. 통화가 끝났다. 이어폰을 다시 꽂는다. 엄마는 더 하고 싶은 말이 있었을 것이다. 하지만 "바빠"가 나오면 더 못 붙잡는다. 엄마도 안다. 이 전화가 부담이라는 걸. 그래서 다음에 전화하기 전에 망설인다. "지금 괜찮으려나." 당신이 만든 거리다.',principle:{name:'효율적 관계',desc:'가장 가까운 사람에게 가장 효율적으로 대한다. 역설이다. 가까울수록 "언제든 가능하다"고 생각해서 "지금은 아니다"를 반복한다. 반복하면 가까운 사람이 먼 사람이 된다.',icon:'📱'},quote:'"가장 가까운 사람에게 가장 짧게 말하는 것. 이것이 관계의 역설이다."'},
+{id:'half4',text:'받긴 받는데, 다른 거 하면서 듣는다.',subtext:'"응... 응..." 적당히 대답한다.',meaning:'"응... 아... 그래..." 핸드폰을 어깨에 끼고, 가방을 뒤지거나 걷거나 다른 걸 한다. 엄마가 뭔가를 말하고 있다. 동네 이야기, 아빠 이야기. 흘려듣는다. 통화가 끝난 뒤, 엄마가 뭘 말했는지 하나도 기억나지 않는다. 전화를 받았지만 만나지 않았다. 음성 데이터를 수신했을 뿐이다.',principle:{name:'존재 없는 응답',desc:'"응"이라고 대답했지만 듣지 않았다. 상대는 말했지만 전달되지 않았다. 대화의 형식은 있었지만 내용은 없었다. 가장 흔한 "나-그것" — 상대를 소리로 처리하는 것.',icon:'🔇'},quote:'"응이라고 대답하는 것과 듣는 것은 완전히 다른 행위다."'},
+{id:'stop4',text:'걸음을 멈추고 전화에 집중한다.',subtext:'엄마 목소리를 제대로 듣는다.',meaning:'멈췄다. 이어폰을 뺐다. "엄마 요즘 어때?" 엄마가 놀란다. 잠깐 침묵. 그리고 말하기 시작한다. 아빠가 검진받았는데, 동네에 새로 생긴 가게, 이웃집 이야기. 사소한 것들이다. 하지만 엄마의 세계다. 당신은 5분간 엄마의 세계에 들어간 것이다. 그게 전부다. 그리고 그게 전부다.',principle:{name:'세계에 들어가기',desc:'"나-너"는 상대의 세계에 잠깐 들어가는 것이다. 엄마의 세계는 당신과 다르다. 동네, 건강, 반찬. 사소해 보이지만, 그것이 그 사람의 전부다. 5분간 그 세계를 존중하는 것이 "너"로 만나는 것이다.',icon:'🌍'},quote:'"사랑한다는 것은 상대의 세계를 방문하는 것이다."'},
+{id:'text4',text:'전화를 안 받고 문자를 보낸다. "회의 중 ㅠ 나중에 할게"',subtext:'나중에 하면 된다.',meaning:'"나중에" 문자를 보냈다. 편하다. 하지만 "나중에"는 대부분 오지 않는다. 내일도 바쁘고, 모레도 바쁘다. "나중에"가 3번 반복되면, 엄마는 전화를 줄인다. 전화를 안 한 게 아니라, 거절당하지 않으려고 안 하는 것이다. 당신이 엄마에게 가르쳐준 것이다. "너의 전화는 우선순위가 아니다"라고.',principle:{name:'나중의 거짓말',desc:'"나중에"는 가장 점잖은 거절이다. 나중은 오지 않는다. "나중에"를 세 번 반복하면 상대는 멈춘다. 당신이 원한 결과다. 하지만 원하지 않았던 결과이기도 하다.',icon:'⏳'},quote:'"나중에라고 말할 때마다, 상대와의 거리가 한 뼘씩 벌어진다."'}
+]},
+{badge:'밤',title:'예상 못한 연락',desc:'밤 11시. 핸드폰이 울린다.\n\n오래 연락 안 했던 친구다.\n\n"야, 별일 아니고. 그냥 네 생각나서."\n\n용건이 없다. 부탁도 아니고, 소식도 아니고, 그냥 연락이다.',highlight:'"그냥 네 생각나서." 당신은 —',
+choices:[
+{id:'why5',text:'"웬일이야? 무슨 일 있어?"',subtext:'갑자기 왜?',meaning:'"무슨 일 있어?" 물었다. 친구가 웃는다. "아니, 그냥." 그냥이라는 답이 어색하다. 용건이 없는 연락이 낯설다. 언제부터 "그냥"이 이상한 말이 됐을까.',principle:{name:'목적 없는 만남의 낯섦',desc:'현대인에게 "그냥"은 낯설다. 모든 연락에 목적이 있다. "그냥 생각나서"는 분류가 안 된다. 분류가 안 되면 불안해진다.',icon:'❓'},quote:'"그냥이라는 말을 의심하게 된 순간, 당신의 관계는 전부 거래가 된 것이다."'},
+{id:'happy5',text:'"야 반갑다!" 전화를 건다.',subtext:'목소리가 듣고 싶다.',meaning:'전화를 걸었다. "야 오랜만이다." 웃음이 나온다. 30분을 떠든다. 아무 쓸모 없는 대화. 근황도, 조언도, 정보도 없다. 그냥 웃었다. 끊고 나서 이상하게 충전된 느낌이다. 쓸모 없는 30분이었다. 하지만 오늘 하루 중 가장 살아있는 30분이었다.',principle:{name:'쓸모없는 만남의 힘',desc:'가장 의미 있는 관계는 가장 쓸모없는 순간에 만들어진다. 용건 없는 전화, 목적 없는 대화. 효율의 관점에서는 낭비다. 존재의 관점에서는 유일한 진짜다.',icon:'💫'},quote:'"쓸모없는 시간을 함께 보낼 수 있는 사람이 진짜 관계다."'},
+{id:'later5',text:'"ㅋㅋ 반가워~ 나중에 밥 한번 하자!"',subtext:'짧게 답한다.',meaning:'"나중에 밥 한번 하자!" 보냈다. "ㅋㅋ 그러자~" 둘 다 안다. 나중은 오지 않는다. "밥 한번 하자"는 한국어에서 가장 실행되지 않는 약속이다. "그냥 생각나서"에 "그냥"으로 답하지 못하고, "밥"을 붙였다.',principle:{name:'기능으로의 전환',desc:'"밥 한번 하자"는 관계를 미래의 기능으로 보내는 것이다. 지금 이 순간의 "그냥"을 받아들이지 못해서 "나중에"로 넘긴다.',icon:'📅'},quote:'"밥 한번 하자는 만남의 약속이 아니라, 지금 만나지 않겠다는 선언이다."'},
+{id:'miss5',text:'읽고 답하지 않는다.',subtext:'내일 해야지.',meaning:'읽었다. "그냥 네 생각나서." 읽었는데 답하지 않았다. 뭐라고 답할지 모르겠어서. 다음 날 답하려 했지만 타이밍을 놓쳤다. 그 친구는 다음에 "그냥 생각나서" 연락하지 않을 것이다. 한 번의 무응답이 하나의 관계를 닫았다.',principle:{name:'무응답의 메시지',desc:'답하지 않는 것도 메시지다. 의도하지 않았지만 상대는 받아들인다. 무응답이 반복되면 관계가 사라진다. 소리 없이.',icon:'💨'},quote:'"답하지 않는 것은 침묵이 아니다. 가장 분명한 대답이다."'}
+]
+}
+],
+calculateResult(choices,principles){
+const scores={plug1:0,talk1:3,short1:1,curious1:3,nod2:0,escape2:0,listen2:3,turn2:1,deal3:1,pure3:3,busy3:0,teach3:2,short4:0,half4:0,stop4:3,text4:0,why5:0,happy5:3,later5:1,miss5:0};
+let total=0;choices.forEach(c=>{total+=scores[c.choiceId]||0;});
+if(total>=12)return{icon:'👁️',label:'관계 방식',title:'"너"를 만나는 사람',desc:'당신은 사람을 봅니다.\n\n기능 뒤에 있는 사람을. 바쁜 하루 속에서도 상대의 세계에 잠깐 들어갈 수 있는 사람입니다.\n\n다만, "나-너"의 만남은 에너지가 필요합니다. 스스로를 돌보지 않으면 지칩니다.',stats:[{value:total+'/15',label:'만남 지수'},{value:principles.length,label:'발견한 원칙'}]};
+if(total>=7)return{icon:'🌤️',label:'관계 방식',title:'오가는 사람',desc:'당신은 "너"와 "그것" 사이를 오갑니다.\n\n어떤 순간에는 사람을 보고, 어떤 순간에는 기능을 봅니다. 이것이 정상입니다.\n\n부버도 말했습니다. "나-너"의 만남은 지속될 수 없다고. 번개처럼 왔다 간다고.\n\n중요한 건 빈도입니다. 하루에 한 번이라도.',stats:[{value:total+'/15',label:'만남 지수'},{value:principles.length,label:'발견한 원칙'}]};
+return{icon:'⚙️',label:'관계 방식',title:'기능의 세계에 사는 사람',desc:'당신의 하루는 기능의 연속입니다.\n\n나쁜 것이 아닙니다. 현대 사회가 이렇게 설계돼 있습니다. 효율, 거래, 처리. 사람을 만나지만 사람을 보지 않습니다.\n\n하지만 이 시뮬레이터를 끝까지 한 당신은, 이미 질문을 던졌습니다.\n"나는 사람을 사람으로 보고 있는가?"\n\n이 질문이 시작입니다.',stats:[{value:total+'/15',label:'만남 지수'},{value:principles.length,label:'발견한 원칙'}]};
+},
+getShareText(t){return'🪞 도구인가, 사람인가\n\n'+t+'\n\nhttps://bit.ly/i-thou-sim';}
+};
+SimTemplate.init(CONFIG);
+document.getElementById('shareBtn').addEventListener('click',async()=>{const t='🪞 도구인가, 사람인가\n\n'+document.getElementById('resultTitle').textContent+'\n\nhttps://bit.ly/i-thou-sim';if(navigator.share){try{await navigator.share({title:'도구인가 사람인가',text:t});}catch{}}else{navigator.clipboard.writeText(t).then(()=>{document.getElementById('shareBtn').textContent='링크 복사됨!';setTimeout(()=>{document.getElementById('shareBtn').textContent='친구한테 시켜보기';},2000);});}});
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#1a0e1e';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#d946ef';x.fillText('도구인가, 사람인가',400,205);const l=document.createElement('a');l.download='도구인가사람인가_결과.png';l.href=c.toDataURL();l.click();});
+  </script>
+</body>
+</html>
