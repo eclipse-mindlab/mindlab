@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이클립스의 딜렘</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="shortcut icon" href="logo.png">
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6d5dbc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="딜렘">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <!-- SEO -->
+  <meta name="description" content="나는 어떤 선택을 하는 사람일까? 트롤리 딜레마, 복제인간 등 철학적 선택을 경험해보세요.">
+  <meta property="og:title" content="이클립스의 딜렘 - 당신의 도덕 성향은?">
+  <meta property="og:description" content="나는 어떤 선택을 하는 사람일까? 트롤리 딜레마, 복제인간 등 철학적 선택을 경험해보세요.">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
+  <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="이클립스의 딜렘 - 당신의 도덕 성향은?">
+  <meta name="twitter:description" content="나는 어떤 선택을 하는 사람일까? 트롤리 딜레마, 복제인간 등 철학적 선택을 경험해보세요.">
+  <meta name="twitter:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { width: 36px; height: 36px; border-radius: 50%; }
+    .brand-text { font-size: 18px; font-weight: 600; color: #9580ff; }
+    
+    .beta-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-links { display: flex; gap: 12px; }
+    .header-link { color: #8b8b92; text-decoration: none; font-size: 13px; }
+    .header-link:hover { color: #9580ff; }
+
+    .profile-card {
+      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #232326;
+      position: relative;
+    }
+
+    .google-sync-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #232326;
+      border: 1px solid #35353a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .google-sync-btn:hover {
+      background: #35353a;
+      transform: scale(1.05);
+    }
+
+    .google-sync-btn.synced {
+      background: #2d5a41;
+      border-color: #5cb88a;
+    }
+
+    .google-sync-btn.synced svg {
+      display: none;
+    }
+
+    .google-sync-btn.synced::after {
+      content: '✓';
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .profile-top { display: flex; gap: 16px; margin-bottom: 16px; }
+
+    .tier-badge { 
+      width: 72px; 
+      flex-shrink: 0; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .tier-badge img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+    .tier-label {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.2);
+      color: #dc6b6b;
+    }
+
+    .profile-info { flex: 1; }
+    .profile-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .profile-name { font-size: 20px; font-weight: 600; }
+    .edit-name-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #232326;
+      border: 1px solid #35353a;
+      color: #8b8b92;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .edit-name-btn:hover {
+      background: #35353a;
+      color: #9580ff;
+    }
+    .profile-title { font-size: 13px; color: #9580ff; margin-bottom: 8px; }
+
+    .level-info { display: flex; align-items: center; gap: 8px; }
+    .level-text { font-size: 12px; color: #8b8b92; }
+    .level-num { color: #fff; font-weight: 600; }
+    .exp-bar { flex: 1; height: 6px; background: #232326; border-radius: 3px; overflow: hidden; }
+    .exp-fill { height: 100%; background: linear-gradient(90deg, #9580ff, #9580ff); border-radius: 3px; }
+    .exp-text { font-size: 11px; color: #8b8b92; }
+
+    .journey-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #232326; }
+    .journey-title { font-size: 13px; color: #8b8b92; margin-bottom: 12px; }
+    .journey-stats { display: flex; gap: 16px; }
+    .journey-stat { flex: 1; text-align: center; padding: 12px; background: #1a1a1e; border-radius: 10px; }
+    .journey-stat-value { font-size: 20px; font-weight: 700; }
+    .journey-stat-label { font-size: 11px; color: #8b8b92; }
+
+    .save-profile-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, #6d5dbc, #9580ff);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .save-profile-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .save-profile-btn.success {
+      background: #2d5a41;
+    }
+
+    .install-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, #6d5dbc, #5b21b6);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .install-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .install-btn.hidden { display: none; }
+
+    .share-app-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: #232326;
+      border: 1px solid #35353a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .share-app-btn:hover {
+      background: #35353a;
+    }
+
+    .share-app-btn.success {
+      background: #2d5a41;
+      border-color: #5cb88a;
+    }
+
+    .backup-warning {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: #eab308;
+      line-height: 1.4;
+    }
+
+    .backup-warning .warning-icon {
+      flex-shrink: 0;
+    }
+
+    .daily-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(149, 128, 255, 0.12), rgba(109, 93, 188, 0.08));
+      border: 1px solid rgba(149, 128, 255, 0.25);
+      border-radius: 14px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .daily-banner:hover {
+      border-color: #9580ff;
+    }
+
+    .daily-banner:active {
+      transform: scale(0.98);
+      border-color: #9580ff;
+    }
+
+    .daily-icon { font-size: 28px; }
+    .daily-content { flex: 1; }
+    .daily-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .daily-desc { font-size: 12px; color: #9580ff; }
+    .daily-arrow { font-size: 18px; color: #8b8b92; }
+
+    .my-challenges-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: #141417;
+      border: 1px solid #232326;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.15s ease, background 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .my-challenges-btn:hover {
+      background: #1a1a1e;
+    }
+
+    .my-challenges-btn:active {
+      transform: scale(0.98);
+      background: #1f1f23;
+    }
+
+    .my-challenges-btn.hidden {
+      display: none;
+    }
+
+    .my-challenges-icon {
+      font-size: 20px;
+    }
+
+    .my-challenges-text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .my-challenges-count {
+      background: #9580ff;
+      color: #000;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .map-section { margin-bottom: 24px; }
+    .section-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 4px; }
+    .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .section-title .icon { font-size: 20px; }
+    .section-subtitle { width: 100%; font-size: 12px; color: #8b8b92; margin-left: 28px; }
+    .section-progress { font-size: 13px; color: #8b8b92; }
+
+    .category-card {
+      background: #141417;
+      border: 1px solid #232326;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .sim-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .sim-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #1a1a1e;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.15s ease, background 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .sim-item:hover { background: #232326; }
+    .sim-item:active { transform: scale(0.98); background: #252528; }
+    .sim-item.locked { opacity: 0.5; pointer-events: none; }
+    .sim-item.completed { border-left: 3px solid #5cb88a; }
+
+    .sim-status { width: 24px; text-align: center; font-size: 14px; }
+    .sim-info { flex: 1; }
+    .sim-title { font-size: 14px; font-weight: 500; }
+    .sim-desc { font-size: 12px; color: #8b8b92; }
+    .sim-reward { font-size: 11px; color: #9580ff; }
+
+    /* 원칙 도감 링크 */
+    .dex-link {
+      display: block;
+      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid #232326;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dex-link:hover {
+      border-color: #6d5dbc;
+    }
+
+    .dex-link:active {
+      transform: scale(0.98);
+      border-color: #6d5dbc;
+    }
+
+    .dex-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dex-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dex-count {
+      font-size: 14px;
+      color: #9580ff;
+      font-weight: 600;
+    }
+
+    .dex-progress {
+      height: 8px;
+      background: #232326;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .dex-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6d5dbc, #9580ff);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .dex-subtitle {
+      font-size: 12px;
+      color: #8b8b92;
+    }
+
+    .tier-section { background: #141417; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .tier-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .tier-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .tier-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; opacity: 0.3; }
+    .tier-icon.active { opacity: 1; box-shadow: 0 0 12px rgba(167, 139, 250, 0.5); }
+    .tier-icon.completed { opacity: 0.7; }
+    .tier-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .tier-name { font-size: 10px; color: #52525b; }
+    .tier-item.active .tier-name { color: #9580ff; font-weight: 600; }
+
+    .book-section { margin-bottom: 24px; }
+    
+    /* 이클립스 더 알아보기 섹션 */
+    .eclipse-section {
+      text-align: center;
+      padding: 24px 0;
+      border-top: 1px solid #232326;
+      margin-bottom: 24px;
+    }
+    
+    .eclipse-section-title {
+      font-size: 14px;
+      color: #8b8b92;
+      margin-bottom: 16px;
+    }
+    
+    .youtube-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: #232326;
+      border: 1px solid #35353a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .youtube-btn:hover {
+      background: #35353a;
+      transform: translateY(-2px);
+    }
+    
+    .youtube-btn svg {
+      fill: #dc6b6b;
+    }
+    
+    /* 책 섹션 */
+    .books-section {
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid #232326;
+      margin-bottom: 24px;
+    }
+    
+    .books-section-title {
+      font-size: 14px;
+      color: #8b8b92;
+      margin-bottom: 20px;
+    }
+    
+    .books-grid {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    
+    .book-item {
+      flex: 1;
+      max-width: 160px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    
+    .book-item:hover {
+      transform: translateY(-4px);
+    }
+    
+    .book-item img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      margin-bottom: 10px;
+    }
+    
+    .book-item-title {
+      font-size: 13px;
+      color: #a1a1aa;
+    }
+    
+    .book-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(135deg, #1a1520 0%, #141417 100%);
+      border: 1px solid #2d2438;
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    
+    .book-card:hover {
+      border-color: #9580ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(167, 139, 250, 0.15);
+    }
+    
+    .book-images {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    
+    .book-img {
+      width: 56px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    
+    .book-info { flex: 1; }
+    .book-series { font-size: 11px; color: #9580ff; margin-bottom: 4px; }
+    .book-main-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .book-desc { font-size: 12px; color: #8b8b92; }
+
+    .footer { text-align: center; padding: 24px 0; border-top: 1px solid #232326; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
+    .footer-link { display: flex; align-items: center; gap: 6px; color: #8b8b92; text-decoration: none; font-size: 13px; }
+    .footer-link:hover { color: #9580ff; }
+    .footer-copy { font-size: 11px; color: #52525b; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 20px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: #141417; border-radius: 20px;
+      padding: 32px 24px; max-width: 360px; width: 100%; text-align: center;
+    }
+    .modal-logo { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 16px; }
+    .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .modal-desc { font-size: 14px; color: #8b8b92; margin-bottom: 24px; line-height: 1.6; }
+    .modal-input {
+      width: 100%; padding: 14px 16px;
+      background: #232326; border: 1px solid #35353a; border-radius: 12px;
+      color: #fff; font-size: 16px; margin-bottom: 16px; text-align: center;
+    }
+    .modal-input:focus { outline: none; border-color: #6d5dbc; }
+    .modal-btn {
+      width: 100%; padding: 14px;
+      background: #6d5dbc; border: none; border-radius: 12px;
+      color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    }
+    .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-btn.cancel {
+      background: #232326;
+      color: #a1a1aa;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .modal-buttons .modal-btn {
+      flex: 1;
+    }
+
+    /* 페이지 전환 애니메이션 */
+    .container {
+      animation: fadeSlideIn 0.4s ease-out;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a[href$=".html"]:not([target="_blank"]) {
+      transition: transform 0.15s ease;
+    }
+    a[href$=".html"]:not([target="_blank"]):active {
+      transform: scale(0.97);
+    }
+
+    /* 오늘의 딜레마 하이라이트 */
+    .daily-banner-main {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(149, 128, 255, 0.15), rgba(109, 93, 188, 0.08));
+      border: 1.5px solid rgba(149, 128, 255, 0.4);
+      border-radius: 16px;
+      text-decoration: none;
+      margin-bottom: 16px;
+      animation: pulseGlow 3s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+    .daily-banner-main:active { transform: scale(0.98); }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(149, 128, 255, 0); }
+      50% { box-shadow: 0 0 20px rgba(149, 128, 255, 0.15); }
+    }
+    .daily-banner-main .daily-icon { font-size: 32px; }
+    .daily-banner-main .daily-title { font-size: 17px; font-weight: 700; color: #fff; }
+    .daily-banner-main .daily-desc { font-size: 13px; color: #9580ff; margin-top: 2px; }
+    .daily-banner-main .daily-arrow { font-size: 20px; color: #9580ff; margin-left: auto; }
+    .daily-streak { 
+      display: inline-block; 
+      background: rgba(251, 191, 36, 0.2); 
+      color: #fbbf24; 
+      font-size: 11px; 
+      padding: 2px 8px; 
+      border-radius: 6px; 
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* 나의 사고 성향 차트 */
+    .mindset-card {
+      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #232326;
+    }
+    .mindset-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #9580ff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mindset-empty {
+      text-align: center;
+      padding: 20px;
+      color: #52525b;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .mindset-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mindset-axis {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mindset-label {
+      font-size: 11px;
+      color: #8b8b92;
+      width: 60px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .mindset-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #232326;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .mindset-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+    .mindset-percent {
+      font-size: 11px;
+      color: #fff;
+      width: 36px;
+      font-weight: 600;
+    }
+    .mindset-summary {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #232326;
+      font-size: 12px;
+      color: #8b8b92;
+      line-height: 1.7;
+    }
+    .mindset-dominant {
+      color: #9580ff;
+      font-weight: 600;
+    }
+
+    /* 추천 시뮬레이터 */
+    .recommend-section {
+      background: linear-gradient(135deg, rgba(149, 128, 255, 0.08), rgba(109, 93, 188, 0.04));
+      border: 1px solid rgba(149, 128, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .recommend-title {
+      font-size: 13px;
+      color: #9580ff;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* 하단 탭 네비게이션 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #09090b;
+      border-top: 1px solid #232326;
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .tab-bar-inner {
+      display: flex;
+      max-width: 480px;
+      width: 100%;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 8px;
+      color: #52525b;
+      font-size: 10px;
+      text-decoration: none;
+      transition: color 0.2s;
+      gap: 4px;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .tab-item.active { color: #9580ff; }
+    .tab-item .tab-icon { font-size: 20px; }
+
+    /* 탭 콘텐츠 */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* 하단 탭 높이만큼 패딩 */
+    .container { padding-bottom: 80px !important; }
+
+    /* 척학 컬렉션 */
+    .collection-card {
+      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #232326;
+    }
+    .collection-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #c9a84c;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .collection-progress {
+      font-size: 12px;
+      color: #52525b;
+      margin-left: auto;
+    }
+    .collection-books {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .collection-book {
+      flex-shrink: 0;
+      width: 80px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .collection-book:active { transform: scale(0.95); }
+    .collection-book img {
+      width: 80px;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+    .collection-book.locked img {
+      filter: brightness(0.15);
+    }
+    .collection-book .book-label {
+      font-size: 10px;
+      color: #a1a1aa;
+      margin-top: 6px;
+      line-height: 1.3;
+    }
+    .collection-book.locked .book-label { color: #3f3f46; }
+    .collection-book .book-check {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* 책 모달 */
+    .book-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .book-modal {
+      background: #18181b;
+      border-radius: 20px;
+      padding: 28px 24px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .book-modal img {
+      width: 140px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .book-modal-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .book-modal-sub { font-size: 13px; color: #71717a; margin-bottom: 16px; }
+    .book-modal-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: transform 0.15s;
+    }
+    .book-modal-btn:active { transform: scale(0.97); }
+    .book-modal-btn.primary { background: #9580ff; color: #fff; }
+    .book-modal-btn.read { background: #10b981; color: #fff; }
+    .book-modal-btn.unread { background: #27272a; color: #a1a1aa; }
+    .book-modal-btn.buy { background: #27272a; color: #c9a84c; }
+    .book-modal-btn.close { background: transparent; color: #52525b; }
+  </style>
+</head>
+<body>
+  <div class="modal-overlay" id="nameModal" style="display:none">
+    <div class="modal">
+      <img src="logo.png" alt="이클립스" class="modal-logo">
+      <div class="modal-title">이클립스의 딜렘</div>
+      <div class="modal-desc">지적 탐험을 시작하세요.<br>심리, 철학, 사회의 숨겨진 원칙들을 발견합니다.</div>
+      <input type="text" class="modal-input" id="nameInput" placeholder="탐험가 이름" maxlength="12">
+      <button class="modal-btn" id="startBtn" disabled>탐험 시작</button>
+      <button class="modal-btn cancel" id="skipBtn" style="margin-top:8px;">건너뛰기</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="editNameModal">
+    <div class="modal">
+      <div class="modal-title">닉네임 변경</div>
+      <div class="modal-desc">새로운 닉네임을 입력하세요.</div>
+      <input type="text" class="modal-input" id="editNameInput" placeholder="새 닉네임" maxlength="12">
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" id="editNameCancelBtn">취소</button>
+        <button class="modal-btn" id="editNameSaveBtn" disabled>저장</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <img src="logo.png" alt="이클립스" class="brand-logo">
+        <span class="brand-text">이클립스의 딜렘</span>
+        <span class="beta-badge">BETA</span>
+      </div>
+      <div class="header-links">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="header-link">유튜브</a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="header-link">책</a>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <button class="google-sync-btn" id="googleSyncBtn" title="구글 계정으로 백업">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </button>
+      <div class="profile-top">
+        <div class="tier-badge">
+          <img src="tier-ruby.png" alt="티어" id="tierImage">
+          <span class="tier-label" id="tierLabel">루비</span>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name-row">
+            <div class="profile-name" id="profileName">탐험가</div>
+            <button class="edit-name-btn" id="editNameBtn" title="닉네임 변경">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="profile-title" id="profileTitle">🌱 초보 탐험가</div>
+          <div class="level-info">
+            <span class="level-text">Lv.<span class="level-num" id="levelNum">1</span></span>
+            <div class="exp-bar">
+              <div class="exp-fill" id="expFill" style="width: 0%"></div>
+            </div>
+            <span class="exp-text" id="expText">0/100</span>
+          </div>
+        </div>
+      </div>
+      <div class="journey-section">
+        <div class="journey-title">탐험 현황</div>
+        <div class="journey-stats">
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statCleared">0</div>
+            <div class="journey-stat-label">클리어</div>
+          </div>
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statPrinciples">0</div>
+            <div class="journey-stat-label">발견한 원칙</div>
+          </div>
+          <div class="journey-stat">
+            <div class="journey-stat-value" id="statMaxStreak">0</div>
+            <div class="journey-stat-label">최대 연속</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="save-profile-btn" id="saveProfileBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        프로필 이미지 저장
+      </button>
+
+      <button class="install-btn hidden" id="installBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        앱으로 설치하기
+      </button>
+
+      <button class="share-app-btn" id="shareAppBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        친구에게 공유하기
+      </button>
+      
+      <div class="backup-warning" id="backupWarning">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">구글 계정 연동 전까지 브라우저 데이터 삭제 시 진행상황이 사라집니다</span>
+      </div>
+    </div>
+
+    <!-- 오늘의 딜레마 - 최상단 하이라이트 -->
+    <a href="daily.html" class="daily-banner-main" id="dailyMainBanner">
+      <div class="daily-icon">🤔</div>
+      <div class="daily-content">
+        <div class="daily-title">오늘의 딜레마</div>
+        <div class="daily-desc" id="dailyMainDesc">오늘의 질문이 기다리고 있습니다</div>
+        <div class="daily-streak hidden" id="dailyMainStreak">🔥 연속 0일</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
+
+    <!-- 추천 시뮬레이터 -->
+    <div class="recommend-section hidden" id="recommendSection">
+      <div class="recommend-title">💡 아직 안 해본 시뮬레이터</div>
+      <div class="sim-list" id="recommendList"></div>
+    </div>
+
+    <a href="daily.html" class="daily-banner" style="display:none;">
+      <div class="daily-icon">🤔</div>
+      <div class="daily-content">
+        <div class="daily-title">오늘의 딜레마</div>
+        <div class="daily-desc">매일 새로운 질문에 답하고 +10 EXP</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
+
+    <a href="read-me.html" class="daily-banner" style="background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(167, 139, 250, 0.1)); border-color: rgba(244, 114, 182, 0.3);">
+      <div class="daily-icon">🔮</div>
+      <div class="daily-content">
+        <div class="daily-title">나를 읽어봐</div>
+        <div class="daily-desc" style="color: #f472b6;">친구에게 도전장 보내기</div>
+      </div>
+      <div class="daily-arrow">→</div>
+    </a>
+
+    <a href="my-challenges.html" class="my-challenges-btn hidden" id="myChallengesBtn">
+      <span class="my-challenges-icon">📊</span>
+      <span class="my-challenges-text">내 도전장 현황</span>
+      <span class="my-challenges-count" id="myChallengesCount">0</span>
+    </a>
+
+    <!-- 나의 사고 성향 -->
+    <div class="mindset-card" id="mindsetCard">
+      <div class="mindset-title">🧬 나의 사고 성향</div>
+      <div id="mindsetContent">
+        <div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>
+      </div>
+    </div>
+
+    <!-- 척학 컬렉션 -->
+    <div class="collection-card">
+      <div class="collection-title">
+        📚 척학 컬렉션
+        <span class="collection-progress" id="collectionProgress">0/6</span>
+      </div>
+      <div class="collection-books" id="collectionBooks"></div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">📖</span> 마인드 스토리</div>
+        <div class="section-subtitle">당신이 주인공인 소설</div>
+        <div class="section-progress" id="storyProgress">0/1</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list" id="storyList"></div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">💭</span> 철학 시뮬레이터</div>
+        <div class="section-progress" id="philProgress">0/2</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list" id="philList"></div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">🧠</span> 심리 시뮬레이터</div>
+        <div class="section-progress" id="psychProgress">0/2</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list" id="psychList"></div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">🎯</span> 전략 시뮬레이터</div>
+        <div class="section-progress" id="strategyProgress">0/1</div>
+      </div>
+      <div class="category-card">
+        <div class="sim-list" id="strategyList"></div>
+      </div>
+    </div>
+
+    <a href="dex.html" class="dex-link">
+      <div class="dex-header">
+        <div class="dex-title"><span class="icon">💎</span> 원칙 도감</div>
+        <div class="dex-count" id="dexCount">0/80</div>
+      </div>
+      <div class="dex-progress">
+        <div class="dex-progress-fill" id="dexProgressFill" style="width: 0%"></div>
+      </div>
+      <div class="dex-subtitle">시뮬레이터를 클리어하며 원칙을 수집하세요 →</div>
+    </a>
+
+    <div class="tier-section">
+      <div class="section-title">티어 진행도</div>
+      <div class="tier-progress">
+        <div class="tier-item active" data-tier="ruby">
+          <div class="tier-icon active"><img src="tier-ruby.png"></div>
+          <span class="tier-name">루비</span>
+        </div>
+        <div class="tier-item" data-tier="amethyst">
+          <div class="tier-icon"><img src="tier-amethyst.png"></div>
+          <span class="tier-name">자수정</span>
+        </div>
+        <div class="tier-item" data-tier="sapphire">
+          <div class="tier-icon"><img src="tier-sapphire.png"></div>
+          <span class="tier-name">사파이어</span>
+        </div>
+        <div class="tier-item" data-tier="emerald">
+          <div class="tier-icon"><img src="tier-emerald.png"></div>
+          <span class="tier-name">에메랄드</span>
+        </div>
+        <div class="tier-item" data-tier="obsidian">
+          <div class="tier-icon"><img src="tier-obsidian.png"></div>
+          <span class="tier-name">옵시디언</span>
+        </div>
+        <div class="tier-item" data-tier="gold">
+          <div class="tier-icon"><img src="tier-gold.png"></div>
+          <span class="tier-name">골드</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eclipse-section">
+      <div class="eclipse-section-title">이클립스 더 알아보기</div>
+      <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="youtube-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/>
+          <path fill="#fff" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        유튜브 채널
+      </a>
+    </div>
+
+    <div class="books-section">
+      <div class="books-section-title">이클립스의 책</div>
+      <div class="books-grid">
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-hierarchy.png" alt="서열의 교양">
+          <div class="book-item-title">서열의 교양</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-transcend.png" alt="초월자의 조건">
+          <div class="book-item-title">초월자의 조건</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-fight.png" alt="싸움의 교양">
+          <div class="book-item-title">싸움의 교양</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-love.png" alt="사랑은 오해다">
+          <div class="book-item-title">사랑은 오해다</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-wealth.png" alt="훔친 부 편">
+          <div class="book-item-title">훔친 부 편</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-philosophy.png" alt="훔친 철학 편">
+          <div class="book-item-title">훔친 철학 편</div>
+        </a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+          <img src="book-psychology.png" alt="훔친 심리학 편">
+          <div class="book-item-title">훔친 심리학 편</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-copy">© 딜렘</div>
+    </div>
+  </div>
+
+  <!-- 하단 탭 네비게이션 -->
+  <div class="tab-bar">
+    <div class="tab-bar-inner">
+      <a href="index.html" class="tab-item active">
+        <span class="tab-icon">🏠</span>
+        홈
+      </a>
+      <a href="daily.html" class="tab-item">
+        <span class="tab-icon">🤔</span>
+        오늘의 질문
+      </a>
+      <a href="dex.html" class="tab-item">
+        <span class="tab-icon">📖</span>
+        도감
+      </a>
+      <a href="read-me.html" class="tab-item">
+        <span class="tab-icon">👤</span>
+        프로필
+      </a>
+    </div>
+  </div>
+
+  <!-- 책 모달 -->
+  <div class="book-modal-overlay" id="bookModal" style="display:none;">
+    <div class="book-modal">
+      <img id="bookModalImg" src="" alt="">
+      <div class="book-modal-title" id="bookModalTitle"></div>
+      <div class="book-modal-sub" id="bookModalSub"></div>
+      <div id="bookModalButtons"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithRedirect, getRedirectResult, signInWithCredential } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685",
+      measurementId: "G-2V3Z9XZJYT"
+    };
+
+    // Firebase 초기화
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    const CURRENT_VERSION = 5;
+
+    const TIERS = [
+      { name: '루비', key: 'ruby', minLevel: 1, color: '#dc6b6b', colorName: '빨간색' },
+      { name: '자수정', key: 'amethyst', minLevel: 6, color: '#a855f7', colorName: '보라색' },
+      { name: '사파이어', key: 'sapphire', minLevel: 11, color: '#3b82f6', colorName: '파란색' },
+      { name: '에메랄드', key: 'emerald', minLevel: 16, color: '#10b981', colorName: '초록색' },
+      { name: '옵시디언', key: 'obsidian', minLevel: 21, color: '#1f2937', colorName: '검은색' },
+      { name: '골드', key: 'gold', minLevel: 26, color: '#f59e0b', colorName: '금색' }
+    ];
+
+    const TITLES = [
+      { minLevel: 1, title: '🌱 초보 탐험가' },
+      { minLevel: 5, title: '🌿 호기심 많은 관찰자' },
+      { minLevel: 10, title: '🌳 깊이 있는 사색가' },
+      { minLevel: 20, title: '🌟 통찰의 대가' }
+    ];
+
+    const SIMULATIONS = {
+      story: [
+        { id: 'clone', title: '복제인간', desc: '완벽한 복제본이 나타났다. 누가 진짜인가?', url: 'sim-clone.html' }
+      ],
+      philosophy: [
+        { id: 'i-thou', title: '도구인가, 사람인가', desc: '오늘 하루, 당신은 몇 명을 사람으로 만났는가?', url: 'sim-i-thou.html', isNewMint: true },
+        { id: 'ressentiment', title: '르상티망의 지도', desc: '성공한 친구를 축하할 때, 당신의 미소는 진짜인가?', url: 'sim-ressentiment.html', isNewMint: true },
+        { id: 'price', title: '돈의 가격', desc: '돈을 벌기 위해 당신은 무엇을 팔고 있는가?', url: 'sim-price.html' },
+        { id: 'rich', title: '부자의 조건', desc: '아버지 수술비 3억. 2주. 당신은 무엇을 팔고, 무엇을 지키는가?', url: 'sim-rich.html' },
+        { id: 'time-master', title: '시간의 주인', desc: '당신은 시간을 어떻게 바라보는 사람인가?', url: 'sim-time-master.html' },
+        { id: 'god', title: '신이 된다면', desc: '24시간 동안 전지전능해진다. 무엇을 하겠는가?', url: 'sim-god.html', locked: true, unlockDate: '2026-02-05T09:00:00+09:00' },
+        { id: 'immortality', title: '영생', desc: '영원히 살 수 있다. 축복인가, 저주인가?', url: 'sim-immortality.html', locked: true, unlockDate: '2026-02-06T09:00:00+09:00' },
+        { id: 'awakening', title: '깨어남', desc: '이 세계가 시뮬레이션이라면, 당신은 깨어날 것인가?', url: 'sim-awakening.html' },
+        { id: 'last-human', title: '마지막 인류', desc: '지구에 남은 마지막 사람. 왜 살아야 하는가?', url: 'sim-last-human.html' },
+        { id: 'death', title: '죽음을 앞둔 선택', desc: '6개월이 남았다. 당신은 어떻게 살겠는가?', url: 'sim-death.html' },
+        { id: 'trolley', title: '트롤리 딜레마', desc: '당신의 도덕적 기준은 어디까지 흔들릴까?', url: 'sim-trolley.html' },
+        { id: 'experience_machine', title: '경험 기계', desc: '완벽한 가짜 행복 vs 불완전한 현실', url: 'sim-experience-machine.html' }
+      ],
+      psych: [
+        { id: 'armor', title: '성격 갑옷', desc: '당신을 지키는 것이 당신을 가두고 있다.', url: 'sim-armor.html', isNewMint: true },
+        { id: 'love-temp', title: '사랑의 온도', desc: '당신은 어떤 사랑을 하는 사람인가?', url: 'sim-love-temp.html', isNewPink: true },
+        { id: 'think-layer', title: '사고의 층', desc: '당신은 몇 층에서 생각하는 사람인가?', url: 'sim-think-layer.html', isNewMint: true },
+        { id: 'breakup', title: '이별 시뮬레이터', desc: '사랑이 끝날 때, 당신은 어떤 선택을 하는가?', url: 'sim-breakup.html', locked: true, unlockDate: '2026-02-04T09:00:00+09:00' },
+        { id: 'shadow', title: '내면의 그림자', desc: '당신이 숨기고 있는 또 다른 자아는?', url: 'sim-shadow.html', locked: true, unlockDate: '2026-02-07T09:00:00+09:00' },
+        { id: 'replacement', title: '완벽한 대체자', desc: '나보다 모든 면에서 나은 사람이 나타났다', url: 'sim-replacement.html' },
+        { id: 'left-on-read', title: '읽씹 시뮬레이터', desc: '읽음. 그리고 침묵. 당신은 어떻게 반응하나요?', url: 'sim-left-on-read.html' },
+        { id: 'revenge', title: '복수 시뮬레이터', desc: '복수할 기회가 왔다. 당신은 어떻게 할 것인가?', url: 'sim-revenge.html' },
+        { id: 'gossip', title: '뒷담화 현장', desc: '동료들이 내 뒷담화를 하고 있다', url: 'sim-gossip.html' },
+        { id: 'idea_thief', title: '아이디어 도둑 동료', desc: '네 아이디어를 가로챈 동료', url: 'sim-idea-thief.html' },
+        { id: 'money_friend', title: '돈 안 갚는 친구', desc: '3개월째 30만원을 안 갚는 친구', url: 'sim-money-friend.html' },
+        { id: 'survival_test', title: '생존자의 선택', desc: '무인도에서 당신은 어떤 선택을 하는가?', url: 'sim-survival-test.html' },
+        { id: 'truth', title: '거짓말 없는 하루', desc: '24시간 동안 진실만 말해야 한다', url: 'sim-truth.html' },
+        { id: 'gaslighting', title: '가스라이팅: 연인편', desc: '연인이 말한다. "네가 예민한 거야."', url: 'sim-gaslighting.html' }
+      ],
+      strategy: [
+        { id: 'brinkmanship', title: '벼랑 끝 협상', desc: '안 올려주면 나갑니다. 블러핑인가, 진심인가?', url: 'sim-brinkmanship.html' }
+      ]
+    };
+
+    // 도감 총 원칙 수 (dex.html과 동기화 필요)
+    const DEX_TOTAL = 503;
+
+    let profile = {
+      version: CURRENT_VERSION,
+      name: '',
+      level: 1,
+      exp: 0,
+      completedSims: [],
+      principles: []
+    };
+
+    // 유효한 원칙 목록 (dex.html ALL_PRINCIPLES와 동기화)
+    const VALID_PRINCIPLES = ['직접 대면','질문형 압박','관망','사실 고정','전략적 관용','철회','관용 + 방향 제시','경계 설정','경고','공개적 개입','사전 허락','포기','선 긋고 리셋','거리 유지','주도권 확보','과잉 양보','신뢰 회복 확인','공유 크레딧','경계 후 협력','값비싼 교훈','긴장 완화','냉전 유지','늦은 경계','뒤늦은 고발','미래 지향','삼킨 분노','실용적 화해','업무 분리','패턴 고착','공개적 압박의 역효과','개인적 접근','소극적 기대의 함정','감정 대 감정의 악순환','감정 인정 후 본론','과도한 양보','반복되는 약속의 평가절하','작은 단위로 쪼개기','열린 질문과 경청','대면의 힘','자기 상황 공개','간접 소통의 리스크','매몰비용의 손절','감정과 문제의 분리','구체적 약속','학습된 무력감','지속적 요청','수업료','마감의 힘','직접적 질문','구체적 실행 계획','불완전한 마무리','상호 이해의 힘','성공 경험의 강화','솔직한 인정','신뢰의 회복','자기 주장','자발적 동기','정당화의 함정','조건부 관용','쾌락주의','진정성','철학적 보류','급진적 주관주의','가치의 위계','실재론','회의주의','실용주의','창조적 니힐리즘','자유의지 존중','자기 정직의 의무','의미 추구','중용','사회적 존재','관계의 양면성','부조리의 수용','방법적 회의','도구주의','진실의 무조건적 가치','자기 극복','사랑과 연대','결과주의','행위의 도덕성','보편적 공정','생명 가치의 차등','극단적 공정','특별한 의무','결과의 동등성','행위의 직접성','임계점 윤리','절대적 의무','응보적 정의','생명의 절대성','동의 기반 윤리','행위자 중심 윤리','확장된 자아','갈등의 해결','실용적 정체성','선택의 총합','공유된 정체성','내면의 연속성','타인의 인정','사회적 정체성','숨겨진 자아','실용적 선택','본질 추구','연결의 힘','협력의 가치','생존 우선','결단의 순간','신중한 대기','충동적 대면의 비용','정보 비대칭','전략적 무시','열린 질문의 함정','모호함의 압박','직접 대면의 비용','피드백으로서의 뒷담화','선택적 무시','조용한 거리두기','제3자 개입의 위험','관계 재편성','프로페셔널 거리','보이지 않는 변화','인정 + 경계','손절의 지혜','불확실성의 효과','조용한 경계','손실 최소화','부정','스토아적 수용','부조리에 대한 분노','죽음 앞의 자유','냉소적 방어','카르페 디엠','일상의 신성함','불멸 프로젝트','관계의 본질','고독한 죽음','초월적 의탁','유물론적 죽음관','영혼 불멸','불가지론','유한성의 의미','죽음의 망각','죽음 공포','삶에의 의지','감사의 철학','허무','윤회적 희망','무심','불확실성 내성','간헐적 강화','회피적 대처','자기 귀인 편향','좌절-공격 가설','인지 부조화 해소','불확실성 회피','사회적 지지 추구','통제 욕구','선제적 자기 보호','관계 지향적 대처','확인 추구','감정적 거리두기','호혜성의 원칙','자기 표현','수용','직접 소통','투자 조절','팃포탯','원한의 심리학','감정의 자연 소멸','용서의 역설','응보 욕구','즉각적 응보','전략적 보류','경고의 기능','무조건적 용서','가치 기반 결정','전략적 인내','비용-편익 분석','사회적 동조','자율성','힘의 절제','회복적 접근','협상 레버리지','관망의 전략','희망의 원리','실존적 절망','생존 본능','부조리의 인식','절대적 자유','습관의 힘','욕망의 해방','증언의 의무','허무주의','본질적 자아','사회적 자아','무아','인류의 대리자','경계의 해체','존재의 증거','무상','삶의 긍정','자기 결정권','존재의 경이','신정론의 도전','의도하지 않은 결과','지식의 저주','합리적 이기주의','신의 침묵','결과주의적 신','자유의지 방어','세뇌의 역설','한계의 인정','국지적 선','계시의 한계','신적 관조','지혜의 보존','유한성의 축복','행위자의 후회','신적 사랑의 역설','경험적 무신론','신비의 수용','유한성의 가치','비가역성의 두려움','결정의 회피','공유된 영원','반복의 용기','회피적 애착','초월적 목적','기억의 의무','영생의 역설','역사의 진보','영원회귀','부조리 수용','감정의 마모','철인왕','적멸','존재의 공포','창조의 의지','의식의 보류','무한한 가능성','그림자 투사','페르소나와 그림자','억압된 욕구','감정과 이성의 균형','페르소나의 필요성','꿈의 보상 기능','억압된 자유','열등감의 보상','아니마/아니무스','불안의 상징화','그림자의 인정','도덕적 그림자','합리화','개성화','억압의 역설','통찰','그림자의 힘','능동적 상상','급진적 정직','수동적 희망','회피 기제','감정 부정','관계의 게임화','결단의 윤리','매몰비용과 헌신','책임의 회피','나-너 관계','정언명령','선의의 거짓말','고스팅','투사','품위 있는 이별','무집착','관계의 전환','미완의 집착','반복 강박','응보적 정의','죽음 공포','협력적 자존감','사회적 비교','지위 불안','정서적 거리두기','보상적 노력','비교 우위','현실 수용','상대적 박탈감','비교 회피','자기 옹호','자기 축소','협력적 경쟁','자존적 이탈','실존적 위기','존재의 유일성','변환적 고통','관계적 정체성','한계의 수용','비교 불가능성','기회비용','협상 레버리지','치킨 게임','신호 이론','현상 유지 편향','정보 비대칭','최후통첩 게임','감정과 협상','침묵의 힘','질문의 힘','브링크맨십','양보의 타이밍','황금 다리','시간 압박','감정 폭발의 비용','매몰비용 무시','불확실성 회피','반복 게임','경매 효과','진정성의 힘','방법적 회의','인지 부조화 회피','실재 불안','경이의 태도','증거 기반 수용','심리적 방어','반복 검증','현상학적 태도','진정성 추구','경험의 가치','정보 요구','관계 우선','실재의 추구','무한 회귀','창조적 초월','의식의 연속성','회피적 정직','건설적 진실','전략적 침묵','점진적 진실','보호적 진실','관계 보호','판단 유보','균형 잡힌 진실','보호적 거짓말','주제 전환','자기 정직','자기기만','열린 자기 탐색','현실 부정','자기 의심의 씨앗','증거 무력화','조건부 허용','사회적 고립','피해자 역할 전환','감정 전가','감정 검열','학습된 침묵','외부 현실 검증','자아 침식','인지적 안개','탈출의 결단','경계의 재설정','매몰 비용의 함정','우정의 무게','빚의 시간','시스템의 벽','양심의 무게','원칙의 대가','미끄러운 비탈길','대리 결정의 무게','부재자의 의사','돈과 권력','절박함의 경제학','자유의 가격','협상의 함정','결과의 무게','보이지 않는 비용','트레이드오프','보호하는 거짓말','진실의 무게','타이밍의 지혜','양심의 시장가격','기회비용의 무게','도덕적 면허 효과','쳇바퀴 효과','돈으로 살 수 없는 것','가치의 수량화','호혜성의 함정','감정과 판단의 분리','타협의 착각','점진적 수용','자존심의 유통기한','전략적 인내 vs 자기기만','성찰의 시작','자기기만의 비용','시대의 속도','전략적 무관심','생물학적 시간','찰나의 각성','순환적 시간','직선적 시간의 함정','규율적 시간','카이로스','사회적 가속','시간과 기억','서사로서의 시간','양자적 시간','영원한 현재','현재주의','에로스의 불꽃','스토르게의 뿌리','루두스의 전략','불안형 애착','안정형 애착','관계의 권력 게임','아가페의 빛','에로스의 합일','프라그마의 계산','독점의 욕구','회피형 애착','필리아의 대화','아가페의 잔상','사랑의 철회','거리의 지혜','반응의 층','분석의 층','전략의 층','철학의 층','감정적 즉각 반응','사실 확인의 사고','관계 역학 파악','전제에 대한 의심','감정에 머무는 사고','개선 중심 사고','의도 파악의 사고','목적에 대한 메타 사고','정의로운 분노의 한계','리스크 분석','구조 너머의 의도','정체성 기반 의사결정','감정 회피','현실 제약 분석','경로 설계','프레임에 대한 질문','위장된 평정','거리 측정','감정의 외주','감정 이전의 감각','사회적 의례','시야 관리','비교의 소용돌이','방어적 전시','편집된 근황','전략적 회피','솔직함의 해제력','물리적 도피','욕망의 출처','나침반의 부재','가능성의 감옥','관계의 우선','0.5초의 진실','감정의 복잡성','순환의 인식','유머의 갑옷','방어의 자동화','동결 반응','프로의 가면','학습된 침묵','완벽의 방패','무감의 갑옷','갑옷 없는 질문','자동화된 괜찮음','감정 없는 보고','갑옷 벗는 순간','화제 전환의 기술','과잉 활동의 갑옷','감정 차단','감정 통과','자기 공격','갑옷의 인식','한 겹씩','갑옷 아래의 자아','아모르 파티','투명한 존재','예의 바른 거절','질문이 사람을 꺼낸다','목적 없는 만남의 낯섦','쓸모없는 만남의 힘','기능으로의 전환','무응답의 메시지','기능으로서의 인간','듣는 척의 비용','효율적 단절','5분의 선물','위장된 관심','호의의 장부','잊혀지는 호의','시간의 서열','능력의 인정','효율적 관계','존재 없는 응답','세계에 들어가기','나중의 거짓말'];
+
+    function loadProfile() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        let p = JSON.parse(saved);
+        if (!p.version || p.version < CURRENT_VERSION) {
+          p = migrateProfile(p);
+        }
+        
+        // 유효하지 않은 원칙 제거 (VALID_PRINCIPLES에 없는 것)
+        if (p.principles && p.principles.length > 0) {
+          const beforeCount = p.principles.length;
+          p.principles = p.principles.filter(pr => {
+            const name = typeof pr === 'string' ? pr : (pr && pr.name ? pr.name : null);
+            return name && VALID_PRINCIPLES.includes(name);
+          });
+          if (p.principles.length !== beforeCount) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+          }
+        }
+        
+        // maxStreak 마이그레이션: dailyData에서 가져오기
+        if (!p.maxStreak) {
+          const dailySaved = localStorage.getItem('eclipse_mindlab_daily');
+          if (dailySaved) {
+            const dailyData = JSON.parse(dailySaved);
+            if (dailyData.maxStreak) {
+              p.maxStreak = dailyData.maxStreak;
+            } else if (dailyData.streak > 0) {
+              p.maxStreak = dailyData.streak;
+            }
+            if (p.maxStreak) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+            }
+          }
+        }
+        
+        profile = p;
+        return true;
+      }
+      return false;
+    }
+
+    function migrateProfile(old) {
+      const migrated = {
+        version: CURRENT_VERSION,
+        name: old.name || '',
+        level: old.level || 1,
+        exp: old.exp || 0,
+        completedSims: old.completedSims || old.completedTests || [],
+        principles: old.principles || []
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
+
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      // Firebase에도 저장
+      saveToCloud();
+    }
+
+    // Firebase 클라우드 저장
+    async function saveToCloud() {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        await setDoc(docRef, {
+          ...profile,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+        console.log('클라우드 저장 완료');
+      } catch (error) {
+        console.error('클라우드 저장 실패:', error);
+      }
+    }
+
+    // Firebase 클라우드에서 불러오기
+    async function loadFromCloud() {
+      const user = auth.currentUser;
+      if (!user) return null;
+      
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return docSnap.data();
+        }
+      } catch (error) {
+        console.error('클라우드 로드 실패:', error);
+      }
+      return null;
+    }
+
+    // 로컬과 클라우드 프로필 병합
+    function mergeProfiles(local, cloud) {
+      if (!cloud) return local;
+      if (!local) return cloud;
+      
+      const merged = { ...local };
+      
+      // 레벨이 높은 쪽 선택
+      if ((cloud.level || 1) > (local.level || 1)) {
+        merged.level = cloud.level;
+        merged.exp = cloud.exp;
+      } else if ((cloud.level || 1) === (local.level || 1)) {
+        merged.exp = Math.max(cloud.exp || 0, local.exp || 0);
+      }
+      
+      // 이름은 "익명 탐험가"가 아닌 쪽 선택
+      if (local.name === '익명 탐험가' && cloud.name && cloud.name !== '익명 탐험가') {
+        merged.name = cloud.name;
+      }
+      
+      // 완료한 시뮬레이션 합치기
+      const localSims = local.completedSims || [];
+      const cloudSims = cloud.completedSims || [];
+      merged.completedSims = [...new Set([...localSims, ...cloudSims])];
+      
+      // 원칙 합치기 (문자열과 객체 모두 처리)
+      const localPrinciples = local.principles || [];
+      const cloudPrinciples = cloud.principles || [];
+      const principleSet = new Set();
+      
+      [...localPrinciples, ...cloudPrinciples].forEach(p => {
+        if (typeof p === 'string') {
+          principleSet.add(p);
+        } else if (p && p.name) {
+          principleSet.add(p.name);
+        }
+      });
+      merged.principles = Array.from(principleSet);
+      
+      // 데일리 데이터
+      const localDaily = local.dailyData || {};
+      const cloudDaily = cloud.dailyData || {};
+      merged.dailyData = {
+        ...localDaily,
+        ...cloudDaily,
+        streak: Math.max(localDaily.streak || 0, cloudDaily.streak || 0),
+        totalVotes: Math.max(localDaily.totalVotes || 0, cloudDaily.totalVotes || 0)
+      };
+      
+      // 투표 기록 합치기
+      const localVotes = local.dailyVotes || {};
+      const cloudVotes = cloud.dailyVotes || {};
+      merged.dailyVotes = { ...localVotes, ...cloudVotes };
+      
+      return merged;
+    }
+
+    function getTier(level) {
+      for (let i = TIERS.length - 1; i >= 0; i--) {
+        if (level >= TIERS[i].minLevel) return TIERS[i];
+      }
+      return TIERS[0];
+    }
+
+    function getTitle(level) {
+      for (let i = TITLES.length - 1; i >= 0; i--) {
+        if (level >= TITLES[i].minLevel) return TITLES[i].title;
+      }
+      return TITLES[0].title;
+    }
+
+    function updateUI() {
+      const tier = getTier(profile.level);
+      const title = getTitle(profile.level);
+      const expNeeded = profile.level * 100;
+      const expPercent = (profile.exp / expNeeded) * 100;
+
+      document.getElementById('profileName').textContent = profile.name || '탐험가';
+      document.getElementById('profileTitle').textContent = title;
+      document.getElementById('tierImage').src = 'tier-' + tier.key + '.png';
+      document.getElementById('levelNum').textContent = profile.level;
+      document.getElementById('expFill').style.width = expPercent + '%';
+      document.getElementById('expText').textContent = profile.exp + '/' + expNeeded;
+      
+      // 티어 라벨 업데이트
+      const tierLabel = document.getElementById('tierLabel');
+      tierLabel.textContent = tier.name;
+      tierLabel.style.color = tier.color;
+      tierLabel.style.background = tier.color + '20';
+      
+      document.getElementById('statCleared').textContent = profile.completedSims.length;
+      
+      // 발견한 원칙 수 (VALID_PRINCIPLES에 있는 것만 카운트)
+      const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
+      const validPrinciples = principleNames.filter(name => VALID_PRINCIPLES.includes(name));
+      document.getElementById('statPrinciples').textContent = validPrinciples.length;
+      
+      // 최대 연속 참여 - dailyData에서 직접 가져오기
+      const dailySaved = localStorage.getItem('eclipse_mindlab_daily');
+      let maxStreak = profile.maxStreak || 0;
+      if (dailySaved) {
+        const dailyData = JSON.parse(dailySaved);
+        maxStreak = Math.max(maxStreak, dailyData.maxStreak || 0, dailyData.streak || 0);
+      }
+      document.getElementById('statMaxStreak').textContent = maxStreak;
+
+      // 마인드 스토리 목록
+      const storyList = document.getElementById('storyList');
+      const completedStory = SIMULATIONS.story.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('storyProgress').textContent = `${completedStory}/${SIMULATIONS.story.length}`;
+      
+      storyList.innerHTML = SIMULATIONS.story.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const isLocked = !sim.url;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">Coming Soon</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 철학 시뮬레이션 목록
+      const philList = document.getElementById('philList');
+      const completedPhil = SIMULATIONS.philosophy.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('philProgress').textContent = `${completedPhil}/${SIMULATIONS.philosophy.length}`;
+      
+      philList.innerHTML = SIMULATIONS.philosophy.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const now = new Date();
+        const unlockTime = sim.unlockDate ? new Date(sim.unlockDate) : null;
+        const isLocked = sim.locked && unlockTime && now < unlockTime;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          const unlockDateStr = unlockTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">${unlockDateStr} 오픈</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}${sim.isNewPink ? ' <span style="background:#ff4d8d;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}${sim.isNewMint ? ' <span style="background:#00d4aa;color:#000;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 심리 시뮬레이션 목록
+      const psychList = document.getElementById('psychList');
+      const completedPsych = SIMULATIONS.psych.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('psychProgress').textContent = `${completedPsych}/${SIMULATIONS.psych.length}`;
+      
+      psychList.innerHTML = SIMULATIONS.psych.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const now = new Date();
+        const unlockTime = sim.unlockDate ? new Date(sim.unlockDate) : null;
+        const isLocked = sim.locked && unlockTime && now < unlockTime;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          const unlockDateStr = unlockTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">${unlockDateStr} 오픈</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}${sim.isNewPink ? ' <span style="background:#ff4d8d;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}${sim.isNewMint ? ' <span style="background:#00d4aa;color:#000;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 전략 시뮬레이션 목록
+      const strategyList = document.getElementById('strategyList');
+      const completedStrategy = SIMULATIONS.strategy.filter(s => profile.completedSims.includes(s.id)).length;
+      document.getElementById('strategyProgress').textContent = `${completedStrategy}/${SIMULATIONS.strategy.length}`;
+      
+      strategyList.innerHTML = SIMULATIONS.strategy.map(sim => {
+        const isCompleted = profile.completedSims.includes(sim.id);
+        const now = new Date();
+        const unlockTime = sim.unlockDate ? new Date(sim.unlockDate) : null;
+        const isLocked = sim.locked && unlockTime && now < unlockTime;
+        
+        let className = 'sim-item';
+        if (isCompleted) className += ' completed';
+        if (isLocked) className += ' locked';
+        
+        const status = isCompleted ? '✓' : (isLocked ? '🔒' : '○');
+        const reward = isCompleted ? '완료' : '+30 EXP';
+        
+        if (isLocked) {
+          const unlockDateStr = unlockTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+          return `
+            <div class="${className}">
+              <div class="sim-status">${status}</div>
+              <div class="sim-info">
+                <div class="sim-title">${sim.title}</div>
+                <div class="sim-desc">${unlockDateStr} 오픈</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        return `
+          <a href="${sim.url}" class="${className}">
+            <div class="sim-status">${status}</div>
+            <div class="sim-info">
+              <div class="sim-title">${sim.title}</div>
+              <div class="sim-desc">${sim.desc}</div>
+            </div>
+            <div class="sim-reward">${reward}</div>
+          </a>
+        `;
+      }).join('');
+
+      // 원칙 도감 진행도 업데이트 (VALID_PRINCIPLES에 있는 것만 카운트)
+      const dexPrincipleNames = profile.principles
+        ? profile.principles
+            .map(p => typeof p === 'string' ? p : (p && p.name ? p.name : null))
+            .filter(name => name && VALID_PRINCIPLES.includes(name))
+        : [];
+      const dexCount = dexPrincipleNames.length;
+      document.getElementById('dexCount').textContent = `${dexCount}/${DEX_TOTAL}`;
+      document.getElementById('dexProgressFill').style.width = `${(dexCount/DEX_TOTAL)*100}%`;
+
+      // === 나의 사고 성향 분석 ===
+      renderMindset(profile);
+
+      // === 추천 시뮬레이터 ===
+      renderRecommendations(profile);
+
+      // === 오늘의 딜레마 상태 ===
+      renderDailyStatus();
+
+      // 티어 진행도
+      TIERS.forEach(t => {
+        const item = document.querySelector(`.tier-item[data-tier="${t.key}"]`);
+        if (!item) return;
+        const icon = item.querySelector('.tier-icon');
+        item.classList.remove('active');
+        icon.classList.remove('active', 'completed');
+        if (t.key === tier.key) {
+          item.classList.add('active');
+          icon.classList.add('active');
+        } else if (profile.level >= t.minLevel) {
+          icon.classList.add('completed');
+        }
+      });
+
+      // 내 도전장 버튼 표시
+      const myChallenges = JSON.parse(localStorage.getItem('mindlab_my_challenges') || '[]');
+      const myChallengesBtn = document.getElementById('myChallengesBtn');
+      const myChallengesCount = document.getElementById('myChallengesCount');
+      
+      if (myChallenges.length > 0) {
+        myChallengesBtn.classList.remove('hidden');
+        myChallengesCount.textContent = myChallenges.length;
+      }
+    }
+
+    async function init() {
+      const nameInput = document.getElementById('nameInput');
+      const startBtn = document.getElementById('startBtn');
+      const nameModal = document.getElementById('nameModal');
+      const googleSyncBtn = document.getElementById('googleSyncBtn');
+
+      // 로컬 프로필 먼저 로드
+      loadProfile();
+
+      // 플래그 확인
+      const loadExistingFlag = localStorage.getItem('eclipse_mindlab_load_existing');
+      console.log('기존 프로필 불러오기 플래그:', loadExistingFlag);
+
+      // Firebase 로그인 상태 확인
+      try {
+        await new Promise((resolve) => {
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              console.log('Firebase 로그인됨:', user.uid);
+              
+              // 구글 연동 여부 체크
+              const isGoogleLinked = user.providerData.some(p => p.providerId === 'google.com');
+              const backupWarning = document.getElementById('backupWarning');
+              
+              if (isGoogleLinked) {
+                googleSyncBtn.classList.add('synced');
+                googleSyncBtn.title = '구글 연동됨';
+                if (backupWarning) backupWarning.classList.add('hidden');
+                
+                // 기존 프로필 불러오기 플래그가 있으면 처리
+                if (loadExistingFlag) {
+                  console.log('기존 프로필 불러오기 시작...');
+                  localStorage.removeItem('eclipse_mindlab_load_existing');
+                  
+                  const cloudProfile = await loadFromCloud();
+                  console.log('클라우드 프로필:', cloudProfile);
+                  
+                  if (cloudProfile && cloudProfile.name) {
+                    // 기존 로컬 데이터 완전히 대체 (병합 X)
+                    profile = cloudProfile;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                    console.log('프로필 교체 완료:', profile);
+                    alert('기존 프로필을 불러왔습니다!');
+                    updateUI(); // UI 즉시 업데이트
+                  } else {
+                    alert('클라우드에 저장된 프로필이 없습니다.');
+                  }
+                  resolve();
+                  return; // 병합 로직 건너뛰기
+                }
+              } else {
+                // 구글 연동 안됨 - 경고 표시
+                if (backupWarning) backupWarning.classList.remove('hidden');
+              }
+              
+              // 일반적인 경우: 클라우드에서 프로필 로드 후 병합
+              const cloudProfile = await loadFromCloud();
+              if (cloudProfile) {
+                const localProfile = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                profile = mergeProfiles(localProfile, cloudProfile);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                console.log('프로필 동기화 완료');
+              }
+              resolve();
+            } else {
+              // 로그아웃 상태 - 익명 로그인 시도
+              const backupWarning = document.getElementById('backupWarning');
+              if (backupWarning) backupWarning.classList.remove('hidden');
+              
+              try {
+                await signInAnonymously(auth);
+                console.log('익명 로그인 성공');
+              } catch (error) {
+                console.error('익명 로그인 실패:', error);
+              }
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Firebase 초기화 실패:', error);
+      }
+
+      // 프로필 체크: localStorage에 프로필이 있거나 건너뛴 적 있으면 모달 안 띄움
+      updateUI();
+      const hasProfile = localStorage.getItem('eclipse_mindlab_profile');
+      const nameDismissed = localStorage.getItem('eclipse_name_dismissed');
+      if (!hasProfile && !nameDismissed) {
+        nameModal.style.display = 'flex';
+      }
+
+      nameInput.addEventListener('input', () => {
+        startBtn.disabled = nameInput.value.trim().length < 2;
+        // 에러 메시지 초기화
+        const errorMsg = document.getElementById('nameError');
+        if (errorMsg) errorMsg.style.display = 'none';
+      });
+
+      document.getElementById('skipBtn').addEventListener('click', () => {
+        localStorage.setItem('eclipse_name_dismissed', 'true');
+        nameModal.style.display = 'none';
+      });
+
+      startBtn.addEventListener('click', async () => {
+        const name = nameInput.value.trim();
+        if (name.length < 2) return;
+        
+        // 버튼 비활성화 (중복 클릭 방지)
+        startBtn.disabled = true;
+        startBtn.textContent = '확인 중...';
+        
+        try {
+          // 닉네임 중복 체크
+          const isDuplicate = await checkNicknameDuplicate(name);
+          
+          if (isDuplicate) {
+            // 중복인 경우
+            let errorMsg = document.getElementById('nameError');
+            if (!errorMsg) {
+              errorMsg = document.createElement('div');
+              errorMsg.id = 'nameError';
+              errorMsg.style.cssText = 'color: #dc6b6b; font-size: 13px; margin-top: 8px; text-align: center;';
+              nameInput.parentNode.insertBefore(errorMsg, nameInput.nextSibling);
+            }
+            errorMsg.textContent = '이미 사용 중인 닉네임입니다.';
+            errorMsg.style.display = 'block';
+            startBtn.disabled = false;
+            startBtn.textContent = '탐험 시작';
+            return;
+          }
+          
+          // 중복 아니면 저장
+          profile.name = name;
+          saveProfile();
+          nameModal.style.display = 'none';
+          updateUI();
+        } catch (error) {
+          console.error('닉네임 체크 실패:', error);
+          // 에러 시 그냥 진행 (오프라인 등)
+          profile.name = name;
+          saveProfile();
+          nameModal.style.display = 'none';
+          updateUI();
+        }
+      });
+
+      // 닉네임 중복 체크 함수
+      async function checkNicknameDuplicate(name) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('name', '==', name));
+        const querySnapshot = await getDocs(q);
+        
+        // 현재 유저의 uid
+        const currentUid = auth.currentUser?.uid;
+        
+        // 다른 유저가 사용 중인지 확인
+        let isDuplicate = false;
+        querySnapshot.forEach((doc) => {
+          if (doc.id !== currentUid) {
+            isDuplicate = true;
+          }
+        });
+        
+        return isDuplicate;
+      }
+
+      // 구글 연동 버튼
+      // 이미 구글 연동됐는지 확인
+      const user2 = auth.currentUser;
+      if (user2 && user2.providerData.some(p => p.providerId === 'google.com')) {
+        googleSyncBtn.classList.add('synced');
+        googleSyncBtn.title = '구글 연동됨';
+      }
+      
+      googleSyncBtn.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          alert('잠시 후 다시 시도해주세요.');
+          return;
+        }
+        
+        // 이미 구글 연동됐으면 무시
+        if (user.providerData.some(p => p.providerId === 'google.com')) {
+          alert('이미 구글 계정과 연동되어 있습니다!');
+          return;
+        }
+        
+        try {
+          const provider = new GoogleAuthProvider();
+          
+          // 익명 계정을 구글 계정에 연결
+          await linkWithPopup(user, provider);
+          
+          // 연동 성공
+          googleSyncBtn.classList.add('synced');
+          googleSyncBtn.title = '구글 연동됨';
+          alert('구글 계정 연동 완료! 이제 다른 기기에서도 데이터를 사용할 수 있습니다.');
+          
+          // 프로필 다시 저장 (새 uid로)
+          saveProfile();
+        } catch (error) {
+          console.error('구글 연동 실패:', error);
+          console.log('에러 코드:', error.code);
+          console.log('에러 메시지:', error.message);
+          
+          // credential-already-in-use 체크 (code 또는 message로)
+          const isAlreadyInUse = error.code === 'auth/credential-already-in-use' || 
+                                 (error.message && error.message.includes('credential-already-in-use'));
+          
+          if (isAlreadyInUse) {
+            // 이미 다른 계정에 연결된 구글 계정
+            console.log('credential-already-in-use 감지됨');
+            console.log('에러 상세:', error.customData);
+            
+            // 에러에서 credential 추출 시도
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            console.log('추출된 credential:', credential);
+            
+            // 팝업이 완전히 닫힌 후 confirm 표시
+            console.log('1초 후 confirm 표시 예정...');
+            setTimeout(async () => {
+              console.log('setTimeout 실행됨');
+              const loadExisting = confirm('이 구글 계정에 기존 프로필이 있습니다.\n\n기존 프로필을 불러올까요?\n(현재 프로필은 삭제됩니다)');
+              
+              console.log('사용자 선택:', loadExisting);
+              
+              if (loadExisting) {
+                try {
+                  // credential이 있으면 직접 로그인
+                  if (credential) {
+                    console.log('credential로 직접 로그인 시도...');
+                    const result = await signInWithCredential(auth, credential);
+                    console.log('로그인 성공:', result.user.uid);
+                    
+                    // 기존 로컬 데이터 삭제
+                    localStorage.removeItem(STORAGE_KEY);
+                    
+                    // 클라우드에서 프로필 로드
+                    const cloudProfile = await loadFromCloud();
+                    console.log('클라우드 프로필:', cloudProfile);
+                    
+                    if (cloudProfile && cloudProfile.name) {
+                      profile = cloudProfile;
+                      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                      googleSyncBtn.classList.add('synced');
+                      googleSyncBtn.title = '구글 연동됨';
+                      updateUI();
+                      alert('기존 프로필을 불러왔습니다!');
+                    } else {
+                      alert('클라우드에 저장된 프로필이 없습니다.');
+                      // 새 프로필로 시작
+                      location.reload();
+                    }
+                  } else {
+                    // credential이 없으면 팝업으로 다시 로그인
+                    console.log('팝업으로 재로그인 시도...');
+                    const provider = new GoogleAuthProvider();
+                    const result = await signInWithPopup(auth, provider);
+                    console.log('재로그인 성공:', result.user.uid);
+                    
+                    // 기존 로컬 데이터 삭제
+                    localStorage.removeItem(STORAGE_KEY);
+                    
+                    // 클라우드에서 프로필 로드
+                    const cloudProfile = await loadFromCloud();
+                    console.log('클라우드 프로필:', cloudProfile);
+                    
+                    if (cloudProfile && cloudProfile.name) {
+                      profile = cloudProfile;
+                      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+                      googleSyncBtn.classList.add('synced');
+                      googleSyncBtn.title = '구글 연동됨';
+                      updateUI();
+                      alert('기존 프로필을 불러왔습니다!');
+                    } else {
+                      alert('클라우드에 저장된 프로필이 없습니다.');
+                      location.reload();
+                    }
+                  }
+                } catch (signInError) {
+                  console.error('프로필 불러오기 실패:', signInError);
+                  alert('프로필 불러오기에 실패했습니다: ' + signInError.message);
+                }
+              }
+            }, 1000);
+          } else if (error.code === 'auth/popup-closed-by-user') {
+            // 사용자가 팝업 닫음
+            console.log('로그인 취소됨');
+          } else {
+            alert('연동 중 오류가 발생했습니다. 다시 시도해주세요.');
+          }
+        }
+      });
+    }
+
+    init();
+
+    // 닉네임 수정 기능
+    const editNameBtn = document.getElementById('editNameBtn');
+    const editNameModal = document.getElementById('editNameModal');
+    const editNameInput = document.getElementById('editNameInput');
+    const editNameCancelBtn = document.getElementById('editNameCancelBtn');
+    const editNameSaveBtn = document.getElementById('editNameSaveBtn');
+
+    editNameBtn.addEventListener('click', () => {
+      editNameInput.value = profile.name || '';
+      editNameModal.classList.remove('hidden');
+      editNameInput.focus();
+    });
+
+    editNameCancelBtn.addEventListener('click', () => {
+      editNameModal.classList.add('hidden');
+    });
+
+    editNameInput.addEventListener('input', () => {
+      editNameSaveBtn.disabled = editNameInput.value.trim().length === 0;
+    });
+
+    editNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && editNameInput.value.trim()) {
+        saveNewName();
+      }
+    });
+
+    editNameSaveBtn.addEventListener('click', saveNewName);
+
+    async function saveNewName() {
+      const newName = editNameInput.value.trim();
+      if (!newName) return;
+
+      // 중복 체크
+      try {
+        editNameSaveBtn.disabled = true;
+        editNameSaveBtn.textContent = '확인 중...';
+
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('name', '==', newName));
+        const querySnapshot = await getDocs(q);
+        
+        const currentUid = auth.currentUser?.uid;
+        let isDuplicate = false;
+        querySnapshot.forEach((doc) => {
+          if (doc.id !== currentUid) {
+            isDuplicate = true;
+          }
+        });
+
+        if (isDuplicate) {
+          alert('이미 사용 중인 닉네임입니다.');
+          editNameSaveBtn.disabled = false;
+          editNameSaveBtn.textContent = '저장';
+          return;
+        }
+
+        // 저장
+        profile.name = newName;
+        saveProfile();
+        updateUI();
+        editNameModal.classList.add('hidden');
+        editNameSaveBtn.textContent = '저장';
+      } catch (error) {
+        console.error('닉네임 변경 실패:', error);
+        profile.name = newName;
+        saveProfile();
+        updateUI();
+        editNameModal.classList.add('hidden');
+        editNameSaveBtn.textContent = '저장';
+      }
+    }
+    
+    // PWA 설치 프롬프트
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // 설치 버튼 표시
+      installBtn.classList.remove('hidden');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+
+    // 이미 설치됐으면 버튼 숨김
+    window.addEventListener('appinstalled', () => {
+      installBtn.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    // 앱 공유 기능
+    const shareAppBtn = document.getElementById('shareAppBtn');
+    shareAppBtn.addEventListener('click', () => {
+      const shareText = `🧠 이클립스의 딜렘
+
+당신의 도덕 성향을 알아보세요!
+매일 새로운 딜레마에 답하고, 나와 비슷한 철학자를 찾아보세요.
+
+심리 시뮬레이터 | 오늘의 딜레마 | 원칙 발견`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: '이클립스의 딜렘',
+          text: shareText,
+          url: 'https://eclipse-mindlab.github.io/mindlab/'
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(shareText + '\n\nhttps://eclipse-mindlab.github.io/mindlab/').then(() => {
+          shareAppBtn.classList.add('success');
+          shareAppBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            복사 완료!
+          `;
+          setTimeout(() => {
+            shareAppBtn.classList.remove('success');
+            shareAppBtn.innerHTML = `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              친구에게 공유하기
+            `;
+          }, 2000);
+        });
+      }
+    });
+
+    // 프로필 이미지 저장 기능
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    saveProfileBtn.addEventListener('click', () => {
+      const card = document.querySelector('.profile-card');
+      const btn = saveProfileBtn;
+      
+      btn.innerHTML = '저장 중...';
+      
+      html2canvas(card, { 
+        backgroundColor: '#09090b', 
+        scale: 2,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const today = new Date();
+        const dateStr = today.getFullYear() + '.' + String(today.getMonth()+1).padStart(2,'0') + '.' + String(today.getDate()).padStart(2,'0');
+        link.download = 'dilem-profile-' + dateStr + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.classList.add('success');
+        btn.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          저장 완료!
+        `;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            프로필 이미지 저장
+          `;
+        }, 2000);
+      });
+    });
+    
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+
+    // === 사고 성향 분석 시스템 ===
+    function renderMindset(profile) {
+      const content = document.getElementById('mindsetContent');
+      if (!profile.completedSims || profile.completedSims.length === 0) {
+        content.innerHTML = '<div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>';
+        return;
+      }
+
+      const principles = profile.principles || [];
+      if (principles.length === 0) {
+        content.innerHTML = '<div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>';
+        return;
+      }
+
+      // 원칙 → 성향 매핑 (포괄적)
+      const mapping = {
+        // 결과주의: 결과, 효용, 실용, 손익 중심
+        결과주의: ['결과', '공리', '효용', '계산', '프라그마', '리스크', '비용', '이득', '쳇바퀴', '매몰', '손절', '팃포탯', '투자', '현상 유지', '경매', '신호 이론', '정보 비대칭', '불확실성 회피', '브링크맨십', '양보', '시간 압박', '황금 다리', '현실 제약', '경로 설계', '비교 우위', '실용적', '손익', '절박함의 경제학', '자유의 가격', '호혜성', '가치의 수량화', '타협', '시장가격', '기회비용', '면허 효과', '점진적 수용','합리적 이기주의','습관의 힘','시스템의 벽','빚의 시간','미끄러운 비탈길','비가역성','생존 우선','돈으로 살 수 없는','경고의 기능','합리화','신중한 대기'],
+        // 원칙주의: 도덕, 규칙, 의무, 정의 중심
+        원칙주의: ['의무', '원칙', '도덕', '양심', '정의', '신성', '절대', '정언명령', '보편적 공정', '동의 기반', '행위자 중심', '스토아', '결단의 윤리', '책임', '보호적 진실', '건설적 진실', '균형 잡힌 진실', '선의의 거짓말', '보호하는 거짓말', '진실의 무게', '카르페 디엠', '부재자의 의사', '생명 가치', '품위 있는', '관계 보호','임계점 윤리','자유의지 방어','국지적 선','극단적 공정','행위의 직접성','가치 기반 결정','회피적 정직','점진적 진실','보호적 거짓말','판단 유보','주제 전환','타이밍의 지혜','힘의 절제','회복적 접근','결단의 순간'],
+        // 감정주의: 감정, 본능, 관계, 애착 중심  
+        감정주의: ['감정', '불안', '에로스', '마니아', '분노', '반응', '직관', '집착', '독점', '심리적 방어', '회피 기제', '반복 강박', '인지 부조화', '공포', '냉소', '현실 부정', '자아 침식', '인지적 안개', '학습된 침묵', '관계 우선', '고스팅', '관계의 전환', '간헐적 강화', '좌절', '확인 추구', '스토르게', '회피적 애착', '안정형 애착', '불안형 애착', '사회적 동조', '상대적 박탈', '원한', '용서', '응보', '억압', '그림자', '페르소나', '아니마', '열등감', '감정 회피', '정서적 거리', '보상적 노력', '사회적 비교', '연결의 힘', '생존 본능', '통제 욕구','사회적 고립','피해자 역할','외부 현실','탈출의 결단','경계의 재설정','회피적 대처','사회적 지지','관계 지향적','직접 소통','회피형 애착','협력적 자존감','현실 수용','협력적 경쟁','자존적 이탈','변환적 고통','한계의 수용','수동적 희망','고독한 죽음','사회적 자아','정서적','보상적','연결','공유된 영원','반복의 용기','꿈의 보상','능동적 상상','협력의 가치'],
+        // 전략가: 구조, 의도, 전략, 권력 파악
+        전략가: ['전략', '게임', '권력', '루두스', '협상', '의도', '구조', '역학', '분석', '사실 확인', '개선 중심', '의도 파악', '리스크 분석', '구조 너머', '경로', '비교', '레버리지', '관망', '침묵의 힘', '질문의 힘', '브링크맨십', '규율적 시간', '사회적 가속', '관계 역학','증거 기반','반복 검증','정보 요구','증거 무력화','조건부 허용','지식의 저주','세뇌의 역설','불확실성 내성','경험의 가치','비교 불가능성'],
+        // 성찰가: 메타인지, 자기 관찰, 존재, 의미
+        성찰가: ['성찰', '메타', '철학', '현재', '자기', '프레임', '정체성', '존재', '찰나', '아가페', '방법적 회의', '현상학', '실재', '경이', '아모르 파티','투명한 존재','예의 바른 거절','질문이 사람을 꺼낸다','목적 없는 만남의 낯섦','쓸모없는 만남의 힘','기능으로의 전환','무응답의 메시지', '유한성', '진정성', '의식', '무한', '초월', '나-너', '관계의 본질', '부조리', '허무', '본질', '개성화', '카이로스', '영원회귀', '순환적 시간', '블록', '양자적 시간', '서사로서', '시간과 기억', '생물학적 시간', '영원한 현재', '현재주의', '사랑의 철회', '거리의 지혜', '필리아', '삶의 긍정', '자율성', '전제에 대한 의심', '목적에 대한', '정체성 기반', '프레임에 대한', '자존심의 유통기한', '시대의 속도','죽음 앞의 자유','불멸 프로젝트','유물론적 죽음관','영혼 불멸','불가지론','죽음의 망각','삶에의 의지','윤회적 희망','신정론의 도전','신의 침묵','한계의 인정','계시의 한계','신적 관조','지혜의 보존','행위자의 후회','신적 사랑의 역설','경험적 무신론','신비의 수용','영생의 역설','역사의 진보','철인왕','창조의 의지','희망의 원리','실존적 절망','욕망의 해방','인류의 대리자','경계의 해체','삶의 긍정','급진적 정직','직선적 시간의 함정','상대적 박탈감']
+      };
+
+      const axes = {
+        결과주의: { count: 0, color: '#f59e0b' },
+        원칙주의: { count: 0, color: '#3b82f6' },
+        감정주의: { count: 0, color: '#ef4444' },
+        전략가: { count: 0, color: '#10b981' },
+        성찰가: { count: 0, color: '#8b5cf6' }
+      };
+
+      principles.forEach(p => {
+        const name = typeof p === 'string' ? p : (p.name || '');
+        let matched = false;
+        for (const [axis, keywords] of Object.entries(mapping)) {
+          if (keywords.some(k => name.includes(k))) {
+            axes[axis].count++;
+            matched = true;
+            break;
+          }
+        }
+        // 매칭 안 되면 성찰가로 (철학적 원칙이 많으므로)
+        if (!matched && name.length > 2) axes['성찰가'].count++;
+      });
+
+      const total = Object.values(axes).reduce((s, a) => s + a.count, 0) || 1;
+      const sorted = Object.entries(axes).sort((a, b) => b[1].count - a[1].count);
+      const dominant = sorted[0];
+
+      let chartHTML = '<div class="mindset-chart">';
+      sorted.forEach(([name, data]) => {
+        const pct = Math.round((data.count / total) * 100);
+        chartHTML += `
+          <div class="mindset-axis">
+            <div class="mindset-label">${name}</div>
+            <div class="mindset-bar-bg">
+              <div class="mindset-bar-fill" style="width: ${pct}%; background: ${data.color};"></div>
+            </div>
+            <div class="mindset-percent" style="color: ${data.color}">${pct}%</div>
+          </div>`;
+      });
+      chartHTML += '</div>';
+
+      const summaries = {
+        결과주의: '결과를 중시합니다. 행동의 옳고 그름을 결과로 판단하는 경향이 있습니다.',
+        원칙주의: '원칙을 중시합니다. 결과와 관계없이 옳은 것은 옳다고 판단하는 경향이 있습니다.',
+        감정주의: '감정에 솔직합니다. 관계와 느낌을 우선시하는 경향이 있습니다.',
+        전략가: '구조를 읽습니다. 상황의 이면과 상대의 의도를 파악하려는 경향이 있습니다.',
+        성찰가: '깊이 생각합니다. 자기 자신의 사고 과정을 관찰하는 경향이 있습니다.'
+      };
+
+      chartHTML += `<div class="mindset-summary">지배적 성향: <span class="mindset-dominant">${dominant[0]}</span><br>${summaries[dominant[0]]}<br><span style="color:#52525b;font-size:11px;">시뮬레이터를 더 할수록 정교해집니다 · ${profile.completedSims.length}개 완료</span></div>`;
+
+      content.innerHTML = chartHTML;
+    }
+
+    // === 추천 시뮬레이터 ===
+    function renderRecommendations(profile) {
+      const section = document.getElementById('recommendSection');
+      const list = document.getElementById('recommendList');
+      const completed = profile.completedSims || [];
+
+      const allSims = [...SIMULATIONS.philosophy, ...SIMULATIONS.psych, ...SIMULATIONS.strategy, ...SIMULATIONS.story];
+      const notDone = allSims.filter(s => !completed.includes(s.id) && !s.locked);
+
+      if (notDone.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      const picks = notDone.slice(0, 2);
+      list.innerHTML = picks.map(sim => `
+        <a href="${sim.url}" class="sim-item" style="animation: fadeSlideIn 0.5s ease-out;">
+          <div class="sim-status">★</div>
+          <div class="sim-info">
+            <div class="sim-title">${sim.title}</div>
+            <div class="sim-desc">${sim.desc}</div>
+          </div>
+          <div class="sim-reward">+30 EXP</div>
+        </a>
+      `).join('');
+    }
+
+    // === 오늘의 딜레마 상태 ===
+    function renderDailyStatus() {
+      const dailyData = localStorage.getItem('eclipse_mindlab_daily');
+      const desc = document.getElementById('dailyMainDesc');
+      const streak = document.getElementById('dailyMainStreak');
+
+      if (dailyData) {
+        try {
+          const data = JSON.parse(dailyData);
+          const today = new Date().toISOString().split('T')[0];
+
+          if (data.lastDate === today) {
+            desc.textContent = '오늘의 딜레마를 완료했습니다 ✓';
+            desc.style.color = '#10b981';
+          } else {
+            desc.textContent = '오늘의 질문이 기다리고 있습니다';
+          }
+
+          if (data.streak && data.streak > 0) {
+            streak.classList.remove('hidden');
+            streak.textContent = '🔥 연속 ' + data.streak + '일';
+          }
+          if (data.maxStreak && data.maxStreak > 0) {
+            streak.classList.remove('hidden');
+            streak.textContent += ' · 최대 ' + data.maxStreak + '일';
+          }
+        } catch(e) {}
+      }
+    }
+
+    // === 페이지 전환 효과 ===
+    document.querySelectorAll('a[href$=".html"]:not([target="_blank"])').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const href = this.href;
+        document.querySelector('.container').style.animation = 'none';
+        document.querySelector('.container').offsetHeight; // reflow
+        document.querySelector('.container').style.animation = 'fadeSlideOut 0.2s ease-in forwards';
+        setTimeout(() => { window.location.href = href; }, 180);
+      });
+    });
+
+    // fadeSlideOut 애니메이션
+    const fadeOutStyle = document.createElement('style');
+    fadeOutStyle.textContent = '@keyframes fadeSlideOut { to { opacity: 0; transform: translateY(-8px); } }';
+    document.head.appendChild(fadeOutStyle);
+
+    // === 척학 컬렉션 ===
+    const BOOKS = [
+      { id: 'philosophy', title: '훔친 철학 편', sub: '있어 보이는 척하기 좋은 철학의 문법', img: 'book-philosophy.png' },
+      { id: 'psychology', title: '훔친 심리학 편', sub: '있어 보이는 척하기 좋은 심리학의 문법', img: 'book-psychology.png' },
+      { id: 'wealth', title: '훔친 부 편', sub: '있어 보이는 척하기 좋은 돈의 문법', img: 'book-wealth.png' },
+      { id: 'love', title: '사랑은 오해다', sub: '있어 보이는 척하기 좋은 사랑의 공식', img: 'book-love.png' },
+      { id: 'fight', title: '싸움의 교양', sub: '야망은 큰데 왜 맨손인가', img: 'book-fight.png' },
+      { id: 'transcend', title: '초월자의 조건', sub: '야망은 큰데 왜 아직도 평범한가', img: 'book-transcend.png' },
+      { id: 'hierarchy', title: '서열의 교양', sub: '알고도 모른 척해야 하는 지위의 법칙', img: 'book-hierarchy.png' }
+    ];
+
+    function getReadBooks() {
+      try { 
+        const data = JSON.parse(localStorage.getItem('eclipse_read_books') || '{}');
+        // 이전 버전 호환 (배열 → 객체 변환)
+        if (Array.isArray(data)) {
+          const obj = {};
+          data.forEach(id => { obj[id] = 1; });
+          return obj;
+        }
+        return data;
+      } catch { return {}; }
+    }
+    function saveReadBooks(books) {
+      localStorage.setItem('eclipse_read_books', JSON.stringify(books));
+    }
+
+    let currentBookId = null;
+
+    function renderCollection() {
+      const container = document.getElementById('collectionBooks');
+      const readBooks = getReadBooks();
+      const readCount = Object.keys(readBooks).filter(id => readBooks[id] > 0).length;
+      document.getElementById('collectionProgress').textContent = readCount + '/' + BOOKS.length;
+
+      container.innerHTML = BOOKS.map(book => {
+        const count = readBooks[book.id] || 0;
+        const isRead = count > 0;
+        const label = count > 1 ? count + '독' : '';
+        return `
+          <button class="collection-book ${isRead ? '' : 'locked'}" onclick="window.openBookModal('${book.id}')">
+            <img src="${book.img}" alt="${book.title}">
+            <div class="book-label">${book.title}</div>
+            <div class="book-check">${isRead ? (label ? '✅ ' + label : '✅') : '🔒'}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openBookModal(bookId) {
+      currentBookId = bookId;
+      const book = BOOKS.find(b => b.id === bookId);
+      const readBooks = getReadBooks();
+      const count = readBooks[bookId] || 0;
+
+      document.getElementById('bookModalImg').src = book.img;
+      document.getElementById('bookModalTitle').textContent = book.title;
+      document.getElementById('bookModalSub').textContent = book.sub;
+
+      const btnContainer = document.getElementById('bookModalButtons');
+      if (count === 0) {
+        btnContainer.innerHTML = `
+          <button class="book-modal-btn read" onclick="window.markRead()">📖 읽었어요</button>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-modal-btn buy">🛒 구매하기</a>
+          <button class="book-modal-btn close" onclick="window.closeBookModal()">닫기</button>`;
+      } else {
+        btnContainer.innerHTML = `
+          <button class="book-modal-btn read" onclick="window.markRead()">📖 ${count + 1}독 기록하기</button>
+          <button class="book-modal-btn unread" onclick="window.markUnread()">↩️ 읽음 취소</button>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-modal-btn buy">🛒 구매하기</a>
+          <button class="book-modal-btn close" onclick="window.closeBookModal()">닫기</button>`;
+      }
+
+      document.getElementById('bookModal').style.display = 'flex';
+    }
+
+    function closeBookModal() {
+      document.getElementById('bookModal').style.display = 'none';
+      currentBookId = null;
+    }
+
+    function markRead() {
+      if (!currentBookId) return;
+      let readBooks = getReadBooks();
+      readBooks[currentBookId] = (readBooks[currentBookId] || 0) + 1;
+      saveReadBooks(readBooks);
+      renderCollection();
+
+      const readCount = Object.keys(readBooks).filter(id => readBooks[id] > 0).length;
+      if (readCount === BOOKS.length) {
+        if (!profile.completedSims.includes('collection-master')) {
+          profile.completedSims.push('collection-master');
+          profile.exp += 100;
+          saveProfile();
+          alert('🎉 축하합니다! 전권 수집 완료!\n"척학 마스터" 뱃지를 획득했습니다.\n+100 EXP');
+        }
+      }
+      closeBookModal();
+    }
+
+    function markUnread() {
+      if (!currentBookId) return;
+      let readBooks = getReadBooks();
+      delete readBooks[currentBookId];
+      saveReadBooks(readBooks);
+      renderCollection();
+      closeBookModal();
+    }
+
+    // 모달 바깥 클릭 닫기
+    document.getElementById('bookModal').addEventListener('click', function(e) {
+      if (e.target === this) closeBookModal();
+    });
+
+    // 초기 렌더링
+    renderCollection();
+
+    // 글로벌 함수 노출
+    window.openBookModal = openBookModal;
+    window.closeBookModal = closeBookModal;
+    window.markRead = markRead;
+    window.markUnread = markUnread;
+  </script>
+</body>
+</html>

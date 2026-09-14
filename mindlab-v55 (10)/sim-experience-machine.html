@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경험 기계 - 이클립스의 딜렘</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6d5dbc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 540px; margin: 0 auto; }
+    
+    .header { margin-bottom: 32px; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #8b8b92;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:hover { color: #60a5fa; }
+
+    .header-content { text-align: center; }
+    .header-category { font-size: 12px; color: #60a5fa; margin-bottom: 8px; }
+    .header h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #8b8b92; }
+    
+    .progress { display: flex; gap: 8px; margin-bottom: 24px; }
+    
+    .progress-bar {
+      height: 4px;
+      flex: 1;
+      border-radius: 4px;
+      background: #232326;
+      transition: background 0.3s;
+    }
+    
+    .progress-bar.completed { background: #60a5fa; }
+    .progress-bar.current { background: rgba(96, 165, 250, 0.5); }
+    
+    .scenario-card {
+      background: #141417;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .stage-label {
+      font-size: 11px;
+      color: #8b8b92;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .context {
+      font-size: 13px;
+      color: #a1a1aa;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #1a1a1e;
+      border-radius: 8px;
+    }
+    
+    .situation { font-size: 17px; line-height: 1.8; }
+    
+    .choices { display: flex; flex-direction: column; gap: 12px; }
+    
+    .choice-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      background: #141417;
+      border: 1px solid #232326;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.6;
+    }
+    
+    .choice-btn:hover {
+      background: #232326;
+      border-color: #35353a;
+    }
+    
+    .result-section { display: none; }
+    .result-section.show { display: block; }
+    
+    .selected-choice {
+      padding: 16px;
+      background: #141417;
+      border: 2px solid #35353a;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .selected-header { font-size: 13px; color: #8b8b92; margin-bottom: 8px; }
+    .selected-text { color: #d4d4d8; line-height: 1.6; }
+    
+    .outcome-card {
+      padding: 16px;
+      background: rgba(24, 24, 27, 0.5);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .outcome-label { font-size: 13px; color: #8b8b92; margin-bottom: 8px; }
+    .outcome-text { color: #d4d4d8; line-height: 1.8; }
+    
+    .principle-card {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), #141417);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .principle-icon { font-size: 20px; }
+    .principle-label {
+      font-size: 11px;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .principle-name { color: #fff; font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+    .principle-explanation { color: #a1a1aa; line-height: 1.8; font-size: 14px; }
+
+    .evaluation-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .evaluation-card.insight {
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .evaluation-icon { font-size: 18px; flex-shrink: 0; }
+    .evaluation-text { font-size: 14px; line-height: 1.7; color: #60a5fa; }
+
+    .other-choices-section { margin-bottom: 16px; }
+
+    .other-choices-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #232326;
+      border-radius: 10px;
+      color: #8b8b92;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .other-choices-toggle:hover {
+      border-color: #35353a;
+      color: #a1a1aa;
+    }
+
+    .other-choices-toggle.open {
+      border-color: #35353a;
+      background: #141417;
+    }
+
+    .other-choices-toggle.open svg { transform: rotate(180deg); }
+
+    .other-choices-content {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .other-choices-content.hidden { display: none; }
+
+    .other-choice-card {
+      background: #131316;
+      border: 1px solid #1a1a1e;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .other-choice-text { font-size: 14px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.6; }
+
+    .other-choice-outcome {
+      font-size: 13px;
+      color: #8b8b92;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #141417;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .other-choice-principle { font-size: 12px; color: #8b8b92; }
+    .other-choice-principle strong { color: #60a5fa; }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      background: #3b82f6;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .next-btn:hover { background: #2563eb; }
+    
+    .final-screen { display: none; padding: 20px 0; }
+    .final-screen.show { display: block; }
+
+    .clear-card {
+      background: linear-gradient(135deg, #1a1a1e, #141417);
+      border: 1px solid #232326;
+      border-radius: 20px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .clear-icon { font-size: 56px; margin-bottom: 16px; }
+    .clear-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .clear-subtitle { font-size: 14px; color: #8b8b92; margin-bottom: 20px; }
+
+    .clear-exp {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(96, 165, 250, 0.2);
+      border-radius: 20px;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .principles-collected {
+      background: #141417;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .principles-title { font-size: 14px; color: #8b8b92; margin-bottom: 16px; }
+
+    .principle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: #1a1a1e;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .principle-item:last-child { margin-bottom: 0; }
+    .principle-item-icon { font-size: 20px; flex-shrink: 0; }
+    .principle-item-content { flex: 1; }
+    .principle-item-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .principle-item-desc { font-size: 12px; color: #8b8b92; line-height: 1.5; }
+
+    .share-section { margin-bottom: 24px; }
+    .share-label { font-size: 14px; color: #8b8b92; margin-bottom: 12px; text-align: center; }
+    .share-buttons { display: flex; gap: 10px; justify-content: center; }
+    
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 18px;
+      background: #232326;
+      border: 1px solid #35353a;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .share-btn:hover { background: #35353a; }
+    .share-btn.success { background: #166534; border-color: #22c55e; }
+
+    .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+    
+    .home-btn {
+      width: 100%;
+      padding: 16px;
+      background: #3b82f6;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .home-btn:hover { background: #2563eb; }
+
+    .restart-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid #35353a;
+      border-radius: 12px;
+      color: #a1a1aa;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .restart-btn:hover { background: #232326; color: #fff; }
+
+    .install-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, #6d5dbc, #5b21b6);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .install-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .install-btn.hidden { display: none; }
+
+    .promo-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #232326;
+    }
+
+    .eclipse-section {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .eclipse-section-title {
+      font-size: 14px;
+      color: #8b8b92;
+      margin-bottom: 16px;
+    }
+    
+    .youtube-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: #232326;
+      border: 1px solid #35353a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .youtube-btn:hover {
+      background: #35353a;
+      transform: translateY(-2px);
+    }
+    
+    .youtube-btn svg { fill: #ff0000; }
+    
+    .books-section {
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid #232326;
+    }
+    
+    .books-section-title {
+      font-size: 14px;
+      color: #8b8b92;
+      margin-bottom: 20px;
+    }
+    
+    .books-grid {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    
+    .book-item {
+      flex: 1;
+      max-width: 140px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    
+    .book-item:hover { transform: translateY(-4px); }
+    
+    .book-item img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      margin-bottom: 10px;
+    }
+    
+    .book-item-title { font-size: 13px; color: #a1a1aa; }
+
+    .hidden { display: none !important; }
+
+    .philosopher-quote {
+      font-style: italic;
+      color: #8b8b92;
+      padding: 12px;
+      border-left: 2px solid #60a5fa;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        돌아가기
+      </a>
+      <div class="header-content">
+        <div class="header-category">철학 · 사고실험</div>
+        <h1>경험 기계</h1>
+        <p>완벽한 행복이 보장된다면, 가짜 세계를 선택할 수 있을까?</p>
+      </div>
+    </div>
+    
+    <div class="progress" id="progress"></div>
+    
+    <div id="game-screen">
+      <div class="scenario-card">
+        <div class="stage-label" id="stage-label">Stage 1</div>
+        <div class="context" id="context"></div>
+        <div class="situation" id="situation"></div>
+      </div>
+      
+      <div class="choices" id="choices"></div>
+      
+      <div class="result-section" id="result-section">
+        <div class="selected-choice">
+          <div class="selected-header">당신의 선택</div>
+          <div class="selected-text" id="selected-text"></div>
+        </div>
+        
+        <div class="outcome-card">
+          <div class="outcome-label">이 선택이 의미하는 것</div>
+          <div class="outcome-text" id="outcome-text"></div>
+        </div>
+        
+        <div class="principle-card">
+          <div class="principle-header">
+            <span class="principle-icon">💭</span>
+            <span class="principle-label">발견한 철학적 원칙</span>
+          </div>
+          <div class="principle-name" id="principle-name"></div>
+          <div class="principle-explanation" id="principle-explanation"></div>
+        </div>
+
+        <div class="evaluation-card insight">
+          <div class="evaluation-icon" id="evaluation-icon">🔮</div>
+          <div class="evaluation-text" id="evaluation-text"></div>
+        </div>
+
+        <div class="other-choices-section">
+          <button class="other-choices-toggle" id="other-toggle">
+            <span>다른 관점은?</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="other-choices-content hidden" id="other-choices-content"></div>
+        </div>
+        
+        <button class="next-btn" id="next-btn">다음 질문</button>
+      </div>
+    </div>
+    
+    <div class="final-screen" id="final-screen">
+      <div class="clear-card">
+        <div class="clear-icon">🧠</div>
+        <div class="clear-title">사고실험 완료!</div>
+        <div class="clear-subtitle">경험 기계 딜레마를 탐험했습니다</div>
+        <div class="clear-exp">+30 EXP 획득!</div>
+      </div>
+
+      <div class="principles-collected">
+        <div class="principles-title">💭 발견한 철학적 원칙들</div>
+        <div id="principles-list"></div>
+      </div>
+
+      <div class="share-section">
+        <div class="share-label">친구에게 공유하기</div>
+        <div class="share-buttons">
+          <button class="share-btn" id="native-share-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            공유하기
+          </button>
+          <button class="share-btn" id="copy-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            링크 복사
+          </button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="index.html" class="home-btn">홈으로 돌아가기</a>
+        <button class="restart-btn" id="restart-btn">다시 탐험하기</button>
+        <button class="install-btn hidden" id="installBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          앱으로 설치하고 계속 탐험하기
+        </button>
+      </div>
+
+      <div class="promo-section">
+        <div class="books-section">
+          
+          <div class="books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편">
+              <div class="book-item-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편">
+              <div class="book-item-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
+    // Firebase 익명 로그인
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        signInAnonymously(auth).catch(console.error);
+      }
+    });
+
+    const SITE_URL = 'https://eclipse-mindlab.github.io/mindlab/';
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    const SIM_ID = 'experience_machine';
+
+    const stages = [
+      {
+        id: 1,
+        context: "당신 앞에 기계가 있다. 이 기계에 들어가면 원하는 모든 경험을 완벽하게 시뮬레이션해준다. 쾌락, 성공, 사랑... 무엇이든. 뇌가 느끼는 경험은 현실과 구분이 불가능하다.",
+        situation: "기계 안에서 당신은 베스트셀러 작가가 될 수도, 세계 여행을 할 수도, 완벽한 사랑을 할 수도 있다. 단, 한 번 들어가면 평생 나올 수 없고, 그것이 가짜라는 사실도 잊게 된다. 들어가겠는가?",
+        choices: [
+          {
+            text: "들어간다. 결국 중요한 건 내가 느끼는 행복 아닌가?",
+            outcome: "당신은 쾌락주의(Hedonism)의 입장을 선택했다. 벤담이 말했듯, '쾌락의 양이 같다면 핀볼이나 시만큼이나 좋다'. 경험 자체가 가치라면, 그것이 진짜든 가짜든 상관없다.",
+            principle: "쾌락주의",
+            principleDesc: "경험 자체가 가치라면, 그 경험이 어디서 오든 중요하지 않다는 입장.",
+            evaluation: "이 선택은 '결과'가 '과정'보다 중요하다는 관점을 반영한다.",
+            nextStage: "stage2_enter"
+          },
+          {
+            text: "들어가지 않는다. 가짜 행복은 진짜 행복이 아니다.",
+            outcome: "당신은 진정성(Authenticity)을 선택했다. 사르트르가 말한 '실존'처럼, 내가 직접 선택하고 책임지는 삶만이 의미가 있다. 시뮬레이션된 성공은 내가 쟁취한 것이 아니다.",
+            principle: "진정성",
+            principleDesc: "경험의 출처가 중요하다. 스스로 만들어낸 것만이 진짜 가치를 가진다.",
+            evaluation: "이 선택은 '과정'이 '결과'만큼, 혹은 더 중요하다는 관점을 반영한다.",
+            nextStage: "stage2_refuse"
+          },
+          {
+            text: "잠깐, 더 생각해보고 싶다.",
+            outcome: "현명한 선택이다. 이 딜레마는 단순하지 않다. 좀 더 깊이 들어가보자.",
+            principle: "철학적 보류",
+            principleDesc: "중요한 결정은 서두르지 않는다. 충분히 고민하는 것도 하나의 입장이다.",
+            evaluation: "대부분의 철학자들도 이 문제에 대해 오래 고민했다.",
+            nextStage: "stage2_think"
+          }
+        ]
+      },
+      
+      // 들어가기 경로
+      {
+        id: "stage2_enter",
+        context: "당신은 쾌락주의적 입장을 선택했다. 그런데 한 가지 질문이 더 있다.",
+        situation: "만약 기계 안에서 '가장 의미 있는 삶'을 살 수 있다면, 그것은 진짜 의미 있는 삶인가? 아니면 기계가 '의미 있다고 느끼게' 해주는 것뿐인가?",
+        choices: [
+          {
+            text: "느끼는 것이 곧 현실이다. 구분이 무의미하다.",
+            outcome: "당신은 급진적 주관주의의 입장을 택했다. 외부 세계는 결국 우리의 경험을 통해서만 존재한다. 경험이 현실을 구성한다면, '진짜' 현실이란 것도 결국 경험의 집합일 뿐.",
+            principle: "급진적 주관주의",
+            principleDesc: "현실은 주관적 경험의 집합이다. '객관적 현실'이란 개념 자체가 환상일 수 있다.",
+            evaluation: "버클리의 '존재하는 것은 지각되는 것'이라는 명제와 맥을 같이 한다.",
+            nextStage: "stage3_matrix"
+          },
+          {
+            text: "그래도 뭔가 다르다. 기계가 만든 의미는 가짜다.",
+            outcome: "흥미롭다. 쾌락은 받아들이면서 의미는 거부한다. 당신에게 쾌락과 의미는 다른 것인가?",
+            principle: "가치의 위계",
+            principleDesc: "모든 가치가 동등하지 않다. 쾌락보다 높은 가치가 있을 수 있다.",
+            evaluation: "밀이 말한 '질적으로 다른 쾌락'의 개념과 연결된다.",
+            nextStage: "stage3_meaning"
+          }
+        ]
+      },
+      
+      // 거부 경로
+      {
+        id: "stage2_refuse",
+        context: "당신은 진정성을 선택했다. 하지만 한 가지 더 물어보겠다.",
+        situation: "우리가 '진짜'라고 믿는 현실도, 결국 뇌가 해석한 전기 신호에 불과하다. 색깔도, 소리도, 감정도 모두 뇌가 만들어낸 것이다. 그렇다면 '진짜 현실'이라는 것이 과연 존재하는가?",
+        choices: [
+          {
+            text: "그래도 다르다. 외부 세계는 분명 존재한다.",
+            outcome: "당신은 실재론자(Realist)다. 우리의 경험과 독립적으로 존재하는 세계가 있다고 믿는다. 경험 기계는 그 세계와의 연결을 끊는다.",
+            principle: "실재론",
+            principleDesc: "경험과 독립적으로 존재하는 객관적 세계가 있다.",
+            evaluation: "대부분의 사람들이 암묵적으로 가정하는 입장이다.",
+            nextStage: "stage3_real"
+          },
+          {
+            text: "...사실 확신할 수 없다.",
+            outcome: "정직한 답변이다. 데카르트도 이 문제로 고민했다. '내가 아는 모든 것이 악마가 만든 환영이라면?' 그가 찾은 답은 '나는 생각한다, 고로 존재한다'였다.",
+            principle: "회의주의",
+            principleDesc: "우리가 알 수 있는 것의 한계를 인정한다. 확실한 것은 거의 없다.",
+            evaluation: "철학의 출발점이 되는 건전한 태도다.",
+            nextStage: "stage3_doubt"
+          }
+        ]
+      },
+      
+      // 보류 경로
+      {
+        id: "stage2_think",
+        context: "좋다, 더 깊이 생각해보자.",
+        situation: "지금 당신이 경험하는 이 세계가 이미 '경험 기계' 안이 아니라는 것을 어떻게 증명할 수 있는가?",
+        choices: [
+          {
+            text: "증명할 수 없다. 하지만 그래도 의미는 있다.",
+            outcome: "실용주의적 접근이다. 윌리엄 제임스는 '진리란 믿었을 때 좋은 결과를 가져오는 것'이라 했다. 증명할 수 없어도, 현실이라고 믿고 사는 것이 더 나은 결과를 가져온다.",
+            principle: "실용주의",
+            principleDesc: "진리의 가치는 그것이 가져오는 결과에 있다.",
+            evaluation: "철학을 실제 삶과 연결하는 관점이다.",
+            nextStage: "stage3_pragma"
+          },
+          {
+            text: "증명할 수 없다. 그래서 아무것도 확실하지 않다.",
+            outcome: "니힐리즘의 그림자가 보인다. 하지만 니체는 말했다. '신이 죽었다면, 인간이 스스로 가치를 창조해야 한다.' 확실한 것이 없기에, 오히려 자유롭다.",
+            principle: "창조적 니힐리즘",
+            principleDesc: "기존의 가치가 없다면, 스스로 가치를 만들어야 한다.",
+            evaluation: "허무주의를 넘어서는 니체의 '초인' 개념과 연결된다.",
+            nextStage: "stage3_create"
+          }
+        ]
+      },
+      
+      // Stage 3들
+      {
+        id: "stage3_matrix",
+        context: "당신의 입장을 더 밀어붙여보자.",
+        situation: "영화 '매트릭스'에서 사이퍼는 현실의 고통보다 가짜 세계의 행복을 선택한다. '무지가 행복이다(Ignorance is bliss).' 이 선택을 비난할 수 있는가?",
+        choices: [
+          {
+            text: "비난할 수 없다. 각자의 선택을 존중해야 한다.",
+            outcome: "자유주의적 입장이다. 타인에게 피해를 주지 않는 한, 각자가 자신의 삶을 결정할 권리가 있다.",
+            principle: "자유의지 존중",
+            principleDesc: "각 개인은 자신의 삶에 대한 결정권을 가진다.",
+            evaluation: "현대 자유민주주의의 기반이 되는 원칙이다.",
+            nextStage: "end"
+          },
+          {
+            text: "비난할 수 있다. 자기기만은 윤리적으로 문제가 있다.",
+            outcome: "칸트적 입장이다. 자기 자신에게조차 정직해야 할 의무가 있다. 스스로를 속이는 것은 인간 존엄성을 해치는 행위다.",
+            principle: "자기 정직의 의무",
+            principleDesc: "자신에게 진실해야 한다. 자기기만은 윤리적 문제다.",
+            evaluation: "칸트의 정언명령과 연결되는 관점이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_meaning",
+        context: "쾌락과 의미의 차이에 대해 더 탐구해보자.",
+        situation: "빅터 프랭클은 아우슈비츠에서 살아남았다. 그는 '삶의 의미를 찾는 것'이 쾌락보다 중요하다고 했다. 고통 속에서도 의미를 찾을 수 있다. 그렇다면, 의미 없는 쾌락보다 의미 있는 고통이 나을 수 있는가?",
+        choices: [
+          {
+            text: "그렇다. 의미 있는 고통이 공허한 쾌락보다 낫다.",
+            outcome: "로고테라피(의미 치료)의 핵심이다. 인간은 쾌락이 아닌 의미를 추구하는 존재다. 의미를 찾으면 어떤 고통도 견딜 수 있다.",
+            principle: "의미 추구",
+            principleDesc: "인간의 근본적 동기는 쾌락이 아니라 의미다.",
+            evaluation: "니체의 '왜 살아야 하는지 아는 자는 어떤 상황도 견딜 수 있다'와 맥을 같이 한다.",
+            nextStage: "end"
+          },
+          {
+            text: "그건 극단적이다. 적당한 균형이 필요하다.",
+            outcome: "아리스토텔레스의 중용(中庸)과 비슷하다. 극단은 피하고, 쾌락과 의미 사이의 균형을 찾는다. 실제 삶에서 가장 현실적인 접근일 수 있다.",
+            principle: "중용",
+            principleDesc: "극단을 피하고 균형 잡힌 삶을 추구한다.",
+            evaluation: "아리스토텔레스가 말한 '에우다이모니아'(좋은 삶)의 핵심이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_real",
+        context: "당신은 외부 세계의 실재를 믿는다.",
+        situation: "마지막 질문. 외부 세계가 실재한다고 치자. 그렇다면, 그 세계와 '연결되어 있다'는 것이 왜 중요한가? 혼자 고립되어 행복한 것보다, 타인과 연결된 채 고통받는 것이 더 나은가?",
+        choices: [
+          {
+            text: "연결이 중요하다. 인간은 사회적 존재다.",
+            outcome: "아리스토텔레스는 '인간은 폴리스적 동물'이라 했다. 우리는 타인과의 관계 속에서 정체성을 형성한다. 고립된 행복은 불완전하다.",
+            principle: "사회적 존재",
+            principleDesc: "인간의 본질은 관계 속에 있다. 고립된 개인은 완전하지 않다.",
+            evaluation: "공동체주의와 연결되는 관점이다.",
+            nextStage: "end"
+          },
+          {
+            text: "경우에 따라 다르다. 연결이 항상 좋은 건 아니다.",
+            outcome: "사르트르는 '타인은 지옥이다'라고 했다. 관계는 자유를 제한하기도 한다. 연결의 가치는 절대적이지 않다.",
+            principle: "관계의 양면성",
+            principleDesc: "타인과의 연결은 가치이자 동시에 제약이 될 수 있다.",
+            evaluation: "실존주의적 시각에서 본 인간 관계의 복잡성이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_doubt",
+        context: "회의주의를 받아들였다.",
+        situation: "확실한 것이 없다면, 어떻게 살아야 하는가?",
+        choices: [
+          {
+            text: "확실하지 않아도 행동할 수 있다. 삶은 계속된다.",
+            outcome: "카뮈의 부조리 철학이다. 세상이 의미 없다는 것을 알면서도, 우리는 계속 살아간다. 시지프스처럼. 그리고 그 자체가 반항이다.",
+            principle: "부조리의 수용",
+            principleDesc: "의미 없음을 알면서도 살아가는 것 자체가 반항이다.",
+            evaluation: "'우리는 시지프스가 행복하다고 상상해야 한다' - 카뮈",
+            nextStage: "end"
+          },
+          {
+            text: "최소한 확실한 것부터 시작해야 한다.",
+            outcome: "데카르트의 방법적 회의다. 모든 것을 의심하되, 의심하는 나 자신의 존재만큼은 확실하다. 거기서부터 다시 쌓아올린다.",
+            principle: "방법적 회의",
+            principleDesc: "모든 것을 의심하고, 확실한 것 위에 지식을 다시 세운다.",
+            evaluation: "근대 철학의 출발점이 된 방법론이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_pragma",
+        context: "실용주의적 접근을 선택했다.",
+        situation: "그렇다면 '믿으면 좋은 것'은 무엇인가? 진실보다 유용함이 더 중요한가?",
+        choices: [
+          {
+            text: "장기적으로 유용한 것이 결국 진실에 가깝다.",
+            outcome: "듀이의 도구주의다. 진리는 고정된 것이 아니라, 문제를 해결하는 도구다. 세상을 더 잘 이해하고 대처하게 해주는 것이 진리다.",
+            principle: "도구주의",
+            principleDesc: "진리는 문제 해결의 도구다. 세상을 더 잘 다루게 해주는 것이 진리다.",
+            evaluation: "과학의 발전과도 맥을 같이 하는 관점이다.",
+            nextStage: "end"
+          },
+          {
+            text: "진실과 유용함은 다르다. 쓴 진실도 있다.",
+            outcome: "정직한 지적이다. 불편한 진실이 유용하지 않을 수 있고, 유용한 거짓이 있을 수 있다. 실용주의도 완벽하지 않다.",
+            principle: "진실의 무조건적 가치",
+            principleDesc: "진실은 그 자체로 가치가 있다. 유용함과 별개다.",
+            evaluation: "플라톤의 이데아론과 맥을 같이 하는 관점이다.",
+            nextStage: "end"
+          }
+        ]
+      },
+      
+      {
+        id: "stage3_create",
+        context: "가치를 스스로 창조해야 한다고 했다.",
+        situation: "그렇다면 당신은 어떤 가치를 창조하겠는가?",
+        choices: [
+          {
+            text: "나 자신을 넘어서는 성장. 니체의 초인처럼.",
+            outcome: "힘에의 의지다. 자기 극복, 끊임없는 성장, 자신만의 가치 창조. 쉽지 않지만, 가장 인간다운 길이다.",
+            principle: "자기 극복",
+            principleDesc: "끊임없이 자신을 넘어서며 성장한다.",
+            evaluation: "니체의 '초인' 개념의 핵심이다.",
+            nextStage: "end"
+          },
+          {
+            text: "타인과 함께하는 의미. 연대와 사랑.",
+            outcome: "에리히 프롬은 '사랑의 기술'에서 말했다. 진정한 사랑은 자신의 생명력을 나누는 것이다. 타인과의 연결에서 의미를 찾는다.",
+            principle: "사랑과 연대",
+            principleDesc: "타인과의 연결에서 삶의 의미를 찾는다.",
+            evaluation: "공동체적 가치를 강조하는 입장이다.",
+            nextStage: "end"
+          }
+        ]
+      }
+    ];
+
+    let currentStageId = 1;
+    let collectedPrinciples = [];
+    let stageHistory = [];
+
+    function getStageById(id) {
+      return stages.find(s => s.id === id);
+    }
+
+    function init() {
+      renderProgress();
+      renderStage();
+      
+      document.getElementById('next-btn').addEventListener('click', nextStage);
+      document.getElementById('restart-btn').addEventListener('click', restart);
+      document.getElementById('native-share-btn').addEventListener('click', nativeShare);
+      document.getElementById('copy-btn').addEventListener('click', copyLink);
+      document.getElementById('other-toggle').addEventListener('click', toggleOtherChoices);
+    }
+
+    function toggleOtherChoices() {
+      const content = document.getElementById('other-choices-content');
+      const toggle = document.getElementById('other-toggle');
+      content.classList.toggle('hidden');
+      toggle.classList.toggle('open');
+    }
+
+    function renderProgress() {
+      const totalStages = 3;
+      const currentCount = stageHistory.length;
+      
+      const progressEl = document.getElementById('progress');
+      progressEl.innerHTML = Array(totalStages).fill(0).map((_, idx) => {
+        let className = 'progress-bar';
+        if (idx < currentCount) className += ' completed';
+        else if (idx === currentCount) className += ' current';
+        return `<div class="${className}"></div>`;
+      }).join('');
+    }
+
+    function renderStage() {
+      const stage = getStageById(currentStageId);
+      if (!stage) return;
+      
+      document.getElementById('stage-label').textContent = `Stage ${stageHistory.length + 1}`;
+      document.getElementById('context').textContent = stage.context;
+      document.getElementById('situation').textContent = stage.situation;
+      
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = stage.choices.map((choice, idx) => `
+        <button class="choice-btn" data-index="${idx}">${choice.text}</button>
+      `).join('');
+      
+      choicesEl.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleChoice(parseInt(btn.dataset.index)));
+      });
+      
+      document.getElementById('choices').classList.remove('hidden');
+      document.getElementById('result-section').classList.remove('show');
+    }
+
+    function handleChoice(index) {
+      const stage = getStageById(currentStageId);
+      const choice = stage.choices[index];
+      
+      stageHistory.push({
+        stageId: currentStageId,
+        choiceIndex: index,
+        principle: choice.principle
+      });
+      
+      if (!collectedPrinciples.find(p => p.name === choice.principle)) {
+        collectedPrinciples.push({
+          name: choice.principle,
+          desc: choice.principleDesc
+        });
+      }
+      
+      document.getElementById('choices').classList.add('hidden');
+      document.getElementById('result-section').classList.add('show');
+      
+      document.getElementById('selected-text').textContent = choice.text;
+      document.getElementById('outcome-text').textContent = choice.outcome;
+      document.getElementById('principle-name').textContent = choice.principle;
+      document.getElementById('principle-explanation').textContent = choice.principleDesc;
+      document.getElementById('evaluation-text').textContent = choice.evaluation;
+      
+      const otherChoices = stage.choices.filter((_, i) => i !== index);
+      const otherContent = document.getElementById('other-choices-content');
+      otherContent.innerHTML = otherChoices.map(c => `
+        <div class="other-choice-card">
+          <div class="other-choice-text">${c.text}</div>
+          <div class="other-choice-outcome">${c.outcome}</div>
+          <div class="other-choice-principle"><strong>${c.principle}</strong>: ${c.principleDesc}</div>
+        </div>
+      `).join('');
+      
+      document.getElementById('other-choices-content').classList.add('hidden');
+      document.getElementById('other-toggle').classList.remove('open');
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (choice.nextStage === 'end') {
+        nextBtn.textContent = '결과 보기';
+      } else {
+        nextBtn.textContent = '다음 질문';
+      }
+      
+      currentStageId = choice.nextStage;
+      renderProgress();
+    }
+
+    function nextStage() {
+      if (currentStageId === 'end') {
+        showFinalScreen();
+      } else {
+        renderStage();
+      }
+    }
+
+    function showFinalScreen() {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('final-screen').classList.add('show');
+      
+      const principlesList = document.getElementById('principles-list');
+      principlesList.innerHTML = collectedPrinciples.map(p => `
+        <div class="principle-item">
+          <div class="principle-item-icon">💭</div>
+          <div class="principle-item-content">
+            <div class="principle-item-name">${p.name}</div>
+            <div class="principle-item-desc">${p.desc}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      saveProgress();
+      showInstallButton();
+    }
+
+    function saveProgress() {
+      let saved = localStorage.getItem(STORAGE_KEY);
+      let profile;
+      
+      if (saved) {
+        profile = JSON.parse(saved);
+      } else {
+        // 프로필 없으면 익명으로 생성
+        profile = { name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.principles) profile.principles = [];
+      
+      const isFirstTime = !profile.completedSims.includes(SIM_ID);
+      
+      if (isFirstTime) {
+        profile.completedSims.push(SIM_ID);
+        profile.exp = (profile.exp || 0) + 30;
+        
+        const expNeeded = (profile.level || 1) * 100;
+        while (profile.exp >= expNeeded) {
+          profile.exp -= expNeeded;
+          profile.level = (profile.level || 1) + 1;
+        }
+      }
+      
+      collectedPrinciples.forEach(p => {
+        if (!profile.principles.find(existing => existing.name === p.name)) {
+          profile.principles.push(p);
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      
+      // Firebase에도 저장
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, 'users', user.uid);
+        setDoc(docRef, { ...profile, updatedAt: new Date().toISOString() }, { merge: true })
+          .then(() => console.log('클라우드 저장 완료'))
+          .catch(console.error);
+      }
+    }
+
+    function getShareText() {
+      return `🧠 이클립스의 딜렘
+
+[경험 기계] 사고실험 완료!
+
+발견한 철학적 원칙 ${collectedPrinciples.length}개:
+${collectedPrinciples.map(p => '• ' + p.name).join('\n')}
+
+당신은 경험 기계에 들어가시겠습니까?`;
+    }
+
+    function nativeShare() {
+      if (navigator.share) {
+        navigator.share({
+          title: '경험 기계 - 이클립스의 딜렘',
+          text: getShareText(),
+          url: SITE_URL
+        }).catch(() => {});
+      } else {
+        copyLink();
+      }
+    }
+
+    function copyLink() {
+      const text = getShareText() + '\n' + SITE_URL;
+      const btn = document.getElementById('copy-btn');
+      
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('success');
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 복사 완료!`;
+        setTimeout(() => {
+          btn.classList.remove('success');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 링크 복사`;
+        }, 2000);
+      });
+    }
+
+    function restart() {
+      currentStageId = 1;
+      collectedPrinciples = [];
+      stageHistory = [];
+      
+      document.getElementById('final-screen').classList.remove('show');
+      document.getElementById('game-screen').classList.remove('hidden');
+      
+      renderProgress();
+      renderStage();
+    }
+
+    // PWA
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function showInstallButton() {
+      if (deferredPrompt && installBtn) {
+        installBtn.classList.remove('hidden');
+      }
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    init();
+  </script>
+</body>
+</html>

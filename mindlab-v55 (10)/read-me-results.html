@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>도전 현황 - 나를 읽어봐</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6d5dbc">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #09090b;
+      color: #fff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #141417;
+      border: 1px solid #232326;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* 로딩 */
+    .loading-screen {
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #232326;
+      border-top-color: #9580ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #8b8b92;
+      font-size: 14px;
+    }
+
+    /* 에러 */
+    .error-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .error-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .error-desc {
+      color: #8b8b92;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* 메인 컨텐츠 */
+    .main-content {
+      display: none;
+    }
+
+    /* 요약 카드 */
+    .summary-card {
+      background: linear-gradient(135deg, #141417 0%, #1a1a2e 100%);
+      border: 1px solid #232326;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .summary-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .summary-subtitle {
+      font-size: 14px;
+      color: #9580ff;
+      margin-bottom: 16px;
+    }
+
+    .summary-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .summary-stat {
+      text-align: center;
+    }
+
+    .summary-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #9580ff;
+    }
+
+    .summary-stat-label {
+      font-size: 12px;
+      color: #8b8b92;
+    }
+
+    /* 랭킹 섹션 */
+    .ranking-section {
+      background: #141417;
+      border: 1px solid #232326;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .ranking-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #232326;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ranking-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #232326;
+    }
+
+    .ranking-item:last-child {
+      border-bottom: none;
+    }
+
+    .ranking-position {
+      width: 32px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #8b8b92;
+    }
+
+    .ranking-position.gold {
+      color: #fbbf24;
+    }
+
+    .ranking-position.silver {
+      color: #d1d5db;
+    }
+
+    .ranking-position.bronze {
+      color: #cd7f32;
+    }
+
+    .ranking-info {
+      flex: 1;
+    }
+
+    .ranking-name {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .ranking-time {
+      font-size: 12px;
+      color: #8b8b92;
+    }
+
+    .ranking-score {
+      font-size: 18px;
+      font-weight: 700;
+      color: #9580ff;
+    }
+
+    .ranking-score.perfect {
+      color: #22c55e;
+    }
+
+    /* 빈 상태 */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: #8b8b92;
+      margin-bottom: 20px;
+    }
+
+    .share-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #6d5dbc, #9580ff);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .share-link-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* 액션 버튼 */
+    .action-section {
+      margin-top: 24px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 16px;
+      background: #232326;
+      border: 1px solid #35353a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #35353a;
+    }
+
+    .action-btn.success {
+      background: #166534;
+      border-color: #22c55e;
+    }
+
+    /* 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #232326;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">도전 현황</div>
+    </div>
+
+    <!-- 로딩 -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">불러오는 중...</div>
+    </div>
+
+    <!-- 에러 -->
+    <div class="error-screen" id="errorScreen">
+      <div class="error-icon">😢</div>
+      <div class="error-title">도전장을 찾을 수 없어요</div>
+      <div class="error-desc">링크가 잘못되었거나 만료된 도전장이에요</div>
+      <a href="read-me.html" class="share-link-btn">새 도전장 만들기</a>
+    </div>
+
+    <!-- 메인 -->
+    <div class="main-content" id="mainContent">
+      <div class="summary-card">
+        <div class="summary-icon">🔮</div>
+        <div class="summary-title" id="summaryTitle">???의 도전장</div>
+        <div class="summary-subtitle">누가 나를 가장 잘 알까?</div>
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="summary-stat-value" id="totalAttempts">0</div>
+            <div class="summary-stat-label">도전</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value" id="avgScore">0%</div>
+            <div class="summary-stat-label">평균</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value" id="perfectCount">0</div>
+            <div class="summary-stat-label">만점</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ranking-section">
+        <div class="ranking-header">
+          🏆 도전자 랭킹
+        </div>
+        <div class="ranking-list" id="rankingList">
+          <!-- 동적 생성 -->
+        </div>
+      </div>
+
+      <div class="action-section">
+        <button class="action-btn" id="shareLinkBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          도전 링크 다시 공유하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">복사되었습니다!</div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZ-NATGNFjQ90gswfebIV-0xqhps68qJM",
+      authDomain: "eclipse-mindlab.firebaseapp.com",
+      projectId: "eclipse-mindlab",
+      storageBucket: "eclipse-mindlab.firebasestorage.app",
+      messagingSenderId: "181450990304",
+      appId: "1:181450990304:web:3043d3857815249f53e685"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const challengeId = urlParams.get('id');
+
+    async function init() {
+      if (!challengeId) {
+        showError();
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'challenges', challengeId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          showError();
+          return;
+        }
+
+        const data = docSnap.data();
+        showResults(data);
+      } catch (error) {
+        console.error('Error:', error);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('errorScreen').style.display = 'block';
+    }
+
+    function showResults(data) {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+
+      const creatorName = data.creatorName || '???';
+      const results = data.results || [];
+
+      // 요약
+      document.getElementById('summaryTitle').textContent = `${creatorName}의 도전장`;
+      document.getElementById('totalAttempts').textContent = results.length;
+
+      if (results.length > 0) {
+        const avgScore = Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length);
+        const perfectCount = results.filter(r => r.score === 100).length;
+        
+        document.getElementById('avgScore').textContent = `${avgScore}%`;
+        document.getElementById('perfectCount').textContent = perfectCount;
+
+        // 랭킹 (점수 높은 순, 같으면 먼저 한 사람)
+        const sorted = [...results].sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+
+        const rankingHtml = sorted.map((r, idx) => {
+          let positionClass = '';
+          let positionText = idx + 1;
+          
+          if (idx === 0) {
+            positionClass = 'gold';
+            positionText = '🥇';
+          } else if (idx === 1) {
+            positionClass = 'silver';
+            positionText = '🥈';
+          } else if (idx === 2) {
+            positionClass = 'bronze';
+            positionText = '🥉';
+          }
+
+          const timeAgo = getTimeAgo(r.timestamp);
+          const scoreClass = r.score === 100 ? 'perfect' : '';
+
+          return `
+            <div class="ranking-item">
+              <div class="ranking-position ${positionClass}">${positionText}</div>
+              <div class="ranking-info">
+                <div class="ranking-name">${r.name}</div>
+                <div class="ranking-time">${timeAgo}</div>
+              </div>
+              <div class="ranking-score ${scoreClass}">${r.score}%</div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('rankingList').innerHTML = rankingHtml;
+      } else {
+        // 아직 도전자 없음
+        document.getElementById('rankingList').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">👀</div>
+            <div class="empty-title">아직 도전자가 없어요</div>
+            <div class="empty-desc">친구들에게 링크를 공유해보세요!</div>
+          </div>
+        `;
+      }
+
+      // 공유 버튼
+      document.getElementById('shareLinkBtn').addEventListener('click', () => {
+        const url = `https://eclipse-mindlab.github.io/mindlab/read-me-challenge.html?id=${challengeId}`;
+        const text = `날 안다고 생각해?\n맞춰봐 👀\n\n🔮 도전하기\n${url}`;
+        
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('링크가 복사되었습니다!');
+          const btn = document.getElementById('shareLinkBtn');
+          btn.classList.add('success');
+          btn.innerHTML = '✓ 복사 완료!';
+          setTimeout(() => {
+            btn.classList.remove('success');
+            btn.innerHTML = `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              도전 링크 다시 공유하기
+            `;
+          }, 2000);
+        });
+      });
+    }
+
+    function getTimeAgo(timestamp) {
+      const now = new Date();
+      const then = new Date(timestamp);
+      const diff = Math.floor((now - then) / 1000);
+
+      if (diff < 60) return '방금 전';
+      if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+      if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
+      
+      return then.toLocaleDateString('ko-KR');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    init();
+  </script>
+</body>
+</html>
