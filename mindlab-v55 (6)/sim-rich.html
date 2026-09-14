@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>부자의 조건 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="부자의 조건 - 이클립스의 딜렘">
+  <meta property="og:description" content="아버지 수술비 3억. 2주. 당신은 무엇을 팔고, 무엇을 지키는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #d4a843;
+      --sim-primary-light: #e8c45a;
+      --sim-primary-bg: rgba(212, 168, 67, 0.1);
+      --sim-primary-border: rgba(212, 168, 67, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">부자의 조건</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle"></div>
+        <div class="sim-situation-desc" id="situationDesc"></div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice"></div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning"></div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName"></div>
+        <div class="sim-principle-desc" id="principleDesc"></div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText"></span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">💰</div>
+        <div class="sim-result-label" id="resultLabel">당신의 유형</div>
+        <div class="sim-result-title" id="resultTitle"></div>
+        <div class="sim-result-desc" id="resultDesc"></div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <!-- 메인 책 프로모션: 훔친 부 편 -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #d4a843; font-weight: 600; margin-bottom: 8px; letter-spacing: 1px;">이 시뮬레이터의 바탕이 된 생각들이 궁금하다면</div>
+        </div>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display: block; text-decoration: none; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #1a1610 0%, #2a2118 50%, #1a1610 100%); border: 1px solid rgba(212, 168, 67, 0.3); border-radius: 16px; padding: 24px; text-align: center;">
+            <img src="book-wealth.png" alt="훔친 부 편" style="width: 200px; height: auto; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 8px 32px rgba(212, 168, 67, 0.2);">
+            <div style="font-size: 17px; font-weight: 700; color: #d4a843; margin-bottom: 6px;">세계척학전집 — 훔친 부 편</div>
+            <div style="font-size: 12px; color: #71717a;">있어 보이는 척하기 좋은 돈의 문법</div>
+          </div>
+        </a>
+
+        <!-- 시리즈 나머지 -->
+        <div style="font-size: 12px; color: #52525b; text-align: center; margin-bottom: 12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 철학 편</div>
+          </a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 심리학 편</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="sim-template.js"></script>
+  <script>
+    const CONFIG = {
+      id: 'rich',
+      title: '부자의 조건',
+      shareIcon: '💰',
+      shareUrl: 'https://bit.ly/rich-sim',
+      
+      stages: [
+        {
+          badge: '발단',
+          title: '전화 한 통',
+          desc: `새벽 3시. 전화가 울린다.
+
+어머니다.
+
+"아빠가 쓰러졌어."
+
+병원에 도착하니 의사가 말한다. 수술비 3억. 보험은 안 된다. 시간은 2주.
+
+통장을 확인한다. 전 재산 1200만원.
+
+2주 안에 3억.
+
+아버지가 중환자실에 누워 있다. 의식이 없다. 어머니가 복도에서 울고 있다.`,
+          highlight: '2주. 3억. 당신은 어떻게 하겠는가?',
+          choices: [
+            {
+              id: 'friend1',
+              text: '가장 친한 친구에게 전화한다.',
+              subtext: '10년 지기다. 그 친구라면.',
+              meaning: '새벽 4시에 전화를 받은 친구가 말한다. "... 얼마 필요해?" 3억이라고 말하는 순간, 전화기 너머로 숨소리만 들린다. 친구가 가진 전 재산이 2억이다. 당신은 그걸 알고 있다. 친구가 말한다. "... 좀 알아볼게." 끊고 나서 생각한다. 친구도 지금 잠을 못 자고 있겠구나.',
+              principle: { name: '우정의 무게', desc: '돈을 빌리는 순간, 우정은 채무 관계가 된다. 갚으면 다행이다. 못 갚으면? 10년의 우정이 3억의 빚이 된다. "빌려줄게"라고 말한 친구의 선의가, 갚지 못하는 당신의 죄책감이 된다.', icon: '⚖️' },
+              quote: '"돈을 빌려주면 돈도 잃고 친구도 잃는다." - 셰익스피어'
+            },
+            {
+              id: 'loan1',
+              text: '은행과 대출업체를 알아본다.',
+              subtext: '시스템 안에서 해결한다.',
+              meaning: '은행에서 거절당한다. 신용으로는 5천만원이 한계다. 제2금융권에서 1억. 나머지 2억은 어디서? 사채업자의 명함이 지갑에 있다. 연이자 40%. 3억을 갚으려면 매달 200만원씩 15년.',
+              principle: { name: '빚의 시간', desc: '빚은 미래의 시간을 현재로 끌어오는 것이다. 오늘 3억을 쓰면, 앞으로 15년의 당신이 갚아야 한다. 돈을 빌리는 건 쉽다. 갚는 건 인생이다.', icon: '⏳' },
+              quote: '"빚진 자는 자유로울 수 없다." - 벤자민 프랭클린'
+            },
+            {
+              id: 'beg1',
+              text: '병원에 사정한다.',
+              subtext: '"분할로 해주실 수는 없나요..."',
+              meaning: '의사가 고개를 젓는다. "수술은 선납입니다." 원무과에서 안내받는다. 정부 지원금, 긴급 의료비 대출, 크라우드 펀딩. 서류를 쓰는데 손이 떨린다. 2주 안에 가능할까? 아버지의 모니터에서 심박수가 깜빡인다.',
+              principle: { name: '시스템의 벽', desc: '개인의 절박함은 시스템 앞에서 무력하다. 병원은 사업체이고, 의사는 선의만으로 수술할 수 없다. 돈이 없으면 목숨도 순번을 기다려야 하는 현실.', icon: '🏥' },
+              quote: '"가난한 자에게 병은 사형선고다." - 의료 격언'
+            }
+          ]
+        },
+        {
+          badge: '거래',
+          title: '제안',
+          desc: `3일이 지났다. 돈이 모자라다.
+
+그때 연락이 온다. 회사 거래처 사장이다. 예전부터 당신에게 관심이 있었다.
+
+"사정 들었어. 3억 빌려줄게. 대신 조건이 하나 있어."
+
+당신 회사의 신제품 설계도를 넘기면 된다. 아직 공개 전이다. 넘기면 당신 회사는 경쟁에서 밀린다. 동료들의 1년 노력이 물거품이 된다.
+
+"아무도 몰라. 네가 넘긴 건 나만 알아."
+
+아버지의 수술까지 11일 남았다.`,
+          highlight: '아버지의 목숨. 동료들의 1년. 당신의 양심.',
+          choices: [
+            {
+              id: 'betray2',
+              text: '설계도를 넘긴다.',
+              subtext: '아버지가 먼저다.',
+              meaning: '파일을 보내는 데 30초. 3억이 입금되는 데 1시간. 한 달 뒤, 경쟁사에서 똑같은 제품이 출시된다. 회사가 발칵 뒤집힌다. 동료가 묻는다. "이거 어떻게 된 거야? 누가 넘긴 거 아니야?" 당신은 "글쎄"라고 말한다. 그 "글쎄"가 목구멍에서 내려가지 않는다.',
+              principle: { name: '양심의 무게', desc: '아무도 모르는 배신은 가장 무겁다. 들킬 걱정이 아니라, 매일 거울을 볼 때마다 자신이 어떤 사람인지 확인해야 하기 때문이다. 양심은 법정보다 정확하다.', icon: '🪞' },
+              quote: '"내 머리 위의 별이 빛나는 하늘과 내 안의 도덕법칙." - 칸트'
+            },
+            {
+              id: 'refuse2',
+              text: '거절한다.',
+              subtext: '"다른 방법을 찾겠습니다."',
+              meaning: '전화를 끊고 화장실에서 운다. "다른 방법"이 뭔지 모른다. 10일 남았다. 아버지는 여전히 의식이 없다. 올바른 선택을 했다는 확신이 드는가? 원칙을 지켰지만, 아버지 곁에 앉아 있으면 그 원칙이 공허하게 느껴진다.',
+              principle: { name: '원칙의 대가', desc: '원칙을 지키는 건 공짜가 아니다. 때로는 사랑하는 사람이 그 대가를 치른다. "옳은 일을 했다"는 확신이, 아버지 병상 앞에서 위안이 될 수 있을까?', icon: '💎' },
+              quote: '"선한 사람이 아무 행동도 하지 않을 때, 악은 승리한다." - 에드먼드 버크'
+            },
+            {
+              id: 'half2',
+              text: '중요하지 않은 부분만 넘긴다.',
+              subtext: '피해를 최소화하면...',
+              meaning: '"핵심 기술 빼고 외형만 넘기자." 합리적으로 들린다. 일주일 뒤, 거래처 사장에게서 전화가 온다. "이거 껍데기잖아. 나머지 줘." 목소리가 차갑다. "안 주면? 네가 넘긴 거 회사에 알려줄까?" 한 발 들어간 늪에서 멈출 수 있다고 생각했는가?',
+              principle: { name: '미끄러운 비탈길', desc: '작은 양보가 큰 양보의 시작이 된다. "이 정도면 괜찮아"는 가장 위험한 문장이다. 오늘 외형을 넘기면 내일은 핵심을 넘기게 된다. 경계를 허무는 건 한순간이다.', icon: '⛷️' },
+              quote: '"처음 한 번이 가장 어렵다. 두 번째부터는 쉬워진다." - 도스토옙스키'
+            }
+          ]
+        },
+        {
+          badge: '대가',
+          title: '모멸',
+          desc: `7일째. 여전히 돈이 부족하다.
+
+어머니가 말한다.
+
+"... 삼촌한테 부탁해볼까?"
+
+삼촌. 아버지와 10년째 말을 안 하는 사람. 아버지 사업이 망했을 때 "그러게 내 말 들었어야지"라고 했던 사람. 명절마다 당신 가족을 깔보던 사람.
+
+삼촌에게 돈이 있다. 많이 있다.
+
+어머니가 전화를 건다. 삼촌이 조건을 내건다.
+
+"좋아. 빌려줄게. 대신, 수술 끝나고 형이 회복되면 — 추석 때 온 가족 앞에서 '내가 틀렸다, 네 말이 맞았다'고 해. 직접."
+
+아버지의 자존심.
+그게 삼촌이 원하는 것이다.`,
+          highlight: '아버지의 목숨과 아버지의 자존심. 당신이 선택할 수 있는가?',
+          choices: [
+            {
+              id: 'call3',
+              text: '받아들인다.',
+              subtext: '일단 살아야 자존심이든 뭐든 있다.',
+              meaning: '삼촌에게 전화한다. "네, 알겠습니다." 어머니가 안도의 한숨을 쉰다. 돈은 들어올 것이다. 하지만 당신은 아버지의 허락 없이, 아버지의 자존심을 팔았다. 추석이 오면 아버지는 모든 친척 앞에서 고개를 숙여야 한다. 그 순간, 아버지의 눈을 볼 수 있겠는가?',
+              principle: { name: '대리 결정의 무게', desc: '누군가의 존엄을 대신 결정하는 것은 가능한가? 생명을 살리기 위해서라면 허용되는가? 아버지가 의식이 있었다면 절대 수락하지 않았을 조건을, 당신이 대신 수락했다.', icon: '🧎' },
+              quote: '"타인의 존엄을 대신 포기할 권리는 누구에게도 없다." - 무명'
+            },
+            {
+              id: 'refuse3',
+              text: '거절한다.',
+              subtext: '아버지가 회복해서 이 조건을 알면 — 차라리 죽는 게 낫다고 할 것이다.',
+              meaning: '어머니가 울며 말한다. "그럼 어떻게 해..." 당신은 대답하지 못한다. 아버지를 아는 사람이라면 안다. 그 사람은 삼촌 앞에 무릎 꿇느니 차라리 수술을 거부할 사람이다. 하지만 아버지는 지금 그 선택조차 할 수 없다.',
+              principle: { name: '부재자의 의사', desc: '의식 없는 사람의 뜻을 대신 결정하는 건 가능한가? "아버지라면 원하지 않았을 것이다"는 추측이다. 하지만 그 추측이 틀리면, 돌이킬 수 없다.', icon: '🤷' },
+              quote: '"산 자가 죽은 자의 명예를 지키는 건, 사치일 수도 있고 의무일 수도 있다." - 무명'
+            },
+            {
+              id: 'condition3',
+              text: '"돈은 빌리되, 사과 조건은 빼주십시오."',
+              subtext: '돈은 갚겠다. 하지만 아버지의 자존심은 건드리지 마라.',
+              meaning: '삼촌이 웃는다. "돈만 빌리면 재미없잖아." 침묵. 그리고 말한다. "사과 없으면 돈도 없어." 삼촌이 원하는 건 돈을 돌려받는 게 아니다. 10년간 못 받은 인정이다. 이건 대출이 아니라 복수다.',
+              principle: { name: '돈과 권력', desc: '돈을 빌려주는 행위 뒤에 권력 관계가 숨어 있다. 삼촌에게 3억은 큰돈이 아니다. 하지만 형의 공개 사과는 돈으로 살 수 없는 것이다. 시혜는 늘 대가를 요구한다. 그 대가가 돈이 아닐 때, 거래는 더 잔인해진다.', icon: '👑' },
+              quote: '"돈을 빌려주는 자가 관계의 주인이 된다." - 발타사르 그라시안'
+            }
+          ]
+        },
+        {
+          badge: '선택',
+          title: '계약',
+          desc: `10일째. 수술 날짜가 잡혔다. 4일 뒤.
+
+어떻게든 2억은 마련했다. 나머지 1억.
+
+퇴근길에 전화가 온다. 전 직장 상사다.
+
+"네 사정 들었어. 우리 쪽으로 와. 1억 사이닝 보너스 줄게."
+
+조건이 있다. 5년 의무 근무. 위약금 2억. 중간에 나가면 1억을 갚는 게 아니라 2억을 물어야 한다. 무슨 프로젝트를 맡게 될지는 입사 후에 알려준다.
+
+"4일 안에 답 줘. 아니면 다른 사람 뽑아야 해."
+
+지금 다니는 회사에는 7년을 바쳤다. 동료들이 있다.
+하지만 1억이다. 지금 필요한 정확히 그 금액.`,
+          highlight: '7년을 버리고, 모르는 5년을 살 수 있는가?',
+          choices: [
+            {
+              id: 'sign4',
+              text: '계약한다.',
+              subtext: '4일 뒤면 아버지 수술이다.',
+              meaning: '사직서를 쓴다. 7년을 다닌 회사다. 동료들이 놀란다. "갑자기 왜?" 사정을 말할 수 없다. 사이닝 보너스 1억이 입금된다. 아버지 수술이 확정된다. 안도감. 하지만 첫 출근 날, 배정된 프로젝트를 보는 순간 — 전 회사의 경쟁 제품이다. 7년간 쌓은 노하우를 무기로 쓰라는 뜻이다.',
+              principle: { name: '절박함의 경제학', desc: '급한 사람이 불리한 거래를 한다. 대출, 보험, 계약 — 세상의 많은 거래는 한쪽의 절박함 위에 세워져 있다. 전 상사는 당신의 능력이 아니라 당신의 절박함을 산 것이다.', icon: '⏰' },
+              quote: '"필요는 법을 모른다." - 라틴 격언'
+            },
+            {
+              id: 'refuse4',
+              text: '거절한다.',
+              subtext: '7년을 바친 곳을 이렇게 떠날 수 없다.',
+              meaning: '전화를 끊는다. 남은 4일. 잠을 못 잔다. 하지만 적어도, 절박함에 끌려서 7년의 관계를 태우지는 않았다. 월요일 출근하면 동료들 얼굴을 볼 수 있다. 1억은 다른 방법을 찾아야 한다.',
+              principle: { name: '자유의 가격', desc: '자유에는 가격이 있다. 안정을 위해 자유를 포기하든, 불안을 감수하고 자유를 지키든. 어느 쪽이 옳은지는 아무도 모른다. 다만 결과는 당신이 짊어진다.', icon: '🕊️' },
+              quote: '"자유를 포기하는 자는 안전도 자유도 얻지 못한다." - 벤자민 프랭클린'
+            },
+            {
+              id: 'negotiate4',
+              text: '"3년이면 하겠습니다."',
+              subtext: '5년은 너무 길다.',
+              meaning: '상사가 침묵한다. 그리고 답한다. "3년이면 사이닝 보너스는 6천만원이야." 4천만원이 부족해진다. 당신은 또 계산을 시작한다. 3년의 자유와 4천만원. 끝이 없다. 협상을 시작한 순간, 이미 전 상사의 판 위에 올라갔다.',
+              principle: { name: '협상의 함정', desc: '조건을 깎는 순간, "이직하겠다"는 결정은 이미 끝난 것이다. 5년이든 3년이든, 7년의 관계를 태우는 건 같다. 가격이 달라졌을 뿐.', icon: '🎲' },
+              quote: '"흥정을 시작하면, 이미 진 것이다." - 나심 탈레브'
+            }
+          ]
+        },
+        {
+          badge: '끝',
+          title: '수술 전날 밤',
+          desc: `수술 전날.
+
+돈은 마련됐다. 어떤 방법으로든.
+
+병실에서 아버지 손을 잡고 앉아 있다. 새벽 2시. 어머니는 소파에서 잠들었다.
+
+아버지의 눈꺼풀이 떨린다. 손가락이 움직인다.
+
+"... 돈은... 어떻게..."
+
+아버지가 깨어났다.
+눈이 마주친다.
+
+아버지가 묻는다.
+
+"수술비... 어떻게 마련했어?"`,
+          highlight: '아버지에게 뭐라고 말하겠는가?',
+          choices: [
+            {
+              id: 'truth5',
+              text: '"걱정 마세요. 제가 다 했어요."',
+              subtext: '진실은 말하지 않는다.',
+              meaning: '아버지가 고개를 끄덕인다. "... 고생했다." 눈물이 난다. 아버지 눈에도 물기가 맺힌다. 진실을 말하면 아버지는 수술을 거부할지도 모른다. 거짓말이다. 하지만 아버지가 내일 수술대에 눕게 하는 거짓말이다. 아버지가 다시 묻는 날이 올 것이다. 그때도 같은 대답을 할 수 있겠는가?',
+              principle: { name: '보호하는 거짓말', desc: '진실이 상대를 파괴할 때, 거짓말은 사랑이 될 수 있는가? 아버지를 살리기 위한 침묵은 배신인가, 보호인가? 답은 당신만 안다.', icon: '🤐' },
+              quote: '"때로는 침묵이 가장 큰 사랑이다." - 무명'
+            },
+            {
+              id: 'honest5',
+              text: '전부 말한다.',
+              subtext: '아버지는 알 권리가 있다.',
+              meaning: '다 말한다. 친구에게 빌린 것, 회사에서 있었던 일, 삼촌의 조건. 아버지의 표정이 일그러진다. 한참을 아무 말 없이 천장을 본다. "... 그러지 말았어야지." 그리고 당신 손을 잡는다. 힘없이. 하지만 놓지 않는다. 그 힘없는 악력이, 당신에게는 가장 무거운 용서다.',
+              principle: { name: '진실의 무게', desc: '진실은 때로 듣는 사람을 아프게 한다. 하지만 거짓 위에 세운 관계는 언젠가 무너진다. 아버지에게 진실을 말하는 건, 아버지를 어른으로 대하는 것이다.', icon: '💡' },
+              quote: '"진실은 아프지만, 거짓은 더 오래 아프다." - 무명'
+            },
+            {
+              id: 'deflect5',
+              text: '"그건 수술 끝나고 얘기해요."',
+              subtext: '지금은 아니다.',
+              meaning: '아버지가 당신 눈을 본다. 알고 있다는 듯이. 하지만 더 묻지 않는다. 어떤 대화는 타이밍이 있다. 지금은 아버지가 살아나는 게 먼저다. 나머지는 나중이다.',
+              principle: { name: '타이밍의 지혜', desc: '모든 진실이 지금 당장 필요한 건 아니다. 때를 기다리는 건 회피가 아니라 판단이다. 수술 전날 밤, 아버지에게 필요한 건 정보가 아니라 안심이다.', icon: '⏰' },
+              quote: '"말할 때를 아는 것이 말하는 것보다 어렵다." - 탈무드'
+            }
+          ]
+        }
+      ],
+      
+      calculateResult(choices, principles) {
+        // 각 선택의 "가치 수호" 점수
+        const valueScores = {
+          friend1: 1, loan1: 1, beg1: 2,
+          betray2: 0, refuse2: 2, half2: 0,
+          call3: 0, refuse3: 2, condition3: 1,
+          sign4: 0, refuse4: 2, negotiate4: 1,
+          truth5: 1, honest5: 2, deflect5: 1
+        };
+        
+        let valueScore = 0;
+        choices.forEach(c => { valueScore += valueScores[c.choiceId] || 0; });
+        
+        // "팔았다/타협했다" 횟수
+        const sold = ['betray2', 'half2', 'call3', 'sign4'];
+        const soldCount = choices.filter(c => sold.includes(c.choiceId)).length;
+        
+        // "거절했다" 횟수
+        const refused = ['refuse2', 'refuse3', 'refuse4'];
+        const refusedCount = choices.filter(c => refused.includes(c.choiceId)).length;
+        
+        if (valueScore >= 8) {
+          return {
+            icon: '💎',
+            label: '당신의 유형',
+            title: '끝까지 지킨 사람',
+            desc: '당신은 절박한 상황에서도 원칙을 지켰습니다.\n\n양심도, 자존감도, 자유도 팔지 않았습니다. 쉬운 선택이 아니었을 겁니다. "이렇게 해서 정말 아버지를 살릴 수 있나?"라는 불안과 싸우면서.\n\n하지만 당신은 알고 있습니다. 아버지가 깨어났을 때, 부끄럽지 않은 얼굴로 마주할 수 있다는 것.',
+            stats: [
+              { value: valueScore + '/10', label: '가치 수호 점수' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else if (valueScore >= 5) {
+          return {
+            icon: '⚖️',
+            label: '당신의 유형',
+            title: '저울 위의 사람',
+            desc: '당신은 어떤 것은 지켰고, 어떤 것은 포기했습니다.\n\n이것은 약함이 아닙니다. 현실입니다. 3억 앞에서 원칙만 외치면 아버지 수술비는 누가 마련합니까.\n\n중요한 건 "어디까지 팔 수 있는가"를 아는 것. 당신은 그 경계에서 싸운 사람입니다.',
+            stats: [
+              { value: valueScore + '/10', label: '가치 수호 점수' },
+              { value: soldCount, label: '타협 횟수' }
+            ]
+          };
+        } else if (soldCount >= 3) {
+          return {
+            icon: '🔥',
+            label: '당신의 유형',
+            title: '무슨 수를 써서라도',
+            desc: '당신은 대부분의 제안을 받아들였습니다.\n\n양심도 팔았고, 자존심도 삼켰고, 자유도 내줬습니다. 누군가는 비난할 겁니다.\n\n하지만 당신의 아버지는 내일 수술을 받습니다.\n\n그 사실 하나가, 당신에게는 전부였던 겁니다.',
+            stats: [
+              { value: soldCount + '/4', label: '타협 횟수' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else {
+          return {
+            icon: '🌊',
+            label: '당신의 유형',
+            title: '흔들린 사람',
+            desc: '당신은 2주 동안 흔들렸습니다.\n\n타협하기도, 거절하기도, 협상하기도 했습니다. 일관된 원칙이 있었다기보다, 매 순간 최선이라고 생각한 것을 선택했습니다.\n\n그리고 그게 가장 인간적인 모습입니다. 정답이 없는 상황에서, 정답을 찾으려 했으니까.',
+            stats: [
+              { value: valueScore + '/10', label: '가치 수호 점수' },
+              { value: soldCount, label: '타협 횟수' }
+            ]
+          };
+        }
+      },
+      
+      getShareText(resultTitle, choices, principles) {
+        const principleNames = principles.map(p => p.name).slice(0, 3).join(', ');
+        return '💰 부자의 조건\n\n나의 유형: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n아버지 수술비 3억. 2주. 당신은 무엇을 팔고, 무엇을 지키는가?\n\nhttps://bit.ly/rich-sim';
+      }
+    };
+    
+    SimTemplate.init(CONFIG);
+    
+    // 이미지 저장
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#1a1610');
+      gradient.addColorStop(1, '#2a2118');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#d4a843';
+      const label = document.getElementById('resultLabel').textContent;
+      ctx.fillText(label, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 250;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      if (line) ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#d4a843';
+      ctx.fillText('부자의 조건', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '부자의조건_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+    
+    // 친구한테 시켜보기 (기존 리스너 제거 후 재바인딩)
+    const oldShareBtn = document.getElementById('shareBtn');
+    const newShareBtn = oldShareBtn.cloneNode(true);
+    oldShareBtn.parentNode.replaceChild(newShareBtn, oldShareBtn);
+    newShareBtn.addEventListener('click', async () => {
+      const url = CONFIG.shareUrl;
+      const result = document.getElementById('resultTitle').textContent;
+      const text = '💰 부자의 조건\n\n나의 유형: ' + result + '\n\n1억이 생긴다. 단, 조건이 있다.\n당신은 무엇을 팔고, 무엇을 지키는가?\n\n' + url;
+      if (navigator.share) { try { await navigator.share({ title: '부자의 조건', text, url }); } catch {} }
+      else { 
+        try { await navigator.clipboard.writeText(text); } catch(e) {
+          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        newShareBtn.textContent = '링크 복사됨!';
+        setTimeout(() => { newShareBtn.textContent = '친구한테 시켜보기'; }, 2000);
+      }
+    });
+  </script>
+</body>
+</html>
