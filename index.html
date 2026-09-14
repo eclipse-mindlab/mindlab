@@ -917,13 +917,14 @@
   </style>
 </head>
 <body>
-  <div class="modal-overlay" id="nameModal">
+  <div class="modal-overlay" id="nameModal" style="display:none">
     <div class="modal">
       <img src="logo.png" alt="이클립스" class="modal-logo">
       <div class="modal-title">이클립스의 딜렘</div>
       <div class="modal-desc">지적 탐험을 시작하세요.<br>심리, 철학, 사회의 숨겨진 원칙들을 발견합니다.</div>
       <input type="text" class="modal-input" id="nameInput" placeholder="탐험가 이름" maxlength="12">
       <button class="modal-btn" id="startBtn" disabled>탐험 시작</button>
+      <button class="modal-btn cancel" id="skipBtn" style="margin-top:8px;">건너뛰기</button>
     </div>
   </div>
 
@@ -1852,13 +1853,12 @@
         console.error('Firebase 초기화 실패:', error);
       }
 
-      // 프로필 로드 후, 이름이 있고 "익명 탐험가"가 아니면 모달 숨김
-      if (profile.name && profile.name !== '익명 탐험가') {
-        nameModal.classList.add('hidden');
-        updateUI();
-      } else if (profile.name === '익명 탐험가') {
-        // 익명이면 모달은 띄우되 UI는 업데이트 (EXP 등 표시)
-        updateUI();
+      // 프로필 체크: localStorage에 프로필이 있거나 건너뛴 적 있으면 모달 안 띄움
+      updateUI();
+      const hasProfile = localStorage.getItem('eclipse_mindlab_profile');
+      const nameDismissed = localStorage.getItem('eclipse_name_dismissed');
+      if (!hasProfile && !nameDismissed) {
+        nameModal.style.display = 'flex';
       }
 
       nameInput.addEventListener('input', () => {
@@ -1866,6 +1866,11 @@
         // 에러 메시지 초기화
         const errorMsg = document.getElementById('nameError');
         if (errorMsg) errorMsg.style.display = 'none';
+      });
+
+      document.getElementById('skipBtn').addEventListener('click', () => {
+        localStorage.setItem('eclipse_name_dismissed', 'true');
+        nameModal.style.display = 'none';
       });
 
       startBtn.addEventListener('click', async () => {
@@ -1899,14 +1904,14 @@
           // 중복 아니면 저장
           profile.name = name;
           saveProfile();
-          nameModal.classList.add('hidden');
+          nameModal.style.display = 'none';
           updateUI();
         } catch (error) {
           console.error('닉네임 체크 실패:', error);
           // 에러 시 그냥 진행 (오프라인 등)
           profile.name = name;
           saveProfile();
-          nameModal.classList.add('hidden');
+          nameModal.style.display = 'none';
           updateUI();
         }
       });
