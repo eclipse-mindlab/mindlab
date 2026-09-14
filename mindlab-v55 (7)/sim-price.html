@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>돈의 가격 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="돈의 가격 - 이클립스의 딜렘">
+  <meta property="og:description" content="돈을 벌기 위해 당신은 무엇을 팔고 있는가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #c9a84c;
+      --sim-primary-light: #e0c068;
+      --sim-primary-bg: rgba(201, 168, 76, 0.1);
+      --sim-primary-border: rgba(201, 168, 76, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">돈의 가격</div>
+    </div>
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle"></div>
+        <div class="sim-situation-desc" id="situationDesc"></div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice"></div>
+      </div>
+      <div class="sim-explanation-card" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning"></div>
+      </div>
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName"></div>
+        <div class="sim-principle-desc" id="principleDesc"></div>
+      </div>
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText"></span>
+      </div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">💸</div>
+        <div class="sim-result-label" id="resultLabel">당신의 유형</div>
+        <div class="sim-result-title" id="resultTitle"></div>
+        <div class="sim-result-desc" id="resultDesc"></div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+      </div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
+        <a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a>
+      </div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #c9a84c; font-weight: 600; margin-bottom: 8px; letter-spacing: 1px;">이 시뮬레이터의 바탕이 된 생각들이 궁금하다면</div>
+        </div>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" style="display: block; text-decoration: none; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #1a1610 0%, #2a2118 50%, #1a1610 100%); border: 1px solid rgba(201, 168, 76, 0.3); border-radius: 16px; padding: 24px; text-align: center;">
+            <img src="book-wealth.png" alt="훔친 부 편" style="width: 200px; height: auto; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 8px 32px rgba(201, 168, 76, 0.2);">
+            <div style="font-size: 17px; font-weight: 700; color: #c9a84c; margin-bottom: 6px;">세계척학전집 — 훔친 부 편</div>
+            <div style="font-size: 12px; color: #71717a;">있어 보이는 척하기 좋은 돈의 문법</div>
+          </div>
+        </a>
+
+        <div style="font-size: 12px; color: #52525b; text-align: center; margin-bottom: 12px;">시리즈 더 보기</div>
+        <div class="sim-books-grid">
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 철학 편</div>
+          </a>
+          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+            <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+            <div class="sim-book-title">훔친 심리학 편</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="sim-template.js"></script>
+  <script>
+    const CONFIG = {
+      id: 'price',
+      title: '돈의 가격',
+      shareIcon: '💸',
+      shareUrl: 'https://bit.ly/price-sim',
+      version: 5,
+      
+      stages: [
+        {
+          badge: '양심',
+          title: '제안',
+          desc: `당신은 중견기업 과장이다. 연봉 5천만원. 나쁘지 않지만 넉넉하지도 않다.
+
+어느 날, 경쟁사 임원에게서 연락이 온다.
+
+"당신 회사 신제품 설계도. 넘기면 1억 줄게."
+
+아무도 모른다. 증거도 안 남는다.
+동료들의 1년이 물거품이 되지만, 당신 통장에 1억이 찍힌다.
+
+연봉의 두 배다.`,
+          highlight: '1억. 양심의 가격은 얼마인가?',
+          choices: [
+            {
+              id: 'sell1',
+              text: '넘긴다.',
+              subtext: '1억이면 인생이 바뀐다.',
+              meaning: '파일을 보내는 데 30초. 1억이 입금되는 데 1시간. 한 달 뒤, 경쟁사에서 똑같은 제품이 출시된다. 동료가 묻는다. "누가 넘긴 거 아니야?" 당신은 "글쎄"라고 말한다. 그 "글쎄"가 1억짜리다.',
+              principle: { name: '양심의 시장가격', desc: '모든 사람에게는 양심을 파는 가격이 있는가? 1억에 안 팔아도 10억이면? 100억이면? "나는 절대 안 팔아"라고 말하는 사람도, 숫자가 커지면 멈칫한다. 그 멈칫하는 지점이 당신의 양심의 시장가격이다.', icon: '🪞' },
+              quote: '"모든 사람에게는 가격이 있다. 다만 그 가격이 돈이 아닌 경우도 있을 뿐." - 무명'
+            },
+            {
+              id: 'refuse1',
+              text: '거절한다.',
+              subtext: '돈이 전부는 아니다.',
+              meaning: '전화를 끊는다. 연봉은 그대로다. 동료들은 모른다. 아무 일도 일어나지 않았다. 하지만 당신은 안다. 오늘 1억을 거절했다는 것. 그리고 그게 옳았는지 아직 확신이 없다는 것.',
+              principle: { name: '기회비용의 무게', desc: '거절은 공짜가 아니다. 1억을 거절한 건 1억을 쓴 것과 같다. 양심을 지키는 데 1억을 지불한 것이다. 당신의 양심은 1억의 가치가 있는가? 그 질문에 "당연하지"라고 답하기가 왜 이렇게 어려운가.', icon: '💎' },
+              quote: '"도덕에는 가격표가 없다. 하지만 대가는 있다." - 무명'
+            },
+            {
+              id: 'negotiate1',
+              text: '"3억이면 하겠습니다."',
+              subtext: '팔 거면 제대로 받아야지.',
+              meaning: '상대가 웃는다. "역시 현실적이시네." 3억에 합의한다. 당신은 방금 양심에 가격표를 붙였다. 1억에는 안 팔리던 양심이 3억에는 팔렸다. 재밌는 건 — 다음에는 1억에도 팔리게 될 것이다.',
+              principle: { name: '도덕적 면허 효과', desc: '한 번 경계를 넘으면, 그 다음부터 넘는 게 쉬워진다. 심리학에서는 이걸 도덕적 면허 효과라고 한다. "한 번은 괜찮아"가 "또 한 번"이 되고, 결국 습관이 된다. 가격 협상을 시작한 순간, 팔겠다는 결정은 이미 끝난 것이다.', icon: '📉' },
+              quote: '"처음이 가장 어렵다. 두 번째부터는 쉬워진다." - 도스토예프스키'
+            }
+          ]
+        },
+        {
+          badge: '시간',
+          title: '계약',
+          desc: `승진 기회가 왔다. 연봉이 8천만원으로 오른다.
+
+하지만 조건이 있다.
+
+주 6일 근무. 매일 밤 10시 퇴근.
+주말 호출에 응해야 한다.
+여행, 취미, 연애 — 전부 뒤로 밀린다.
+
+3년 계약이다.
+3년 뒤에는 연봉 1억 2천.
+
+지금 당신 나이, 20대 후반.
+이 3년이 지나면 30대 초반이다.`,
+          highlight: '3년의 자유. 얼마에 팔겠는가?',
+          choices: [
+            {
+              id: 'sign2',
+              text: '계약한다.',
+              subtext: '20대에 고생해야 30대가 편하다.',
+              meaning: '서명한다. 첫 달은 괜찮다. 두 번째 달, 친구들이 여행 사진을 올린다. 세 번째 달, 연인이 "우리 언제 만나?"라고 묻는다. 여섯 번째 달, 거울 속 얼굴이 낯설다. "3년만"이라고 했다. 하지만 3년 뒤에도 "3년만"이라고 할 것이다.',
+              principle: { name: '쳇바퀴 효과', desc: '소득이 올라가면 행복이 올라갈까? 심리학 연구에 따르면, 연봉이 일정 수준을 넘으면 행복과의 상관관계가 급격히 약해진다. 하지만 높아진 생활 수준은 내려가지 않는다. 이걸 쾌락의 쳇바퀴라고 한다. 더 벌면 더 쓰고, 더 쓰면 더 벌어야 한다.', icon: '🐹' },
+              quote: '"부자가 되는 것은 목적지가 아니라 쳇바퀴다." - 심리학 격언'
+            },
+            {
+              id: 'reject2',
+              text: '거절한다.',
+              subtext: '20대는 다시 안 온다.',
+              meaning: '거절한다. 연봉은 그대로다. 하지만 주말이 있다. 저녁이 있다. 3년 뒤, 승진한 동기가 차를 바꿨다. 당신은 아직 대중교통이다. "그때 할걸"이라는 생각이 스친다. 하지만 여행 사진을 꺼내본다. 그래도 괜찮은가?',
+              principle: { name: '돈으로 살 수 없는 것', desc: '시간, 청춘, 경험, 관계. 이것들은 나중에 돈으로 살 수 없다. 30대에 돈이 있어도 20대의 체력은 돌아오지 않는다. 문제는 이걸 20대에는 모른다는 것이다. 알게 될 때는 이미 지나간 뒤다.', icon: '⏳' },
+              quote: '"시간은 돈이라고? 천만에. 시간은 돈보다 비싸다." - 무명'
+            },
+            {
+              id: 'counter2',
+              text: '"주 5일이면 하겠습니다."',
+              subtext: '조건을 깎아보자.',
+              meaning: '"주 5일이면 하겠습니다." 상사가 고개를 젓는다. "그러면 연봉은 6천 5백." 당신은 또 계산을 시작한다. 3년 × 1500만원 차이 = 4500만원. 주말 52일 × 3년 = 156일. 하루에 약 29만원. 당신의 주말은 하루 29만원짜리인가?',
+              principle: { name: '가치의 수량화', desc: '우리는 모든 것을 숫자로 바꾸려 한다. 시간을 시급으로, 관계를 투자 대비 수익으로, 행복을 연봉으로. 숫자로 바꾸는 순간, 비교가 가능해진다. 비교가 가능해지면, 더 높은 숫자를 쫓게 된다. 숫자로 바꿀 수 없는 것의 가치는 어떻게 매기는가?', icon: '🔢' },
+              quote: '"가격을 아는 것과 가치를 아는 것은 다르다." - 오스카 와일드'
+            }
+          ]
+        },
+        {
+          badge: '관계',
+          title: '친구의 부탁',
+          desc: `10년 친구가 사업을 시작했다.
+
+투자를 부탁한다. 3천만원.
+
+솔직히, 사업 계획이 허술하다. 실패할 확률이 높다.
+
+하지만 이 친구는 당신이 어려울 때 200만원을 빌려준 적이 있다. 조건 없이.
+
+"야, 나 진짜 이번에 잘 될 것 같아. 너만 믿는다."
+
+3천만원은 당신 저축의 절반이다.`,
+          highlight: '우정의 가격은 3천만원인가?',
+          choices: [
+            {
+              id: 'invest3',
+              text: '투자한다.',
+              subtext: '그때 나를 도와준 친구다.',
+              meaning: '3천만원을 보낸다. 6개월 뒤, 사업이 망한다. 친구가 말한다. "미안해. 갚을게." 1년이 지났다. 2년이 지났다. 돈은 돌아오지 않는다. 친구에게서 연락이 뜸해진다. 우정이 빚이 되었다. 200만원의 은혜가 3천만원의 채무로 바뀌었다.',
+              principle: { name: '호혜성의 함정', desc: '누군가에게 빚진 감정은 판단을 왜곡한다. "그때 도와줬으니까 나도"는 감정이지 논리가 아니다. 200만원의 도움과 3천만원의 투자는 다른 차원의 결정이다. 하지만 호혜성은 이 차이를 무시하게 만든다.', icon: '🔄' },
+              quote: '"돈을 빌려주면 돈도 잃고 친구도 잃는다." - 셰익스피어'
+            },
+            {
+              id: 'decline3',
+              text: '거절한다.',
+              subtext: '"사업 계획부터 다시 짜봐."',
+              meaning: '거절한다. 친구의 표정이 굳는다. "너까지 그러는 거야?" 전화가 끊긴다. 한 달 뒤, 친구가 다른 데서 돈을 빌려 사업을 시작한다. 6개월 뒤, 사업이 망한다. 당신은 3천만원을 지켰다. 하지만 친구에게서 "네가 믿어줬으면 달랐을 텐데"라는 말을 듣는다.',
+              principle: { name: '감정과 판단의 분리', desc: '좋은 친구인 것과 좋은 투자인 것은 별개다. 하지만 인간은 감정과 판단을 분리하지 못한다. 친구가 부탁하면 사업 계획이 아니라 우정을 기준으로 결정한다. 거절하는 게 더 좋은 친구일 수 있다. 하지만 그걸 이해시키는 건 불가능에 가깝다.', icon: '🧠' },
+              quote: '"진정한 친구는 원하는 걸 들어주는 사람이 아니라, 필요한 말을 해주는 사람이다." - 무명'
+            },
+            {
+              id: 'partial3',
+              text: '"500만원만 할게."',
+              subtext: '잃어도 괜찮은 만큼만.',
+              meaning: '"3천은 무리고, 500이면 할게." 친구가 고맙다고 한다. 하지만 눈빛이 달라졌다. "500으로 뭘 하라고" — 라는 말은 안 했지만, 느껴진다. 당신은 우정과 재정 사이에서 중간을 찾으려 했다. 하지만 중간은 양쪽 모두를 만족시키지 못한다.',
+              principle: { name: '타협의 착각', desc: '타협은 양쪽 모두를 조금씩 불만족시키는 결정이다. 500만원은 친구를 만족시키기에 적고, 당신의 지갑을 지키기에 크다. "적당히"는 느낌은 좋지만, 결과는 어중간하다. 진짜 결정은 "한다" 아니면 "안 한다"뿐이다.', icon: '⚖️' },
+              quote: '"타협은 양쪽 모두가 불만족하는 결과를 만든다." - 헨리 키신저'
+            }
+          ]
+        },
+        {
+          badge: '자존심',
+          title: '무릎',
+          desc: `회사가 구조조정에 들어갔다.
+
+당신은 살아남았다. 하지만 조건이 있다.
+
+팀장이 말한다.
+"네가 맡던 프로젝트, 이제 김 대리한테 넘겨. 너는 보조로 들어가."
+
+김 대리. 당신보다 3년 후배다.
+실력은 당신이 위다.
+하지만 팀장과 친하다.
+
+월급은 그대로다.
+직급도 그대로다.
+하지만 실질적으로 강등이다.
+
+거절하면 다음 구조조정 명단에 올라간다.`,
+          highlight: '자존심의 가격은 월급만큼인가?',
+          choices: [
+            {
+              id: 'accept4',
+              text: '받아들인다.',
+              subtext: '일단 살아남아야 한다.',
+              meaning: '보조로 들어간다. 3년 후배에게 보고한다. 회의에서 "김 대리 의견은?" 이라는 말이 나올 때, 당신은 옆에 앉아 있다. 3개월이 지나면 익숙해진다. 그게 더 무섭다. 굴욕에 익숙해지는 자신이.',
+              principle: { name: '점진적 수용', desc: '처음엔 분노한다. 한 달이면 체념한다. 석 달이면 익숙해진다. 인간은 거의 모든 것에 적응한다. 이걸 쾌락 적응이라고 한다. 문제는 자존심도 적응 대상이라는 것이다. 자존심을 팔아도 살 수 있다. 다만 그 전의 자신은 죽는다.', icon: '📉' },
+              quote: '"노예의 가장 비극적인 점은, 자신이 노예인 줄 모르는 것이다." - 프레더릭 더글러스'
+            },
+            {
+              id: 'quit4',
+              text: '사표를 낸다.',
+              subtext: '이건 아니다.',
+              meaning: '사표를 낸다. 팀장이 놀란다. "어디 갈 데는 있어?" 없다. 하지만 후배 밑에서 일하는 것보다 백수가 낫다. 한 달 뒤, 통장 잔고가 줄어든다. 두 달 뒤, 이력서를 넣기 시작한다. 자존심은 지켰다. 하지만 월세는 나간다.',
+              principle: { name: '자존심의 유통기한', desc: '자존심을 지키는 건 그 순간은 통쾌하다. 하지만 3개월 뒤에도 통쾌한가? 자존심으로 밥을 먹을 수 없다. 문제는 자존심을 팔면 밥은 먹을 수 있지만 맛을 모른다는 것이다.', icon: '🦁' },
+              quote: '"자존심은 비싼 사치품이다. 가난한 자에게는 허용되지 않는다." - 무명'
+            },
+            {
+              id: 'plan4',
+              text: '"6개월만 하겠습니다."',
+              subtext: '기한을 정하면 버틸 수 있다.',
+              meaning: '"6개월만 보조로 들어가겠습니다. 그 뒤에는 원래 자리로 돌려주세요." 팀장이 고개를 끄덕인다. "알겠어." 하지만 6개월 뒤, 팀장이 말한다. "상황이 좀 더 필요해. 3개월만 더." 당신은 또 수락한다. 기한은 늘어난다. 항상 "조금만 더"다.',
+              principle: { name: '전략적 인내 vs 자기기만', desc: '"기한을 정하면 괜찮다"는 합리적으로 들린다. 하지만 현실에서 기한은 거의 지켜지지 않는다. 6개월이 9개월이 되고, 1년이 된다. "참는 거야"와 "적응한 거야"의 경계는 생각보다 가깝다.', icon: '🎭' },
+              quote: '"내일 하겠다는 말은 하지 않겠다는 말의 다른 표현이다." - 무명'
+            }
+          ]
+        },
+        {
+          badge: '진실',
+          title: '거울',
+          desc: `5년이 지났다.
+
+돈은 벌었다. 통장에 숫자가 늘었다.
+
+어느 날, 오랜만에 대학 친구를 만난다.
+
+"너 요즘 어때?"
+
+대답하려는데, 입이 열리지 않는다.
+
+연봉은 올랐다. 차도 바꿨다. 전세도 넓혔다.
+하지만 "행복해"라는 말이 나오지 않는다.
+
+친구가 묻는다.
+
+"너 진짜 하고 싶은 게 뭐야?"
+
+모른다. 진짜 모른다.
+언제부터 모르게 됐는지도 모른다.`,
+          highlight: '당신은 돈을 벌었는가, 돈에 팔렸는가?',
+          choices: [
+            {
+              id: 'honest5',
+              text: '"솔직히 모르겠어."',
+              subtext: '처음으로 인정한다.',
+              meaning: '처음으로 말한다. "모르겠어. 하고 싶은 게 뭔지." 친구가 놀란다. 그리고 말한다. "나도." 두 사람이 웃는다. 씁쓸하게. 무엇을 위해 달려왔는지 모르겠다는 걸 인정하는 순간, 이상하게 조금 가벼워진다.',
+              principle: { name: '성찰의 시작', desc: '멈추지 않으면 방향을 확인할 수 없다. 소크라테스는 말했다. "성찰하지 않는 삶은 살 가치가 없다." 모른다는 것을 아는 것이, 알고 있다고 착각하는 것보다 낫다. 5년을 달려온 뒤에 "모르겠다"고 말할 수 있는 건, 용기다.', icon: '🪞' },
+              quote: '"성찰하지 않는 삶은 살 가치가 없다." - 소크라테스'
+            },
+            {
+              id: 'deflect5',
+              text: '"괜찮아. 잘 되고 있어."',
+              subtext: '굳이 무거운 얘기를 왜.',
+              meaning: '"잘 되고 있어." 웃으며 말한다. 친구가 고개를 끄덕인다. 술 한잔 더 마시고 헤어진다. 집에 돌아와서 불을 끈다. 천장을 본다. "잘 되고 있다"는 말이 자기 자신한테 한 거짓말인 걸, 당신만 안다.',
+              principle: { name: '자기기만의 비용', desc: '남에게 하는 거짓말은 관계를 보호한다. 자기 자신에게 하는 거짓말은 자신을 파괴한다. "괜찮아"를 반복하면 진짜 괜찮지 않은 부분이 묻힌다. 묻힌 감정은 사라지지 않는다. 이자가 붙는다.', icon: '🎭' },
+              quote: '"스스로를 속이는 것은 가장 쉬운 일이다. 사람은 무엇이든 원하는 것을 진실이라 믿는다." - 데모스테네스'
+            },
+            {
+              id: 'question5',
+              text: '"너는 알아?"',
+              subtext: '되묻는다.',
+              meaning: '"너는 알아? 하고 싶은 거." 친구가 멈칫한다. "... 나도 사실 모르겠어." 둘 다 모른다. 같은 시대를 살고 있기 때문이다. 달리라고 해서 달렸고, 벌라고 해서 벌었다. 누구도 "왜"를 물어보지 않았다. 당신도, 당신 자신에게도.',
+              principle: { name: '시대의 속도', desc: '개인의 문제가 아닐 수 있다. 베버는 말했다. 우리는 부자가 되기 위해서가 아니라 멈추지 못해서 일한다. 멈추면 뒤처지는 사회에서, "왜 달리는가"를 묻는 건 사치처럼 느껴진다. 하지만 방향 없는 속도는 의미가 없다.', icon: '🌊' },
+              quote: '"우리는 부자가 되기 위해서가 아니라 멈추지 못해서 일한다." - 막스 베버'
+            }
+          ]
+        }
+      ],
+      
+      calculateResult(choices, principles) {
+        const soldScores = {
+          sell1: 0, refuse1: 2, negotiate1: 0,
+          sign2: 0, reject2: 2, counter2: 1,
+          invest3: 0, decline3: 2, partial3: 1,
+          accept4: 0, quit4: 2, plan4: 1,
+          honest5: 2, deflect5: 0, question5: 1
+        };
+        
+        let score = 0;
+        choices.forEach(c => { score += soldScores[c.choiceId] || 0; });
+        
+        const sold = ['sell1', 'negotiate1', 'sign2', 'invest3', 'accept4', 'deflect5'];
+        const soldCount = choices.filter(c => sold.includes(c.choiceId)).length;
+        
+        const kept = ['refuse1', 'reject2', 'decline3', 'quit4', 'honest5'];
+        const keptCount = choices.filter(c => kept.includes(c.choiceId)).length;
+        
+        if (score >= 8) {
+          return {
+            icon: '🛡️',
+            label: '당신의 유형',
+            title: '팔지 않는 사람',
+            desc: '당신은 돈 앞에서 흔들리지 않았습니다.\n\n양심도, 시간도, 자존심도 팔지 않았습니다. 대신 잃은 것이 있습니다. 1억, 승진, 안정.\n\n하지만 당신은 알고 있습니다. 판 적 없는 사람만이 자기 자신을 온전히 갖고 있다는 것.',
+            stats: [
+              { value: keptCount + '/5', label: '지킨 횟수' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else if (score >= 5) {
+          return {
+            icon: '⚖️',
+            label: '당신의 유형',
+            title: '경계에 선 사람',
+            desc: '당신은 어떤 것은 지켰고, 어떤 것은 팔았습니다.\n\n이것은 현실적인 선택입니다. 모든 것을 지키면 아무것도 얻지 못하고, 모든 것을 팔면 자기 자신이 사라집니다.\n\n중요한 건 "어디까지 팔 수 있는가"를 아는 것입니다. 당신은 그 경계를 탐색한 사람입니다.',
+            stats: [
+              { value: score + '/10', label: '자기 보존 점수' },
+              { value: soldCount, label: '판 횟수' }
+            ]
+          };
+        } else if (soldCount >= 4) {
+          return {
+            icon: '💸',
+            label: '당신의 유형',
+            title: '돈의 사람',
+            desc: '당신은 대부분의 것을 팔았습니다.\n\n양심도, 시간도, 관계도, 자존심도.\n\n비난하려는 게 아닙니다. 당신은 현실을 선택한 겁니다. 돈이 없으면 아무것도 할 수 없다는 걸 알기 때문입니다.\n\n하지만 질문은 남습니다. 그렇게 번 돈으로 무엇을 하고 있습니까?',
+            stats: [
+              { value: soldCount + '/5', label: '판 횟수' },
+              { value: principles.length, label: '발견한 원칙' }
+            ]
+          };
+        } else {
+          return {
+            icon: '🌀',
+            label: '당신의 유형',
+            title: '흔들리는 사람',
+            desc: '당신은 매 순간 다른 선택을 했습니다.\n\n어떤 건 팔았고, 어떤 건 타협했고, 어떤 건 지켰습니다. 일관된 기준이 있었다기보다, 그때그때 최선을 골랐습니다.\n\n그리고 그게 가장 인간적인 모습입니다. 정답이 없는 세상에서, 매번 다시 고민하는 것.',
+            stats: [
+              { value: score + '/10', label: '자기 보존 점수' },
+              { value: soldCount, label: '판 횟수' }
+            ]
+          };
+        }
+      },
+      
+      getShareText(resultTitle, choices, principles) {
+        const principleNames = principles.map(p => p.name).slice(0, 3).join(', ');
+        return '💸 돈의 가격\n\n나의 유형: ' + resultTitle + '\n발견한 원칙: ' + principleNames + '\n\n돈을 벌기 위해 당신은 무엇을 팔고 있는가?\n\nhttps://bit.ly/price-sim';
+      }
+    };
+    
+    SimTemplate.init(CONFIG);
+    
+    const oldShareBtn = document.getElementById('shareBtn');
+    const newShareBtn = oldShareBtn.cloneNode(true);
+    oldShareBtn.parentNode.replaceChild(newShareBtn, oldShareBtn);
+    newShareBtn.addEventListener('click', async () => {
+      const url = CONFIG.shareUrl;
+      const result = document.getElementById('resultTitle').textContent;
+      const text = '💸 돈의 가격\n\n나의 유형: ' + result + '\n\n돈을 벌기 위해 당신은 무엇을 팔고 있는가?\n\n' + url;
+      if (navigator.share) { try { await navigator.share({ title: '돈의 가격', text, url }); } catch {} }
+      else { 
+        try { await navigator.clipboard.writeText(text); } catch(e) {
+          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        newShareBtn.textContent = '링크 복사됨!';
+        setTimeout(() => { newShareBtn.textContent = '친구한테 시켜보기'; }, 2000);
+      }
+    });
+
+    document.getElementById('saveImageBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('shareCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 800; canvas.height = 420;
+      
+      const gradient = ctx.createLinearGradient(0, 0, 800, 420);
+      gradient.addColorStop(0, '#1a1610');
+      gradient.addColorStop(1, '#2a2118');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 420);
+      
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(document.getElementById('resultIcon').textContent, 400, 100);
+      
+      ctx.font = 'bold 36px -apple-system, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(document.getElementById('resultTitle').textContent, 400, 170);
+      
+      ctx.font = '16px -apple-system, sans-serif';
+      ctx.fillStyle = '#c9a84c';
+      ctx.fillText(document.getElementById('resultLabel').textContent, 400, 205);
+      
+      ctx.font = '18px -apple-system, sans-serif';
+      ctx.fillStyle = '#ccc';
+      const desc = document.getElementById('resultDesc').textContent;
+      const words = desc.split(' ');
+      let line = '', y = 250;
+      words.forEach(word => {
+        const test = line + word + ' ';
+        if (ctx.measureText(test).width > 700) { ctx.fillText(line, 400, y); line = word + ' '; y += 28; }
+        else { line = test; }
+      });
+      if (line) ctx.fillText(line, 400, y);
+      
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillStyle = '#c9a84c';
+      ctx.fillText('돈의 가격', 400, 390);
+      ctx.font = '14px -apple-system, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
+      
+      const link = document.createElement('a');
+      link.download = '돈의가격_결과.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>
