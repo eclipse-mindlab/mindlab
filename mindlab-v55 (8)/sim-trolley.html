@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>트롤리 딜레마 - 이클립스의 딜렘</title>
+  <link rel="stylesheet" href="sim-template.css">
+  <meta property="og:title" content="트롤리 딜레마 - 이클립스의 딜렘">
+  <meta property="og:description" content="당신의 도덕적 한계는 어디인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <style>
+    :root {
+      --sim-primary: #a855f7;
+      --sim-primary-light: #9580ff;
+      --sim-primary-bg: rgba(168, 85, 247, 0.1);
+      --sim-primary-border: rgba(168, 85, 247, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="sim-container">
+    <!-- 헤더 -->
+    <div class="sim-header">
+      <a href="index.html" class="sim-back-btn">←</a>
+      <div class="sim-header-title">트롤리 딜레마</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="gameScreen">
+      <div class="sim-progress">
+        <div class="sim-progress-label">
+          <span id="stageLabel">STAGE 1</span>
+          <span id="stageCount">1/5</span>
+        </div>
+        <div class="sim-progress-bar">
+          <div class="sim-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+      </div>
+
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1: 클래식</div>
+
+      <div class="sim-situation">
+        <div class="sim-situation-title" id="situationTitle">상황 제목</div>
+        <div class="sim-situation-desc" id="situationDesc">상황 설명</div>
+        <div class="sim-situation-highlight hidden" id="situationHighlight"></div>
+        <div class="sim-situation-quote hidden" id="situationQuote"></div>
+      </div>
+
+      <div class="sim-choices" id="choices"></div>
+    </div>
+
+    <!-- 해설 화면 -->
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card">
+        <div class="sim-explanation-label">당신의 선택</div>
+        <div class="sim-explanation-title" id="yourChoice">선택 내용</div>
+      </div>
+
+      <div class="sim-explanation-card hidden" id="meaningCard">
+        <div class="sim-explanation-label">이 선택이 의미하는 것</div>
+        <div class="sim-explanation-desc" id="choiceMeaning">해설 내용</div>
+      </div>
+
+      <div class="sim-principle-card hidden" id="principleCard">
+        <div class="sim-principle-header">
+          <span class="sim-principle-icon">💡</span>
+          <span>발견한 철학적 원칙</span>
+        </div>
+        <div class="sim-principle-name" id="principleName">원칙 이름</div>
+        <div class="sim-principle-desc" id="principleDesc">원칙 설명</div>
+      </div>
+
+      <div class="sim-quote-card hidden" id="quoteCard">
+        <span class="sim-quote-icon">💬</span>
+        <span class="sim-quote-text" id="quoteText">인용구</span>
+      </div>
+
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card">
+        <div class="sim-result-icon" id="resultIcon">🚃</div>
+        <div class="sim-result-label" id="resultLabel">당신의 도덕 유형</div>
+        <div class="sim-result-title" id="resultTitle">결과 타입</div>
+        <div class="sim-result-stats hidden" id="resultStats"></div>
+        <div class="sim-result-desc" id="resultDesc">결과 설명</div>
+      </div>
+
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+
+      <div class="sim-actions">
+        <button class="sim-action-btn primary" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
+      </div>
+
+      <!-- 프로모션 섹션 -->
+      <div class="sim-promo">
+        <div class="sim-promo-title">이 시뮬레이터의 바탕이 된 철학과 심리학이 궁금하다면</div>
+        
+        <div class="sim-books">
+          
+          <div class="sim-books-grid">
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-philosophy.png" alt="훔친 철학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 철학 편</div>
+            </a>
+            <a href="https://litt.ly/eclipse.thinker" target="_blank" class="sim-book-item">
+              <img src="book-psychology.png" alt="훔친 심리학 편" class="sim-book-cover">
+              <div class="sim-book-title">훔친 심리학 편</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 분기형 트롤리 딜레마 - 커스텀 로직
+    const STORAGE_KEY = 'eclipse_mindlab_profile';
+    
+    // 게임 상태
+    let currentRoute = null; // 'pull' or 'nothing'
+    let currentStageIndex = 0;
+    let choices = [];
+    let principles = [];
+    let gameEnded = false;
+    
+    // 스테이지 정의
+    const STAGE_1 = {
+      badge: 'STAGE 1: 클래식',
+      title: '폭주하는 트롤리',
+      desc: '당신은 선로 옆에 서 있다. 브레이크가 고장난 트롤리가 달려오고 있고, 선로 위에는 5명의 인부가 일하고 있다.\n\n당신 옆에는 레버가 있다. 레버를 당기면 트롤리가 다른 선로로 바뀌지만, 그 선로에는 1명의 인부가 있다.',
+      highlight: '5명이 죽거나, 1명이 죽는다.',
+      choices: [
+        {
+          id: 'pull',
+          text: '레버를 당긴다',
+          subtext: '1명을 희생하고 5명을 구한다',
+          meaning: '당신은 숫자를 계산했습니다. 5명의 생명이 1명보다 크다는 판단. 이것이 공리주의적 사고의 시작입니다.',
+          principle: {
+            name: '결과주의',
+            desc: '행위의 옳고 그름은 그 결과로 판단한다. 더 많은 생명을 구하는 선택이 옳다.',
+            icon: '📊'
+          },
+          quote: '"최대 다수의 최대 행복" - 제러미 벤담',
+          nextRoute: 'pull'
+        },
+        {
+          id: 'nothing',
+          text: '아무것도 하지 않는다',
+          subtext: '5명이 죽는 것을 지켜본다',
+          meaning: '당신은 행위와 방관을 구분했습니다. 트롤리가 5명을 치는 것은 당신 탓이 아니지만, 레버를 당겨 1명을 죽이는 것은 당신의 행위입니다.',
+          principle: {
+            name: '행위의 도덕성',
+            desc: '인간을 수단으로 사용해서는 안 된다. 결과와 상관없이 직접 죽이는 행위 자체가 잘못이다.',
+            icon: '📜'
+          },
+          quote: '"인간을 수단으로 대하지 말라" - 칸트',
+          nextRoute: 'nothing'
+        }
+      ]
+    };
+    
+    // A루트: 레버를 당긴 사람 - 한계를 찾는 여정
+    const ROUTE_PULL = [
+      {
+        badge: 'STAGE 2: 무고함의 무게',
+        title: '어린 아이',
+        desc: '또 다른 상황이다. 트롤리가 달려오고, 5명이 위험에 처해 있다.\n\n하지만 이번에는 다른 선로에 있는 1명이 어린 아이다.',
+        highlight: '성인 5명 vs 어린 아이 1명',
+        quote: '모든 생명의 가치는 동등한가?',
+        choices: [
+          {
+            id: 'pull_child',
+            text: '레버를 당긴다',
+            subtext: '아이라도 5명이 우선이다',
+            meaning: '당신은 감정을 배제하고 숫자를 유지했습니다. 아이의 생명도 성인 5명보다 크지 않다는 냉정한 판단.',
+            principle: {
+              name: '보편적 공정',
+              desc: '도덕적 판단에서 나이, 관계, 잠재력은 고려 대상이 아니다. 모든 생명은 동등하게 1로 계산된다.',
+              icon: '⚖️'
+            },
+            quote: '"공정함은 때로 냉정함을 요구한다" - 존 롤스',
+            continues: true
+          },
+          {
+            id: 'stop_child',
+            text: '레버를 당기지 않는다',
+            subtext: '아이를 희생시킬 수 없다',
+            meaning: '여기가 당신의 한계입니다. 숫자의 논리는 아이 앞에서 멈췄습니다. 무고함의 정도가 당신의 계산을 바꿨습니다.',
+            principle: {
+              name: '생명 가치의 차등',
+              desc: '모든 생명이 동등하지 않을 수 있다. 무고함, 잠재력, 취약성이 도덕적 무게를 더한다.',
+              icon: '👶'
+            },
+            quote: '"아이는 미래의 가능성 그 자체다"',
+            ends: true,
+            endResult: 'child_limit'
+          }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 개인적 관계',
+        title: '당신의 가족',
+        desc: '이번에 다른 선로에 있는 1명은 당신의 가족이다.\n\n낯선 5명을 구하기 위해 가족을 희생시킬 수 있는가?',
+        highlight: '낯선 5명 vs 당신의 가족 1명',
+        quote: '사랑하는 사람과 낯선 사람의 생명은 같은 무게인가?',
+        choices: [
+          {
+            id: 'pull_family',
+            text: '레버를 당긴다',
+            subtext: '가족이라도 5명이 우선이다',
+            meaning: '당신은 극도로 어려운 선택을 했습니다. 개인적 감정을 완전히 배제하고 숫자만 남겼습니다. 피터 싱어도 놀랄 선택입니다.',
+            principle: {
+              name: '극단적 공정',
+              desc: '도덕적 판단에서 개인적 관계는 배제되어야 한다. 내 가족도 낯선 사람과 동등한 1이다.',
+              icon: '🎯'
+            },
+            quote: '"나의 아이와 낯선 아이의 생명은 같은 무게다" - 피터 싱어',
+            continues: true
+          },
+          {
+            id: 'stop_family',
+            text: '레버를 당기지 않는다',
+            subtext: '가족을 희생시킬 수 없다',
+            meaning: '여기가 당신의 한계입니다. 공리주의는 가족 앞에서 멈췄습니다. 특별한 관계가 숫자를 이겼습니다.',
+            principle: {
+              name: '특별한 의무',
+              desc: '가까운 사람에 대한 특별한 의무가 있다. 가족을 낯선 5명보다 우선시하는 것은 자연스러운 일이다.',
+              icon: '👨‍👩‍👧'
+            },
+            quote: '"공정함은 때로 비인간적이다" - 버나드 윌리엄스',
+            ends: true,
+            endResult: 'family_limit'
+          }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 직접적 행위',
+        title: '다리 위의 남자',
+        desc: '이번에는 레버가 없다.\n\n당신은 다리 위에 서 있고, 옆에 덩치 큰 남자가 있다. 그를 밀어서 선로에 떨어뜨리면 트롤리가 멈춘다.\n\n5명이 살지만, 당신이 직접 손으로 밀어야 한다.',
+        highlight: '레버를 당기는 것과 직접 미는 것은 같은가?',
+        quote: '행위의 직접성이 도덕적 판단을 바꾸는가?',
+        choices: [
+          {
+            id: 'push',
+            text: '남자를 민다',
+            subtext: '5명을 구하기 위해 직접 행동한다',
+            meaning: '당신은 끝까지 일관성을 유지했습니다. 레버든 손이든, 결과는 같습니다. 수단의 차이가 도덕을 바꾸지 않는다는 것이 당신의 철학입니다.',
+            principle: {
+              name: '결과의 동등성',
+              desc: '행위의 방식(간접/직접)은 도덕적 판단과 무관하다. 오직 결과만이 중요하다.',
+              icon: '🎯'
+            },
+            quote: '"의도와 결과, 결과가 더 중요하다" - 결과주의',
+            continues: true,
+            endResult: 'ultimate_utilitarian'
+          },
+          {
+            id: 'not_push',
+            text: '밀지 않는다',
+            subtext: '직접 죽이는 것은 다르다',
+            meaning: '여기가 당신의 한계입니다. 레버는 당길 수 있지만, 직접 손으로 미는 것은 다릅니다. 행위의 직접성이 당신의 마지막 선을 그었습니다.',
+            principle: {
+              name: '행위의 직접성',
+              desc: '간접적으로 죽음을 유발하는 것과 직접 죽이는 것은 도덕적으로 다르다.',
+              icon: '✋'
+            },
+            quote: '"우리의 도덕적 직관은 논리적이지 않다" - 조슈아 그린',
+            ends: true,
+            endResult: 'directness_limit'
+          }
+        ]
+      }
+    ];
+    
+    // B루트: 레버를 안 당긴 사람 - 설득의 여정
+    const ROUTE_NOTHING = [
+      {
+        badge: 'STAGE 2: 숫자의 무게',
+        title: '더 많은 생명',
+        desc: '또 다른 상황이다. 이번에는 선로 위에 10명이 있다.\n\n레버를 당기면 1명이 죽지만, 10명이 산다.',
+        highlight: '10명 vs 1명',
+        quote: '숫자가 충분히 커지면 마음이 바뀌는가?',
+        choices: [
+          {
+            id: 'pull_ten',
+            text: '레버를 당긴다',
+            subtext: '10명이면 다르다',
+            meaning: '여기서 마음이 바뀌었습니다. 5명은 아니었지만, 10명은 달랐습니다. 당신에게는 행동을 정당화하는 임계점이 있습니다.',
+            principle: {
+              name: '임계점 윤리',
+              desc: '행위의 정당성에는 임계점이 있다. 충분히 많은 생명이 걸리면 개입이 정당화된다.',
+              icon: '📊'
+            },
+            quote: '"얼마나 많아야 충분한가?" - 공리주의의 딜레마',
+            ends: true,
+            endResult: 'threshold_utilitarian'
+          },
+          {
+            id: 'nothing_ten',
+            text: '그래도 당기지 않는다',
+            subtext: '숫자가 문제가 아니다',
+            meaning: '당신은 숫자에 흔들리지 않았습니다. 10명이든 100명이든, 직접 죽이는 행위 자체가 잘못이라는 입장을 유지했습니다.',
+            principle: {
+              name: '절대적 의무',
+              desc: '어떤 결과를 위해서도 무고한 사람을 죽이는 것은 허용되지 않는다. 숫자는 중요하지 않다.',
+              icon: '📜'
+            },
+            quote: '"목적이 수단을 정당화하지 않는다" - 칸트',
+            continues: true
+          }
+        ]
+      },
+      {
+        badge: 'STAGE 3: 가치의 판단',
+        title: '연쇄살인범',
+        desc: '이번에는 다른 선로에 있는 1명이 연쇄살인범이다.\n\n과거에 여러 사람을 죽였고, 앞으로도 더 죽일 가능성이 높다.',
+        highlight: '무고한 5명 vs 연쇄살인범 1명',
+        quote: '죄인의 생명도 무고한 생명과 같은가?',
+        choices: [
+          {
+            id: 'pull_killer',
+            text: '레버를 당긴다',
+            subtext: '살인범이라면 다르다',
+            meaning: '여기서 마음이 바뀌었습니다. 무고한 사람은 아니었지만, 살인범은 달랐습니다. 생명의 가치에 차등을 둔 것입니다.',
+            principle: {
+              name: '응보적 정의',
+              desc: '생명의 가치는 그 사람의 행위에 따라 달라질 수 있다. 죄인과 무고한 자는 다르다.',
+              icon: '⚖️'
+            },
+            quote: '"정의는 각자에게 그의 몫을 주는 것" - 울피아누스',
+            ends: true,
+            endResult: 'justice_utilitarian'
+          },
+          {
+            id: 'nothing_killer',
+            text: '그래도 당기지 않는다',
+            subtext: '그래도 내가 죽일 수는 없다',
+            meaning: '당신은 심판자가 되기를 거부했습니다. 살인범이라도 당신이 직접 죽일 권리는 없다는 입장입니다.',
+            principle: {
+              name: '생명의 절대성',
+              desc: '누구도 타인의 생명을 빼앗을 권리가 없다. 그가 어떤 사람이든.',
+              icon: '🛡️'
+            },
+            quote: '"복수는 나의 것이라 내가 갚으리라" - 로마서 12:19',
+            continues: true
+          }
+        ]
+      },
+      {
+        badge: 'STAGE 4: 동의의 윤리',
+        title: '자발적 희생',
+        desc: '이번에는 다른 선로에 있는 1명이 당신에게 소리친다.\n\n"저를 희생시켜 주세요! 제가 원합니다!"\n\n그는 5명을 구하기 위해 스스로 죽음을 선택했다.',
+        highlight: '5명 vs 자발적 희생자 1명',
+        quote: '본인이 동의하면 달라지는가?',
+        choices: [
+          {
+            id: 'pull_willing',
+            text: '레버를 당긴다',
+            subtext: '본인이 원한다면',
+            meaning: '여기서 마음이 바뀌었습니다. 강제가 아닌 동의가 있다면 다릅니다. 자율성이 당신의 행위를 정당화했습니다.',
+            principle: {
+              name: '동의 기반 윤리',
+              desc: '본인의 자발적 동의가 있다면 행위의 도덕성이 달라진다. 자율성은 존중받아야 한다.',
+              icon: '🤝'
+            },
+            quote: '"자유로운 선택은 존중받아야 한다" - 자유주의 윤리',
+            ends: true,
+            endResult: 'consent_ethicist'
+          },
+          {
+            id: 'nothing_willing',
+            text: '그래도 당기지 않는다',
+            subtext: '동의해도 내가 죽일 수는 없다',
+            meaning: '당신은 끝까지 흔들리지 않았습니다. 동의가 있어도 당신이 레버를 당기는 행위 자체는 바뀌지 않습니다.',
+            principle: {
+              name: '행위자 중심 윤리',
+              desc: '도덕적 판단의 핵심은 결과나 동의가 아니라, 행위자 자신의 행위다. 내가 죽이는 것은 내 행위다.',
+              icon: '🪞'
+            },
+            quote: '"나는 무엇을 해야 하는가?" - 칸트의 질문',
+            continues: true,
+            endResult: 'absolute_deontologist'
+          }
+        ]
+      }
+    ];
+    
+    // 결과 정의
+    const RESULTS = {
+      ultimate_utilitarian: {
+        icon: '📊',
+        title: '철저한 결과주의자',
+        desc: '당신은 끝까지 일관했습니다. 레버든 손이든, 가족이든 아이든, 결과만이 중요합니다.\n\n"최대 다수의 최대 행복"을 위해 어떤 수단도 정당화될 수 있다는 것이 당신의 철학입니다.\n\n이것은 냉정하지만, 가장 논리적으로 일관된 입장이기도 합니다.'
+      },
+      child_limit: {
+        icon: '👶',
+        title: '무고함의 수호자',
+        desc: '당신의 공리주의는 아이 앞에서 멈췄습니다.\n\n숫자의 논리는 강력하지만, 가장 무고하고 취약한 존재 앞에서는 다른 원칙이 작동합니다.\n\n"모든 생명은 동등하다"는 말이 진정 옳은가를 질문하게 만드는 선택입니다.'
+      },
+      family_limit: {
+        icon: '👨‍👩‍👧',
+        title: '관계 중심주의자',
+        desc: '당신의 공리주의는 가족 앞에서 멈췄습니다.\n\n우리는 모든 사람을 동등하게 사랑할 수 없고, 그것이 인간입니다. 버나드 윌리엄스는 이것을 "도덕적 운"이라 불렀습니다.\n\n가까운 사람에 대한 특별한 의무를 인정하는 것은 인간적인 선택입니다.'
+      },
+      directness_limit: {
+        icon: '✋',
+        title: '간접 행위 한정자',
+        desc: '레버는 당길 수 있지만, 직접 미는 것은 달랐습니다.\n\n논리적으로는 같은 결과인데, 왜 느낌이 다를까요? 조슈아 그린의 연구에 따르면, 이것은 우리 뇌의 진화적 특성입니다.\n\n당신의 도덕적 직관은 논리를 넘어섭니다.'
+      },
+      threshold_utilitarian: {
+        icon: '📈',
+        title: '임계점 공리주의자',
+        desc: '5명은 아니었지만, 10명은 달랐습니다.\n\n당신에게는 행동을 정당화하는 임계점이 있습니다. 충분히 많은 생명이 걸리면 개입이 정당화됩니다.\n\n"얼마나 많아야 충분한가?"는 여전히 열린 질문입니다.'
+      },
+      justice_utilitarian: {
+        icon: '⚖️',
+        title: '응보적 정의론자',
+        desc: '무고한 사람은 아니었지만, 살인범은 달랐습니다.\n\n모든 생명이 동등한 가치를 가지는 것은 아닙니다. 행위에 따른 책임이 있고, 정의는 그것을 반영해야 합니다.\n\n"눈에는 눈"의 고대 원칙이 여전히 당신 안에 살아있습니다.'
+      },
+      consent_ethicist: {
+        icon: '🤝',
+        title: '동의 기반 윤리학자',
+        desc: '강제는 안 되지만, 자발적 동의는 다릅니다.\n\n개인의 자율성과 선택의 자유는 존중받아야 합니다. 그가 스스로 선택한 것이라면, 당신은 그 선택을 존중한 것입니다.\n\n자유주의 윤리학의 핵심이 당신의 마음을 움직였습니다.'
+      },
+      absolute_deontologist: {
+        icon: '📜',
+        title: '절대적 의무론자',
+        desc: '당신은 끝까지 흔들리지 않았습니다.\n\n숫자가 늘어도, 상대가 살인범이어도, 본인이 동의해도 - 당신이 레버를 당기는 행위 자체는 변하지 않습니다.\n\n"목적이 수단을 정당화하지 않는다"는 칸트의 말이 당신의 철학입니다. 가장 엄격하지만, 가장 일관된 입장입니다.'
+      }
+    };
+    
+    // 현재 스테이지 가져오기
+    function getCurrentStage() {
+      if (currentStageIndex === 0) {
+        return STAGE_1;
+      }
+      const route = currentRoute === 'pull' ? ROUTE_PULL : ROUTE_NOTHING;
+      return route[currentStageIndex - 1];
+    }
+    
+    // 총 스테이지 수
+    function getTotalStages() {
+      if (!currentRoute) return 5;
+      const route = currentRoute === 'pull' ? ROUTE_PULL : ROUTE_NOTHING;
+      return 1 + route.length;
+    }
+    
+    // UI 업데이트
+    function updateStageUI() {
+      const stage = getCurrentStage();
+      const total = getTotalStages();
+      
+      document.getElementById('stageLabel').textContent = `STAGE ${currentStageIndex + 1}`;
+      document.getElementById('stageCount').textContent = `${currentStageIndex + 1}/${total}`;
+      document.getElementById('progressFill').style.width = `${((currentStageIndex + 1) / total) * 100}%`;
+      document.getElementById('stageBadge').textContent = stage.badge;
+      document.getElementById('situationTitle').textContent = stage.title;
+      document.getElementById('situationDesc').innerHTML = stage.desc.replace(/\n/g, '<br>');
+      
+      const highlightEl = document.getElementById('situationHighlight');
+      if (stage.highlight) {
+        highlightEl.textContent = stage.highlight;
+        highlightEl.classList.remove('hidden');
+      } else {
+        highlightEl.classList.add('hidden');
+      }
+      
+      const quoteEl = document.getElementById('situationQuote');
+      if (stage.quote) {
+        quoteEl.textContent = stage.quote;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+      
+      // 선택지 렌더링
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = '';
+      
+      stage.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-choice-btn';
+        btn.innerHTML = `
+          <span class="sim-choice-text">${choice.text}</span>
+          <span class="sim-choice-subtext">${choice.subtext}</span>
+        `;
+        btn.addEventListener('click', () => handleChoice(choice));
+        choicesEl.appendChild(btn);
+      });
+    }
+    
+    // 선택 처리
+    function handleChoice(choice) {
+      // 선택 기록
+      choices.push({
+        stage: currentStageIndex,
+        choiceId: choice.id
+      });
+      
+      // 원칙 추가
+      if (choice.principle) {
+        const existing = principles.find(p => p.name === choice.principle.name);
+        if (!existing) {
+          principles.push(choice.principle);
+        }
+      }
+      
+      // 첫 번째 스테이지면 루트 결정
+      if (currentStageIndex === 0) {
+        currentRoute = choice.nextRoute;
+      }
+      
+      // 해설 표시
+      showExplanation(choice);
+    }
+    
+    // 해설 표시
+    function showExplanation(choice) {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('explanationScreen').classList.remove('hidden');
+      
+      document.getElementById('yourChoice').textContent = choice.text;
+      
+      const meaningCard = document.getElementById('meaningCard');
+      if (choice.meaning) {
+        document.getElementById('choiceMeaning').textContent = choice.meaning;
+        meaningCard.classList.remove('hidden');
+      } else {
+        meaningCard.classList.add('hidden');
+      }
+      
+      const principleCard = document.getElementById('principleCard');
+      if (choice.principle) {
+        document.getElementById('principleName').textContent = choice.principle.name;
+        document.getElementById('principleDesc').textContent = choice.principle.desc;
+        principleCard.classList.remove('hidden');
+      } else {
+        principleCard.classList.add('hidden');
+      }
+      
+      const quoteCard = document.getElementById('quoteCard');
+      if (choice.quote) {
+        document.getElementById('quoteText').textContent = choice.quote;
+        quoteCard.classList.remove('hidden');
+      } else {
+        quoteCard.classList.add('hidden');
+      }
+      
+      // 다음 버튼 설정
+      const nextBtn = document.getElementById('nextBtn');
+      
+      if (choice.ends || choice.endResult) {
+        gameEnded = true;
+        nextBtn.textContent = '결과 보기';
+        nextBtn.onclick = () => showResult(choice.endResult);
+      } else {
+        nextBtn.textContent = '다음으로';
+        nextBtn.onclick = () => {
+          currentStageIndex++;
+          document.getElementById('explanationScreen').classList.add('hidden');
+          document.getElementById('gameScreen').classList.remove('hidden');
+          updateStageUI();
+        };
+      }
+    }
+    
+    // 결과 표시
+    function showResult(resultKey) {
+      const result = RESULTS[resultKey];
+      
+      document.getElementById('explanationScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.remove('hidden');
+      
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').innerHTML = result.desc.replace(/\n/g, '<br>');
+      
+      // 원칙 리스트
+      const principlesList = document.getElementById('principlesList');
+      if (principles.length > 0) {
+        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principles.forEach(p => {
+          principlesList.innerHTML += `
+            <div class="sim-principles-item">
+              <span class="sim-principles-item-icon">${p.icon}</span>
+              <div>
+                <div class="sim-principles-item-name">${p.name}</div>
+                <div class="sim-principles-item-desc">${p.desc}</div>
+              </div>
+            </div>
+          `;
+        });
+        principlesList.classList.remove('hidden');
+      }
+      
+      // 프로필 저장
+      saveProfile(result, resultKey);
+      
+      // 공유 버튼 - 복제인간 방식
+      document.getElementById('shareBtn').addEventListener('click', async () => {
+        const quote = principles.length > 0 ? principles[principles.length - 1].desc : '';
+        const text = `🚃 트롤리 딜레마 결과\n\n나의 도덕 유형: ${result.title}\n\n"${quote}"\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-trolley.html`;
+        
+        // 모바일에서만 네이티브 공유 사용
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile && navigator.share) {
+          try {
+            await navigator.share({ title: '트롤리 딜레마', text: text });
+          } catch (e) {
+            // 공유 취소시 무시
+          }
+        } else {
+          try {
+            await navigator.clipboard.writeText(text);
+            alert('결과가 클립보드에 복사되었습니다!');
+          } catch (e) {
+            // fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('결과가 클립보드에 복사되었습니다!');
+          }
+        }
+      });
+    }
+    
+    // 프로필 저장
+    function saveProfile(result, resultKey) {
+      let profile = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      
+      if (!profile.version) {
+        profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      }
+      
+      // 경험치 추가
+      profile.exp = (profile.exp || 0) + 30;
+      
+      // 레벨업 체크
+      const expNeeded = (profile.level || 1) * 100;
+      while (profile.exp >= expNeeded) {
+        profile.exp -= expNeeded;
+        profile.level = (profile.level || 1) + 1;
+      }
+      
+      // 완료한 시뮬레이터 기록
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.completedSims.includes('trolley')) {
+        profile.completedSims.push('trolley');
+      }
+      
+      // 원칙 추가
+      if (!profile.principles) profile.principles = [];
+      principles.forEach(p => {
+        if (!profile.principles.find(existing => existing.name === p.name)) {
+          profile.principles.push(p);
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    }
+    
+    // 초기화
+    function init() {
+      updateStageUI();
+    }
+    
+    init();
+  </script>
+</body>
+</html>
