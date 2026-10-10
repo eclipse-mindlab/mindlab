@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#140a20">
   <title>죽음을 앞둔 선택 - 이클립스의 딜렘</title>
   <link rel="stylesheet" href="sim-template.css">
   <meta property="og:title" content="죽음을 앞둔 선택 - 이클립스의 딜렘">
@@ -633,7 +634,7 @@
       // 발견한 원칙 표시
       if (principles.length > 0) {
         const principlesList = document.getElementById('principlesList');
-        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principlesList.innerHTML = '<div class="sim-principles-list-title">발견한 원칙</div>';
         principles.forEach(p => {
           const item = document.createElement('div');
           item.className = 'sim-principles-item';

@@ -4,26 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>개인정보처리방침 - 이클립스의 딜렘</title>
+  <meta name="theme-color" content="#140a20">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #d4d4d8;
-      line-height: 1.8;
-      padding: 24px;
-    }
-    .container { max-width: 600px; margin: 0 auto; }
-    h1 { color: #fff; font-size: 24px; margin-bottom: 24px; }
-    h2 { color: #a78bfa; font-size: 18px; margin: 24px 0 12px; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 72px; }
+    .top { display: flex; align-items: center; gap: 6px; height: 54px; margin-left: -10px; }
+    .back { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--mist); }
+    .back:hover { color: var(--moon); }
+    .back svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .top span { font-size: 14px; color: var(--mist); }
+    h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(28px, 7.6vw, 34px); line-height: 1.3; letter-spacing: -.02em; margin: 24px 0 8px; }
+    .date { color: var(--dim); font-size: 13px; margin-bottom: 28px; }
+    h2 { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.4; margin: 36px 0 10px; padding-top: 22px; border-top: 1px solid var(--line); }
+    p, li { font-size: 15.5px; line-height: 1.85; color: color-mix(in srgb, var(--moon) 84%, var(--mist)); word-break: keep-all; overflow-wrap: break-word; }
     p { margin-bottom: 12px; }
-    ul { margin-left: 20px; margin-bottom: 12px; }
-    .date { color: #71717a; font-size: 14px; margin-bottom: 24px; }
-    a { color: #a78bfa; }
+    ul { margin: 0 0 12px 20px; }
+    li::marker { color: var(--dim); }
   </style>
 </head>
 <body>
   <div class="container">
+    <nav class="top">
+      <a href="index.html" class="back" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+      <span>이클립스의 딜렘</span>
+    </nav>
     <h1>개인정보처리방침</h1>
     <p class="date">시행일: 2026년 10월 11일 (최초 시행 2025년 1월 29일)</p>
 

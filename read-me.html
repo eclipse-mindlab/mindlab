@@ -7,7 +7,7 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <link rel="apple-touch-icon" href="icon-192.png">
   
   <!-- SEO -->
@@ -16,577 +16,215 @@
   <meta property="og:description" content="내 선택을 친구가 맞출 수 있을까?">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-read-me.png?v=2">
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+    /* 나를 읽어봐: a game between two people. I answer, a friend guesses. */
+    body { word-break: keep-all; overflow-wrap: anywhere; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 64px; }
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
+    /* top bar */
+    .header { display: flex; align-items: center; gap: 10px; height: 64px; }
     .back-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #141417;
-      border: 1px solid #232326;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .header-title {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    /* 닉네임 입력 화면 */
-    .nickname-screen {
-      padding: 40px 0;
-    }
-
-    .nickname-screen.hidden {
-      display: none;
-    }
-
-    .nickname-card {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 20px;
-      padding: 40px 24px;
-      text-align: center;
-    }
-
-    .nickname-card-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .nickname-card-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .nickname-card-desc {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 24px;
-    }
-
-    .nickname-card-input {
-      width: 100%;
-      padding: 16px;
-      background: #09090b;
-      border: 2px solid #232326;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 18px;
-      text-align: center;
-      outline: none;
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
-    }
-
-    .nickname-card-input:focus {
-      border-color: #9580ff;
-    }
-
-    .nickname-card-input::placeholder {
-      color: #52525b;
-    }
-
-    .nickname-card-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nickname-card-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .nickname-card-btn:not(:disabled):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-    }
-
-    /* 인트로 화면 */
-    .intro-screen {
-      text-align: center;
-      padding: 40px 0;
-    }
-
-    .intro-screen.hidden {
-      display: none;
-    }
-
-    .intro-icon {
-      font-size: 64px;
-      margin-bottom: 24px;
-    }
-
-    .intro-title {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #9580ff, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .intro-desc {
-      font-size: 16px;
-      color: #a1a1aa;
-      margin-bottom: 32px;
-      line-height: 1.7;
-    }
-
-    .intro-steps {
-      text-align: left;
-      background: #141417;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 32px;
-    }
-
-    .intro-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 0;
-    }
-
-    .intro-step:not(:last-child) {
-      border-bottom: 1px solid #232326;
-    }
-
-    .step-num {
-      width: 24px;
-      height: 24px;
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .step-text {
-      font-size: 14px;
-      color: #d4d4d8;
-    }
-
-    .start-btn {
-      width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      border: none;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 17px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
-    }
-
-    /* 질문 화면 */
-    .question-screen {
-      display: none;
-    }
-
-    .progress-bar {
-      height: 4px;
-      background: #232326;
-      border-radius: 2px;
-      margin-bottom: 32px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #6d5dbc, #9580ff);
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    .question-num {
-      font-size: 13px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-
-    .question-text {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option-btn {
-      padding: 18px 20px;
-      background: #141417;
-      border: 2px solid #232326;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .option-btn:hover {
-      border-color: #6d5dbc;
-      background: #1a1a1e;
-    }
-
-    .option-btn.selected {
-      border-color: #9580ff;
-      background: rgba(167, 139, 250, 0.15);
-    }
-
-    /* 결과/공유 화면 */
-    .result-screen {
-      display: none;
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .result-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .result-desc {
-      font-size: 14px;
-      color: #a1a1aa;
-      margin-bottom: 32px;
-    }
-
-    /* 공유 카드 - 인스타 스토리 비율 */
-    .share-card {
-      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
-      border: 1px solid rgba(167, 139, 250, 0.3);
-      border-radius: 24px;
-      padding: 48px 32px;
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-      aspect-ratio: 9/12;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .share-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle at 30% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
-                  radial-gradient(circle at 70% 80%, rgba(244, 114, 182, 0.1) 0%, transparent 40%);
-    }
-
-    .share-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-      opacity: 0.03;
-      pointer-events: none;
-    }
-
-    .share-card-content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-    }
-
-    .share-card-icon {
-      font-size: 56px;
-      margin-bottom: 20px;
-    }
-
-    .share-card-label {
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-
-    .share-card-title {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      background: linear-gradient(135deg, #9580ff, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .share-card-divider {
-      width: 40px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #9580ff, transparent);
-      margin: 20px auto;
-    }
-
-    .share-card-question {
-      font-size: 24px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .share-card-question2 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #e4e4e7;
-    }
-
-    .share-card-from {
-      font-size: 14px;
-      color: #9580ff;
-      margin-top: 24px;
-      margin-bottom: 20px;
-    }
-
-    .share-card-cta {
-      display: inline-block;
-      padding: 10px 24px;
-      background: rgba(167, 139, 250, 0.15);
-      border: 1px solid rgba(167, 139, 250, 0.3);
-      border-radius: 24px;
-      font-size: 14px;
-      color: #d4d4d8;
-    }
-
-    .share-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .share-btn {
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: none;
-    }
-
-    .share-btn.save-image {
-      background: linear-gradient(135deg, #ec4899, #f472b6);
-      color: #fff;
-    }
-
-    .share-btn.save-image:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
-    }
-
-    .share-btn.primary {
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      color: #fff;
-    }
-
-    .share-btn.primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-    }
-
-    .share-btn.secondary {
-      background: #232326;
-      color: #fff;
-      border: 1px solid #35353a;
-    }
-
-    .share-btn.secondary:hover {
-      background: #35353a;
-    }
-
-    .share-btn.success {
-      background: #166534 !important;
-      color: #fff !important;
-    }
-
-    .link-box {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-
-    .link-label {
-      font-size: 12px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-
-    .link-display {
-      font-family: monospace;
-      font-size: 12px;
-      color: #9580ff;
-      word-break: break-all;
-      line-height: 1.5;
-    }
-
-    .home-link {
-      display: inline-block;
-      margin-top: 16px;
-      color: #8b8b92;
-      font-size: 14px;
-      text-decoration: none;
-    }
-
-    .home-link:hover {
-      color: #9580ff;
-    }
-
-    .results-link {
-      display: block;
-      text-align: center;
-      padding: 14px;
-      background: rgba(167, 139, 250, 0.1);
-      border: 1px solid rgba(167, 139, 250, 0.3);
-      border-radius: 12px;
-      color: #9580ff;
-      font-size: 14px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .results-link:hover {
-      background: rgba(167, 139, 250, 0.2);
-    }
-
-    .hidden { display: none !important; }
-
-    /* 토스트 */
+      width: 36px; height: 36px; margin-left: -8px; border-radius: 50%;
+      display: grid; place-items: center; color: var(--mist); flex: none;
+    }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .top-logo { width: 26px; height: 26px; border-radius: 50%; flex: none; }
+    .header-title { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; }
+    .top-aside { margin-left: auto; font-size: 13px; color: var(--mist); }
+    .top-aside:hover { color: var(--moon); }
+
+    /* toast */
     .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
+      position: fixed; left: 50%; bottom: 96px; z-index: 100;
       transform: translateX(-50%);
-      background: #232326;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 100;
+      background: var(--night-3); color: var(--moon);
+      padding: 10px 18px; border-radius: 999px; font-size: 14px; white-space: nowrap;
+      box-shadow: inset 0 0 0 1px var(--line);
+      opacity: 0; transition: opacity .25s; pointer-events: none;
     }
+    .toast.show { opacity: 1; }
 
-    .toast.show {
-      opacity: 1;
+    /* loading */
+    .loading-spinner {
+      width: 28px; height: 28px; margin: 0 auto 14px; border-radius: 50%;
+      border: 1.5px solid var(--line); border-top-color: var(--mist);
+      animation: spin 1s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--dim); font-size: 14px; }
+
+    .ecl-btn.wide { width: 100%; height: 52px; font-size: 16px; }
+    .ecl-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .ecl-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    .kicker { font-size: 13px; color: var(--mist); }
+    .serif-title { font-family: var(--serif); font-weight: 400; letter-spacing: -.02em; line-height: 1.3; }
+    /* question: one at a time */
+    .q-meta { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
+    .question-num { font-size: 13px; color: var(--mist); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .progress-bar { flex: 1; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--corona); border-radius: 2px; transition: width .35s ease; }
+    .question-text {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(26px, 7.2vw, 32px); line-height: 1.36; letter-spacing: -.02em;
+      margin: 36px 0 32px; min-height: 2.72em; text-wrap: balance; word-break: keep-all;
+    }
+    .options { display: flex; flex-direction: column; margin: 0 -12px; border-top: 1px solid var(--line); }
+    .option-btn {
+      display: flex; align-items: center; gap: 14px; width: 100%;
+      padding: 18px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 16px; text-align: left; color: var(--moon); line-height: 1.45;
+      transition: background .15s ease;
+    }
+    .option-btn::before {
+      content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%;
+      box-shadow: inset 0 0 0 1.5px var(--dim); transition: box-shadow .15s ease;
+    }
+    .option-btn:hover { background: var(--night-2); }
+    .option-btn:hover::before { box-shadow: inset 0 0 0 1.5px var(--mist); }
+    .option-btn:active { background: var(--night-3); }
+    .option-btn.selected { background: var(--night-2); font-weight: 500; }
+    .option-btn.selected::before { box-shadow: inset 0 0 0 5px var(--moon); }
+    .container { padding-bottom: 120px; }
+
+    /* nickname + intro */
+    .nickname-screen, .intro-screen { padding: 28px 0 0; }
+    .intro-mark { width: 56px; margin: 18px 0 34px 14px; }
+    .intro-title { font-size: clamp(38px, 11vw, 46px); }
+    .intro-desc { margin-top: 14px; color: var(--mist); font-size: 15.5px; line-height: 1.7; }
+    .intro-steps { margin: 34px 0 32px; border-top: 1px solid var(--line); }
+    .intro-step { display: flex; align-items: baseline; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .step-num { font-family: var(--serif); font-size: 20px; color: var(--dim); width: 14px; flex: none; }
+    .step-text { font-size: 15px; }
+
+    .nickname-card-title { font-size: 28px; }
+    .nickname-card-desc { margin-top: 8px; color: var(--mist); font-size: 14.5px; }
+    .nickname-card-input {
+      display: block; width: 100%; height: 54px; margin: 28px 0 14px; padding: 0 18px;
+      background: var(--night-3); border: 0; border-radius: 12px; outline: none;
+      color: var(--moon); font: inherit; font-size: 17px;
+    }
+    .nickname-card-input::placeholder { color: var(--dim); }
+    .nickname-card-input:focus-visible { box-shadow: inset 0 0 0 1px var(--mist); }
+
+    /* question */
+    .question-screen { display: none; padding-top: 4px; }
+
+    /* share step */
+    .result-screen { display: none; padding-top: 20px; }
+    .result-title { font-size: 30px; }
+    .result-desc { margin-top: 8px; color: var(--mist); font-size: 14.5px; }
+
+    .link-box { margin-top: 28px; background: var(--night-2); border-radius: var(--r-m); padding: 18px 18px 18px; }
+    .link-label { font-size: 13px; color: var(--mist); margin-bottom: 8px; }
+    .link-display {
+      font-size: 14px; color: var(--moon); word-break: break-all; line-height: 1.5;
+      background: var(--night-3); border-radius: 10px; padding: 12px 14px;
+      font-variant-numeric: tabular-nums; user-select: all;
+    }
+    .share-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .share-btn { width: 100%; height: 50px; }
+    .share-btn.primary { height: 52px; font-size: 16px; }
+    .share-btn.success { box-shadow: inset 0 0 0 1px var(--ok); color: var(--ok); background: transparent; }
+    .share-btn:disabled { opacity: .6; }
+
+    .story { margin-top: 44px; }
+    .story-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .story-head h2 { font-family: var(--serif); font-weight: 400; font-size: 21px; }
+    .story-head span { font-size: 13px; color: var(--dim); }
+
+    /* share card: rendered to an image by html2canvas */
+    .share-card {
+      position: relative; overflow: hidden; aspect-ratio: 9 / 12;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      background: var(--night); border-radius: var(--r-m); box-shadow: inset 0 0 0 1px var(--line);
+      padding: 40px 28px;
+    }
+    .share-card-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+    .share-card .ecl-mark { width: 74px; margin-bottom: 42px; }
+    .share-card-label { font-size: 12px; color: var(--dim); letter-spacing: .02em; }
+    .share-card-title { font-family: var(--serif); font-size: 40px; line-height: 1.2; margin-top: 6px; }
+    .share-card-divider { width: 28px; height: 1px; background: var(--line); margin: 22px auto; }
+    .share-card-question, .share-card-question2 { font-family: var(--serif); font-size: 23px; line-height: 1.4; color: var(--mist); }
+    .share-card-from { margin-top: 26px; font-size: 14px; color: var(--moon); }
+    .share-card-cta {
+      margin-top: 14px; display: inline-block; padding: 8px 18px; border-radius: 999px;
+      font-size: 13px; color: var(--mist); box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .share-btn.save-image { margin-top: 12px; }
+
+    .next-links { margin-top: 36px; border-top: 1px solid var(--line); }
+    .results-link, .home-link {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 15px;
+    }
+    .results-link small { display: block; font-size: 13px; color: var(--dim); margin-top: 1px; }
+    .home-link { color: var(--mist); }
+    .results-link svg, .home-link svg { width: 18px; height: 18px; flex: none; stroke: var(--dim); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .results-link:hover svg, .home-link:hover svg { stroke: var(--moon); }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <a href="index.html" class="back-btn">←</a>
+      <img src="logo.png" alt="" class="top-logo">
       <div class="header-title">나를 읽어봐</div>
+      <a href="my-challenges.html" class="top-aside">내 도전장</a>
     </div>
 
     <!-- 닉네임 입력 화면 (프로필 없을 때) -->
     <div class="nickname-screen hidden" id="nicknameScreen">
       <div class="nickname-card">
-        <div class="nickname-card-icon">✏️</div>
-        <div class="nickname-card-title">먼저 닉네임을 정해주세요</div>
-        <div class="nickname-card-desc">도전장에 표시됩니다</div>
+        <h1 class="nickname-card-title serif-title">먼저 닉네임을 정해 주세요</h1>
+        <p class="nickname-card-desc">도전장에 이 이름이 표시돼요.</p>
         <input type="text" class="nickname-card-input" id="creatorNicknameInput" placeholder="예: 홍길동" maxlength="10">
-        <button class="nickname-card-btn" id="nicknameNextBtn" disabled>다음</button>
+        <button class="nickname-card-btn ecl-btn wide" id="nicknameNextBtn" disabled>다음</button>
       </div>
     </div>
 
     <!-- 인트로 화면 -->
     <div class="intro-screen hidden" id="introScreen">
-      <div class="intro-icon">🔮</div>
-      <div class="intro-title">나를 읽어봐</div>
-      <div class="intro-desc">
-        5가지 상황에서 내 선택을 답하고,<br>
-        친구에게 도전장을 보내세요.<br>
-        과연 날 얼마나 알까?
-      </div>
+      <div class="ecl-mark intro-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
+      <div class="kicker">친구와 둘이 하는 다섯 문제</div>
+      <h1 class="intro-title serif-title">나를 읽어봐</h1>
+      <p class="intro-desc">
+        다섯 가지 상황에서 내가 고를 답을 정해 두고,
+        친구에게 맞혀 보라고 보내요. 친구가 나를 얼마나 아는지 점수로 나와요.
+      </p>
 
       <div class="intro-steps">
         <div class="intro-step">
           <div class="step-num">1</div>
-          <div class="step-text">5개 질문에 솔직하게 답하기</div>
+          <div class="step-text">질문 5개에 솔직하게 답하기</div>
         </div>
         <div class="intro-step">
           <div class="step-num">2</div>
-          <div class="step-text">나만의 도전장 링크 생성</div>
+          <div class="step-text">내 도전장 링크 받기</div>
         </div>
         <div class="intro-step">
           <div class="step-num">3</div>
-          <div class="step-text">친구에게 공유하고 결과 확인!</div>
+          <div class="step-text">친구에게 보내고 점수 확인하기</div>
         </div>
       </div>
 
-      <button class="start-btn" id="startBtn">도전장 만들기</button>
+      <button class="start-btn ecl-btn wide" id="startBtn">도전장 만들기</button>
     </div>
 
     <!-- 질문 화면 -->
     <div class="question-screen" id="questionScreen">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+      <div class="q-meta">
+        <div class="question-num" id="questionNum">질문 1/5</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
       </div>
 
-      <div class="question-num" id="questionNum">질문 1/5</div>
       <div class="question-text" id="questionText">질문이 여기에 표시됩니다</div>
 
       <div class="options" id="optionsContainer">
@@ -596,65 +234,60 @@
 
     <!-- 결과/공유 화면 -->
     <div class="result-screen" id="resultScreen">
-      <div class="result-title">도전장 완성! 🎉</div>
-      <div class="result-desc">친구에게 공유해서 진짜 날 아는지 확인해봐</div>
-
-      <div class="share-card" id="shareCard">
-        <div class="share-card-content">
-          <div class="share-card-icon">🔮</div>
-          <div class="share-card-label">MIND CHALLENGE</div>
-          <div class="share-card-title">나를 읽어봐</div>
-          <div class="share-card-divider"></div>
-          <div class="share-card-question">날 안다고?</div>
-          <div class="share-card-question2">맞춰봐 👀</div>
-          <div class="share-card-divider"></div>
-          <div class="share-card-from">@<span id="shareCardName">???</span>의 도전장</div>
-          <div class="share-card-cta">5문제 도전 →</div>
-        </div>
-      </div>
-
-      <div class="share-actions">
-        <button class="share-btn save-image" id="saveImageBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          인스타 스토리용 이미지 저장
-        </button>
-
-        <button class="share-btn primary" id="copyShareBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          문구 + 링크 복사
-        </button>
-
-        <button class="share-btn secondary" id="nativeShareBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-          </svg>
-          다른 앱으로 공유
-        </button>
-      </div>
+      <h1 class="result-title serif-title">도전장이 준비됐어요</h1>
+      <p class="result-desc">아래 링크를 친구에게 보내면 친구가 내 답을 맞혀 봐요.</p>
 
       <div class="link-box" id="linkBox">
         <div class="link-label">도전 링크</div>
         <div class="link-display" id="linkDisplay">링크 생성 중...</div>
+
+        <div class="share-actions">
+          <button class="share-btn primary ecl-btn" id="copyShareBtn">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            문구 + 링크 복사
+          </button>
+          <button class="share-btn secondary ecl-btn ghost" id="nativeShareBtn">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4"/></svg>
+            다른 앱으로 공유
+          </button>
+        </div>
       </div>
 
-      <a href="#" class="results-link" id="resultsLink">
-        📊 도전 현황 보기 (누가 몇 점 맞췄는지)
-      </a>
+      <div class="story">
+        <div class="story-head"><h2>스토리용 이미지</h2><span>인스타 스토리에 올리기 좋아요</span></div>
+        <div class="share-card" id="shareCard">
+          <div class="share-card-content">
+            <div class="ecl-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
+            <div class="share-card-label">이클립스의 딜렘</div>
+            <div class="share-card-title">나를 읽어봐</div>
+            <div class="share-card-divider"></div>
+            <div class="share-card-question">날 안다고?</div>
+            <div class="share-card-question2">맞춰 봐</div>
+            <div class="share-card-from">@<span id="shareCardName">???</span>의 도전장</div>
+            <div class="share-card-cta">5문제 도전</div>
+          </div>
+        </div>
+        <button class="share-btn save-image ecl-btn ghost" id="saveImageBtn">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="M20.5 15l-5-5L4 21"/></svg>
+          이미지 저장
+        </button>
+      </div>
 
-      <a href="index.html" class="home-link">← 홈으로 돌아가기</a>
+      <div class="next-links">
+        <a href="#" class="results-link" id="resultsLink">
+          <span>도전 현황 보기<small>누가 몇 점 맞혔는지 여기서 봐요</small></span>
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="index.html" class="home-link">
+          <span>홈으로</span>
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 
-  <div class="toast" id="toast">복사되었습니다!</div>
+  <div class="toast" id="toast">복사했어요</div>
+
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -1028,7 +661,7 @@
       btn.disabled = true;
       
       html2canvas(card, { 
-        backgroundColor: '#09090b',
+        backgroundColor: getComputedStyle(document.body).backgroundColor,
         scale: 2,
         logging: false,
         useCORS: true
@@ -1039,19 +672,15 @@
         link.click();
         
         btn.classList.add('success');
-        btn.innerHTML = '✓ 저장 완료!';
-        showToast('이미지가 저장되었습니다!');
+        btn.innerHTML = '저장했어요';
+        showToast('이미지를 저장했어요');
         
         setTimeout(() => {
           btn.classList.remove('success');
           btn.disabled = false;
           btn.innerHTML = `
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            인스타 스토리용 이미지 저장
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="M20.5 15l-5-5L4 21"/></svg>
+            이미지 저장
           `;
         }, 2000);
       }).catch(err => {
@@ -1067,16 +696,13 @@
       const fullText = `${message}\n\n🔮 도전하기\n${url}`;
       
       navigator.clipboard.writeText(fullText).then(() => {
-        showToast('문구와 링크가 복사되었습니다!');
+        showToast('문구와 링크를 복사했어요');
         copyShareBtn.classList.add('success');
-        copyShareBtn.innerHTML = '✓ 복사 완료!';
+        copyShareBtn.innerHTML = '복사했어요';
         setTimeout(() => {
           copyShareBtn.classList.remove('success');
           copyShareBtn.innerHTML = `
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
             문구 + 링크 복사
           `;
         }, 2000);
@@ -1108,22 +734,13 @@
     init();
   </script>
 
-  <!-- 하단 탭 네비게이션 -->
-  <div style="position:fixed;bottom:0;left:0;right:0;background:#09090b;border-top:1px solid #232326;display:flex;justify-content:center;z-index:1000;padding-bottom:env(safe-area-inset-bottom);">
-    <div style="display:flex;max-width:480px;width:100%;">
-      <a href="index.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">🏠</span>홈
-      </a>
-      <a href="daily.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">🤔</span>오늘의 질문
-      </a>
-      <a href="dex.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">📖</span>도감
-      </a>
-      <a href="read-me.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#9580ff;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">👤</span>프로필
-      </a>
-    </div>
+  <div class="ecl-tabbar">
+    <nav aria-label="주요 메뉴">
+      <a href="index.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 4.2a8.5 8.5 0 0 0 0 15.6"/></svg>홈</a>
+      <a href="daily.html"><svg viewBox="0 0 24 24"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3"/><circle cx="12" cy="17.6" r=".6"/><circle cx="12" cy="12" r="9"/></svg>오늘의 질문</a>
+      <a href="dex.html"><svg viewBox="0 0 24 24"><path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h11"/></svg>도감</a>
+      <a href="read-me.html" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 19.5a6 6 0 0 1 12 0"/><path d="M15.5 6.2a3.5 3.5 0 0 1 0 5.6M18 19.5a6 6 0 0 0-2.5-4.9"/></svg>나를 읽어봐</a>
+    </nav>
   </div>
 
 </body>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#140a20">
   <title>영생 - 이클립스의 딜렘</title>
   <link rel="stylesheet" href="sim-template.css">
   <meta property="og:title" content="영생 - 이클립스의 딜렘">
@@ -101,7 +102,7 @@
       <div class="sim-principles-list hidden" id="principlesList"></div>
 
       <div class="sim-actions">
-        <button class="sim-action-btn primary" id="saveImageBtn">📸 이미지 저장하기</button>
+        <button class="sim-action-btn primary" id="saveImageBtn">이미지로 저장하기</button>
         <button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button>
         <a href="index.html" class="sim-action-btn secondary">홈으로 돌아가기</a>
       </div>
@@ -621,7 +622,7 @@
       
       if (principles.length > 0) {
         const principlesList = document.getElementById('principlesList');
-        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principlesList.innerHTML = '<div class="sim-principles-list-title">발견한 원칙</div>';
         principles.forEach(p => {
           const item = document.createElement('div');
           item.className = 'sim-principles-item';

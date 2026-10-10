@@ -7,785 +7,227 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      padding: 24px;
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 540px;
-      margin: 0 auto;
-    }
-    
+    body { min-height: 100vh; padding-bottom: 56px; word-break: keep-all; overflow-wrap: break-word; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px; }
+
+    /* top bar: back, title, scene count, thin progress line */
     .header {
-      margin-bottom: 32px;
+      position: sticky; top: 0; z-index: 20;
+      margin: 0 -20px; padding: 0 20px;
+      background: color-mix(in srgb, var(--night) 92%, transparent);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
     }
-
+    .bar { display: flex; align-items: center; gap: 6px; height: 56px; }
     .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #8b8b92;
-      text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 16px;
+      flex: none; width: 40px; height: 40px; margin-left: -10px;
+      display: grid; place-items: center; border-radius: 50%; color: var(--mist);
+      transition: transform .15s ease, color .2s ease;
     }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn:active { transform: scale(.94); }
+    .bar-title {
+      flex: 1; min-width: 0; font-family: var(--serif); font-weight: 400; font-size: 19px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .stage-label { flex: none; font-size: 12.5px; color: var(--dim); font-variant-numeric: tabular-nums; }
+    .progress { display: flex; gap: 4px; }
+    .progress-bar { flex: 1; height: 2px; background: var(--line); transition: background .3s ease; }
+    .progress-bar.completed { background: var(--corona); }
+    .progress-bar.current { background: var(--violet-soft); }
 
-    .back-btn:hover {
-      color: #9580ff;
-    }
+    .intro { padding: 26px 0 0; }
+    .intro-meta { font-size: 12.5px; color: var(--dim); }
+    .intro-line { font-size: 14px; color: var(--mist); margin-top: 2px; }
 
-    .header-content {
-      text-align: center;
-    }
+    /* scene */
+    .scenario-card { padding: 22px 0 0; }
+    .context { font-size: 15.5px; line-height: 1.9; color: var(--mist); margin-bottom: 20px; }
+    .situation { font-family: var(--serif); font-weight: 400; font-size: 23px; line-height: 1.55; color: var(--moon); }
 
-    .header-category {
-      font-size: 12px;
-      color: #9580ff;
-      margin-bottom: 8px;
-    }
-    
-    .header h1 {
-      font-size: 22px;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-    
-    .header p {
-      font-size: 14px;
-      color: #8b8b92;
-    }
-    
-    .progress {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-    
-    .progress-bar {
-      height: 4px;
-      flex: 1;
-      border-radius: 4px;
-      background: #232326;
-      transition: background 0.3s;
-    }
-    
-    .progress-bar.completed { background: #9580ff; }
-    .progress-bar.current { background: rgba(167, 139, 250, 0.5); }
-    
-    .scenario-card {
-      background: #141417;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    .stage-label {
-      font-size: 11px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .context {
-      font-size: 13px;
-      color: #a1a1aa;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: #1a1a1e;
-      border-radius: 8px;
-    }
-    
-    .situation {
-      font-size: 17px;
-      line-height: 1.8;
-    }
-    
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
+    /* choices: tappable rows */
+    .choices { margin-top: 28px; border-top: 1px solid var(--line); counter-reset: ch; }
     .choice-btn {
-      width: 100%;
-      text-align: left;
-      padding: 16px;
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-      line-height: 1.6;
+      counter-increment: ch;
+      display: grid; grid-template-columns: 22px 1fr 10px; gap: 12px; align-items: start;
+      width: 100%; text-align: left; padding: 19px 6px 19px 4px;
+      border-bottom: 1px solid var(--line);
+      font-size: 15.5px; line-height: 1.65; color: var(--moon);
+      transition: background .2s ease, transform .15s ease;
     }
-    
-    .choice-btn:hover {
-      background: #232326;
-      border-color: #35353a;
+    .choice-btn::before { content: counter(ch); font-family: var(--serif); font-size: 18px; line-height: 1.45; color: var(--dim); }
+    .choice-btn::after {
+      content: ""; width: 8px; height: 8px; margin-top: 9px;
+      border-top: 1.5px solid var(--dim); border-right: 1.5px solid var(--dim); transform: rotate(45deg);
     }
-    
-    .result-section {
-      display: none;
-    }
-    
-    .result-section.show {
-      display: block;
-    }
-    
-    .selected-choice {
-      padding: 16px;
-      background: #141417;
-      border: 2px solid #35353a;
-      border-radius: 12px;
-      margin-bottom: 16px;
-    }
-    
-    .selected-header {
-      font-size: 13px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-    
-    .selected-text {
-      color: #d4d4d8;
-      line-height: 1.6;
-    }
-    
-    .outcome-card {
-      padding: 16px;
-      background: rgba(24, 24, 27, 0.5);
-      border-radius: 12px;
-      margin-bottom: 16px;
-    }
-    
-    .outcome-label {
-      font-size: 13px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-    
-    .outcome-text {
-      color: #d4d4d8;
-      line-height: 1.8;
-    }
-    
+    .choice-btn:hover { background: var(--night-2); }
+    .choice-btn:active { background: var(--night-3); transform: scale(.99); }
+    .choice-btn:active::before { color: var(--moon); }
+
+    /* after a choice */
+    .result-section { display: none; margin-top: 28px; }
+    .result-section.show { display: block; }
+    .selected-choice { padding: 2px 0 2px 16px; border-left: 2px solid var(--moon); margin-bottom: 28px; }
+    .selected-header, .outcome-label { font-size: 12.5px; color: var(--dim); margin-bottom: 6px; }
+    .selected-text { font-size: 15.5px; line-height: 1.65; color: var(--moon); }
+    .outcome-card { margin-bottom: 28px; }
+    .outcome-text { font-size: 15.5px; line-height: 1.9; color: var(--moon); }
+
+    /* the one special object */
     .principle-card {
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), #141417);
-      border: 1px solid rgba(124, 58, 237, 0.3);
-      border-radius: 12px;
-      margin-bottom: 16px;
+      background: var(--night-2); border-radius: var(--r-m);
+      padding: 22px 22px 24px; margin-bottom: 26px;
+      box-shadow: inset 0 0 0 1px var(--line);
     }
-    
-    .principle-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+    .principle-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .principle-icon { display: grid; color: var(--violet); }
+    .principle-icon svg { width: 16px; height: 16px; }
+    .principle-label { font-size: 12.5px; color: var(--mist); }
+    .principle-name { font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.35; margin-bottom: 8px; }
+    .principle-explanation { font-size: 14.5px; line-height: 1.8; color: var(--mist); }
 
-    .principle-icon {
-      font-size: 20px;
+    /* verdict: label + one line */
+    .evaluation-card { --tone: var(--mist); margin-bottom: 28px; }
+    .evaluation-card.positive, .eval-badge.positive { --tone: var(--ok); }
+    .evaluation-card.neutral, .eval-badge.neutral { --tone: var(--mist); }
+    .evaluation-card.negative, .eval-badge.negative { --tone: color-mix(in srgb, var(--corona) 45%, var(--moon)); }
+    .evaluation-icon, .eval-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12.5px; color: var(--tone); margin-bottom: 4px;
     }
+    .evaluation-icon:empty { display: none; }
+    .evaluation-icon::before, .eval-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .evaluation-card.insight .evaluation-icon::before { display: none; }
+    .evaluation-text { font-size: 15px; line-height: 1.75; color: var(--moon); }
 
-    .principle-label {
-      font-size: 11px;
-      color: #9580ff;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .principle-name {
-      color: #fff;
-      font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-    
-    .principle-explanation {
-      color: #a1a1aa;
-      line-height: 1.8;
-      font-size: 14px;
-    }
-
-    .evaluation-card {
-      display: flex;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      align-items: flex-start;
-    }
-
-    .evaluation-card.positive {
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.3);
-    }
-
-    .evaluation-card.neutral {
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .evaluation-card.negative {
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3);
-    }
-
-    .evaluation-icon {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .evaluation-text {
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .evaluation-card.positive .evaluation-text { color: #4ade80; }
-    .evaluation-card.neutral .evaluation-text { color: #fbbf24; }
-    .evaluation-card.negative .evaluation-text { color: #f87171; }
-
-    .other-choices-section {
-      margin-bottom: 16px;
-    }
-
+    /* other choices */
+    .other-choices-section { margin-bottom: 28px; }
     .other-choices-toggle {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 12px;
-      background: transparent;
-      border: 1px solid #232326;
-      border-radius: 10px;
-      color: #8b8b92;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 2px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      font-size: 14.5px; color: var(--mist); transition: color .2s ease;
     }
+    .other-choices-toggle:hover, .other-choices-toggle.open { color: var(--moon); }
+    .other-choices-toggle svg { transition: transform .2s ease; }
+    .other-choices-toggle.open svg { transform: rotate(180deg); }
+    .other-choices-content { display: flex; flex-direction: column; }
+    .other-choice-card { padding: 18px 2px; border-bottom: 1px solid var(--line); }
+    .other-choice-header { margin-bottom: 2px; }
+    .other-choice-text { font-size: 15px; line-height: 1.65; color: var(--moon); margin-bottom: 8px; }
+    .other-choice-outcome { font-size: 14px; line-height: 1.8; color: var(--mist); margin-bottom: 8px; }
+    .other-choice-eval { font-size: 13.5px; line-height: 1.7; color: var(--dim); margin-bottom: 8px; }
+    .other-choice-principle { font-size: 13.5px; line-height: 1.7; color: var(--dim); }
+    .other-choice-principle strong { color: var(--moon); font-weight: 500; }
 
-    .other-choices-toggle:hover {
-      border-color: #35353a;
-      color: #a1a1aa;
+    /* pills */
+    .next-btn, .home-btn, .restart-btn, .install-btn, .share-btn {
+      width: 100%; height: 50px; padding: 0 20px; border-radius: 999px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 15px; transition: transform .15s ease, box-shadow .2s ease, color .2s ease;
     }
+    .next-btn, .home-btn { background: var(--moon); color: var(--night); font-weight: 600; }
+    .restart-btn, .install-btn, .share-btn { color: var(--moon); box-shadow: inset 0 0 0 1px var(--line); }
+    .restart-btn:hover, .install-btn:hover, .share-btn:hover { box-shadow: inset 0 0 0 1px var(--mist); }
+    .next-btn:active, .home-btn:active, .restart-btn:active, .install-btn:active, .share-btn:active { transform: scale(.97); }
+    .share-btn.success { color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); }
 
-    .other-choices-toggle.open {
-      border-color: #35353a;
-      background: #141417;
-    }
+    /* result */
+    .final-screen { display: none; padding-top: 40px; }
+    .final-screen.show { display: block; }
+    .container:has(.final-screen.show) .intro,
+    .container:has(.final-screen.show) .progress,
+    .container:has(.final-screen.show) .stage-label { display: none; }
+    .clear-card { text-align: center; padding-bottom: 32px; }
+    .clear-icon { width: 56px; margin: 0 auto 30px; }
+    .clear-title { font-family: var(--serif); font-weight: 400; font-size: 30px; line-height: 1.3; }
+    .clear-subtitle { font-size: 14.5px; color: var(--mist); margin-top: 8px; }
+    .clear-exp { font-size: 13px; color: var(--dim); margin-top: 6px; }
 
-    .other-choices-toggle.open svg {
-      transform: rotate(180deg);
-    }
+    .principles-collected { border-top: 1px solid var(--line); padding-top: 26px; margin-bottom: 32px; }
+    .principles-title { font-size: 12.5px; color: var(--dim); margin-bottom: 2px; }
+    .principle-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .principle-item-icon { display: none; }
+    .principle-item-name { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.4; margin-bottom: 4px; }
+    .principle-item-desc { font-size: 14px; line-height: 1.75; color: var(--mist); }
 
-    .other-choices-content {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .share-section { margin-bottom: 12px; }
+    .share-label { font-size: 12.5px; color: var(--dim); margin-bottom: 10px; }
+    .share-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .share-btn { font-size: 14.5px; }
+    .action-buttons { display: grid; gap: 8px; }
 
-    .other-choices-content.hidden {
-      display: none;
+    /* books */
+    .promo-section { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .books-section-title { font-size: 12.5px; color: var(--dim); margin-bottom: 16px; }
+    .book-feature {
+      display: grid; grid-template-columns: 92px 1fr; gap: 18px; align-items: center;
+      padding: 18px; margin-bottom: 32px; background: var(--night-2); border-radius: var(--r-m);
+      transition: transform .15s ease;
     }
-
-    .other-choice-card {
-      background: #131316;
-      border: 1px solid #1a1a1e;
-      border-radius: 12px;
-      padding: 14px;
-    }
-
-    .other-choice-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .eval-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .eval-badge.positive {
-      background: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
-    }
-
-    .eval-badge.neutral {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-    }
-
-    .eval-badge.negative {
-      background: rgba(248, 113, 113, 0.2);
-      color: #f87171;
-    }
-
-    .other-choice-text {
-      font-size: 14px;
-      color: #a1a1aa;
-      margin-bottom: 10px;
-      line-height: 1.6;
-    }
-
-    .other-choice-outcome {
-      font-size: 13px;
-      color: #8b8b92;
-      margin-bottom: 10px;
-      padding: 10px;
-      background: #141417;
-      border-radius: 8px;
-      line-height: 1.6;
-    }
-
-    .other-choice-eval {
-      font-size: 12px;
-      color: #a1a1aa;
-      margin-bottom: 10px;
-      padding: 8px 10px;
-      background: rgba(39, 39, 42, 0.5);
-      border-radius: 6px;
-      line-height: 1.6;
-    }
-
-    .other-choice-principle {
-      font-size: 12px;
-      color: #8b8b92;
-    }
-
-    .other-choice-principle strong {
-      color: #9580ff;
-    }
-
-    .next-btn {
-      width: 100%;
-      padding: 16px;
-      background: #6d5dbc;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    
-    .next-btn:hover {
-      background: #6d28d9;
-    }
-    
-    /* Final Result Screen */
-    .final-screen {
-      display: none;
-      padding: 20px 0;
-    }
-    
-    .final-screen.show {
-      display: block;
-    }
-
-    .clear-card {
-      background: linear-gradient(135deg, #1a1a1e, #141417);
-      border: 1px solid #232326;
-      border-radius: 20px;
-      padding: 32px 24px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .clear-icon {
-      font-size: 56px;
-      margin-bottom: 16px;
-    }
-
-    .clear-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .clear-subtitle {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 20px;
-    }
-
-    .clear-exp {
-      display: inline-block;
-      padding: 8px 16px;
-      background: rgba(167, 139, 250, 0.2);
-      border-radius: 20px;
-      color: #9580ff;
-      font-weight: 600;
-    }
-
-    .principles-collected {
-      background: #141417;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-
-    .principles-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 16px;
-    }
-
-    .principle-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px;
-      background: #1a1a1e;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    .principle-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .principle-item-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .principle-item-content {
-      flex: 1;
-    }
-
-    .principle-item-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .principle-item-desc {
-      font-size: 12px;
-      color: #8b8b92;
-      line-height: 1.5;
-    }
-
-    .share-section {
-      margin-bottom: 24px;
-    }
-    
-    .share-label {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    
-    .share-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    
-    .share-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 12px 18px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .share-btn:hover {
-      background: #35353a;
-    }
-
-    .share-btn.success {
-      background: #166534;
-      border-color: #22c55e;
-    }
-
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .home-btn {
-      width: 100%;
-      padding: 16px;
-      background: #6d5dbc;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: block;
-      text-align: center;
-    }
-
-    .home-btn:hover {
-      background: #6d28d9;
-    }
-
-    .restart-btn {
-      width: 100%;
-      padding: 16px;
-      background: transparent;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #a1a1aa;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .restart-btn:hover {
-      background: #232326;
-      color: #fff;
-    }
-
-    .install-btn {
-      width: 100%;
-      margin-top: 8px;
-      padding: 14px;
-      background: linear-gradient(135deg, #6d5dbc, #5b21b6);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .install-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-    }
-
-    .install-btn.hidden { display: none; }
-
-    .promo-section {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid #232326;
-    }
-
-    /* 이클립스 더 알아보기 */
-    .eclipse-section {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    
-    .eclipse-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 16px;
-    }
-    
-    .youtube-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    
-    .youtube-btn:hover {
-      background: #35353a;
-      transform: translateY(-2px);
-    }
-    
-    .youtube-btn svg {
-      fill: #ff0000;
-    }
-    
-    /* 책 섹션 */
-    .books-section {
-      text-align: center;
-      padding-top: 24px;
-      border-top: 1px solid #232326;
-    }
-    
-    .books-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 20px;
-    }
-    
-    .books-grid {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-    }
-    
-    .book-item {
-      flex: 1;
-      max-width: 140px;
-      text-decoration: none;
-      color: #fff;
-      transition: all 0.2s;
-    }
-    
-    .book-item:hover {
-      transform: translateY(-4px);
-    }
-    
+    .book-feature:active { transform: scale(.98); }
+    .book-feature img { width: 92px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+    .book-feature-title { font-family: var(--serif); font-size: 19px; line-height: 1.35; }
+    .book-feature-sub { font-size: 13px; color: var(--mist); margin-top: 4px; }
+    .book-feature-more { font-size: 13px; color: var(--dim); margin-top: 10px; }
+    .books-grid { display: flex; gap: 20px; }
+    .book-item { flex: 1; max-width: 104px; display: flex; flex-direction: column; gap: 8px; transition: transform .15s ease; }
+    .book-item:active { transform: scale(.97); }
     .book-item img {
-      width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      margin-bottom: 10px;
+      width: 100%; aspect-ratio: 104 / 161; object-fit: contain; object-position: left bottom;
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,.5));
     }
-    
-    .book-item-title {
-      font-size: 13px;
-      color: #a1a1aa;
-    }
-
-    .book-promo {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px;
-      background: linear-gradient(135deg, #1a1520 0%, #141417 100%);
-      border: 1px solid #2d2438;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #fff;
-      transition: all 0.2s;
-    }
-
-    .book-promo:hover {
-      border-color: #9580ff;
-      transform: translateY(-2px);
-    }
-
-    .book-promo-images {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .book-promo-img {
-      width: 48px;
-      height: auto;
-      border-radius: 4px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-
-    .book-promo-text { flex: 1; }
-    .book-promo-series { font-size: 11px; color: #9580ff; margin-bottom: 2px; }
-    .book-promo-title { font-size: 14px; font-weight: 500; }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .exp-toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #6d5dbc;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      z-index: 1000;
-      animation: fadeInOut 2s ease-in-out;
-    }
-
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-    }
+    .book-item-title { font-size: 13px; line-height: 1.35; color: var(--mist); }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <a href="index.html" class="back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        돌아가기
-      </a>
-      <div class="header-content">
-        <div class="header-category">심리 · 직장</div>
-        <h1>아이디어 도둑 동료</h1>
-        <p>네 아이디어를 가로챈 동료, 어떻게 대응할까?</p>
+    <header class="header">
+      <div class="bar">
+        <a href="index.html" class="back-btn" aria-label="돌아가기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </a>
+        <h1 class="bar-title">아이디어 도둑 동료</h1>
+        <span class="stage-label" id="stage-label">1 / 3</span>
       </div>
+      <div class="progress" id="progress"></div>
+    </header>
+
+    <div class="intro">
+      <div class="intro-meta">심리 · 직장</div>
+      <p class="intro-line">네 아이디어를 가로챈 동료, 어떻게 대응할까?</p>
     </div>
-    
-    <div class="progress" id="progress"></div>
-    
+
     <div id="game-screen">
       <div class="scenario-card">
-        <div class="stage-label" id="stage-label">Stage 1</div>
         <div class="context" id="context"></div>
         <div class="situation" id="situation"></div>
       </div>
-      
+
       <div class="choices" id="choices"></div>
-      
+
       <div class="result-section" id="result-section">
         <div class="selected-choice">
           <div class="selected-header">선택한 답변</div>
           <div class="selected-text" id="selected-text"></div>
         </div>
-        
+
         <div class="outcome-card">
           <div class="outcome-label">상대방의 반응</div>
           <div class="outcome-text" id="outcome-text"></div>
         </div>
-        
+
         <div class="principle-card">
           <div class="principle-header">
-            <span class="principle-icon">💡</span>
+            <span class="principle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span>
             <span class="principle-label">발견한 원칙</span>
           </div>
           <div class="principle-name" id="principle-name"></div>
@@ -793,34 +235,32 @@
         </div>
 
         <div class="evaluation-card" id="evaluation-card">
-          <div class="evaluation-icon" id="evaluation-icon">⚠️</div>
+          <div class="evaluation-icon" id="evaluation-icon"></div>
           <div class="evaluation-text" id="evaluation-text"></div>
         </div>
 
         <div class="other-choices-section">
           <button class="other-choices-toggle" id="other-toggle">
             <span>다른 선택은?</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="other-choices-content hidden" id="other-choices-content"></div>
         </div>
-        
+
         <button class="next-btn" id="next-btn">다음 상황</button>
       </div>
     </div>
-    
+
     <div class="final-screen" id="final-screen">
       <div class="clear-card">
-        <div class="clear-icon">🎯</div>
-        <div class="clear-title">시뮬레이션 완료!</div>
-        <div class="clear-subtitle">아이디어 도둑 동료 상황을 클리어했습니다</div>
-        <div class="clear-exp">+30 EXP 획득!</div>
+        <div class="clear-icon" aria-hidden="true"><div class="ecl-mark"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div></div>
+        <div class="clear-title">시뮬레이션을 마쳤어요</div>
+        <div class="clear-subtitle">아이디어 도둑 동료 상황을 끝까지 풀었어요</div>
+        <div class="clear-exp">경험치 +30</div>
       </div>
 
       <div class="principles-collected">
-        <div class="principles-title">🔓 발견한 원칙들</div>
+        <div class="principles-title">발견한 원칙</div>
         <div id="principles-list"></div>
       </div>
 
@@ -828,46 +268,35 @@
         <div class="share-label">친구에게 공유하기</div>
         <div class="share-buttons">
           <button class="share-btn" id="native-share-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-              <polyline points="16 6 12 2 8 6"/>
-              <line x1="12" y1="2" x2="12" y2="15"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
             공유하기
           </button>
           <button class="share-btn" id="copy-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             링크 복사
           </button>
         </div>
       </div>
 
       <div class="action-buttons">
-        <a href="index.html" class="home-btn">홈으로 돌아가기</a>
+        <a href="index.html" class="home-btn">홈으로</a>
         <button class="restart-btn" id="restart-btn">다시 해보기</button>
         <button class="install-btn hidden" id="installBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          앱으로 설치하고 계속 탐험하기
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          앱으로 설치하기
         </button>
       </div>
 
       <div class="promo-section">
         <div class="books-section">
-          
+          <div class="books-section-title">이클립스의 책</div>
           <div class="books-grid">
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-philosophy.png" alt="훔친 철학 편">
+              <img src="img/book-philosophy.webp" alt="훔친 철학 편" loading="lazy">
               <div class="book-item-title">훔친 철학 편</div>
             </a>
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-psychology.png" alt="훔친 심리학 편">
+              <img src="img/book-psychology.webp" alt="훔친 심리학 편" loading="lazy">
               <div class="book-item-title">훔친 심리학 편</div>
             </a>
           </div>
@@ -1328,7 +757,7 @@
       const stage = getStageById(currentStageId);
       if (!stage) return;
       
-      document.getElementById('stage-label').textContent = `Stage ${stageHistory.length + 1}`;
+      document.getElementById('stage-label').textContent = `${stageHistory.length + 1} / 3`;
       document.getElementById('context').textContent = stage.context;
       document.getElementById('situation').textContent = stage.situation;
       
@@ -1377,18 +806,18 @@
       evalCard.className = 'evaluation-card ' + choice.evaluation;
       evalText.textContent = choice.evalText;
       
-      if (choice.evaluation === 'positive') evalIcon.textContent = '✓';
-      else if (choice.evaluation === 'neutral') evalIcon.textContent = '⚠️';
-      else evalIcon.textContent = '✗';
+      if (choice.evaluation === 'positive') evalIcon.textContent = '효과적';
+      else if (choice.evaluation === 'neutral') evalIcon.textContent = '상황에 따라';
+      else evalIcon.textContent = '리스크';
       
       // 다른 선택지
       const otherChoices = stage.choices.filter((_, i) => i !== index);
       const otherContent = document.getElementById('other-choices-content');
       otherContent.innerHTML = otherChoices.map(c => {
         let evalBadge = '';
-        if (c.evaluation === 'positive') evalBadge = '<span class="eval-badge positive">✓ 효과적</span>';
-        else if (c.evaluation === 'neutral') evalBadge = '<span class="eval-badge neutral">⚠️ 상황에 따라</span>';
-        else evalBadge = '<span class="eval-badge negative">✗ 리스크</span>';
+        if (c.evaluation === 'positive') evalBadge = '<span class="eval-badge positive">효과적</span>';
+        else if (c.evaluation === 'neutral') evalBadge = '<span class="eval-badge neutral">상황에 따라</span>';
+        else evalBadge = '<span class="eval-badge negative">리스크</span>';
         
         return `
           <div class="other-choice-card">
@@ -1434,7 +863,7 @@
       const principlesList = document.getElementById('principles-list');
       principlesList.innerHTML = collectedPrinciples.map(p => `
         <div class="principle-item">
-          <div class="principle-item-icon">💡</div>
+          <div class="principle-item-icon"></div>
           <div class="principle-item-content">
             <div class="principle-item-name">${p.name}</div>
             <div class="principle-item-desc">${p.desc}</div>

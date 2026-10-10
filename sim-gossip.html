@@ -7,7 +7,7 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
@@ -16,695 +16,179 @@
   <meta property="og:title" content="뒷담화 현장 - 이클립스의 딜렘">
   <meta property="og:description" content="동료들이 내 뒷담화를 하고 있다. 어떻게 대응할까?">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      padding: 24px;
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 540px;
-      margin: 0 auto;
-    }
-    
+    /* 뒷담화 현장: a short film you play, three scenes.
+       Corona marks progress only; the principle card is the one raised object. */
+    body { min-height: 100vh; word-break: keep-all; overflow-wrap: anywhere; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 64px; }
+
+    /* top bar */
     .header {
-      margin-bottom: 32px;
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 6px;
+      height: 56px; margin: 0 -20px; padding: 0 20px 0 10px;
+      background: rgba(20,10,32,.92);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
     }
+    .back-btn { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 50%; color: var(--mist); }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn:active { transform: scale(.94); }
+    .back-btn svg { width: 22px; height: 22px; }
+    .header-content { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .header h1 { font-family: var(--serif); font-weight: 400; font-size: 18px; letter-spacing: -.01em; white-space: nowrap; }
+    .header-category { font-size: 12px; color: var(--dim); white-space: nowrap; }
 
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #8b8b92;
-      text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
+    /* progress: three thin segments */
+    .progress { display: flex; gap: 6px; margin: 4px 0 40px; }
+    .progress-bar { height: 2px; flex: 1; border-radius: 2px; background: var(--line); transition: background .3s; }
+    .progress-bar.completed { background: var(--corona); }
+    .progress-bar.current { background: var(--moon); }
 
-    .back-btn:hover {
-      color: #f87171;
-    }
-
-    .header-content {
-      text-align: center;
-    }
-
-    .header-category {
-      font-size: 12px;
-      color: #f87171;
-      margin-bottom: 8px;
-    }
-    
-    .header h1 {
-      font-size: 22px;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-    
-    .header p {
-      font-size: 14px;
-      color: #8b8b92;
-    }
-    
-    .progress {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-    
-    .progress-bar {
-      height: 4px;
-      flex: 1;
-      border-radius: 4px;
-      background: #232326;
-      transition: background 0.3s;
-    }
-    
-    .progress-bar.completed { background: #f87171; }
-    .progress-bar.current { background: rgba(248, 113, 113, 0.5); }
-    
-    .scenario-card {
-      background: #141417;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    .stage-label {
-      font-size: 11px;
-      color: #8b8b92;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-
-    .context {
-      font-size: 13px;
-      color: #a1a1aa;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #232326;
-    }
-    
+    /* the scene */
+    .scenario-card { margin-bottom: 32px; }
+    .stage-label { font-size: 13px; color: var(--mist); margin-bottom: 14px; }
+    .context { font-size: 15px; line-height: 1.85; color: var(--mist); margin-bottom: 20px; }
     .situation {
-      font-size: 17px;
-      color: #fff;
-      font-weight: 500;
-      line-height: 1.7;
+      font-family: var(--serif); font-size: clamp(22px, 6vw, 25px); line-height: 1.55;
+      letter-spacing: -.01em; color: var(--moon);
     }
-    
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    
+
+    /* choices: large rows, hairlines between */
+    .choices { display: flex; flex-direction: column; border-top: 1px solid var(--line); margin-bottom: 24px; counter-reset: pick; }
     .choice-btn {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      padding: 16px 20px;
-      text-align: left;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 15px;
-      line-height: 1.6;
+      display: grid; grid-template-columns: 30px 1fr; align-items: baseline; column-gap: 6px;
+      width: 100%; padding: 18px 12px 18px 4px;
+      text-align: left; font-size: 16px; line-height: 1.55; color: var(--moon);
+      border-bottom: 1px solid var(--line);
+      transition: background .2s ease, transform .15s ease;
     }
-    
-    .choice-btn:hover {
-      border-color: #f87171;
-      background: rgba(248, 113, 113, 0.05);
+    .choice-btn::before { counter-increment: pick; content: counter(pick, upper-alpha); font-family: var(--serif); font-size: 17px; color: var(--dim); }
+    @media (hover: hover) {
+      .choice-btn:hover { background: var(--night-2); }
+      .choice-btn:hover::before { color: var(--moon); }
     }
+    .choice-btn:active { transform: scale(.98); background: var(--night-3); box-shadow: inset 2px 0 0 var(--moon); }
 
-    .choice-btn:active {
-      transform: scale(0.98);
-    }
-    
-    .result-section {
-      display: none;
-    }
-    
-    .result-section.show {
-      display: block;
-    }
+    /* after choosing */
+    .result-section { display: none; }
+    .result-section.show { display: block; }
 
-    .selected-choice {
-      background: #1a1a1e;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+    .selected-choice {     /* the picked row, held in place */
+      padding: 16px 16px 18px; margin-bottom: 28px;
+      background: var(--night-3); border-radius: var(--r-s); box-shadow: inset 2px 0 0 var(--moon);
     }
+    .selected-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .selected-label { font-size: 12px; color: var(--dim); }
+    .selected-badge, .eval-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--mist); white-space: nowrap;
+    }
+    .selected-badge::before, .eval-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; }
+    .selected-badge.optimal, .eval-badge.positive { color: var(--ok); }
+    .selected-badge.optimal::before, .eval-badge.positive::before { background: currentColor; }
+    .selected-badge.neutral, .eval-badge.neutral { color: var(--mist); }
+    .selected-badge.neutral::before, .eval-badge.neutral::before { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+    .selected-badge.bad, .eval-badge.negative { color: var(--dim); }
+    .selected-text { font-size: 16px; line-height: 1.6; color: var(--moon); }
 
-    .selected-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
+    .outcome-card { margin-bottom: 28px; }
+    .outcome-label { font-size: 12px; color: var(--dim); margin-bottom: 8px; }
+    .outcome-text { font-size: 16px; line-height: 1.9; color: var(--moon); opacity: .9; }
 
-    .selected-label {
-      font-size: 12px;
-      color: #8b8b92;
-    }
-
-    .selected-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .selected-badge.optimal {
-      background: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
-    }
-
-    .selected-badge.neutral {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-    }
-
-    .selected-badge.bad {
-      background: rgba(248, 113, 113, 0.2);
-      color: #f87171;
-    }
-
-    .selected-text {
-      font-size: 15px;
-      color: #fff;
-      line-height: 1.6;
-    }
-
-    .outcome-card {
-      background: #141417;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .outcome-label {
-      font-size: 12px;
-      color: #8b8b92;
-      margin-bottom: 8px;
-    }
-
-    .outcome-text {
-      font-size: 14px;
-      color: #a1a1aa;
-      line-height: 1.8;
-    }
-    
-    .principle-card {
-      background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(248, 113, 113, 0.05));
-      border: 1px solid rgba(248, 113, 113, 0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-
-    .principle-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .principle-icon {
-      font-size: 20px;
-    }
-
-    .principle-label {
-      font-size: 11px;
-      color: #f87171;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .principle-name {
-      color: #fff;
-      font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-    
-    .principle-explanation {
-      color: #a1a1aa;
-      line-height: 1.8;
-      font-size: 14px;
-    }
+    /* the one special object */
+    .principle-card { background: var(--night-2); border-radius: var(--r-m); padding: 22px 20px 24px; margin-bottom: 20px; }
+    .principle-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .principle-icon { width: 6px; height: 6px; border-radius: 50%; background: var(--violet); font-size: 0; }
+    .principle-label { font-size: 12px; color: var(--mist); }
+    .principle-name { font-family: var(--serif); font-size: 23px; line-height: 1.35; color: var(--moon); margin-bottom: 10px; }
+    .principle-explanation { font-size: 15px; line-height: 1.8; color: var(--mist); }
 
     .evaluation-card {
-      display: flex;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      align-items: flex-start;
+      display: flex; gap: 12px; align-items: baseline;
+      padding: 4px 0 20px; margin-bottom: 4px;
     }
+    .evaluation-icon { flex: none; width: 7px; height: 7px; border-radius: 50%; font-size: 0; transform: translateY(-2px); box-shadow: inset 0 0 0 1.5px currentColor; }
+    .evaluation-text { font-size: 14.5px; line-height: 1.7; color: var(--mist); }
+    .evaluation-card.positive .evaluation-icon { color: var(--ok); background: currentColor; }
+    .evaluation-card.neutral .evaluation-icon { color: var(--mist); background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+    .evaluation-card.negative .evaluation-icon { color: var(--dim); }
 
-    .evaluation-card.positive {
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.3);
-    }
-
-    .evaluation-card.neutral {
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .evaluation-card.negative {
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.3);
-    }
-
-    .evaluation-icon {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .evaluation-text {
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .evaluation-card.positive .evaluation-text { color: #4ade80; }
-    .evaluation-card.neutral .evaluation-text { color: #fbbf24; }
-    .evaluation-card.negative .evaluation-text { color: #f87171; }
-
-    .other-choices-section {
-      margin-bottom: 16px;
-    }
-
+    .other-choices-section { margin-bottom: 28px; border-top: 1px solid var(--line); }
     .other-choices-toggle {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 12px;
-      background: transparent;
-      border: 1px solid #232326;
-      border-radius: 10px;
-      color: #8b8b92;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      padding: 14px 4px; font-size: 14px; color: var(--mist);
     }
+    .other-choices-toggle:hover { color: var(--moon); }
+    .other-choices-toggle svg { transition: transform .2s ease; }
+    .other-choices-toggle.open svg { transform: rotate(180deg); }
+    .other-choices-content { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+    .other-choices-content.hidden { display: none; }
+    .other-choice-card { padding: 14px 4px; border-bottom: 1px solid var(--line); }
+    .other-choice-header { margin-bottom: 4px; }
+    .other-choice-text { font-size: 15px; line-height: 1.6; color: var(--moon); margin-bottom: 4px; }
+    .other-choice-principle { font-family: var(--serif); font-size: 15px; color: var(--mist); }
 
-    .other-choices-toggle:hover {
-      border-color: #35353a;
-      color: #a1a1aa;
-    }
+    .next-btn { width: 100%; height: 50px; }
 
-    .other-choices-toggle.open {
-      border-color: #35353a;
-      background: #141417;
-    }
+    /* final */
+    .final-screen { display: none; padding: 20px 0 0; }
+    .final-screen.show { display: block; }
 
-    .other-choices-toggle.open svg {
-      transform: rotate(180deg);
-    }
+    .score-card { margin-bottom: 44px; }
+    .score-label { font-size: 13px; color: var(--mist); margin-bottom: 6px; }
+    .score-display { order: -1; line-height: 1; margin: 0 0 18px; font-variant-numeric: tabular-nums; }
+    .score-card { display: flex; flex-direction: column; }
+    .score-label { order: -2; }
+    .score-number { font-family: var(--serif); font-size: 76px; letter-spacing: -.03em; color: var(--moon); }
+    .score-total { font-family: var(--serif); font-size: 30px; color: var(--dim); margin-left: 4px; }
+    .score-message { font-size: 16px; line-height: 1.85; color: var(--moon); opacity: .9; margin-bottom: 14px; }
+    .score-exp { font-size: 13px; color: var(--mist); font-variant-numeric: tabular-nums; }
 
-    .other-choices-content {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .principles-collected { margin-bottom: 40px; }
+    .principles-title { font-family: var(--serif); font-size: 23px; margin-bottom: 8px; }
+    .principle-item { display: grid; grid-template-columns: 18px 1fr; gap: 10px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .principle-item:last-child { border-bottom: 0; }
+    .principle-item-icon { width: 7px; height: 7px; margin-top: 9px; border-radius: 50%; font-size: 0; color: var(--dim); box-shadow: inset 0 0 0 1.5px currentColor; }
+    .principle-item.positive .principle-item-icon { color: var(--ok); background: currentColor; }
+    .principle-item.neutral .principle-item-icon { color: var(--mist); background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+    .principle-item-content { min-width: 0; }
+    .principle-item-name { font-family: var(--serif); font-size: 18px; line-height: 1.4; margin-bottom: 4px; }
+    .principle-item-desc { font-size: 14px; line-height: 1.7; color: var(--mist); }
 
-    .other-choices-content.hidden {
-      display: none;
-    }
+    .share-section { margin-bottom: 12px; }
+    .share-label { display: none; }
+    .share-buttons { display: flex; gap: 10px; }
+    .share-btn { flex: 1; height: 46px; font-weight: 500; font-size: 14px; }
+    .share-btn svg { width: 16px; height: 16px; }
 
-    .other-choice-card {
-      background: #131316;
-      border: 1px solid #1a1a1e;
-      border-radius: 12px;
-      padding: 14px;
-    }
+    .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+    .home-btn, .restart-btn { width: 100%; height: 50px; }
 
-    .other-choice-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .eval-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .eval-badge.positive {
-      background: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
-    }
-
-    .eval-badge.neutral {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-    }
-
-    .eval-badge.negative {
-      background: rgba(248, 113, 113, 0.2);
-      color: #f87171;
-    }
-
-    .other-choice-text {
-      font-size: 14px;
-      color: #a1a1aa;
-      margin-bottom: 10px;
-    }
-
-    .other-choice-principle {
-      font-size: 13px;
-      color: #8b8b92;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .other-choice-principle::before {
-      content: "💡";
-      font-size: 12px;
-    }
-
-    .next-btn {
-      width: 100%;
-      padding: 16px;
-      background: #f87171;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    
-    .next-btn:hover {
-      background: #ef4444;
-    }
-    
-    /* Final Result Screen */
-    .final-screen {
-      display: none;
-      padding: 20px 0;
-    }
-    
-    .final-screen.show {
-      display: block;
-    }
-
-    .score-card {
-      background: linear-gradient(135deg, #1a1a1e, #141417);
-      border: 1px solid #232326;
-      border-radius: 20px;
-      padding: 32px 24px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .score-display {
-      margin-bottom: 16px;
-    }
-
-    .score-number {
-      font-size: 64px;
-      font-weight: 700;
-      color: #f87171;
-    }
-
-    .score-total {
-      font-size: 32px;
-      color: #8b8b92;
-    }
-
-    .score-label {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 20px;
-    }
-
-    .score-message {
-      font-size: 15px;
-      color: #a1a1aa;
-      line-height: 1.7;
-      margin-bottom: 20px;
-    }
-
-    .score-exp {
-      display: inline-block;
-      padding: 8px 16px;
-      background: rgba(248, 113, 113, 0.2);
-      border-radius: 20px;
-      color: #f87171;
-      font-weight: 600;
-    }
-
-    .principles-collected {
-      background: #141417;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-
-    .principles-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 16px;
-    }
-
-    .principle-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px;
-      background: #1a1a1e;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    .principle-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .principle-item-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .principle-item-content {
-      flex: 1;
-    }
-
-    .principle-item-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .principle-item-desc {
-      font-size: 12px;
-      color: #8b8b92;
-      line-height: 1.5;
-    }
-
-    .share-section {
-      margin-bottom: 24px;
-    }
-    
-    .share-label {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    
-    .share-buttons {
-      display: flex;
-      gap: 12px;
-    }
-    
-    .share-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px;
-      background: #1a1a1e;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .share-btn:hover {
-      border-color: #f87171;
-    }
-
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .home-btn {
-      display: block;
-      text-align: center;
-      padding: 16px;
-      background: #f87171;
-      border-radius: 12px;
-      color: #fff;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
-
-    .home-btn:hover {
-      background: #ef4444;
-    }
-
-    .restart-btn {
-      width: 100%;
-      padding: 16px;
-      background: transparent;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      color: #a1a1aa;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .restart-btn:hover {
-      border-color: #f87171;
-      color: #fff;
-    }
-
-    .promo-section {
-      border-top: 1px solid #232326;
-      padding-top: 32px;
-    }
-
-    .eclipse-section {
-      margin-bottom: 24px;
-    }
-
-    .eclipse-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .youtube-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px;
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      color: #fff;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .youtube-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: #ef4444;
-      border-radius: 6px;
-      font-size: 12px;
-    }
-
-    .youtube-btn:hover {
-      border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.1);
-    }
-
-    .books-section {
-      margin-top: 24px;
-    }
-
-    .books-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .books-grid {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-    }
-
-    .book-item {
-      text-align: center;
-      text-decoration: none;
-    }
-
-    .book-item img {
-      width: 100px;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      transition: transform 0.2s;
-    }
-
-    .book-item:hover img {
-      transform: scale(1.05);
-    }
-
-    .book-item-title {
-      font-size: 12px;
-      color: #a1a1aa;
-    }
-
-    .hidden {
-      display: none !important;
-    }
+    /* books */
+    .promo-section { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .books-section-title { font-size: 13px; color: var(--mist); margin-bottom: 18px; }
+    .books-grid { display: flex; gap: 18px; }
+    .book-item { display: flex; flex-direction: column; gap: 8px; width: 104px; }
+    .book-item img { width: 104px; height: 161px; object-fit: contain; object-position: left bottom; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+    .book-item:active img { transform: scale(.97); }
+    .book-item-title { font-size: 13px; line-height: 1.35; color: var(--moon); }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <a href="index.html" class="back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        돌아가기
+      <a href="index.html" class="back-btn" aria-label="홈으로">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <div class="header-content">
-        <div class="header-category">심리 · 관계</div>
         <h1>뒷담화 현장</h1>
-        <p>당신의 선택 뒤에 숨겨진 원칙을 발견하세요</p>
+        <div class="header-category">심리 · 관계</div>
       </div>
     </div>
     
@@ -712,7 +196,7 @@
     
     <div id="game-screen">
       <div class="scenario-card">
-        <div class="stage-label" id="stage-label">Stage 1</div>
+        <div class="stage-label" id="stage-label">상황 1</div>
         <div class="context" id="context"></div>
         <div class="situation" id="situation"></div>
       </div>
@@ -722,20 +206,20 @@
       <div class="result-section" id="result-section">
         <div class="selected-choice">
           <div class="selected-header">
-            <span class="selected-label">선택한 답변</span>
+            <span class="selected-label">내 선택</span>
             <span class="selected-badge" id="selected-badge">최적의 수</span>
           </div>
           <div class="selected-text" id="selected-text"></div>
         </div>
         
         <div class="outcome-card">
-          <div class="outcome-label">결과</div>
+          <div class="outcome-label">그 다음</div>
           <div class="outcome-text" id="outcome-text"></div>
         </div>
         
         <div class="principle-card">
           <div class="principle-header">
-            <span class="principle-icon">💡</span>
+            <span class="principle-icon"></span>
             <span class="principle-label">발견한 원칙</span>
           </div>
           <div class="principle-name" id="principle-name"></div>
@@ -743,21 +227,21 @@
         </div>
 
         <div class="evaluation-card" id="evaluation-card">
-          <div class="evaluation-icon" id="evaluation-icon">⚠️</div>
+          <div class="evaluation-icon" id="evaluation-icon"></div>
           <div class="evaluation-text" id="evaluation-text"></div>
         </div>
 
         <div class="other-choices-section">
           <button class="other-choices-toggle" id="other-toggle">
-            <span>다른 선택은?</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <span>다른 선택지는 어땠을까요</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
           <div class="other-choices-content hidden" id="other-choices-content"></div>
         </div>
         
-        <button class="next-btn" id="next-btn">다음 상황</button>
+        <button class="next-btn ecl-btn" id="next-btn">다음 상황</button>
       </div>
     </div>
     
@@ -768,27 +252,27 @@
         </div>
         <div class="score-label">당신의 심리전 점수</div>
         <div class="score-message" id="score-message">메시지</div>
-        <div class="score-exp">+30 EXP 획득!</div>
+        <div class="score-exp">경험치 +30</div>
       </div>
 
       <div class="principles-collected">
-        <div class="principles-title">🔓 발견한 원칙들</div>
+        <div class="principles-title">발견한 원칙</div>
         <div id="principles-list"></div>
       </div>
 
       <div class="share-section">
         <div class="share-label">친구에게 공유하기</div>
         <div class="share-buttons">
-          <button class="share-btn" id="native-share-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="share-btn ecl-btn ghost" id="native-share-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
               <polyline points="16 6 12 2 8 6"/>
               <line x1="12" y1="2" x2="12" y2="15"/>
             </svg>
             공유하기
           </button>
-          <button class="share-btn" id="copy-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="share-btn ecl-btn ghost" id="copy-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
             </svg>
@@ -798,20 +282,20 @@
       </div>
 
       <div class="action-buttons">
-        <a href="index.html" class="home-btn">홈으로 돌아가기</a>
-        <button class="restart-btn" id="restart-btn">다시 도전하기</button>
+        <a href="index.html" class="home-btn ecl-btn">홈으로 돌아가기</a>
+        <button class="restart-btn ecl-btn ghost" id="restart-btn">다시 해보기</button>
       </div>
 
       <div class="promo-section">
         <div class="books-section">
-          
+          <div class="books-section-title">이 시뮬레이터의 바탕이 된 철학과 심리학이 궁금하다면</div>
           <div class="books-grid">
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-philosophy.png" alt="훔친 철학 편">
+              <img src="img/book-philosophy.webp" alt="훔친 철학 편" loading="lazy">
               <div class="book-item-title">훔친 철학 편</div>
             </a>
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-psychology.png" alt="훔친 심리학 편">
+              <img src="img/book-psychology.webp" alt="훔친 심리학 편" loading="lazy">
               <div class="book-item-title">훔친 심리학 편</div>
             </a>
           </div>
@@ -1337,11 +821,11 @@
       // 평가 카드
       evaluationCard.className = 'evaluation-card ' + choice.evaluation;
       if (choice.evaluation === 'positive') {
-        evaluationIcon.textContent = '✅';
+        evaluationIcon.textContent = '';
       } else if (choice.evaluation === 'neutral') {
-        evaluationIcon.textContent = '⚠️';
+        evaluationIcon.textContent = '';
       } else {
-        evaluationIcon.textContent = '❌';
+        evaluationIcon.textContent = '';
       }
       evaluationText.textContent = choice.evalText;
       
@@ -1446,12 +930,12 @@
       principlesList.innerHTML = '';
       collectedPrinciples.forEach(p => {
         let icon;
-        if (p.evaluation === 'positive') icon = '🟢';
-        else if (p.evaluation === 'neutral') icon = '🟡';
-        else icon = '🔴';
+        if (p.evaluation === 'positive') icon = '';
+        else if (p.evaluation === 'neutral') icon = '';
+        else icon = '';
         
         const item = document.createElement('div');
-        item.className = 'principle-item';
+        item.className = 'principle-item ' + p.evaluation;
         item.innerHTML = `
           <div class="principle-item-icon">${icon}</div>
           <div class="principle-item-content">

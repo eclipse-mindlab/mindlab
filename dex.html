@@ -5,296 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>원칙 도감 - 이클립스의 딜렘</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-    }
+    /* Dex: the index at the back of the book. Discovered names in moon-white serif,
+       the rest as quiet placeholders. The only accent is the corona progress line. */
+    body { min-height: 100vh; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 120px; }
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      padding-bottom: 40px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .back-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #8b8b92;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .back-btn:hover { color: #9580ff; }
+    .header { padding: 18px 0 0; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mist); }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
     .page-title {
-      flex: 1;
-      font-size: 20px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-family: var(--serif); font-weight: 400;
+      font-size: 32px; line-height: 1.25; letter-spacing: -.02em;
+      margin-top: 28px;
     }
+    .page-sub { margin-top: 8px; font-size: 14px; color: var(--mist); }
 
-    /* 진행도 카드 */
-    .progress-card {
-      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-      border: 1px solid #232326;
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .progress-label {
-      font-size: 14px;
-      color: #a1a1aa;
-    }
-
+    /* count + progress line */
+    .progress-card { margin-top: 30px; }
+    .progress-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .progress-label { font-size: 13px; color: var(--dim); }
     .progress-count {
-      font-size: 18px;
-      font-weight: 600;
-      color: #9580ff;
+      font-family: var(--serif); font-weight: 400; font-size: 30px; line-height: 1;
+      letter-spacing: .01em; font-variant-numeric: tabular-nums;
     }
+    .progress-bar { margin-top: 14px; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--corona); border-radius: 2px; transition: width .4s ease; }
 
-    .progress-bar {
-      height: 8px;
-      background: #232326;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #6d5dbc, #9580ff);
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-
-    /* 필터 */
-    .filter-section {
-      margin-bottom: 20px;
-    }
-
-    .filter-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
+    /* filters: quiet text tabs */
+    .filter-section { margin-top: 34px; border-bottom: 1px solid var(--line); }
+    .filter-row { display: flex; align-items: center; }
+    #categoryFilter { gap: 22px; }
     .filter-btn {
-      padding: 8px 14px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 20px;
-      color: #a1a1aa;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
+      position: relative; padding: 8px 0; font-size: 15px; color: var(--dim);
+      transition: color .2s ease;
     }
-
-    .filter-btn:hover {
-      background: #35353a;
+    .filter-btn:hover { color: var(--mist); }
+    .filter-btn.active { color: var(--moon); }
+    #categoryFilter .filter-btn { padding-bottom: 12px; }
+    #categoryFilter .filter-btn.active::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--moon);
     }
-
-    .filter-btn.active {
-      background: #6d5dbc;
-      border-color: #6d5dbc;
-      color: #fff;
+    #statusFilter { gap: 14px; padding: 14px 0 0; }
+    #statusFilter .filter-btn { font-size: 13px; padding: 4px 0; }
+    #statusFilter .filter-btn + .filter-btn::before {
+      content: ""; position: absolute; left: -8px; top: 50%; width: 2px; height: 2px;
+      border-radius: 50%; background: var(--dim); transform: translateY(-50%);
     }
+    .filter-wrap { display: flex; justify-content: flex-end; }
 
-    /* 원칙 리스트 */
+    /* the index itself */
     .principles-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px;
+      margin-top: 10px;
     }
-
     .principle-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px;
-      background: #141417;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      display: flex; min-width: 0; padding: 14px 0 13px;
+      border-bottom: 1px solid var(--line);
     }
-
-    .principle-item:hover {
-      background: #1a1a1e;
-    }
-
-    .principle-item.discovered {
-      border-color: rgba(124, 58, 237, 0.3);
-    }
-
-    .principle-item.locked {
-      opacity: 0.5;
-    }
-
-    .principle-icon {
-      width: 44px;
-      height: 44px;
-      background: #232326;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .principle-item.discovered .principle-icon {
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(167, 139, 250, 0.1));
-    }
-
-    .principle-info {
-      flex: 1;
-      min-width: 0;
-    }
-
+    .principle-item.discovered { cursor: pointer; transition: transform .15s ease; }
+    .principle-item.discovered:active { transform: scale(.97); }
+    .principle-item.discovered:hover .principle-name { color: var(--moon); }
+    .principle-icon, .principle-status { display: none; }
+    .principle-info { flex: 1; min-width: 0; }
     .principle-name {
-      font-size: 15px;
-      font-weight: 500;
-      margin-bottom: 4px;
-      color: #fff;
+      font-family: var(--serif); font-weight: 400; font-size: 17px; line-height: 1.35;
+      color: var(--moon); letter-spacing: -.01em; word-break: keep-all;
     }
-
-    .principle-item.locked .principle-name {
-      color: #8b8b92;
-    }
-
     .principle-source {
-      font-size: 12px;
-      color: #8b8b92;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--dim);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .principle-source .tag { color: var(--mist); }
+    .principle-item.discovered .principle-source .tag::after { content: " · "; color: var(--dim); }
 
-    .principle-source .tag {
-      padding: 2px 8px;
-      background: #232326;
-      border-radius: 10px;
-      font-size: 11px;
+    /* undiscovered: name and source become placeholders */
+    .principle-item.locked .principle-name {
+      color: transparent; user-select: none;
+      width: 5.2em; height: 9px; margin: 7px 0 8px;
+      background: var(--night-3); border-radius: 4px; overflow: hidden;
     }
+    .principle-item.locked:nth-child(3n+1) .principle-name { width: 4.2em; }
+    .principle-item.locked:nth-child(5n+2) .principle-name { width: 6.4em; }
+    .principle-item.locked .principle-source { font-size: 0; }
+    .principle-item.locked .principle-source .tag { font-size: 12px; color: var(--dim); }
 
-    .principle-status {
-      font-size: 18px;
-    }
+    .empty-state { grid-column: 1 / -1; padding: 56px 0; text-align: center; font-size: 14px; color: var(--dim); }
+    .empty-state-icon { display: none; }
 
-    /* 모달 */
+    /* modal: a page of the book */
     .modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 20px;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s;
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: rgba(10,5,16,.78);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s;
     }
-
-    .modal.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
+    .modal.show { opacity: 1; visibility: visible; }
     .modal-content {
-      background: #141417;
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 340px;
-      width: 100%;
-      text-align: center;
-      transform: scale(0.9);
-      transition: transform 0.2s;
+      width: 100%; max-width: 380px;
+      background: var(--night-2); border-radius: var(--r-m);
+      padding: 34px 28px 24px;
     }
-
-    .modal.show .modal-content {
-      transform: scale(1);
-    }
-
-    .modal-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
+    .modal-icon { display: none; }
     .modal-name {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 12px;
+      font-family: var(--serif); font-weight: 400; font-size: 27px; line-height: 1.3;
+      letter-spacing: -.02em; word-break: keep-all;
     }
-
     .modal-desc {
-      font-size: 14px;
-      color: #a1a1aa;
-      line-height: 1.8;
-      margin-bottom: 16px;
+      margin-top: 16px; font-size: 15px; line-height: 1.85; color: var(--moon);
+      word-break: keep-all;
     }
-
     .modal-source {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: #232326;
-      border-radius: 20px;
-      font-size: 12px;
-      color: #9580ff;
-      margin-bottom: 20px;
+      margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line);
+      font-size: 12.5px; color: var(--dim); line-height: 1.6;
     }
+    .modal-source-label { margin-right: 6px; }
+    #modalSource { color: var(--mist); }
+    .modal-close { width: 100%; margin-top: 24px; }
 
-    .modal-close {
-      width: 100%;
-      padding: 14px;
-      background: #232326;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .modal-close:hover {
-      background: #35353a;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #52525b;
-    }
-
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
+    @media (max-width: 370px) {
+      .principles-list { column-gap: 14px; }
+      .principle-name { font-size: 16px; }
     }
   </style>
 </head>
@@ -302,21 +141,18 @@
   <div class="container">
     <div class="header">
       <a href="index.html" class="back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        돌아가기
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        홈
       </a>
     </div>
 
-    <div class="page-title">
-      <span>💎</span> 원칙 도감
-    </div>
+    <h1 class="page-title">원칙 도감</h1>
+    <p class="page-sub">시뮬레이터에서 고른 선택이 원칙으로 쌓여요.</p>
 
     <div class="progress-card">
       <div class="progress-header">
-        <span class="progress-label">수집 진행도</span>
         <span class="progress-count" id="progressCount">0/0</span>
+        <span class="progress-label">발견한 원칙</span>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
@@ -326,14 +162,16 @@
     <div class="filter-section">
       <div class="filter-row" id="categoryFilter">
         <button class="filter-btn active" data-filter="all">전체</button>
-        <button class="filter-btn" data-filter="심리">🧠 심리</button>
-        <button class="filter-btn" data-filter="철학">💭 철학</button>
-        <button class="filter-btn" data-filter="스토리">📖 스토리</button>
+        <button class="filter-btn" data-filter="심리">심리</button>
+        <button class="filter-btn" data-filter="철학">철학</button>
+        <button class="filter-btn" data-filter="스토리">스토리</button>
       </div>
+    </div>
+    <div class="filter-wrap">
       <div class="filter-row" id="statusFilter">
-        <button class="filter-btn active" data-filter="all">전체</button>
-        <button class="filter-btn" data-filter="discovered">발견됨 ✓</button>
-        <button class="filter-btn" data-filter="locked">미발견 🔒</button>
+        <button class="filter-btn active" data-filter="all">모두</button>
+        <button class="filter-btn" data-filter="discovered">발견</button>
+        <button class="filter-btn" data-filter="locked">미발견</button>
       </div>
     </div>
 
@@ -341,15 +179,15 @@
   </div>
 
   <!-- 모달 -->
-  <div class="modal" id="modal">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
     <div class="modal-content">
-      <div class="modal-icon" id="modalIcon">💎</div>
-      <div class="modal-name" id="modalName">원칙 이름</div>
-      <div class="modal-desc" id="modalDesc">원칙 설명</div>
+      <div class="modal-icon" id="modalIcon"></div>
+      <h2 class="modal-name" id="modalName">원칙 이름</h2>
+      <p class="modal-desc" id="modalDesc">원칙 설명</p>
       <div class="modal-source">
-        <span>📍</span> <span id="modalSource">출처</span>
+        <span class="modal-source-label">출처</span><span id="modalSource">출처</span>
       </div>
-      <button class="modal-close" id="modalClose">닫기</button>
+      <button class="modal-close ecl-btn ghost" id="modalClose">닫기</button>
     </div>
   </div>
 
@@ -983,8 +821,8 @@
       if (filtered.length === 0) {
         list.innerHTML = `
           <div class="empty-state">
-            <div class="empty-state-icon">🔍</div>
-            <div>조건에 맞는 원칙이 없습니다</div>
+            <div class="empty-state-icon"></div>
+            <div>조건에 맞는 원칙이 없어요</div>
           </div>
         `;
         return;
@@ -996,7 +834,7 @@
           <div class="principle-item ${isDiscovered ? 'discovered' : 'locked'}" 
                data-name="${p.name}" 
                data-discovered="${isDiscovered}">
-            <div class="principle-icon">${isDiscovered ? p.icon : '❓'}</div>
+            <div class="principle-icon">${isDiscovered ? p.icon : ''}</div>
             <div class="principle-info">
               <div class="principle-name">${isDiscovered ? p.name : '???'}</div>
               <div class="principle-source">
@@ -1004,7 +842,7 @@
                 ${isDiscovered ? p.source : '???'}
               </div>
             </div>
-            <div class="principle-status">${isDiscovered ? '✓' : '🔒'}</div>
+            <div class="principle-status">${isDiscovered ? '발견' : ''}</div>
           </div>
         `;
       }).join('');
@@ -1061,22 +899,13 @@
     renderList();
   </script>
 
-  <!-- 하단 탭 네비게이션 -->
-  <div style="position:fixed;bottom:0;left:0;right:0;background:#09090b;border-top:1px solid #232326;display:flex;justify-content:center;z-index:1000;padding-bottom:env(safe-area-inset-bottom);">
-    <div style="display:flex;max-width:480px;width:100%;">
-      <a href="index.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">🏠</span>홈
-      </a>
-      <a href="daily.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">🤔</span>오늘의 질문
-      </a>
-      <a href="dex.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#9580ff;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">📖</span>도감
-      </a>
-      <a href="read-me.html" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;color:#52525b;font-size:10px;text-decoration:none;gap:4px;">
-        <span style="font-size:20px;">👤</span>프로필
-      </a>
-    </div>
+  <div class="ecl-tabbar">
+    <nav aria-label="주요 메뉴">
+      <a href="index.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 4.2a8.5 8.5 0 0 0 0 15.6"/></svg>홈</a>
+      <a href="daily.html"><svg viewBox="0 0 24 24"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3"/><circle cx="12" cy="17.6" r=".6"/><circle cx="12" cy="12" r="9"/></svg>오늘의 질문</a>
+      <a href="dex.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h11"/></svg>도감</a>
+      <a href="read-me.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 19.5a6 6 0 0 1 12 0"/><path d="M15.5 6.2a3.5 3.5 0 0 1 0 5.6M18 19.5a6 6 0 0 0-2.5-4.9"/></svg>나를 읽어봐</a>
+    </nav>
   </div>
 
 </body>
