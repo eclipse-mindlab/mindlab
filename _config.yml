@@ -1,2 +1,7 @@
 include:
   - .well-known
+exclude:
+  - tools
+  - CLAUDE.md
+  - GUIDE.md
+  - HANDOVER.md

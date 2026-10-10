@@ -902,6 +902,19 @@
     let currentStatusFilter = 'all';
     
     // 삭제된 원칙 목록 (더 이상 획득 불가)
+    // 같은 이름의 원칙은 하나로 합친다 (출처는 함께 표시)
+    (function dedupePrinciples() {
+      const seen = new Map();
+      for (let i = 0; i < ALL_PRINCIPLES.length; i++) {
+        const p = ALL_PRINCIPLES[i];
+        const first = seen.get(p.name);
+        if (first) {
+          if (p.source && first.source && !first.source.includes(p.source)) first.source += ' · ' + p.source;
+          ALL_PRINCIPLES.splice(i, 1); i--;
+        } else seen.set(p.name, p);
+      }
+    })();
+
     const DEPRECATED_PRINCIPLES = [
       '현재의 확실성',
       '가치의 계산', 
@@ -943,7 +956,7 @@
       const discovered = getDiscoveredNames();
       const total = ALL_PRINCIPLES.length;
       const allPrincipleNames = ALL_PRINCIPLES.map(p => p.name);
-      const count = discovered.filter(name => allPrincipleNames.includes(name)).length;
+      const count = new Set(discovered.filter(name => allPrincipleNames.includes(name))).size;
       
       document.getElementById('progressCount').textContent = `${count}/${total}`;
       document.getElementById('progressFill').style.width = `${(count/total)*100}%`;

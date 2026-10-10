@@ -640,8 +640,9 @@
         profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
       }
       
-      // 경험치 추가
-      profile.exp = (profile.exp || 0) + 30;
+      // 경험치는 첫 완료 때만
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.completedSims.includes('trolley')) profile.exp = (profile.exp || 0) + 30;
       
       // 레벨업 체크
       const expNeeded = (profile.level || 1) * 100;

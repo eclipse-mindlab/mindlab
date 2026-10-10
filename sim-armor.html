@@ -99,7 +99,7 @@ return{icon:'🌀',label:'갑옷 유형',title:'복합 갑옷',desc:'당신의 �
 getShareText(t){return'🛡️ 성격 갑옷\n\n'+t+'\n\nhttps://bit.ly/armor-sim';}
 };
 SimTemplate.init(CONFIG);
-document.getElementById('shareBtn').addEventListener('click',async()=>{const t='🛡️ 성격 갑옷\n\n'+document.getElementById('resultTitle').textContent+'\n\nhttps://bit.ly/armor-sim';if(navigator.share){try{await navigator.share({title:'성격 갑옷',text:t});}catch{}}else{navigator.clipboard.writeText(t).then(()=>{document.getElementById('shareBtn').textContent='링크 복사됨!';setTimeout(()=>{document.getElementById('shareBtn').textContent='친구한테 시켜보기';},2000);});}});
+// 공유는 sim-template.js가 처리 (중복 실행 방지)
 document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#1a1008';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#f97316';x.fillText('성격 갑옷',400,205);const l=document.createElement('a');l.download='성격갑옷_결과.png';l.href=c.toDataURL();l.click();});
   </script>
 </body>

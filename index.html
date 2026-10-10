@@ -1341,7 +1341,7 @@
     };
 
     // 도감 총 원칙 수 (dex.html과 동기화 필요)
-    const DEX_TOTAL = 503;
+    const DEX_TOTAL = 496; // VALID_PRINCIPLES의 고유 이름 수
 
     let profile = {
       version: CURRENT_VERSION,
@@ -1363,17 +1363,7 @@
           p = migrateProfile(p);
         }
         
-        // 유효하지 않은 원칙 제거 (VALID_PRINCIPLES에 없는 것)
-        if (p.principles && p.principles.length > 0) {
-          const beforeCount = p.principles.length;
-          p.principles = p.principles.filter(pr => {
-            const name = typeof pr === 'string' ? pr : (pr && pr.name ? pr.name : null);
-            return name && VALID_PRINCIPLES.includes(name);
-          });
-          if (p.principles.length !== beforeCount) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-          }
-        }
+        // 원칙은 절대 삭제하지 않는다. 목록에 없는 원칙은 저장만 유지하고 집계에서 제외한다.
         
         // maxStreak 마이그레이션: dailyData에서 가져오기
         if (!p.maxStreak) {
@@ -1545,7 +1535,7 @@
       // 발견한 원칙 수 (VALID_PRINCIPLES에 있는 것만 카운트)
       const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
       const validPrinciples = principleNames.filter(name => VALID_PRINCIPLES.includes(name));
-      document.getElementById('statPrinciples').textContent = validPrinciples.length;
+      document.getElementById('statPrinciples').textContent = new Set(validPrinciples).size;
       
       // 최대 연속 참여 - dailyData에서 직접 가져오기
       const dailySaved = localStorage.getItem('eclipse_mindlab_daily');
@@ -1731,7 +1721,7 @@
             .map(p => typeof p === 'string' ? p : (p && p.name ? p.name : null))
             .filter(name => name && VALID_PRINCIPLES.includes(name))
         : [];
-      const dexCount = dexPrincipleNames.length;
+      const dexCount = new Set(dexPrincipleNames).size;
       document.getElementById('dexCount').textContent = `${dexCount}/${DEX_TOTAL}`;
       document.getElementById('dexProgressFill').style.width = `${(dexCount/DEX_TOTAL)*100}%`;
 
