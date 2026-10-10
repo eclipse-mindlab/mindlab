@@ -15,3 +15,9 @@ python3 tools/check.py          # 전 페이지 검사 + tools/out/ 스크린샷
 python3 tools/check.py --no-shots
 ```
 기존 사용자 데이터로 모든 페이지를 열어 JS 오류, 데이터 유실, 홈/도감 집계, 템플릿 시뮬레이터 완주 저장을 확인한다. Firebase는 tools/firebase-stub 로 대체된다.
+
+## 디자인 시스템
+- `eclipse.css`: 공통 토큰(색은 logo.png에서 추출: 보라 밤, 달빛 흰색, 마젠타 코로나), 폰트(Song Myung + IBM Plex Sans KR), 버튼, 일식 마크(`.ecl-mark`), 하단 탭(`.ecl-tabbar`).
+- 코로나(마젠타)는 화면당 한 곳만 강조에 쓴다. 이모지 아이콘, 대문자 라벨, 무지개색 배지는 쓰지 않는다.
+- 책 표지 썸네일은 `img/book-*.webp`(검은 여백을 잘라낸 360px). 원본 png는 다른 페이지가 쓰므로 유지.
+- 오늘의 딜레마 데이터는 `daily-data.js` 하나. 새 딜레마는 배열 맨 뒤에만 추가한다.

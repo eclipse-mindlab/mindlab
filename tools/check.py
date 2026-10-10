@@ -10,6 +10,7 @@
 
 실행:  python3 tools/check.py            (스크린샷: tools/out/)
        python3 tools/check.py --no-shots
+       ECLIPSE_FONTS=<dir> python3 tools/check.py   (fontsource 패키지를 풀어둔 폴더: 실제 웹폰트로 스크린샷)
 """
 import http.server, json, os, re, socketserver, sys, threading
 from functools import partial
@@ -72,8 +73,25 @@ def serve():
     return srv, f'http://127.0.0.1:{srv.server_address[1]}/'
 
 
+FONTS = os.environ.get('ECLIPSE_FONTS')
+
+
+def font_css():
+    """구글 폰트 대신 로컬 fontsource 파일로 같은 글꼴을 제공한다 (스크린샷 확인용)."""
+    css = []
+    for pkg, files in [('song-myung', ['400.css']), ('ibm-plex-sans-kr', ['400.css', '500.css', '600.css'])]:
+        d = next(p for p in Path(FONTS).glob(f'fontsource-{pkg}-*') if p.is_dir())
+        for f in files:
+            css.append((d / f).read_text().replace('url(./files/', f'url(http://fonts.local/{d.name}/files/'))
+    return '\n'.join(css)
+
+
 def route(r):
     url = r.request.url
+    if FONTS and 'fonts.googleapis.com' in url:
+        return r.fulfill(body=font_css(), content_type='text/css')
+    if FONTS and url.startswith('http://fonts.local/'):
+        return r.fulfill(path=str(Path(FONTS) / url[len('http://fonts.local/'):]))
     m = re.search(r'firebasejs/[\d.]+/(firebase-[a-z]+\.js)', url)
     if m:
         return r.fulfill(path=str(STUB / m.group(1)), content_type='application/javascript')

@@ -13,6 +13,8 @@ const urlsToCache = [
   './sim-money-friend.html',
   './sim-trolley.html',
   './sim-clone.html',
+  './eclipse.css',
+  './daily-data.js',
   './sim-template.css',
   './sim-template.js',
   './sim-survival-test.html',

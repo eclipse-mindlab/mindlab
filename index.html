@@ -12,7 +12,7 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="딜렘">
@@ -32,888 +32,211 @@
   <meta name="twitter:description" content="나는 어떤 선택을 하는 사람일까? 트롤리 딜레마, 복제인간 등 철학적 선택을 경험해보세요.">
   <meta name="twitter:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+    /* Home: one column, read top to bottom like a theatre programme.
+       The only loud moment is the eclipse rising behind today's question. */
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 120px; }
 
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
+    /* top bar */
+    .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0 6px; }
     .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-logo { width: 36px; height: 36px; border-radius: 50%; }
-    .brand-text { font-size: 18px; font-weight: 600; color: #9580ff; }
-    
-    .beta-badge {
-      font-size: 10px;
-      padding: 2px 6px;
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-      border-radius: 4px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+    .brand-logo { width: 30px; height: 30px; border-radius: 50%; }
+    .brand-text { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; }
+    .top-links { display: flex; gap: 16px; font-size: 13px; color: var(--mist); }
+    .top-links a:hover { color: var(--moon); }
+
+    /* hero: today's dilemma */
+    .hero { position: relative; display: block; padding: 120px 0 34px; overflow: hidden; margin: 0 -20px; padding-inline: 20px; }
+    .hero-mark { position: absolute; width: 196px; right: -40px; top: -4px; z-index: -1; }
+    .new-tag { font-family: var(--sans); font-size: 11px; color: var(--corona); margin-left: 8px; vertical-align: 3px; letter-spacing: 0; }
+    .hero-mark .shade { animation: wax 2s cubic-bezier(.55,0,.2,1) .15s both; }
+    .hero-mark .rim { animation: rim 1s ease-out 1.6s both; }
+    @keyframes wax { from { transform: translate(52%, -24%); } to { transform: translate(13%, -3%); } }
+    @keyframes rim { from { opacity: 0; } }
+    .hero-kicker { font-size: 13px; color: var(--mist); display: flex; gap: 10px; }
+    .hero-kicker span { color: var(--dim); }
+    .hero-q {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(27px, 7.4vw, 34px); line-height: 1.32; letter-spacing: -.02em;
+      margin-top: 10px; max-width: 13em; text-wrap: balance;
     }
+    .hero-situation {
+      margin-top: 14px; color: var(--mist); font-size: 14.5px; max-width: 30em;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .hero-foot { margin-top: 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-meta { display: flex; flex-direction: column; font-size: 13px; color: var(--mist); line-height: 1.5; }
+    .daily-desc.is-done { color: var(--ok); }
+    .daily-streak { color: var(--dim); font-variant-numeric: tabular-nums; }
+    .hero:active .ecl-btn { transform: scale(.97); }
 
-    .header-links { display: flex; gap: 12px; }
-    .header-link { color: #8b8b92; text-decoration: none; font-size: 13px; }
-    .header-link:hover { color: #9580ff; }
-
+    /* my record */
     .profile-card {
-      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 24px;
-      border: 1px solid #232326;
-      position: relative;
+      position: relative; background: var(--night-2); border-radius: var(--r-m);
+      padding: 20px; margin-top: 8px;
     }
-
     .google-sync-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #232326;
-      border: 1px solid #35353a;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
+      position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center; background: var(--night-3);
     }
-
-    .google-sync-btn:hover {
-      background: #35353a;
-      transform: scale(1.05);
+    .google-sync-btn.synced { box-shadow: inset 0 0 0 1px var(--ok); }
+    .google-sync-btn.synced::after { content: ""; position: absolute; right: 1px; bottom: 1px; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 2px var(--night-2); }
+    .profile-top { display: flex; gap: 14px; align-items: center; padding-right: 40px; }
+    .tier-badge { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; }
+    .tier-badge img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; }
+    .tier-label { font-size: 11px; padding: 1px 8px; border-radius: 999px; }
+    .profile-info { flex: 1; min-width: 0; }
+    .profile-name-row { display: flex; align-items: center; gap: 6px; }
+    .profile-name { font-family: var(--serif); font-size: 22px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .edit-name-btn { color: var(--dim); padding: 4px; }
+    .edit-name-btn:hover { color: var(--moon); }
+    .profile-title { font-size: 13px; color: var(--mist); margin-top: 2px; }
+    .level-info { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--mist); font-variant-numeric: tabular-nums; }
+    .level-num { color: var(--moon); font-weight: 600; }
+    .exp-bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .exp-fill { height: 100%; background: linear-gradient(90deg, var(--violet), var(--corona)); border-radius: 2px; transition: width .8s ease; }
+    .journey-section { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+    .journey-title { display: none; }
+    .journey-stats { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .journey-stat + .journey-stat { border-left: 1px solid var(--line); padding-left: 14px; }
+    .journey-stat-value { font-family: var(--serif); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .journey-stat-label { font-size: 12px; color: var(--dim); margin-top: 2px; }
+    .profile-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .save-profile-btn, .share-app-btn, .install-btn {
+      display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px;
+      border-radius: 999px; font-size: 13px; color: var(--mist); box-shadow: inset 0 0 0 1px var(--line);
     }
+    .save-profile-btn:hover, .share-app-btn:hover, .install-btn:hover { color: var(--moon); box-shadow: inset 0 0 0 1px var(--mist); }
+    .save-profile-btn svg, .share-app-btn svg, .install-btn svg { width: 15px; height: 15px; }
+    .save-profile-btn.success, .share-app-btn.success { color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); }
+    .backup-warning { margin-top: 14px; font-size: 12.5px; color: var(--dim); line-height: 1.5; }
+    .backup-warning .warning-icon { display: none; }
 
-    .google-sync-btn.synced {
-      background: #2d5a41;
-      border-color: #5cb88a;
-    }
+    /* sections */
+    .block { margin-top: 52px; }
+    .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .block-head h2 { font-family: var(--serif); font-weight: 400; font-size: 23px; letter-spacing: -.01em; }
+    .block-sub { font-size: 13px; color: var(--dim); margin: -2px 0 8px; }
+    .count { font-size: 13px; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-    .google-sync-btn.synced svg {
-      display: none;
-    }
-
-    .google-sync-btn.synced::after {
-      content: '✓';
-      color: #fff;
-      font-size: 16px;
-    }
-
-    .profile-top { display: flex; gap: 16px; margin-bottom: 16px; }
-
-    .tier-badge { 
-      width: 72px; 
-      flex-shrink: 0; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-    .tier-badge img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
-    .tier-label {
-      font-size: 12px;
-      font-weight: 600;
-      padding: 2px 10px;
-      border-radius: 10px;
-      background: rgba(239, 68, 68, 0.2);
-      color: #dc6b6b;
-    }
-
-    .profile-info { flex: 1; }
-    .profile-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-    .profile-name { font-size: 20px; font-weight: 600; }
-    .edit-name-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #232326;
-      border: 1px solid #35353a;
-      color: #8b8b92;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .edit-name-btn:hover {
-      background: #35353a;
-      color: #9580ff;
-    }
-    .profile-title { font-size: 13px; color: #9580ff; margin-bottom: 8px; }
-
-    .level-info { display: flex; align-items: center; gap: 8px; }
-    .level-text { font-size: 12px; color: #8b8b92; }
-    .level-num { color: #fff; font-weight: 600; }
-    .exp-bar { flex: 1; height: 6px; background: #232326; border-radius: 3px; overflow: hidden; }
-    .exp-fill { height: 100%; background: linear-gradient(90deg, #9580ff, #9580ff); border-radius: 3px; }
-    .exp-text { font-size: 11px; color: #8b8b92; }
-
-    .journey-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #232326; }
-    .journey-title { font-size: 13px; color: #8b8b92; margin-bottom: 12px; }
-    .journey-stats { display: flex; gap: 16px; }
-    .journey-stat { flex: 1; text-align: center; padding: 12px; background: #1a1a1e; border-radius: 10px; }
-    .journey-stat-value { font-size: 20px; font-weight: 700; }
-    .journey-stat-label { font-size: 11px; color: #8b8b92; }
-
-    .save-profile-btn {
-      width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .save-profile-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-    }
-
-    .save-profile-btn.success {
-      background: #2d5a41;
-    }
-
-    .install-btn {
-      width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      background: linear-gradient(135deg, #6d5dbc, #5b21b6);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .install-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-    }
-
-    .install-btn.hidden { display: none; }
-
-    .share-app-btn {
-      width: 100%;
-      margin-top: 10px;
-      padding: 14px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .share-app-btn:hover {
-      background: #35353a;
-    }
-
-    .share-app-btn.success {
-      background: #2d5a41;
-      border-color: #5cb88a;
-    }
-
-    .backup-warning {
-      margin-top: 12px;
-      padding: 12px 14px;
-      background: rgba(234, 179, 8, 0.1);
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      border-radius: 10px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 12px;
-      color: #eab308;
-      line-height: 1.4;
-    }
-
-    .backup-warning .warning-icon {
-      flex-shrink: 0;
-    }
-
-    .daily-banner {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(149, 128, 255, 0.12), rgba(109, 93, 188, 0.08));
-      border: 1px solid rgba(149, 128, 255, 0.25);
-      border-radius: 14px;
-      margin-bottom: 24px;
-      text-decoration: none;
-      color: #fff;
-      transition: transform 0.15s ease, border-color 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .daily-banner:hover {
-      border-color: #9580ff;
-    }
-
-    .daily-banner:active {
-      transform: scale(0.98);
-      border-color: #9580ff;
-    }
-
-    .daily-icon { font-size: 28px; }
-    .daily-content { flex: 1; }
-    .daily-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
-    .daily-desc { font-size: 12px; color: #9580ff; }
-    .daily-arrow { font-size: 18px; color: #8b8b92; }
-
-    .my-challenges-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 16px;
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      text-decoration: none;
-      color: #fff;
-      transition: transform 0.15s ease, background 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .my-challenges-btn:hover {
-      background: #1a1a1e;
-    }
-
-    .my-challenges-btn:active {
-      transform: scale(0.98);
-      background: #1f1f23;
-    }
-
-    .my-challenges-btn.hidden {
-      display: none;
-    }
-
-    .my-challenges-icon {
-      font-size: 20px;
-    }
-
-    .my-challenges-text {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .my-challenges-count {
-      background: #9580ff;
-      color: #000;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .map-section { margin-bottom: 24px; }
-    .section-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 4px; }
-    .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .section-title .icon { font-size: 20px; }
-    .section-subtitle { width: 100%; font-size: 12px; color: #8b8b92; margin-left: 28px; }
-    .section-progress { font-size: 13px; color: #8b8b92; }
-
-    .category-card {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 16px;
-      padding: 12px;
-    }
-
-    .sim-list { display: flex; flex-direction: column; gap: 8px; }
-
+    /* simulator rows */
+    .sim-list { display: flex; flex-direction: column; }
     .sim-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: #1a1a1e;
-      border-radius: 10px;
-      text-decoration: none;
-      color: #fff;
-      transition: transform 0.15s ease, background 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
+      display: grid; grid-template-columns: 22px 1fr auto; gap: 14px; align-items: start;
+      padding: 15px 0; border-bottom: 1px solid var(--line);
     }
+    .sim-list > .sim-item:last-child { border-bottom: 0; }
+    .sim-item:active { opacity: .7; }
+    .sim-status { font-size: 0; padding-top: 6px; }
+    .sim-status::before {   /* moon phase: empty ring until watched */
+      content: ""; display: block; width: 14px; height: 14px; border-radius: 50%;
+      box-shadow: inset 0 0 0 1.5px var(--dim);
+    }
+    .sim-item.completed .sim-status::before { background: var(--night); box-shadow: inset 5px -2px 0 0 var(--moon), 0 0 0 1px var(--line); }
+    .sim-item.locked { opacity: .45; pointer-events: none; }
+    .sim-item.locked .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--dim); border: 1.5px dashed var(--night); }
+    .recommend .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--corona); }
+    .sim-info { min-width: 0; }
+    .sim-title { font-family: var(--serif); font-size: 18px; line-height: 1.35; }
+    .sim-desc { font-size: 13.5px; color: var(--mist); margin-top: 3px; line-height: 1.5; }
+    .sim-reward { font-size: 12px; color: var(--dim); padding-top: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .sim-item.completed .sim-reward { color: var(--mist); }
+    @media (hover: hover) { .sim-item:hover .sim-title { color: #fff; text-decoration: underline; text-decoration-color: var(--corona); text-underline-offset: 5px; text-decoration-thickness: 1px; } }
 
-    .sim-item:hover { background: #232326; }
-    .sim-item:active { transform: scale(0.98); background: #252528; }
-    .sim-item.locked { opacity: 0.5; pointer-events: none; }
-    .sim-item.completed { border-left: 3px solid #5cb88a; }
+    /* dex */
+    .dex-link { display: block; margin-top: 52px; padding: 20px; border-radius: var(--r-m); background: var(--night-2); }
+    .dex-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .dex-title { font-family: var(--serif); font-size: 23px; }
+    .dex-count { font-size: 14px; color: var(--mist); font-variant-numeric: tabular-nums; }
+    .dex-progress { height: 3px; background: var(--line); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+    .dex-progress-fill { height: 100%; background: var(--corona); transition: width .8s ease; }
+    .dex-subtitle { margin-top: 12px; font-size: 13px; color: var(--dim); }
 
-    .sim-status { width: 24px; text-align: center; font-size: 14px; }
-    .sim-info { flex: 1; }
-    .sim-title { font-size: 14px; font-weight: 500; }
-    .sim-desc { font-size: 12px; color: #8b8b92; }
-    .sim-reward { font-size: 11px; color: #9580ff; }
-
-    /* 원칙 도감 링크 */
-    .dex-link {
-      display: block;
-      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-      border: 1px solid #232326;
-      text-decoration: none;
-      color: #fff;
-      transition: transform 0.15s ease, border-color 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .dex-link:hover {
-      border-color: #6d5dbc;
-    }
-
-    .dex-link:active {
-      transform: scale(0.98);
-      border-color: #6d5dbc;
-    }
-
-    .dex-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .dex-title {
-      font-size: 16px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dex-count {
-      font-size: 14px;
-      color: #9580ff;
-      font-weight: 600;
-    }
-
-    .dex-progress {
-      height: 8px;
-      background: #232326;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    .dex-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #6d5dbc, #9580ff);
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-
-    .dex-subtitle {
-      font-size: 12px;
-      color: #8b8b92;
-    }
-
-    .tier-section { background: #141417; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
-    .tier-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-    .tier-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .tier-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; opacity: 0.3; }
-    .tier-icon.active { opacity: 1; box-shadow: 0 0 12px rgba(167, 139, 250, 0.5); }
-    .tier-icon.completed { opacity: 0.7; }
-    .tier-icon img { width: 100%; height: 100%; object-fit: cover; }
-    .tier-name { font-size: 10px; color: #52525b; }
-    .tier-item.active .tier-name { color: #9580ff; font-weight: 600; }
-
-    .book-section { margin-bottom: 24px; }
-    
-    /* 이클립스 더 알아보기 섹션 */
-    .eclipse-section {
-      text-align: center;
-      padding: 24px 0;
-      border-top: 1px solid #232326;
-      margin-bottom: 24px;
-    }
-    
-    .eclipse-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 16px;
-    }
-    
-    .youtube-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    
-    .youtube-btn:hover {
-      background: #35353a;
-      transform: translateY(-2px);
-    }
-    
-    .youtube-btn svg {
-      fill: #dc6b6b;
-    }
-    
-    /* 책 섹션 */
-    .books-section {
-      text-align: center;
-      padding-top: 24px;
-      border-top: 1px solid #232326;
-      margin-bottom: 24px;
-    }
-    
-    .books-section-title {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 20px;
-    }
-    
-    .books-grid {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-    }
-    
-    .book-item {
-      flex: 1;
-      max-width: 160px;
-      text-decoration: none;
-      color: #fff;
-      transition: all 0.2s;
-    }
-    
-    .book-item:hover {
-      transform: translateY(-4px);
-    }
-    
-    .book-item img {
-      width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      margin-bottom: 10px;
-    }
-    
-    .book-item-title {
-      font-size: 13px;
-      color: #a1a1aa;
-    }
-    
-    .book-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: linear-gradient(135deg, #1a1520 0%, #141417 100%);
-      border: 1px solid #2d2438;
-      border-radius: 16px;
-      padding: 16px;
-      text-decoration: none;
-      color: #fff;
-      transition: all 0.2s;
-    }
-    
-    .book-card:hover {
-      border-color: #9580ff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(167, 139, 250, 0.15);
-    }
-    
-    .book-images {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    
-    .book-img {
-      width: 56px;
-      height: auto;
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    }
-    
-    .book-info { flex: 1; }
-    .book-series { font-size: 11px; color: #9580ff; margin-bottom: 4px; }
-    .book-main-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .book-desc { font-size: 12px; color: #8b8b92; }
-
-    .footer { text-align: center; padding: 24px 0; border-top: 1px solid #232326; }
-    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
-    .footer-link { display: flex; align-items: center; gap: 6px; color: #8b8b92; text-decoration: none; font-size: 13px; }
-    .footer-link:hover { color: #9580ff; }
-    .footer-copy { font-size: 11px; color: #52525b; }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 100; padding: 20px;
-    }
-    .modal-overlay.hidden { display: none; }
-    .modal {
-      background: #141417; border-radius: 20px;
-      padding: 32px 24px; max-width: 360px; width: 100%; text-align: center;
-    }
-    .modal-logo { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 16px; }
-    .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-    .modal-desc { font-size: 14px; color: #8b8b92; margin-bottom: 24px; line-height: 1.6; }
-    .modal-input {
-      width: 100%; padding: 14px 16px;
-      background: #232326; border: 1px solid #35353a; border-radius: 12px;
-      color: #fff; font-size: 16px; margin-bottom: 16px; text-align: center;
-    }
-    .modal-input:focus { outline: none; border-color: #6d5dbc; }
-    .modal-btn {
-      width: 100%; padding: 14px;
-      background: #6d5dbc; border: none; border-radius: 12px;
-      color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
-    }
-    .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .modal-btn.cancel {
-      background: #232326;
-      color: #a1a1aa;
-    }
-    .modal-buttons {
-      display: flex;
-      gap: 12px;
-    }
-    .modal-buttons .modal-btn {
-      flex: 1;
-    }
-
-    /* 페이지 전환 애니메이션 */
-    .container {
-      animation: fadeSlideIn 0.4s ease-out;
-    }
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    a[href$=".html"]:not([target="_blank"]) {
-      transition: transform 0.15s ease;
-    }
-    a[href$=".html"]:not([target="_blank"]):active {
-      transform: scale(0.97);
-    }
-
-    /* 오늘의 딜레마 하이라이트 */
-    .daily-banner-main {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(149, 128, 255, 0.15), rgba(109, 93, 188, 0.08));
-      border: 1.5px solid rgba(149, 128, 255, 0.4);
-      border-radius: 16px;
-      text-decoration: none;
-      margin-bottom: 16px;
-      animation: pulseGlow 3s ease-in-out infinite;
-      transition: transform 0.2s;
-    }
-    .daily-banner-main:active { transform: scale(0.98); }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 rgba(149, 128, 255, 0); }
-      50% { box-shadow: 0 0 20px rgba(149, 128, 255, 0.15); }
-    }
-    .daily-banner-main .daily-icon { font-size: 32px; }
-    .daily-banner-main .daily-title { font-size: 17px; font-weight: 700; color: #fff; }
-    .daily-banner-main .daily-desc { font-size: 13px; color: #9580ff; margin-top: 2px; }
-    .daily-banner-main .daily-arrow { font-size: 20px; color: #9580ff; margin-left: auto; }
-    .daily-streak { 
-      display: inline-block; 
-      background: rgba(251, 191, 36, 0.2); 
-      color: #fbbf24; 
-      font-size: 11px; 
-      padding: 2px 8px; 
-      border-radius: 6px; 
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* 나의 사고 성향 차트 */
-    .mindset-card {
-      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #232326;
-    }
-    .mindset-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #9580ff;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .mindset-empty {
-      text-align: center;
-      padding: 20px;
-      color: #52525b;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-    .mindset-chart {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .mindset-axis {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .mindset-label {
-      font-size: 11px;
-      color: #8b8b92;
-      width: 60px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .mindset-bar-bg {
-      flex: 1;
-      height: 8px;
-      background: #232326;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .mindset-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 1s ease-out;
-    }
-    .mindset-percent {
-      font-size: 11px;
-      color: #fff;
-      width: 36px;
-      font-weight: 600;
-    }
-    .mindset-summary {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid #232326;
-      font-size: 12px;
-      color: #8b8b92;
-      line-height: 1.7;
-    }
-    .mindset-dominant {
-      color: #9580ff;
-      font-weight: 600;
-    }
-
-    /* 추천 시뮬레이터 */
-    .recommend-section {
-      background: linear-gradient(135deg, rgba(149, 128, 255, 0.08), rgba(109, 93, 188, 0.04));
-      border: 1px solid rgba(149, 128, 255, 0.2);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .recommend-title {
-      font-size: 13px;
-      color: #9580ff;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    /* 하단 탭 네비게이션 */
-    .tab-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #09090b;
-      border-top: 1px solid #232326;
-      display: flex;
-      justify-content: center;
-      z-index: 1000;
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    .tab-bar-inner {
-      display: flex;
-      max-width: 480px;
-      width: 100%;
-    }
-    .tab-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 0 8px;
-      color: #52525b;
-      font-size: 10px;
-      text-decoration: none;
-      transition: color 0.2s;
-      gap: 4px;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-    .tab-item.active { color: #9580ff; }
-    .tab-item .tab-icon { font-size: 20px; }
-
-    /* 탭 콘텐츠 */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* 하단 탭 높이만큼 패딩 */
-    .container { padding-bottom: 80px !important; }
-
-    /* 척학 컬렉션 */
-    .collection-card {
-      background: linear-gradient(135deg, #141417 0%, #1a1a1e 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #232326;
-    }
-    .collection-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #c9a84c;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .collection-progress {
-      font-size: 12px;
-      color: #52525b;
-      margin-left: auto;
-    }
+    /* book collection: a shelf */
     .collection-books {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 8px;
+      display: grid; grid-auto-flow: column; grid-auto-columns: 104px; gap: 14px;
+      overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 20px 4px; margin: 0 -20px;
+      scrollbar-width: none;
     }
-    .collection-book {
-      flex-shrink: 0;
-      width: 80px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s;
-      background: none;
-      border: none;
-      padding: 0;
-    }
-    .collection-book:active { transform: scale(0.95); }
-    .collection-book img {
-      width: 80px;
-      height: auto;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: all 0.3s;
-    }
-    .collection-book.locked img {
-      filter: brightness(0.15);
-    }
-    .collection-book .book-label {
-      font-size: 10px;
-      color: #a1a1aa;
-      margin-top: 6px;
-      line-height: 1.3;
-    }
-    .collection-book.locked .book-label { color: #3f3f46; }
-    .collection-book .book-check {
-      font-size: 12px;
-      margin-top: 4px;
-    }
+    .collection-books::-webkit-scrollbar { display: none; }
+    .collection-book { scroll-snap-align: start; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+    .collection-book img { width: 104px; height: 161px; object-fit: contain; object-position: left bottom; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+    .collection-book.locked img { filter: saturate(.3) brightness(.6) drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+    .collection-book .book-label { font-size: 13px; line-height: 1.35; }
+    .collection-book .book-check { font-size: 12px; color: var(--ok); min-height: 1em; }
+    .collection-book.locked .book-check { color: var(--dim); }
+    .collection-book:active img { transform: scale(.97); }
+    .shelf-foot { margin-top: 14px; font-size: 13px; color: var(--mist); }
+    .shelf-foot a { box-shadow: inset 0 -1px 0 var(--line); }
 
-    /* 책 모달 */
-    .book-modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.2s ease;
+    /* read-me */
+    .readme { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; padding: 20px; border-radius: var(--r-m); background: var(--night-2); }
+    .readme h2 { font-family: var(--serif); font-weight: 400; font-size: 21px; }
+    .readme p { font-size: 13.5px; color: var(--mist); grid-column: 1; }
+    .readme .ecl-btn { grid-row: 1 / span 2; grid-column: 2; height: 40px; font-size: 14px; }
+    .my-challenges-btn { display: flex; justify-content: space-between; margin-top: 10px; padding: 12px 4px; font-size: 14px; color: var(--mist); border-bottom: 1px solid var(--line); }
+    .my-challenges-icon { display: none; }
+    .my-challenges-count { color: var(--moon); font-variant-numeric: tabular-nums; }
+
+    /* mindset */
+    .mindset-title { display: none; }
+    .mindset-empty { color: var(--dim); font-size: 14px; padding: 14px 0; }
+    .mindset-chart { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+    .mindset-axis { display: grid; grid-template-columns: 64px 1fr 40px; gap: 12px; align-items: center; font-size: 13px; }
+    .mindset-label { color: var(--mist); }
+    .mindset-bar-bg { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+    .mindset-bar-fill { height: 100%; border-radius: 3px; }
+    .mindset-percent { text-align: right; font-variant-numeric: tabular-nums; }
+    .mindset-summary { margin-top: 18px; font-size: 14px; color: var(--mist); line-height: 1.7; }
+    .mindset-dominant { font-family: var(--serif); font-size: 17px; color: var(--moon); }
+
+    /* tiers */
+    .tier-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
+    .tier-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .tier-icon img { width: 40px; height: 40px; border-radius: 50%; filter: grayscale(1) brightness(.5); transition: filter .3s; }
+    .tier-icon.active img, .tier-icon.completed img { filter: none; }
+    .tier-icon.active { border-radius: 50%; box-shadow: 0 0 0 2px var(--night), 0 0 0 3px var(--corona); }
+    .tier-name { font-size: 11px; color: var(--dim); }
+    .tier-item.active .tier-name { color: var(--moon); }
+
+    /* footer */
+    .footer { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 18px; }
+    .footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 17px; }
+    .footer-brand .ecl-mark { width: 22px; }
+    .footer-brand .ecl-mark::before { display: none; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13.5px; color: var(--mist); }
+    .footer-links a:hover { color: var(--moon); }
+    .footer-copy { font-size: 12px; color: var(--dim); }
+
+    /* modals */
+    .modal-overlay, .book-modal-overlay {
+      position: fixed; inset: 0; z-index: 100; background: rgba(10,4,18,.82);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
     }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .book-modal {
-      background: #18181b;
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 320px;
-      width: 90%;
-      text-align: center;
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .book-modal img {
-      width: 140px;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    }
-    .book-modal-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-    .book-modal-sub { font-size: 13px; color: #71717a; margin-bottom: 16px; }
-    .book-modal-btn {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 8px;
-      transition: transform 0.15s;
-    }
-    .book-modal-btn:active { transform: scale(0.97); }
-    .book-modal-btn.primary { background: #9580ff; color: #fff; }
-    .book-modal-btn.read { background: #10b981; color: #fff; }
-    .book-modal-btn.unread { background: #27272a; color: #a1a1aa; }
-    .book-modal-btn.buy { background: #27272a; color: #c9a84c; }
-    .book-modal-btn.close { background: transparent; color: #52525b; }
+    .modal, .book-modal { width: 100%; max-width: 360px; background: var(--night-2); border-radius: 18px; padding: 28px 24px; text-align: center; box-shadow: 0 0 0 1px var(--line); }
+    .modal-logo { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 14px; }
+    .modal-title { font-family: var(--serif); font-size: 22px; }
+    .modal-desc { font-size: 14px; color: var(--mist); margin: 8px 0 18px; }
+    .modal-input { width: 100%; height: 48px; border-radius: 12px; border: 0; background: var(--night-3); color: var(--moon); font: inherit; padding: 0 16px; text-align: center; }
+    .modal-input::placeholder { color: var(--dim); }
+    .modal-input:focus { outline: 2px solid var(--violet); }
+    .modal-btn { width: 100%; height: 48px; border-radius: 999px; margin-top: 12px; background: var(--moon); color: var(--night); font-weight: 600; }
+    .modal-btn:disabled { opacity: .35; }
+    .modal-btn.cancel { background: transparent; color: var(--mist); }
+    .modal-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .book-modal img { width: 140px; margin: 0 auto 18px; filter: drop-shadow(0 16px 24px rgba(0,0,0,.55)); }
+    .book-modal-title { font-family: var(--serif); font-size: 22px; }
+    .book-modal-sub { font-size: 13.5px; color: var(--mist); margin: 6px 0 18px; }
+    #bookModalButtons { display: grid; gap: 8px; }
+    .book-modal-btn { display: flex; align-items: center; justify-content: center; height: 46px; border-radius: 999px; font-size: 14.5px; font-weight: 500; }
+    .book-modal-btn.buy { background: var(--moon); color: var(--night); font-weight: 600; }
+    .book-modal-btn.read { box-shadow: inset 0 0 0 1px var(--line); }
+    .book-modal-btn.unread, .book-modal-btn.close { color: var(--dim); height: 38px; }
   </style>
 </head>
 <body>
@@ -941,21 +264,34 @@
   </div>
 
   <div class="container">
-    <div class="header">
-      <div class="brand">
-        <img src="logo.png" alt="이클립스" class="brand-logo">
+    <header class="top">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="" class="brand-logo">
         <span class="brand-text">이클립스의 딜렘</span>
-        <span class="beta-badge">BETA</span>
-      </div>
-      <div class="header-links">
-        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="header-link">유튜브</a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="header-link">책</a>
-      </div>
-    </div>
+      </a>
+      <nav class="top-links" aria-label="이클립스 채널">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" rel="noopener">유튜브</a>
+        <a href="https://www.instagram.com/eclipse.thinker" target="_blank" rel="noopener">인스타그램</a>
+      </nav>
+    </header>
 
-    <div class="profile-card">
+    <a href="daily.html" class="hero" id="dailyMainBanner">
+      <div class="ecl-mark hero-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
+      <p class="hero-kicker">오늘의 딜레마 <span id="heroCategory"></span></p>
+      <h1 class="hero-q" id="heroQuestion">오늘의 질문이 기다리고 있어요</h1>
+      <p class="hero-situation" id="heroSituation"></p>
+      <div class="hero-foot">
+        <span class="ecl-btn">답하러 가기</span>
+        <div class="hero-meta">
+          <span class="daily-desc" id="dailyMainDesc">하루 한 문제, 답하면 경험치 10</span>
+          <span class="daily-streak hidden" id="dailyMainStreak"></span>
+        </div>
+      </div>
+    </a>
+
+    <section class="profile-card" aria-label="내 기록">
       <button class="google-sync-btn" id="googleSyncBtn" title="구글 계정으로 백업">
-        <svg width="18" height="18" viewBox="0 0 24 24">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -970,19 +306,14 @@
         <div class="profile-info">
           <div class="profile-name-row">
             <div class="profile-name" id="profileName">탐험가</div>
-            <button class="edit-name-btn" id="editNameBtn" title="닉네임 변경">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
+            <button class="edit-name-btn" id="editNameBtn" title="닉네임 변경" aria-label="닉네임 변경">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             </button>
           </div>
-          <div class="profile-title" id="profileTitle">🌱 초보 탐험가</div>
+          <div class="profile-title" id="profileTitle">초보 탐험가</div>
           <div class="level-info">
             <span class="level-text">Lv.<span class="level-num" id="levelNum">1</span></span>
-            <div class="exp-bar">
-              <div class="exp-fill" id="expFill" style="width: 0%"></div>
-            </div>
+            <div class="exp-bar"><div class="exp-fill" id="expFill" style="width: 0%"></div></div>
             <span class="exp-text" id="expText">0/100</span>
           </div>
         </div>
@@ -990,264 +321,125 @@
       <div class="journey-section">
         <div class="journey-title">탐험 현황</div>
         <div class="journey-stats">
-          <div class="journey-stat">
-            <div class="journey-stat-value" id="statCleared">0</div>
-            <div class="journey-stat-label">클리어</div>
-          </div>
-          <div class="journey-stat">
-            <div class="journey-stat-value" id="statPrinciples">0</div>
-            <div class="journey-stat-label">발견한 원칙</div>
-          </div>
-          <div class="journey-stat">
-            <div class="journey-stat-value" id="statMaxStreak">0</div>
-            <div class="journey-stat-label">최대 연속</div>
-          </div>
+          <div class="journey-stat"><div class="journey-stat-value" id="statCleared">0</div><div class="journey-stat-label">본 작품</div></div>
+          <div class="journey-stat"><div class="journey-stat-value" id="statPrinciples">0</div><div class="journey-stat-label">모은 원칙</div></div>
+          <div class="journey-stat"><div class="journey-stat-value" id="statMaxStreak">0</div><div class="journey-stat-label">최대 연속</div></div>
         </div>
       </div>
-
-      <button class="save-profile-btn" id="saveProfileBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21 15 16 10 5 21"/>
-        </svg>
-        프로필 이미지 저장
-      </button>
-
-      <button class="install-btn hidden" id="installBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        앱으로 설치하기
-      </button>
-
-      <button class="share-app-btn" id="shareAppBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-        </svg>
-        친구에게 공유하기
-      </button>
-      
+      <div class="profile-actions">
+        <button class="save-profile-btn" id="saveProfileBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          프로필 이미지 저장
+        </button>
+        <button class="share-app-btn" id="shareAppBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          친구에게 공유하기
+        </button>
+        <button class="install-btn hidden" id="installBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          앱으로 설치하기
+        </button>
+      </div>
       <div class="backup-warning" id="backupWarning">
-        <span class="warning-icon">⚠️</span>
-        <span class="warning-text">구글 계정 연동 전까지 브라우저 데이터 삭제 시 진행상황이 사라집니다</span>
+        <span class="warning-icon"></span>
+        <span class="warning-text">구글 계정을 연동하기 전에는 브라우저 데이터를 지우면 기록도 함께 사라져요. 오른쪽 위 G 버튼으로 백업할 수 있어요.</span>
       </div>
-    </div>
+    </section>
 
-    <!-- 오늘의 딜레마 - 최상단 하이라이트 -->
-    <a href="daily.html" class="daily-banner-main" id="dailyMainBanner">
-      <div class="daily-icon">🤔</div>
-      <div class="daily-content">
-        <div class="daily-title">오늘의 딜레마</div>
-        <div class="daily-desc" id="dailyMainDesc">오늘의 질문이 기다리고 있습니다</div>
-        <div class="daily-streak hidden" id="dailyMainStreak">🔥 연속 0일</div>
-      </div>
-      <div class="daily-arrow">→</div>
-    </a>
-
-    <!-- 추천 시뮬레이터 -->
-    <div class="recommend-section hidden" id="recommendSection">
-      <div class="recommend-title">💡 아직 안 해본 시뮬레이터</div>
+    <section class="block recommend hidden" id="recommendSection">
+      <div class="block-head"><h2>아직 안 본 작품</h2></div>
       <div class="sim-list" id="recommendList"></div>
-    </div>
+    </section>
 
-    <a href="daily.html" class="daily-banner" style="display:none;">
-      <div class="daily-icon">🤔</div>
-      <div class="daily-content">
-        <div class="daily-title">오늘의 딜레마</div>
-        <div class="daily-desc">매일 새로운 질문에 답하고 +10 EXP</div>
-      </div>
-      <div class="daily-arrow">→</div>
-    </a>
+    <section class="block map-section">
+      <div class="block-head"><h2>마인드 스토리</h2><span class="count" id="storyProgress">0/1</span></div>
+      <p class="block-sub">당신이 주인공인 소설</p>
+      <div class="sim-list" id="storyList"></div>
+    </section>
 
-    <a href="read-me.html" class="daily-banner" style="background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(167, 139, 250, 0.1)); border-color: rgba(244, 114, 182, 0.3);">
-      <div class="daily-icon">🔮</div>
-      <div class="daily-content">
-        <div class="daily-title">나를 읽어봐</div>
-        <div class="daily-desc" style="color: #f472b6;">친구에게 도전장 보내기</div>
-      </div>
-      <div class="daily-arrow">→</div>
-    </a>
+    <section class="block map-section">
+      <div class="block-head"><h2>철학</h2><span class="count" id="philProgress">0/0</span></div>
+      <div class="sim-list" id="philList"></div>
+    </section>
 
-    <a href="my-challenges.html" class="my-challenges-btn hidden" id="myChallengesBtn">
-      <span class="my-challenges-icon">📊</span>
-      <span class="my-challenges-text">내 도전장 현황</span>
-      <span class="my-challenges-count" id="myChallengesCount">0</span>
-    </a>
+    <section class="block map-section">
+      <div class="block-head"><h2>심리</h2><span class="count" id="psychProgress">0/0</span></div>
+      <div class="sim-list" id="psychList"></div>
+    </section>
 
-    <!-- 나의 사고 성향 -->
-    <div class="mindset-card" id="mindsetCard">
-      <div class="mindset-title">🧬 나의 사고 성향</div>
-      <div id="mindsetContent">
-        <div class="mindset-empty">시뮬레이터를 완료하면<br>당신의 사고 성향이 여기에 나타납니다.</div>
-      </div>
-    </div>
-
-    <!-- 척학 컬렉션 -->
-    <div class="collection-card">
-      <div class="collection-title">
-        📚 척학 컬렉션
-        <span class="collection-progress" id="collectionProgress">0/6</span>
-      </div>
-      <div class="collection-books" id="collectionBooks"></div>
-    </div>
-
-    <div class="map-section">
-      <div class="section-header">
-        <div class="section-title"><span class="icon">📖</span> 마인드 스토리</div>
-        <div class="section-subtitle">당신이 주인공인 소설</div>
-        <div class="section-progress" id="storyProgress">0/1</div>
-      </div>
-      <div class="category-card">
-        <div class="sim-list" id="storyList"></div>
-      </div>
-    </div>
-
-    <div class="map-section">
-      <div class="section-header">
-        <div class="section-title"><span class="icon">💭</span> 철학 시뮬레이터</div>
-        <div class="section-progress" id="philProgress">0/2</div>
-      </div>
-      <div class="category-card">
-        <div class="sim-list" id="philList"></div>
-      </div>
-    </div>
-
-    <div class="map-section">
-      <div class="section-header">
-        <div class="section-title"><span class="icon">🧠</span> 심리 시뮬레이터</div>
-        <div class="section-progress" id="psychProgress">0/2</div>
-      </div>
-      <div class="category-card">
-        <div class="sim-list" id="psychList"></div>
-      </div>
-    </div>
-
-    <div class="map-section">
-      <div class="section-header">
-        <div class="section-title"><span class="icon">🎯</span> 전략 시뮬레이터</div>
-        <div class="section-progress" id="strategyProgress">0/1</div>
-      </div>
-      <div class="category-card">
-        <div class="sim-list" id="strategyList"></div>
-      </div>
-    </div>
+    <section class="block map-section">
+      <div class="block-head"><h2>전략</h2><span class="count" id="strategyProgress">0/0</span></div>
+      <div class="sim-list" id="strategyList"></div>
+    </section>
 
     <a href="dex.html" class="dex-link">
       <div class="dex-header">
-        <div class="dex-title"><span class="icon">💎</span> 원칙 도감</div>
-        <div class="dex-count" id="dexCount">0/80</div>
+        <div class="dex-title">원칙 도감</div>
+        <div class="dex-count" id="dexCount">0/0</div>
       </div>
-      <div class="dex-progress">
-        <div class="dex-progress-fill" id="dexProgressFill" style="width: 0%"></div>
-      </div>
-      <div class="dex-subtitle">시뮬레이터를 클리어하며 원칙을 수집하세요 →</div>
+      <div class="dex-progress"><div class="dex-progress-fill" id="dexProgressFill" style="width: 0%"></div></div>
+      <div class="dex-subtitle">작품 속 선택마다 원칙이 하나씩 모여요</div>
     </a>
 
-    <div class="tier-section">
-      <div class="section-title">티어 진행도</div>
-      <div class="tier-progress">
-        <div class="tier-item active" data-tier="ruby">
-          <div class="tier-icon active"><img src="tier-ruby.png"></div>
-          <span class="tier-name">루비</span>
-        </div>
-        <div class="tier-item" data-tier="amethyst">
-          <div class="tier-icon"><img src="tier-amethyst.png"></div>
-          <span class="tier-name">자수정</span>
-        </div>
-        <div class="tier-item" data-tier="sapphire">
-          <div class="tier-icon"><img src="tier-sapphire.png"></div>
-          <span class="tier-name">사파이어</span>
-        </div>
-        <div class="tier-item" data-tier="emerald">
-          <div class="tier-icon"><img src="tier-emerald.png"></div>
-          <span class="tier-name">에메랄드</span>
-        </div>
-        <div class="tier-item" data-tier="obsidian">
-          <div class="tier-icon"><img src="tier-obsidian.png"></div>
-          <span class="tier-name">옵시디언</span>
-        </div>
-        <div class="tier-item" data-tier="gold">
-          <div class="tier-icon"><img src="tier-gold.png"></div>
-          <span class="tier-name">골드</span>
-        </div>
-      </div>
-    </div>
+    <section class="block collection-card">
+      <div class="block-head"><h2>척학 컬렉션</h2><span class="count collection-progress" id="collectionProgress">0/0</span></div>
+      <p class="block-sub">세계척학전집. 읽은 책을 표시해 두세요.</p>
+      <div class="collection-books" id="collectionBooks"></div>
+      <p class="shelf-foot"><a href="https://litt.ly/eclipse.thinker" target="_blank" rel="noopener">이클립스의 책 전체 보기</a></p>
+    </section>
 
-    <div class="eclipse-section">
-      <div class="eclipse-section-title">이클립스 더 알아보기</div>
-      <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" class="youtube-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/>
-          <path fill="#fff" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>
-        유튜브 채널
+    <section class="block">
+      <div class="readme">
+        <h2>나를 읽어봐</h2>
+        <p>다섯 개 질문에 답하고 친구가 내 선택을 맞히는지 봐요.</p>
+        <a href="read-me.html" class="ecl-btn">도전장 만들기</a>
+      </div>
+      <a href="my-challenges.html" class="my-challenges-btn hidden" id="myChallengesBtn">
+        <span class="my-challenges-icon"></span>
+        <span class="my-challenges-text">내가 보낸 도전장</span>
+        <span class="my-challenges-count" id="myChallengesCount">0</span>
       </a>
-    </div>
+    </section>
 
-    <div class="books-section">
-      <div class="books-section-title">이클립스의 책</div>
-      <div class="books-grid">
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-hierarchy.png" alt="서열의 교양">
-          <div class="book-item-title">서열의 교양</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-transcend.png" alt="초월자의 조건">
-          <div class="book-item-title">초월자의 조건</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-fight.png" alt="싸움의 교양">
-          <div class="book-item-title">싸움의 교양</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-love.png" alt="사랑은 오해다">
-          <div class="book-item-title">사랑은 오해다</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-wealth.png" alt="훔친 부 편">
-          <div class="book-item-title">훔친 부 편</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-philosophy.png" alt="훔친 철학 편">
-          <div class="book-item-title">훔친 철학 편</div>
-        </a>
-        <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-          <img src="book-psychology.png" alt="훔친 심리학 편">
-          <div class="book-item-title">훔친 심리학 편</div>
-        </a>
+    <section class="block mindset-card" id="mindsetCard">
+      <div class="block-head"><h2>나의 사고 성향</h2></div>
+      <div class="mindset-title"></div>
+      <div id="mindsetContent">
+        <div class="mindset-empty">작품을 끝내면 모은 원칙으로 사고 성향을 그려요.</div>
       </div>
-    </div>
+    </section>
 
-    <div class="footer">
-      <div class="footer-copy">© 딜렘</div>
-    </div>
+    <section class="block tier-section">
+      <div class="block-head"><h2>티어</h2><span class="count">5레벨마다 한 단계</span></div>
+      <div class="tier-progress">
+        <div class="tier-item active" data-tier="ruby"><div class="tier-icon active"><img src="tier-ruby.png" alt=""></div><span class="tier-name">루비</span></div>
+        <div class="tier-item" data-tier="amethyst"><div class="tier-icon"><img src="tier-amethyst.png" alt=""></div><span class="tier-name">자수정</span></div>
+        <div class="tier-item" data-tier="sapphire"><div class="tier-icon"><img src="tier-sapphire.png" alt=""></div><span class="tier-name">사파이어</span></div>
+        <div class="tier-item" data-tier="emerald"><div class="tier-icon"><img src="tier-emerald.png" alt=""></div><span class="tier-name">에메랄드</span></div>
+        <div class="tier-item" data-tier="obsidian"><div class="tier-icon"><img src="tier-obsidian.png" alt=""></div><span class="tier-name">옵시디언</span></div>
+        <div class="tier-item" data-tier="gold"><div class="tier-icon"><img src="tier-gold.png" alt=""></div><span class="tier-name">골드</span></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-brand"><div class="ecl-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>이클립스</div>
+      <nav class="footer-links" aria-label="이클립스 채널">
+        <a href="https://www.youtube.com/@Eclipse-g4e" target="_blank" rel="noopener">유튜브</a>
+        <a href="https://www.instagram.com/eclipse.thinker" target="_blank" rel="noopener">인스타그램</a>
+        <a href="https://litt.ly/eclipse.thinker" target="_blank" rel="noopener">책</a>
+        <a href="privacy.html">개인정보처리방침</a>
+      </nav>
+      <div class="footer-copy">© 이클립스의 딜렘</div>
+    </footer>
   </div>
 
-  <!-- 하단 탭 네비게이션 -->
-  <div class="tab-bar">
-    <div class="tab-bar-inner">
-      <a href="index.html" class="tab-item active">
-        <span class="tab-icon">🏠</span>
-        홈
-      </a>
-      <a href="daily.html" class="tab-item">
-        <span class="tab-icon">🤔</span>
-        오늘의 질문
-      </a>
-      <a href="dex.html" class="tab-item">
-        <span class="tab-icon">📖</span>
-        도감
-      </a>
-      <a href="read-me.html" class="tab-item">
-        <span class="tab-icon">👤</span>
-        프로필
-      </a>
-    </div>
+  <div class="ecl-tabbar">
+    <nav aria-label="주요 메뉴">
+      <a href="index.html" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 4.2a8.5 8.5 0 0 0 0 15.6"/></svg>홈</a>
+      <a href="daily.html"><svg viewBox="0 0 24 24"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3"/><circle cx="12" cy="17.6" r=".6"/><circle cx="12" cy="12" r="9"/></svg>오늘의 질문</a>
+      <a href="dex.html"><svg viewBox="0 0 24 24"><path d="M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h11"/></svg>도감</a>
+      <a href="read-me.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 19.5a6 6 0 0 1 12 0"/><path d="M15.5 6.2a3.5 3.5 0 0 1 0 5.6M18 19.5a6 6 0 0 0-2.5-4.9"/></svg>나를 읽어봐</a>
+    </nav>
   </div>
 
   <!-- 책 모달 -->
@@ -1295,10 +487,10 @@
     ];
 
     const TITLES = [
-      { minLevel: 1, title: '🌱 초보 탐험가' },
-      { minLevel: 5, title: '🌿 호기심 많은 관찰자' },
-      { minLevel: 10, title: '🌳 깊이 있는 사색가' },
-      { minLevel: 20, title: '🌟 통찰의 대가' }
+      { minLevel: 1, title: '초보 탐험가' },
+      { minLevel: 5, title: '호기심 많은 관찰자' },
+      { minLevel: 10, title: '깊이 있는 사색가' },
+      { minLevel: 20, title: '통찰의 대가' }
     ];
 
     const SIMULATIONS = {
@@ -1530,7 +722,8 @@
       tierLabel.style.color = tier.color;
       tierLabel.style.background = tier.color + '20';
       
-      document.getElementById('statCleared').textContent = profile.completedSims.length;
+      const allSimIds = Object.values(SIMULATIONS).flat().map(s => s.id);
+      document.getElementById('statCleared').textContent = new Set(profile.completedSims.filter(id => allSimIds.includes(id))).size;
       
       // 발견한 원칙 수 (VALID_PRINCIPLES에 있는 것만 카운트)
       const principleNames = profile.principles.map(p => typeof p === 'string' ? p : p.name);
@@ -1621,7 +814,7 @@
           <a href="${sim.url}" class="${className}">
             <div class="sim-status">${status}</div>
             <div class="sim-info">
-              <div class="sim-title">${sim.title}${sim.isNewPink ? ' <span style="background:#ff4d8d;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}${sim.isNewMint ? ' <span style="background:#00d4aa;color:#000;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}</div>
+              <div class="sim-title">${sim.title}${sim.isNewPink ? '<span class="new-tag">새 작품</span>' : ''}${sim.isNewMint ? '<span class="new-tag">새 작품</span>' : ''}</div>
               <div class="sim-desc">${sim.desc}</div>
             </div>
             <div class="sim-reward">${reward}</div>
@@ -1664,7 +857,7 @@
           <a href="${sim.url}" class="${className}">
             <div class="sim-status">${status}</div>
             <div class="sim-info">
-              <div class="sim-title">${sim.title}${sim.isNewPink ? ' <span style="background:#ff4d8d;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}${sim.isNewMint ? ' <span style="background:#00d4aa;color:#000;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700;">NEW</span>' : ''}</div>
+              <div class="sim-title">${sim.title}${sim.isNewPink ? '<span class="new-tag">새 작품</span>' : ''}${sim.isNewMint ? '<span class="new-tag">새 작품</span>' : ''}</div>
               <div class="sim-desc">${sim.desc}</div>
             </div>
             <div class="sim-reward">${reward}</div>
@@ -2208,7 +1401,7 @@
       btn.innerHTML = '저장 중...';
       
       html2canvas(card, { 
-        backgroundColor: '#09090b', 
+        backgroundColor: '#140a20', 
         scale: 2,
         logging: false
       }).then(canvas => {
@@ -2304,6 +1497,7 @@
       let chartHTML = '<div class="mindset-chart">';
       sorted.forEach(([name, data]) => {
         const pct = Math.round((data.count / total) * 100);
+        data.color = name === dominant[0] ? 'var(--corona)' : 'var(--violet)';
         chartHTML += `
           <div class="mindset-axis">
             <div class="mindset-label">${name}</div>
@@ -2323,7 +1517,7 @@
         성찰가: '깊이 생각합니다. 자기 자신의 사고 과정을 관찰하는 경향이 있습니다.'
       };
 
-      chartHTML += `<div class="mindset-summary">지배적 성향: <span class="mindset-dominant">${dominant[0]}</span><br>${summaries[dominant[0]]}<br><span style="color:#52525b;font-size:11px;">시뮬레이터를 더 할수록 정교해집니다 · ${profile.completedSims.length}개 완료</span></div>`;
+      chartHTML += `<div class="mindset-summary">지배적 성향: <span class="mindset-dominant">${dominant[0]}</span><br>${summaries[dominant[0]]}<br><span style="color:var(--dim);font-size:12px;">작품을 더 볼수록 정확해져요.</span></div>`;
 
       content.innerHTML = chartHTML;
     }
@@ -2368,15 +1562,15 @@
           const today = new Date().toISOString().split('T')[0];
 
           if (data.lastDate === today) {
-            desc.textContent = '오늘의 딜레마를 완료했습니다 ✓';
-            desc.style.color = '#10b981';
+            desc.textContent = '오늘은 이미 답했어요';
+            desc.classList.add('is-done');
           } else {
-            desc.textContent = '오늘의 질문이 기다리고 있습니다';
+            desc.textContent = '아직 답하지 않았어요';
           }
 
           if (data.streak && data.streak > 0) {
             streak.classList.remove('hidden');
-            streak.textContent = '🔥 연속 ' + data.streak + '일';
+            streak.textContent = '연속 ' + data.streak + '일';
           }
           if (data.maxStreak && data.maxStreak > 0) {
             streak.classList.remove('hidden');
@@ -2404,14 +1598,16 @@
     document.head.appendChild(fadeOutStyle);
 
     // === 척학 컬렉션 ===
+    const BOOK_STORE = 'https://litt.ly/eclipse.thinker';
+    // 책마다 개별 구매 링크가 생기면 url: '...' 를 추가한다. 없으면 BOOK_STORE로 연결된다.
     const BOOKS = [
-      { id: 'philosophy', title: '훔친 철학 편', sub: '있어 보이는 척하기 좋은 철학의 문법', img: 'book-philosophy.png' },
-      { id: 'psychology', title: '훔친 심리학 편', sub: '있어 보이는 척하기 좋은 심리학의 문법', img: 'book-psychology.png' },
-      { id: 'wealth', title: '훔친 부 편', sub: '있어 보이는 척하기 좋은 돈의 문법', img: 'book-wealth.png' },
-      { id: 'love', title: '사랑은 오해다', sub: '있어 보이는 척하기 좋은 사랑의 공식', img: 'book-love.png' },
-      { id: 'fight', title: '싸움의 교양', sub: '야망은 큰데 왜 맨손인가', img: 'book-fight.png' },
-      { id: 'transcend', title: '초월자의 조건', sub: '야망은 큰데 왜 아직도 평범한가', img: 'book-transcend.png' },
-      { id: 'hierarchy', title: '서열의 교양', sub: '알고도 모른 척해야 하는 지위의 법칙', img: 'book-hierarchy.png' }
+      { id: 'philosophy', title: '훔친 철학 편', sub: '있어 보이는 척하기 좋은 철학의 문법', img: 'img/book-philosophy.webp' },
+      { id: 'psychology', title: '훔친 심리학 편', sub: '있어 보이는 척하기 좋은 심리학의 문법', img: 'img/book-psychology.webp' },
+      { id: 'wealth', title: '훔친 부 편', sub: '있어 보이는 척하기 좋은 돈의 문법', img: 'img/book-wealth.webp' },
+      { id: 'love', title: '사랑은 오해다', sub: '있어 보이는 척하기 좋은 사랑의 공식', img: 'img/book-love.webp' },
+      { id: 'fight', title: '싸움의 교양', sub: '야망은 큰데 왜 맨손인가', img: 'img/book-fight.webp' },
+      { id: 'transcend', title: '초월자의 조건', sub: '야망은 큰데 왜 아직도 평범한가', img: 'img/book-transcend.webp' },
+      { id: 'hierarchy', title: '서열의 교양', sub: '알고도 모른 척해야 하는 지위의 법칙', img: 'img/book-hierarchy.webp' }
     ];
 
     function getReadBooks() {
@@ -2446,7 +1642,7 @@
           <button class="collection-book ${isRead ? '' : 'locked'}" onclick="window.openBookModal('${book.id}')">
             <img src="${book.img}" alt="${book.title}">
             <div class="book-label">${book.title}</div>
-            <div class="book-check">${isRead ? (label ? '✅ ' + label : '✅') : '🔒'}</div>
+            <div class="book-check">${isRead ? (label || '읽음') : ''}</div>
           </button>
         `;
       }).join('');
@@ -2465,14 +1661,14 @@
       const btnContainer = document.getElementById('bookModalButtons');
       if (count === 0) {
         btnContainer.innerHTML = `
-          <button class="book-modal-btn read" onclick="window.markRead()">📖 읽었어요</button>
-          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-modal-btn buy">🛒 구매하기</a>
+          <a href="${book.url || BOOK_STORE}" target="_blank" rel="noopener" class="book-modal-btn buy">책 보러 가기</a>
+          <button class="book-modal-btn read" onclick="window.markRead()">읽었어요</button>
           <button class="book-modal-btn close" onclick="window.closeBookModal()">닫기</button>`;
       } else {
         btnContainer.innerHTML = `
-          <button class="book-modal-btn read" onclick="window.markRead()">📖 ${count + 1}독 기록하기</button>
-          <button class="book-modal-btn unread" onclick="window.markUnread()">↩️ 읽음 취소</button>
-          <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-modal-btn buy">🛒 구매하기</a>
+          <a href="${book.url || BOOK_STORE}" target="_blank" rel="noopener" class="book-modal-btn buy">책 보러 가기</a>
+          <button class="book-modal-btn read" onclick="window.markRead()">${count + 1}번째로 읽었어요</button>
+          <button class="book-modal-btn unread" onclick="window.markUnread()">읽음 취소</button>
           <button class="book-modal-btn close" onclick="window.closeBookModal()">닫기</button>`;
       }
 
@@ -2497,7 +1693,7 @@
           profile.completedSims.push('collection-master');
           profile.exp += 100;
           saveProfile();
-          alert('🎉 축하합니다! 전권 수집 완료!\n"척학 마스터" 뱃지를 획득했습니다.\n+100 EXP');
+          alert('세계척학전집을 모두 읽었어요. 경험치 100을 드려요.');
         }
       }
       closeBookModal();
@@ -2525,6 +1721,21 @@
     window.closeBookModal = closeBookModal;
     window.markRead = markRead;
     window.markUnread = markUnread;
+  </script>
+  <script src="daily-data.js"></script>
+  <script>
+    // 홈 첫 화면: 오늘의 딜레마 미리보기 (daily.html과 같은 날짜 계산)
+    (function () {
+      var list = window.ECLIPSE_DILEMMAS;
+      if (!list || !list.length) return;
+      var now = new Date();
+      var day = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+      var d = list[day % list.length];
+      document.getElementById('heroQuestion').textContent = d.question;
+      document.getElementById('heroCategory').textContent = d.category || '';
+      var first = (d.situation || '').split('\n').filter(Boolean).slice(0, 2).join(' ');
+      document.getElementById('heroSituation').textContent = first;
+    })();
   </script>
 </body>
 </html>
