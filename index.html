@@ -178,6 +178,10 @@
     .readme h2 { font-family: var(--serif); font-weight: 400; font-size: 21px; }
     .readme p { font-size: 13.5px; color: var(--mist); grid-column: 1; }
     .readme .ecl-btn { grid-row: 1 / span 2; grid-column: 2; height: 40px; font-size: 14px; }
+    .hunt { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .hunt h2 { font-family: var(--serif); font-weight: 400; font-size: 23px; }
+    .hunt p { font-size: 13.5px; color: var(--mist); grid-column: 1; }
+    .hunt .ecl-btn { grid-row: 1 / span 2; grid-column: 2; height: 40px; font-size: 14px; }
     .my-challenges-btn { display: flex; justify-content: space-between; margin-top: 10px; padding: 12px 4px; font-size: 14px; color: var(--mist); border-bottom: 1px solid var(--line); }
     .my-challenges-icon { display: none; }
     .my-challenges-count { color: var(--moon); font-variant-numeric: tabular-nums; }
@@ -344,6 +348,14 @@
         <span class="warning-icon"></span>
         <span class="warning-text">구글 계정을 연동하기 전에는 브라우저 데이터를 지우면 기록도 함께 사라져요. 오른쪽 위 G 버튼으로 백업할 수 있어요.</span>
       </div>
+    </section>
+
+    <section class="block">
+      <a href="hunt.html" class="hunt" id="huntCard">
+        <h2>궤변 사냥</h2>
+        <p id="huntSub">대화 속에 숨은 궤변을 찾아 잡는 게임. 매일 다섯 판.</p>
+        <span class="ecl-btn ghost" id="huntCta">오늘의 사냥</span>
+      </a>
     </section>
 
     <section class="block recommend hidden" id="recommendSection">
@@ -1737,5 +1749,19 @@
       document.getElementById('heroSituation').textContent = first;
     })();
   </script>
+<script>
+  (function () {
+    try {
+      const st = JSON.parse(localStorage.getItem('eclipse_fallacy_hunt') || 'null');
+      if (!st || !st.daily) return;
+      const t = new Date(), key = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
+      const d = st.daily[key];
+      if (d) {
+        document.getElementById('huntSub').textContent = '오늘 ' + d.score.toLocaleString('ko-KR') + '점' + (st.streak > 1 && st.lastDaily === key ? ' · ' + st.streak + '일 연속' : '') + '. 내일 새 문제가 나와요.';
+        document.getElementById('huntCta').textContent = '연속 사냥';
+      }
+    } catch (e) {}
+  })();
+</script>
 </body>
 </html>
