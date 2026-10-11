@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#140a20">
+  <title>궤변 사냥 - 이클립스의 딜렘</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="description" content="더 나은 판단을 위한 서른 개의 스테이지. 숫자, 말, 결정 속에 숨은 함정을 하나씩 풀어요.">
+  <meta property="og:title" content="궤변 사냥 - 이클립스의 딜렘">
+  <meta property="og:description" content="더 나은 판단을 위한 서른 개의 스테이지.">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
+  <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/hunt.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
+  <style>
+    body { min-height: 100vh; min-height: 100dvh; }
+    .wrap { max-width: var(--col); margin: 0 auto; padding: 0 20px 48px; }
+    .num { font-variant-numeric: tabular-nums; }
+    .screen[hidden] { display: none !important; }
+    .rail { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+    .rail a, .rail button { display: inline-flex; align-items: center; gap: 6px; color: var(--mist); font-size: 14px; height: 40px; }
+    .rail svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .rail .meta { font-size: 13px; color: var(--dim); }
+
+    /* map */
+    .head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px; margin: 16px 0 10px; }
+    .head h1 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1.1; letter-spacing: -.02em; }
+    .head .ecl-mark { width: 54px; margin: 0 8px 10px 0; }
+    .lede { color: var(--mist); font-size: 15px; }
+    .progress { margin: 22px 0 0; display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--mist); }
+    .progress b { font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--moon); margin-right: 4px; }
+    .bar { height: 2px; background: var(--line); margin-top: 8px; }
+    .bar i { display: block; height: 100%; background: var(--moon); }
+    .cont { width: 100%; margin-top: 20px; }
+    .chap { margin-top: 40px; }
+    .chap h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; display: flex; gap: 10px; align-items: baseline; }
+    .chap h2 small { font-family: var(--sans); font-size: 13px; color: var(--dim); }
+    .chap > p { font-size: 13px; color: var(--mist); margin: 2px 0 10px; }
+    .rows { border-top: 1px solid var(--line); }
+    .row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .row .n { font-family: var(--serif); color: var(--mist); font-size: 16px; }
+    .row .t { font-size: 15px; }
+    .row .t small { display: block; font-size: 12.5px; color: var(--dim); margin-top: 1px; }
+    .row .st { font-size: 12px; color: var(--mist); display: inline-flex; align-items: center; gap: 6px; }
+    .row.locked { pointer-events: none; }
+    .row.locked .n, .row.locked .t { color: var(--dim); }
+    .row.next .st { color: var(--moon); }
+    .fresh { width: 7px; height: 7px; border-radius: 50%; background: var(--corona); display: inline-block; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--moon); display: inline-block; }
+    .dot.full { background: var(--moon); }
+    .dot.half { background: linear-gradient(90deg, var(--moon) 50%, transparent 50%); }
+    .dot.none { box-shadow: inset 0 0 0 1.5px var(--dim); }
+    .toolslink { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; width: 100%; text-align: left; margin-top: 44px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .toolslink b { font-family: var(--serif); font-weight: 400; font-size: 21px; display: block; }
+    .toolslink span { font-size: 13px; color: var(--mist); }
+    .chev { width: 18px; height: 18px; stroke: var(--dim); fill: none; stroke-width: 1.8; }
+
+    /* stage */
+    .stage-top { margin: 10px 0 18px; }
+    .stage-top .k { font-size: 12.5px; color: var(--dim); }
+    .stage-top h1 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.25; margin-top: 2px; }
+    .claim { border-left: 1px solid var(--line); padding-left: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .claim p { font-size: 16px; line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere; }
+    .q { font-family: var(--serif); font-size: 21px; line-height: 1.45; margin: 28px 0 14px; text-wrap: balance; word-break: keep-all; }
+    .opts { border-top: 1px solid var(--line); }
+    .opt { display: grid; grid-template-columns: 22px 1fr; gap: 8px; width: 100%; text-align: left; padding: 15px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.6; color: var(--moon); word-break: keep-all; overflow-wrap: anywhere; transition: color .2s; }
+    .opt i { font-style: normal; font-family: var(--serif); color: var(--dim); }
+    .opt:active { background: var(--night-2); }
+    .opt.right i { color: var(--corona); }
+    .opt.wrongpick { color: var(--dim); text-decoration: line-through; text-decoration-color: var(--dim); }
+    .opt.dim { color: var(--dim); }
+    .opts.locked .opt { pointer-events: none; }
+    .think { font-size: 13px; color: var(--dim); margin-top: 14px; }
+
+    /* sheet */
+    .scrim { position: fixed; inset: 0; background: rgba(8,4,14,.55); z-index: 30; opacity: 0; transition: opacity .2s; }
+    .scrim.on { opacity: 1; }
+    .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; transform: translateY(100%); transition: transform .26s cubic-bezier(.2,.8,.2,1); max-height: 92vh; max-height: 92dvh; overflow-y: auto; }
+    .sheet.on { transform: none; }
+    .sheet-in { max-width: var(--col); margin: 0 auto; background: var(--night-2); border-radius: 20px 20px 0 0; padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px)); }
+    .verdict h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.2; }
+    .verdict .answer { font-size: 14px; color: var(--mist); margin-top: 8px; }
+    .verdict .note { font-size: 15px; line-height: 1.75; margin-top: 14px; }
+    .tool { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .tool .lbl { font-size: 12px; color: var(--dim); }
+    .tool b { display: block; font-family: var(--serif); font-weight: 400; font-size: 24px; margin-top: 2px; }
+    .tool .def { font-size: 14px; color: var(--mist); margin-top: 4px; }
+    .tool h5 { font-size: 12px; color: var(--dim); font-weight: 500; margin: 16px 0 4px; }
+    .tool .story { font-size: 14.5px; line-height: 1.75; color: var(--mist); }
+    .tool .rule { font-family: var(--serif); font-size: 18px; line-height: 1.55; border-left: 1px solid var(--moon); padding-left: 12px; }
+    .chapdone { margin-top: 22px; padding: 14px 16px; border-radius: var(--r-m); background: var(--night-3); font-size: 14px; color: var(--mist); }
+    .chapdone b { color: var(--moon); font-weight: 500; }
+    .acts { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+    .acts .ecl-btn { width: 100%; }
+    .plain { color: var(--mist); font-size: 14px; padding: 10px; }
+
+    /* tools */
+    .tools-top h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; margin-top: 10px; }
+    .tools-top p { color: var(--mist); font-size: 14px; }
+    .tch { font-family: var(--serif); font-size: 18px; color: var(--mist); margin: 32px 0 6px; }
+    .tl { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .tl:first-of-type { border-top: 1px solid var(--line); }
+    .tl .h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .tl b { font-family: var(--serif); font-weight: 400; font-size: 20px; }
+    .tl .h span { font-size: 12px; color: var(--dim); flex: none; }
+    .tl p { font-size: 14px; color: var(--mist); margin-top: 3px; }
+    .tl .rule { font-family: var(--serif); font-size: 16px; color: var(--moon); border-left: 1px solid var(--moon); padding-left: 12px; margin-top: 10px; line-height: 1.55; }
+    .tl details { margin-top: 8px; }
+    .tl summary { font-size: 13px; color: var(--dim); cursor: pointer; }
+    .tl details p { line-height: 1.7; margin-top: 6px; }
+    .tl.locked b { color: var(--dim); }
+  </style>
+</head>
+<body>
+
+<section class="screen" id="map">
+  <div class="wrap">
+    <div class="rail"><a href="index.html" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>홈</a></div>
+    <div class="head">
+      <h1>궤변<br>사냥</h1>
+      <div class="ecl-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
+    </div>
+    <p class="lede">더 나은 판단을 위한 서른 개의 스테이지. 매일 마주치는 숫자와 말과 결정 속에 숨은 함정을 하나씩 풀어요.</p>
+    <div class="progress"><span><b class="num" id="pDone">0</b>/ <span id="pTotal">30</span> 스테이지</span><span id="pRight"></span></div>
+    <div class="bar"><i id="pBar" style="width:0%"></i></div>
+    <button class="ecl-btn cont" id="continueBtn" type="button">1스테이지 시작</button>
+    <div id="chapters"></div>
+    <button class="toolslink" id="toolsBtn" type="button"><div><b>생각 도구</b><span id="toolsSub"></span></div><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+</section>
+
+<section class="screen" id="stage" hidden>
+  <div class="wrap">
+    <div class="rail"><button id="stageBack" type="button"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>지도</button><span class="meta num" id="stageMeta"></span></div>
+    <div id="stageBody"></div>
+  </div>
+</section>
+
+<section class="screen" id="tools" hidden>
+  <div class="wrap">
+    <div class="rail"><button id="toolsBack" type="button"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>지도</button></div>
+    <div class="tools-top"><h1>생각 도구</h1><p id="toolsLine"></p></div>
+    <div id="toolList"></div>
+  </div>
+</section>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" hidden><div class="sheet-in" id="sheetIn"></div></div>
+
+<script src="hunt-data.js"></script>
+<script>
+(function () {
+  const C = window.CHAPTERS, ST = window.STAGES;
+  const KEY = 'eclipse_hunt', PROFILE_KEY = 'eclipse_mindlab_profile';
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
+  const today = () => { const t = new Date(); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); };
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  /* 저장: stages[id] = { r: '●' 첫 시도에 맞힘 | '◐' 다시 풀어 맞힘 | '○' 틀림, at } */
+  function load() {
+    let s = null; try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    if (!s || typeof s !== 'object' || s.v !== 3) s = { v: 3 };
+    s.stages = s.stages || {};
+    return s;
+  }
+  let S = load();
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+  function grantExp(n) {
+    try {
+      let p = null; try { p = JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch (e) {}
+      if (!p || typeof p !== 'object') p = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
+      p.exp = (p.exp || 0) + n; p.level = p.level || 1;
+      while (p.exp >= p.level * 100) { p.exp -= p.level * 100; p.level++; }
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+    } catch (e) {}
+  }
+
+  const rec = s => S.stages[s.id];
+  const isRight = r => r && (r.r === '●' || r.r === '◐');
+  const nextIdx = () => { const i = ST.findIndex(s => !rec(s)); return i < 0 ? ST.length : i; };
+  const chapStages = no => ST.filter(s => s.ch === no);
+  const posInChap = s => chapStages(s.ch).indexOf(s) + 1;
+  const dotCls = r => r === '●' ? 'full' : r === '◐' ? 'half' : 'none';
+
+  function show(id) { ['map', 'stage', 'tools'].forEach(x => { $('#' + x).hidden = x !== id; }); window.scrollTo(0, 0); }
+
+  /* 지도 */
+  function renderMap() {
+    const done = ST.filter(rec).length, right = ST.filter(s => isRight(rec(s))).length, ni = nextIdx();
+    $('#pDone').textContent = done; $('#pTotal').textContent = ST.length;
+    $('#pRight').textContent = done ? `맞힘 ${right}` : '';
+    $('#pBar').style.width = (done / ST.length * 100) + '%';
+    const cb = $('#continueBtn');
+    if (ni < ST.length) { const s = ST[ni]; cb.textContent = done ? `이어서 하기 · ${s.ch}장 ${posInChap(s)}. ${s.title}` : '1스테이지 시작'; cb.onclick = () => openStage(ni); cb.hidden = false; }
+    else { const wrong = ST.findIndex(s => !isRight(rec(s))); cb.textContent = wrong >= 0 ? '틀린 스테이지 다시 풀기' : '서른 개를 모두 맞혔어요'; cb.onclick = wrong >= 0 ? () => openStage(wrong) : null; }
+    $('#chapters').innerHTML = C.map(ch => {
+      const list = chapStages(ch.no), got = list.filter(s => isRight(rec(s))).length, tried = list.filter(rec).length;
+      return `<section class="chap"><h2>${ch.no}장 ${esc(ch.title)} <small class="num">${tried ? got + '/' + list.length : ''}</small></h2><p>${esc(ch.sub)}</p>
+        <div class="rows">${list.map(s => {
+          const i = ST.indexOf(s), r = rec(s), locked = i > ni, next = i === ni;
+          const st = r ? `<i class="dot ${dotCls(r.r)}"></i>${r.r === '○' ? '다시 풀기' : ''}` : next ? '<i class="fresh"></i>다음' : '';
+          return `<button class="row ${locked ? 'locked' : ''} ${next ? 'next' : ''}" type="button" data-i="${i}" ${locked ? 'tabindex="-1" aria-disabled="true"' : ''}>
+            <span class="n num">${posInChap(s)}</span><span class="t">${esc(s.title)}${r ? `<small>${esc(s.name)}</small>` : ''}</span><span class="st">${st}</span></button>`;
+        }).join('')}</div></section>`;
+    }).join('');
+    document.querySelectorAll('#chapters .row:not(.locked)').forEach(b => b.onclick = () => openStage(+b.dataset.i));
+    const tried = ST.filter(rec).length;
+    $('#toolsSub').textContent = tried ? `${ST.length}개 중 ${tried}개를 열었어요` : '스테이지를 풀면 생각 도구가 하나씩 열려요';
+    show('map');
+  }
+
+  /* 스테이지 */
+  let cur = null;
+  function openStage(i) {
+    const s = ST[i]; cur = { i, s, done: false };
+    const order = shuffle([0, 1, 2]);
+    $('#stageMeta').textContent = `${i + 1} / ${ST.length}`;
+    $('#stageBody').innerHTML = `
+      <div class="stage-top"><div class="k">${s.ch}장 ${esc(C[s.ch - 1].title)} · ${posInChap(s)}</div><h1>${esc(s.title)}</h1></div>
+      <div class="claim">${s.lines.map(x => `<p>${esc(x)}</p>`).join('')}</div>
+      <p class="q">${esc(s.q)}</p>
+      <div class="opts" id="opts">${order.map((k, j) => `<button class="opt" type="button" data-k="${k}"><i>${'가나다'[j]}</i><span>${esc(s.opts[k])}</span></button>`).join('')}</div>
+      <p class="think">시간 제한은 없어요. 충분히 생각하고 고르세요.</p>`;
+    document.querySelectorAll('#opts .opt').forEach(b => b.onclick = () => pick(+b.dataset.k));
+    show('stage');
+  }
+
+  function pick(k) {
+    if (!cur || cur.done) return; cur.done = true;
+    const s = cur.s, ok = k === 0, prev = rec(s);
+    document.querySelectorAll('#opts .opt').forEach(b => { const kk = +b.dataset.k; b.classList.add(kk === 0 ? 'right' : kk === k ? 'wrongpick' : 'dim'); });
+    $('#opts').classList.add('locked');
+    buzz(ok ? 25 : 60);
+    let r;
+    if (!prev) r = ok ? '●' : '○';
+    else if (prev.r === '○') r = ok ? '◐' : '○';
+    else r = prev.r;
+    if (ok && !isRight(prev)) grantExp(5);
+    S.stages[s.id] = { r, at: today() };
+    save();
+    setTimeout(() => verdict(ok, k), 500);
+  }
+
+  function verdict(ok, k) {
+    const s = cur.s, i = cur.i, last = i + 1 >= ST.length;
+    const chEnd = last || ST[i + 1].ch !== s.ch;
+    let chapNote = '';
+    if (chEnd) {
+      const list = chapStages(s.ch), got = list.filter(x => isRight(rec(x))).length;
+      chapNote = `<div class="chapdone"><b>${s.ch}장</b>을 마쳤어요. ${list.length}개 중 ${got}개를 맞혔어요.${last ? ' 서른 개 스테이지를 모두 풀었어요.' : `<br>다음 장 · ${esc(C[s.ch].title)}`}</div>`;
+    }
+    openSheet(`<div class="verdict">
+      <h3>${ok ? '맞았어요' : '아쉬워요'}</h3>
+      ${ok ? '' : `<p class="answer">정답: ${esc(s.opts[0])}</p>`}
+      <p class="note">${esc(s.note)}</p>
+      <div class="tool">
+        <div class="lbl">이 스테이지의 생각 도구</div><b>${esc(s.name)}</b><p class="def">${esc(s.def)}</p>
+        <h5>실제로 있었던 일</h5><p class="story">${esc(s.story)}</p>
+        <h5>기억할 한 줄</h5><p class="rule">${esc(s.rule)}</p>
+      </div>
+      ${chapNote}
+      <div class="acts">
+        ${last ? '' : `<button class="ecl-btn" type="button" id="nextBtn">${chEnd ? `${s.ch + 1}장으로` : '다음 스테이지'}</button>`}
+        <button class="plain" type="button" id="mapBtn">지도로</button>
+      </div></div>`);
+    const nb = $('#nextBtn'); if (nb) nb.onclick = () => { closeSheet(); openStage(i + 1); };
+    $('#mapBtn').onclick = () => { closeSheet(); renderMap(); };
+  }
+
+  /* 생각 도구 */
+  function renderTools() {
+    const tried = ST.filter(rec).length;
+    $('#toolsLine').textContent = `${ST.length}개 중 ${tried}개. 스테이지를 풀면 그 스테이지의 도구가 열려요.`;
+    $('#toolList').innerHTML = C.map(ch => `<h2 class="tch">${ch.no}장 ${esc(ch.title)}</h2>` + chapStages(ch.no).map(s => {
+      const r = rec(s);
+      if (!r) return `<div class="tl locked"><div class="h"><b>${posInChap(s)}. ${esc(s.title)}</b><span>아직 안 풀었어요</span></div></div>`;
+      return `<div class="tl"><div class="h"><b>${esc(s.name)}</b><span><i class="dot ${dotCls(r.r)}" style="width:9px;height:9px"></i></span></div>
+        <p>${esc(s.def)}</p><p class="rule">${esc(s.rule)}</p>
+        <details><summary>실제로 있었던 일</summary><p>${esc(s.story)}</p></details></div>`;
+    }).join('')).join('');
+    show('tools');
+  }
+
+  function openSheet(html) {
+    $('#sheetIn').innerHTML = html; $('#sheet').scrollTop = 0;
+    $('#scrim').hidden = false; $('#sheet').hidden = false;
+    requestAnimationFrame(() => { $('#scrim').classList.add('on'); $('#sheet').classList.add('on'); });
+  }
+  function closeSheet() { $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on'); $('#scrim').hidden = true; $('#sheet').hidden = true; $('#sheetIn').innerHTML = ''; }
+
+  $('#stageBack').onclick = renderMap;
+  $('#toolsBack').onclick = renderMap;
+  $('#toolsBtn').onclick = renderTools;
+
+  window.Hunt = { get stage() { return cur && { id: cur.s.id, done: cur.done }; } };
+  renderMap();
+})();
+</script>
+</body>
+</html>

@@ -147,6 +147,29 @@ def play_template_sim(page, errors):
         errors.append('플레이 후 원칙이 늘지 않음')
 
 
+def play_hunt(page, errors):
+    """궤변 사냥(hunt.html) 첫 세 스테이지를 정답으로 풀고 저장과 경험치를 확인한다."""
+    if not page.evaluate("typeof window.Hunt !== 'undefined'"):
+        return
+    before = get_profile(page)
+    page.click('#continueBtn')
+    for n in range(3):
+        page.click('#opts .opt[data-k="0"]')
+        page.wait_for_selector('#nextBtn', timeout=3000)
+        if n < 2:
+            page.click('#nextBtn')
+    page.click('#mapBtn')
+    st = json.loads(page.evaluate("localStorage.getItem('eclipse_hunt')") or '{}')
+    got = [v.get('r') for v in st.get('stages', {}).values()]
+    if got != ['●', '●', '●']:
+        errors.append(f'궤변 사냥 기록 이상: {got}')
+    if page.inner_text('#pDone').strip() != '3':
+        errors.append('궤변 사냥 지도 진행도 이상')
+    after = get_profile(page)
+    check_preserved(after, errors)
+    if (after['level'], after['exp']) == (before['level'], before['exp']):
+        errors.append('궤변 사냥 경험치 미지급')
+
 def main():
     srv, base = serve()
     if SHOTS: OUT.mkdir(parents=True, exist_ok=True)
