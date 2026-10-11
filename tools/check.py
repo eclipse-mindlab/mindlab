@@ -147,6 +147,40 @@ def play_template_sim(page, errors):
         errors.append('플레이 후 원칙이 늘지 않음')
 
 
+def play_film(page, errors):
+    """영화형 시뮬레이터(film.js)를 끝까지 상영하고 저장을 확인한다."""
+    film_id = page.evaluate("window.FILM ? window.FILM.id : null")
+    if not film_id:
+        return
+    before = get_profile(page)
+    for _ in range(400):
+        if page.query_selector('.credits'):
+            break
+        try:
+            if page.is_visible('#playBtn'):
+                page.click('#playBtn', timeout=1000)
+            elif page.query_selector('#say'):
+                page.fill('#say', '테스트 문장', timeout=1000); page.click('#shoot', timeout=1000)
+            elif page.query_selector('.lines:not(.locked) .line'):
+                page.click('.lines:not(.locked) .line >> nth=0', timeout=1000)
+            elif page.query_selector('#nx'):
+                page.click('#nx', timeout=1000)
+            elif not page.query_selector('.lines.locked'):
+                page.mouse.click(200, 120)
+        except Exception:
+            pass
+        page.wait_for_timeout(60)
+    if not page.query_selector('.credits'):
+        errors.append('영화 크레딧까지 도달 못함'); return
+    after = get_profile(page)
+    if film_id not in after.get('completedSims', []):
+        errors.append(f'완료 기록 미저장: {film_id}')
+    missing = [n for n in page.evaluate("window.FILM.scenes.map((s,i)=>s.p ? s.p.name : s.choices[0].p.name)") if n not in names(after['principles'])]
+    if missing: errors.append(f'원칙 미저장: {missing}')
+    if missing == [] and not set(page.evaluate("window.FILM.scenes.map(s=>s.p ? s.p.name : s.choices[0].p.name)")) <= set(VALID):
+        errors.append('영화 원칙이 VALID_PRINCIPLES에 없음')
+
+
 def main():
     srv, base = serve()
     if SHOTS: OUT.mkdir(parents=True, exist_ok=True)
@@ -175,6 +209,7 @@ def main():
             if SHOTS:
                 page.screenshot(path=str(OUT / name.replace('.html', '.png')), full_page=True)
             play_template_sim(page, errors)
+            play_film(page, errors)
             status = 'OK ' if not errors else 'FAIL'
             failures += bool(errors)
             print(f'{status} {name}')
