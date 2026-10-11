@@ -4,7 +4,7 @@
 
    FILM = {
      id, title, tagline, notice?, runtime,
-     cast: ['아버지', ...], book: { title, url },
+     cast: ['아버지', ...], book: { title?, url },
      share: { url, text },
      scenes: [{
        page,                       // 대본 페이지 번호(장식)
@@ -82,7 +82,7 @@
     else if (s.k === 'num') h = `<div class="shot s-num"><div class="big">${esc(s.big)}</div>${s.small ? `<div class="small">${esc(s.small)}</div>` : ''}</div>`;
     else if (s.k === 'black') h = `<div class="shot s-black">${s.cap ? `<div class="cap">${esc(s.cap)}</div>` : ''}</div>`;
     else if (s.k === 'two') h = `<div class="shot s-two">${twoSVG(speaker === s.L ? 'L' : speaker === s.R ? 'R' : null)}</div>`;
-    else if (s.k === 'card') h = `<div class="shot s-card"><div class="no">이 장면의 원리</div><div class="nm">${esc(s.name)}</div></div>`;
+    else if (s.k === 'card') h = `<div class="shot s-card"><div class="no">이 장면의 원칙</div><div class="nm">${esc(s.name)}</div></div>`;
     else if (s.k === 'title') h = `<div class="shot s-title">${s.u ? `<div class="u">${esc(s.u)}</div>` : ''}<div class="t">${esc(s.t)}</div></div>`;
     screen.classList.add('cut');
     setTimeout(() => { putShot(h); screen.classList.remove('cut'); }, reduce ? 0 : 90);
@@ -226,10 +226,10 @@
       ${said ? `<div class="cr"><h5>${esc(F.creditWritten || '각본')}</h5><div>당신</div><div class="q">“${esc(said)}”</div></div>` : ''}
       <div class="cr"><h5>출연</h5>${F.cast.map(n => `<div>${esc(n)}</div>`).join('')}</div>
       <div class="cr"><h5>이 영화에서 모은 원칙</h5>${got.map(p => `<div>${esc(p.name)}</div>`).join('')}<div style="font-size:13px;color:var(--mist)">원칙 도감에 저장했어요</div></div>
-      <div class="cr"><h5>원작</h5><div class="bk">세계척학전집 『${esc(F.book.title)}』</div></div>
+      <div class="cr"><h5>함께 읽을 책</h5><div class="bk">세계척학전집${F.book.title ? ` 『${esc(F.book.title)}』` : ''}</div></div>
       <div class="cr cr-end">${markHTML}<h5>제작</h5><div style="font-family:var(--serif)">이클립스</div></div>
       <div class="cr-actions">
-        <a class="ecl-btn" href="${esc(F.book.url)}" target="_blank" rel="noopener">원작 보러 가기</a>
+        <a class="ecl-btn" href="${esc(F.book.url)}" target="_blank" rel="noopener">책 보러 가기</a>
         <button class="ecl-btn ghost" id="shareFilm" type="button">친구에게 보내기</button>
         <button class="ecl-btn ghost" id="retake" type="button">다른 선택으로 다시 보기</button>
         <a href="index.html" style="color:var(--mist);font-size:14px;margin-top:6px">홈으로</a>
