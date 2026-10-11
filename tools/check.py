@@ -168,7 +168,7 @@ def play_hunt(page, errors):
         for b, f in zip(bads, kinds):
             sel = f'#logIn .msg[data-k="{b}"]:not(.caught) .bubble'
             if page.query_selector(sel) and not page.query_selector('#sheet.on'):
-                page.click(sel); page.click(f'#sheetIn .opt[data-f="{f}"]')
+                page.click(sel)
                 break
         page.wait_for_timeout(80)
     if not page.is_visible('#end'):

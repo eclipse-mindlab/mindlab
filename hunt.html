@@ -73,6 +73,12 @@
     .log { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .log-in { max-width: var(--col); margin: 0 auto; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 12px; }
 
+    .poster { position: sticky; top: 0; z-index: 2; background: var(--night); padding: 6px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+    .poster .lbl { font-size: 12px; color: var(--dim); }
+    .poster .nm { font-family: var(--serif); font-size: 24px; line-height: 1.25; margin-top: 2px; }
+    .poster .df { font-size: 13.5px; color: var(--mist); margin-top: 2px; }
+    .poster .pair { display: grid; gap: 10px; margin-top: 4px; }
+    .poster .pair .nm { font-size: 20px; }
     .msg { display: flex; flex-direction: column; align-items: flex-start; max-width: 86%; animation: pop .22s ease-out; }
     .msg.me { align-self: flex-end; align-items: flex-end; }
     .msg .who { font-size: 12px; color: var(--dim); margin: 0 0 4px 4px; }
@@ -100,7 +106,7 @@
     .foot p { font-size: 13px; color: var(--mist); }
     .foot .ecl-btn { height: 42px; flex: none; }
 
-    .toast { position: fixed; left: 50%; top: 92px; transform: translate(-50%, -8px); opacity: 0; background: var(--night-3); color: var(--moon); font-size: 13px; padding: 8px 14px; border-radius: 999px; transition: opacity .2s, transform .2s; z-index: 40; pointer-events: none; white-space: nowrap; }
+    .toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px); opacity: 0; background: var(--night-3); color: var(--moon); font-size: 13px; padding: 8px 14px; border-radius: 999px; transition: opacity .2s, transform .2s; z-index: 40; pointer-events: none; white-space: nowrap; }
     .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
     /* sheet */
@@ -183,7 +189,7 @@
       <h1>궤변<br>사냥</h1>
       <div class="ecl-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
     </div>
-    <p class="lede">맞는 말처럼 들리는데 논리가 무너진 문장이 있어요. 대화 속에서 그 한 줄을 찾아 누르고, 무슨 수법인지 맞히세요.</p>
+    <p class="lede">맞는 말처럼 들리는데 논리가 무너진 문장이 있어요. 수배서를 보고, 대화 속에서 그 한 줄을 찾아 누르세요.</p>
     <div class="rank"><b id="rankName">견습 사냥꾼</b><span id="rankSub"></span></div>
 
     <div class="modes">
@@ -204,9 +210,9 @@
     <div class="how">
       <h3>하는 법</h3>
       <ol>
-      <li>대화가 하나씩 올라와요. 수상한 문장이 보이면 바로 누르세요.</li>
-      <li>무슨 수법인지 고르세요. 빨리 잡을수록, 연속으로 잡을수록 점수가 커져요.</li>
-      <li>문제없는 대화도 섞여 있어요. 그럴 땐 이상 없음을 누르세요. 엉뚱한 사람을 의심하면 4초가 깎여요.</li>
+      <li>판마다 수배서가 먼저 나와요. 이번에 잡을 궤변이 무엇인지 알려줘요.</li>
+      <li>대화가 올라오면 수배서에 맞는 문장을 바로 누르세요. 빨리, 연속으로 잡을수록 점수가 커져요.</li>
+      <li>수배된 궤변이 없는 대화도 있어요. 그럴 땐 여기엔 없어요를 누르세요. 엉뚱한 문장을 누르면 4초가 깎여요.</li>
       </ol>
     </div>
   </div>
@@ -222,7 +228,7 @@
   <div class="timer" id="timer"><i id="timerFill"></i></div>
   <div class="roomname" id="roomName"></div>
   <div class="log" id="log"><div class="log-in" id="logIn" aria-live="polite"></div></div>
-  <div class="foot"><div class="wrap"><p id="footHint">수상한 문장을 누르세요</p><button class="ecl-btn ghost" id="okBtn" type="button">이상 없음</button></div></div>
+  <div class="foot"><div class="wrap"><p id="footHint">수배서에 맞는 문장을 누르세요</p><button class="ecl-btn ghost" id="okBtn" type="button">여기엔 없어요</button></div></div>
 </section>
 
 <!-- 결과 -->
@@ -379,13 +385,16 @@
     if (G.mode === 'endless' && G.lives <= 0) return finish();
     const r = G.mode === 'daily' ? G.list[G.i] : endlessNext(G.i);
     G.lastR = r;
-    const sched = []; let t = 450;
+    const sched = []; let t = 1500;
     r.m.forEach((m, k) => { sched.push(t); t += Math.min(2600, Math.max(900, 380 + m[1].length * 38)); });
     const extra = { 1: 14000, 2: 12500, 3: 11000 }[r.lv] + (r.boss ? 9000 : 0);
     const diff = G.mode === 'endless' ? Math.max(0.6, 1 - 0.05 * Math.floor(G.i / 3)) : 1;
     RS = { hit: [], r, sched, budget: sched[sched.length - 1] + extra * diff, t: 0, penalty: 0, next: 0, paused: false, done: false, falseN: 0, got: [], typing: null };
-    $('#logIn').innerHTML = ''; $('#roomName').textContent = r.room;
-    $('#footHint').textContent = '수상한 문장을 누르세요';
+    const wanted = r.clean ? [r.t] : r.boss ? r.f : [r.f];
+    $('#logIn').innerHTML = `<div class="poster"><div class="lbl">${wanted.length > 1 ? '수배 · 이 대화에 둘이 숨어 있어요' : '수배'}</div>
+      <div class="${wanted.length > 1 ? 'pair' : ''}">${wanted.map(f => `<div><div class="nm">${esc(F[f].name)}</div><div class="df">${esc(F[f].def)}</div></div>`).join('')}</div></div>`;
+    $('#roomName').textContent = r.room;
+    $('#footHint').textContent = '수배서에 맞는 문장을 누르세요';
     $('#okBtn').disabled = false;
     $('#timer').classList.remove('low');
     hud();
@@ -432,48 +441,21 @@
     return [].concat(r.bad).includes(k) ? 0 : -1;
   }
   const kindOf = (r, j) => r.boss ? r.f[j] : r.f;
-  const optsOf = (r, j) => r.boss ? r.o[j] : r.o;
 
   function tap(k) {
     if (!RS || RS.done || RS.paused) return;
-    const e = msgEl(k); if (!e || e.classList.contains('accused') || e.classList.contains('caught') || e.classList.contains('half')) return;
-    RS.paused = true; e.classList.add('sel');
-    const r = RS.r; let j = culpritIdx(k), names;
-    if (j < 0 && !r.clean) j = r.boss ? r.f.findIndex((_, i) => RS.got[i] === undefined) : 0;
-    if (r.clean) names = shuffle(Object.keys(F)).slice(0, 3);
-    else names = shuffle([kindOf(r, j), ...optsOf(r, j)]);
-    const [who, x] = r.m[k];
-    openSheet(`<div class="ask">이 문장은 무슨 수법일까요</div><div class="q">${esc(who)}: ${esc(x)}</div>
-      ${names.map(n => `<button class="opt" type="button" data-f="${n}"><b>${esc(F[n].name)}</b><span>${esc(F[n].def)}</span></button>`).join('')}
-      <button class="back-link" type="button" id="unpick">다시 보기</button>`);
-    document.querySelectorAll('#sheetIn .opt').forEach(b => b.onclick = () => choose(k, b.dataset.f));
-    $('#unpick').onclick = () => { e.classList.remove('sel'); closeSheet(); RS.paused = false; };
-  }
-
-  function choose(k, fid) {
-    closeSheet(); RS.paused = false;
+    const e = msgEl(k); if (!e || e.classList.contains('accused') || e.classList.contains('caught')) return;
     const r = RS.r, j = culpritIdx(k);
     if (j < 0) {
       RS.penalty += PENALTY; RS.falseN++; G.falseN++;
-      setTag(k, 'accused', '무고한 말이에요'); toast('엉뚱한 사람을 잡았어요. 4초가 깎였어요'); buzz(60);
+      setTag(k, 'accused', '수배된 궤변이 아니에요'); toast('엉뚱한 문장이에요. 4초가 깎였어요'); buzz(60);
       return;
     }
-    const right = fid === kindOf(r, j);
-    if (r.boss) {
-      if (RS.got[j] !== undefined) return;
-      RS.hit[j] = k;
-      RS.got[j] = right ? 'caught' : { half: fid };
-      setTag(k, right ? 'caught' : 'half', right ? F[r.f[j]].name : '이름이 틀렸어요');
-      buzz(right ? 25 : 60);
-      if (RS.got.filter(x => x !== undefined).length === 2) endRound('boss');
-      else toast(right ? '잡았어요. 하나 더 숨어 있어요' : '하나 더 숨어 있어요');
-      return;
-    }
-    RS.hit[0] = k;
-    RS.got[0] = right ? 'caught' : { half: fid };
-    setTag(k, right ? 'caught' : 'half', right ? F[r.f].name : '문장은 맞았어요');
-    buzz(right ? 25 : 60);
-    endRound(right ? 'caught' : 'half');
+    if (RS.got[j]) return;
+    RS.hit[j] = k; RS.got[j] = 'caught';
+    setTag(k, 'caught', F[kindOf(r, j)].name); buzz(25);
+    if (r.boss && RS.got.filter(Boolean).length < 2) return toast('하나 잡았어요. 남은 하나를 찾으세요');
+    endRound(r.boss ? 'boss' : 'caught');
   }
 
   $('#okBtn').onclick = () => { if (!RS || RS.done || RS.paused) return; endRound(RS.r.clean ? 'clean' : 'wrongclean'); };
@@ -515,17 +497,17 @@
   function verdict(kind, sym, pts, mult, speed) {
     const r = RS.r;
     let title;
-    if (r.clean) title = kind === 'clean' ? '맞아요. 문제없는 대화였어요' : kind === 'timeout' ? '시간이 다 됐어요' : '문제없는 대화였어요';
+    if (r.clean) title = kind === 'clean' ? '맞아요. 여기엔 없었어요' : '시간이 다 됐어요. 여기엔 없었어요';
     else if (r.boss) { const c = RS.got.filter(g => g === 'caught').length; title = c === 2 ? '둘 다 잡았어요' : c === 1 ? '하나만 잡았어요' : '둘 다 놓쳤어요'; }
-    else title = { caught: '잡았어요', half: '문장은 맞았어요', timeout: '놓쳤어요', wrongclean: '숨어 있었어요' }[kind] || '놓쳤어요';
+    else title = { caught: '잡았어요', timeout: '놓쳤어요', wrongclean: '여기 있었어요' }[kind] || '놓쳤어요';
 
     let body = '';
-    if (r.clean) body = `<div class="finding"><p>${esc(r.why)}</p></div>`;
+    if (r.clean) body = `<div class="finding"><div class="kind"><b>${esc(F[r.t].name)}</b><small>이 대화에는 없어요</small></div><p>${esc(r.why)}</p></div>`;
     else for (let j = 0; j < (r.boss ? 2 : 1); j++) {
       const f = kindOf(r, j), g = RS.got[j], line = RS.hit[j] !== undefined ? RS.hit[j] : r.boss ? r.bad[j] : [].concat(r.bad).slice(-1)[0];
       const isNew = g === 'caught' && G.newKinds.includes(f) && S.caught[f] === 1;
       body += `<div class="finding">
-        <div class="kind"><b>${esc(F[f].name)}</b>${isNew ? '<em>도감에 새로 올렸어요</em>' : ''}${g && g.half ? `<small>고른 이름: ${esc(F[g.half].name)}</small>` : ''}</div>
+        <div class="kind"><b>${esc(F[f].name)}</b>${isNew ? '<em>도감에 새로 올렸어요</em>' : ''}</div>
         <div class="line">${esc(r.m[line][0])}: ${esc(r.m[line][1])}</div>
         <p>${esc(r.boss ? r.why[j] : r.why)}</p>
         <div class="comeback"><span>이렇게 받아칠 수 있어요</span><q>${esc(r.boss ? r.back[j] : r.back)}</q></div>
@@ -569,7 +551,7 @@
     const lbl = mode === 'daily' ? `오늘의 사냥 · ${dateLabel(G ? G.date : today())}` : `연속 사냥 · ${results.length}판`;
     const reviewRows = (results || []).map(x => {
       const r = R.find(z => z.id === x.id); if (!r) return '';
-      const name = r.clean ? '문제없는 대화' : r.boss ? r.f.map(f => F[f].name).join(', ') : F[r.f].name;
+      const name = r.clean ? `없던 판 · ${F[r.t].name}` : r.boss ? r.f.map(f => F[f].name).join(', ') : F[r.f].name;
       return `<div class="rv"><i class="dot ${x.sym === '●' ? 'full' : x.sym === '◐' ? 'half' : 'none'}"></i><div>${esc(name)} <span>${esc(r.room)}</span></div><small class="num">${x.pts !== undefined ? '+' + fmt(x.pts) : ''}</small></div>`;
     }).join('');
     $('#endBody').innerHTML = `
@@ -635,7 +617,7 @@
     $('#stop').onclick = () => { closeSheet(); RS = null; G = null; renderLobby(); };
   };
 
-  window.Hunt = { get round() { return RS && { id: RS.r.id, bad: RS.r.bad, f: RS.r.f, clean: !!RS.r.clean, boss: !!RS.r.boss, shown: RS.next, done: RS.done }; }, get mode() { return G && G.mode; }, dailyRounds };
+  window.Hunt = { get round() { return RS && { id: RS.r.id, t: RS.r.t, bad: RS.r.bad, f: RS.r.f, clean: !!RS.r.clean, boss: !!RS.r.boss, shown: RS.next, done: RS.done }; }, get mode() { return G && G.mode; }, dailyRounds };
   renderLobby();
 })();
 </script>
