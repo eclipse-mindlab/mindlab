@@ -148,30 +148,23 @@ def play_template_sim(page, errors):
 
 
 def play_hunt(page, errors):
-    """궤변 사냥(hunt.html) 오늘의 사냥 다섯 판을 정답으로 끝내고 저장을 확인한다."""
+    """궤변 사냥(hunt.html) 첫 세 스테이지를 정답으로 풀고 저장과 경험치를 확인한다."""
     if not page.evaluate("typeof window.Hunt !== 'undefined'"):
         return
     before = get_profile(page)
-    page.click('#dailyBtn')
-    for _ in range(300):
-        if page.is_visible('#end'):
-            break
-        if page.query_selector('#nextBtn'):
-            page.click('#nextBtn'); page.wait_for_timeout(80); continue
-        r = page.evaluate("Hunt.round")
-        if r and not r['done']:
-            if r['type'] == 'where':
-                a = r['ans'] if isinstance(r['ans'], int) else r['ans'][0]
-                page.click(f'#stageIn .ln[data-k="{a}"]')
-            else:
-                page.click(f'#opts .opt[data-k="{r["ans"]}"]')
-        page.wait_for_timeout(120)
-    if not page.is_visible('#end'):
-        errors.append('궤변 사냥 결과 화면까지 도달 못함'); return
+    page.click('#continueBtn')
+    for n in range(3):
+        page.click('#opts .opt[data-k="0"]')
+        page.wait_for_selector('#nextBtn', timeout=3000)
+        if n < 2:
+            page.click('#nextBtn')
+    page.click('#mapBtn')
     st = json.loads(page.evaluate("localStorage.getItem('eclipse_hunt')") or '{}')
-    day = list(st.get('daily', {}).values())
-    if not day or day[0].get('grid') != '●●●●●':
-        errors.append(f"궤변 사냥 기록 이상: {day}")
+    got = [v.get('r') for v in st.get('stages', {}).values()]
+    if got != ['●', '●', '●']:
+        errors.append(f'궤변 사냥 기록 이상: {got}')
+    if page.inner_text('#pDone').strip() != '3':
+        errors.append('궤변 사냥 지도 진행도 이상')
     after = get_profile(page)
     check_preserved(after, errors)
     if (after['level'], after['exp']) == (before['level'], before['exp']):

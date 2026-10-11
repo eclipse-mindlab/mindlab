@@ -353,8 +353,8 @@
     <section class="block">
       <a href="hunt.html" class="hunt" id="huntCard">
         <h2>궤변 사냥</h2>
-        <p id="huntSub">그럴듯한 주장에서 논리의 구멍을 찾는 게임. 매일 다섯 판.</p>
-        <span class="ecl-btn ghost" id="huntCta">오늘의 사냥</span>
+        <p id="huntSub">더 나은 판단을 위한 30개 스테이지. 숫자, 말, 결정 속 함정을 풀어요.</p>
+        <span class="ecl-btn ghost" id="huntCta">시작하기</span>
       </a>
     </section>
 
@@ -1753,12 +1753,11 @@
   (function () {
     try {
       const st = JSON.parse(localStorage.getItem('eclipse_hunt') || 'null');
-      if (!st || !st.daily) return;
-      const t = new Date(), key = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
-      const d = st.daily[key];
-      if (d) {
-        document.getElementById('huntSub').textContent = '오늘 ' + d.score.toLocaleString('ko-KR') + '점' + (st.streak > 1 && st.lastDaily === key ? ' · ' + st.streak + '일 연속' : '') + '. 내일 새 문제가 나와요.';
-        document.getElementById('huntCta').textContent = '연속 사냥';
+      if (!st || !st.stages) return;
+      const n = Object.keys(st.stages).length;
+      if (n) {
+        document.getElementById('huntSub').textContent = '30개 스테이지 중 ' + n + '개를 풀었어요.';
+        document.getElementById('huntCta').textContent = '이어서 하기';
       }
     } catch (e) {}
   })();
