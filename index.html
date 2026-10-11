@@ -353,7 +353,7 @@
     <section class="block">
       <a href="hunt.html" class="hunt" id="huntCard">
         <h2>궤변 사냥</h2>
-        <p id="huntSub">대화 속에 숨은 궤변을 찾아 잡는 게임. 매일 다섯 판.</p>
+        <p id="huntSub">그럴듯한 주장에서 논리의 구멍을 찾는 게임. 매일 다섯 판.</p>
         <span class="ecl-btn ghost" id="huntCta">오늘의 사냥</span>
       </a>
     </section>
@@ -1752,7 +1752,7 @@
 <script>
   (function () {
     try {
-      const st = JSON.parse(localStorage.getItem('eclipse_fallacy_hunt') || 'null');
+      const st = JSON.parse(localStorage.getItem('eclipse_hunt') || 'null');
       if (!st || !st.daily) return;
       const t = new Date(), key = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
       const d = st.daily[key];

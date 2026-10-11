@@ -153,27 +153,22 @@ def play_hunt(page, errors):
         return
     before = get_profile(page)
     page.click('#dailyBtn')
-    for _ in range(600):
+    for _ in range(300):
         if page.is_visible('#end'):
             break
         if page.query_selector('#nextBtn'):
             page.click('#nextBtn'); page.wait_for_timeout(80); continue
         r = page.evaluate("Hunt.round")
-        if not r or r['done']:
-            page.wait_for_timeout(80); continue
-        if r['clean']:
-            page.click('#okBtn'); continue
-        bads = r['bad'] if r['boss'] else [r['bad'] if isinstance(r['bad'], int) else r['bad'][0]]
-        kinds = r['f'] if r['boss'] else [r['f']]
-        for b, f in zip(bads, kinds):
-            sel = f'#logIn .msg[data-k="{b}"]:not(.caught) .bubble'
-            if page.query_selector(sel) and not page.query_selector('#sheet.on'):
-                page.click(sel)
-                break
-        page.wait_for_timeout(80)
+        if r and not r['done']:
+            if r['type'] == 'where':
+                a = r['ans'] if isinstance(r['ans'], int) else r['ans'][0]
+                page.click(f'#stageIn .ln[data-k="{a}"]')
+            else:
+                page.click(f'#opts .opt[data-k="{r["ans"]}"]')
+        page.wait_for_timeout(120)
     if not page.is_visible('#end'):
         errors.append('궤변 사냥 결과 화면까지 도달 못함'); return
-    st = json.loads(page.evaluate("localStorage.getItem('eclipse_fallacy_hunt')") or '{}')
+    st = json.loads(page.evaluate("localStorage.getItem('eclipse_hunt')") or '{}')
     day = list(st.get('daily', {}).values())
     if not day or day[0].get('grid') != '●●●●●':
         errors.append(f"궤변 사냥 기록 이상: {day}")
@@ -181,7 +176,6 @@ def play_hunt(page, errors):
     check_preserved(after, errors)
     if (after['level'], after['exp']) == (before['level'], before['exp']):
         errors.append('궤변 사냥 경험치 미지급')
-
 
 def main():
     srv, base = serve()

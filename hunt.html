@@ -7,9 +7,9 @@
   <title>궤변 사냥 - 이클립스의 딜렘</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="manifest" href="manifest.json">
-  <meta name="description" content="대화 속에 숨은 궤변을 찾아 누르고, 무슨 수법인지 맞히는 게임. 매일 다섯 판.">
+  <meta name="description" content="회의, 기사, 투자 리포트 속 그럴듯한 주장에서 논리의 구멍을 찾는 게임. 매일 다섯 판.">
   <meta property="og:title" content="궤변 사냥 - 이클립스의 딜렘">
-  <meta property="og:description" content="대화 속에 숨은 궤변을 찾아 잡는 게임. 매일 다섯 판.">
+  <meta property="og:description" content="그럴듯한 주장에서 논리의 구멍을 찾는 게임. 매일 다섯 판.">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
   <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/hunt.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,38 +19,33 @@
   <style>
     body { min-height: 100vh; min-height: 100dvh; }
     .wrap { max-width: var(--col); margin: 0 auto; padding: 0 20px; }
-    .serif { font-family: var(--serif); font-weight: 400; }
     .num { font-variant-numeric: tabular-nums; }
+    .screen[hidden] { display: none !important; }
 
-    /* rail */
     .rail { display: flex; align-items: center; justify-content: space-between; height: 52px; }
     .rail a, .rail button { display: inline-flex; align-items: center; gap: 6px; color: var(--mist); font-size: 14px; height: 40px; }
     .rail svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-
-    /* screens */
-    .screen[hidden] { display: none !important; }
 
     /* lobby */
     .lobby-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px; margin: 20px 0 10px; }
     .lobby-head h1 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1.1; letter-spacing: -.02em; }
     .lobby-head .ecl-mark { width: 54px; margin: 0 8px 10px 0; }
-    .lede { color: var(--mist); font-size: 15px; max-width: 34em; }
+    .lede { color: var(--mist); font-size: 15px; }
     .rank { margin: 22px 0 6px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
     .rank b { font-family: var(--serif); font-weight: 400; font-size: 19px; }
     .rank span { font-size: 13px; color: var(--dim); }
-
     .modes { margin-top: 18px; border-top: 1px solid var(--line); }
     .mode { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 18px 0; border-bottom: 1px solid var(--line); }
-    .mode:active { transform: scale(.99); }
     .mode h2 { font-family: var(--serif); font-weight: 400; font-size: 22px; display: flex; align-items: center; gap: 8px; }
     .mode p { font-size: 13px; color: var(--mist); margin-top: 2px; }
     .mode .side { font-size: 13px; color: var(--mist); text-align: right; }
     .mode .ecl-btn { height: 38px; padding: 0 18px; font-size: 14px; }
+    .fresh[hidden] { display: none; }
     .fresh { width: 7px; height: 7px; border-radius: 50%; background: var(--corona); display: inline-block; }
     .chev { width: 18px; height: 18px; stroke: var(--dim); fill: none; stroke-width: 1.8; }
-
-    .how { margin: 34px 0 40px; counter-reset: how; }
+    .how { margin: 34px 0 40px; }
     .how h3 { font-size: 13px; color: var(--dim); font-weight: 500; margin-bottom: 10px; }
+    .how ol { counter-reset: how; }
     .how li { list-style: none; counter-increment: how; display: grid; grid-template-columns: 22px 1fr; gap: 6px; font-size: 14px; color: var(--mist); padding: 6px 0; }
     .how li::before { content: counter(how); font-family: var(--serif); color: var(--moon); }
 
@@ -58,85 +53,63 @@
     #game { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--night); z-index: 10; }
     .hud { flex: none; max-width: var(--col); width: 100%; margin: 0 auto; padding: 10px 20px 8px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
     .hud .l { font-size: 13px; color: var(--mist); display: flex; align-items: center; gap: 10px; }
-    #hudLeft { display: inline-flex; align-items: center; gap: 10px; }
     .hud .l button { color: var(--dim); display: inline-flex; padding: 4px; margin-left: -4px; }
     .hud .l svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    #hudLeft { display: inline-flex; align-items: center; gap: 10px; }
     .hud .c { font-size: 12px; color: var(--mist); min-height: 16px; }
     .hud .r { text-align: right; font-family: var(--serif); font-size: 24px; line-height: 1; }
     .lives { display: inline-flex; gap: 6px; }
-    .life { width: 13px; height: 13px; border-radius: 50%; background: var(--moon); position: relative; overflow: hidden; }
+    .life { width: 13px; height: 13px; border-radius: 50%; background: var(--moon); }
     .life.out { background: transparent; box-shadow: inset 0 0 0 1px var(--dim); }
     .timer { flex: none; height: 2px; background: var(--line); max-width: var(--col); width: calc(100% - 40px); margin: 0 auto; }
     .timer i { display: block; height: 100%; background: var(--moon); transform-origin: left; }
     .timer.low i { background: var(--mist); }
-    .roomname { flex: none; text-align: center; font-size: 12px; color: var(--dim); padding: 14px 0 4px; }
-    .log { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .log-in { max-width: var(--col); margin: 0 auto; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+    .stage { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .stage-in { max-width: var(--col); margin: 0 auto; padding: 18px 20px 40px; }
 
-    .poster { position: sticky; top: 0; z-index: 2; background: var(--night); padding: 6px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
-    .poster .lbl { font-size: 12px; color: var(--dim); }
-    .poster .nm { font-family: var(--serif); font-size: 24px; line-height: 1.25; margin-top: 2px; }
-    .poster .df { font-size: 13.5px; color: var(--mist); margin-top: 2px; }
-    .poster .pair { display: grid; gap: 10px; margin-top: 4px; }
-    .poster .pair .nm { font-size: 20px; }
-    .msg { display: flex; flex-direction: column; align-items: flex-start; max-width: 86%; animation: pop .22s ease-out; }
-    .msg.me { align-self: flex-end; align-items: flex-end; }
-    .msg .who { font-size: 12px; color: var(--dim); margin: 0 0 4px 4px; }
-    .msg.cont { margin-top: -6px; }
-    .bubble { text-align: left; font-size: 15px; line-height: 1.55; padding: 10px 14px; border-radius: 16px 16px 16px 5px; background: var(--night-2); color: var(--moon); transition: transform .12s ease, box-shadow .2s ease, opacity .2s ease; word-break: keep-all; overflow-wrap: anywhere; }
-    .msg.me .bubble { border-radius: 16px 16px 5px 16px; background: var(--violet-soft); }
-    .bubble:active { transform: scale(.98); }
-    .msg.sel .bubble { box-shadow: inset 0 0 0 1.5px var(--moon); }
-    .msg .tag { font-size: 12px; margin: 5px 4px 0; min-height: 0; }
-    .msg.caught .bubble { box-shadow: inset 0 0 0 1.5px var(--corona); }
-    .msg.caught .tag { color: var(--corona); }
-    .msg.half .bubble { box-shadow: inset 0 0 0 1px var(--mist); }
-    .msg.half .tag, .msg.missed .tag { color: var(--mist); }
-    .msg.missed .bubble { outline: 1px dashed var(--mist); outline-offset: 2px; }
-    .msg.accused .bubble { opacity: .45; text-decoration: line-through; text-decoration-color: var(--dim); }
-    .msg.accused .tag { color: var(--dim); }
-    .typing .bubble { display: inline-flex; gap: 4px; padding: 14px 16px; }
-    .typing .bubble i { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); animation: blink 1s infinite; }
-    .typing .bubble i:nth-child(2) { animation-delay: .15s; } .typing .bubble i:nth-child(3) { animation-delay: .3s; }
-    @keyframes blink { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
-    @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .src { font-size: 12px; color: var(--dim); margin-bottom: 10px; }
+    .claim { border-left: 1px solid var(--line); padding-left: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .ln { display: block; width: 100%; text-align: left; font-size: 16px; line-height: 1.65; color: var(--moon); word-break: keep-all; overflow-wrap: anywhere; border-radius: 6px; transition: background .15s, opacity .2s, box-shadow .2s; }
+    .where .ln { padding: 6px 10px; margin: -6px -10px; cursor: pointer; }
+    .where .ln:hover { background: var(--night-2); }
+    .where .ln:active { transform: scale(.99); }
+    .ln.wrong { opacity: .4; text-decoration: line-through; text-decoration-color: var(--dim); }
+    .ln.hit { box-shadow: inset 0 0 0 1.5px var(--corona); }
+    .ln.reveal { box-shadow: inset 0 0 0 1px var(--mist); }
+    .q { font-family: var(--serif); font-size: 21px; line-height: 1.45; margin: 26px 0 14px; text-wrap: balance; }
+    .hint { font-size: 13px; color: var(--mist); }
+    .opts { border-top: 1px solid var(--line); }
+    .opt { display: grid; grid-template-columns: 22px 1fr; gap: 8px; width: 100%; text-align: left; padding: 15px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.55; color: var(--moon); }
+    .opt i { font-style: normal; font-family: var(--serif); color: var(--dim); }
+    .opt:active { background: var(--night-2); }
+    .opt.right { color: var(--moon); }
+    .opt.right i { color: var(--corona); }
+    .opt.wrongpick { color: var(--dim); text-decoration: line-through; text-decoration-color: var(--dim); }
+    .opt.dim { color: var(--dim); }
+    .opts.locked .opt { pointer-events: none; }
 
-    .foot { flex: none; border-top: 1px solid var(--line); padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)); }
-    .foot .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .foot p { font-size: 13px; color: var(--mist); }
-    .foot .ecl-btn { height: 42px; flex: none; }
-
-    .toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px); opacity: 0; background: var(--night-3); color: var(--moon); font-size: 13px; padding: 8px 14px; border-radius: 999px; transition: opacity .2s, transform .2s; z-index: 40; pointer-events: none; white-space: nowrap; }
+    .toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 8px); opacity: 0; background: var(--night-3); color: var(--moon); font-size: 13px; padding: 8px 14px; border-radius: 999px; transition: opacity .2s, transform .2s; z-index: 40; pointer-events: none; white-space: nowrap; }
     .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
     /* sheet */
     .scrim { position: fixed; inset: 0; background: rgba(8,4,14,.55); z-index: 30; opacity: 0; transition: opacity .2s; }
     .scrim.on { opacity: 1; }
-    .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; transform: translateY(100%); transition: transform .26s cubic-bezier(.2,.8,.2,1); max-height: 88vh; max-height: 88dvh; overflow-y: auto; }
+    .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; transform: translateY(100%); transition: transform .26s cubic-bezier(.2,.8,.2,1); max-height: 90vh; max-height: 90dvh; overflow-y: auto; }
     .sheet.on { transform: none; }
-    .sheet-in { max-width: var(--col); margin: 0 auto; background: var(--night-2); border-radius: 20px 20px 0 0; padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px)); }
-    .sheet .q { font-size: 14px; color: var(--mist); border-left: 2px solid var(--line); padding-left: 12px; margin-bottom: 14px; }
-    .sheet .ask { font-size: 13px; color: var(--dim); margin-bottom: 4px; }
-    .opt { display: block; width: 100%; text-align: left; padding: 14px 2px; border-bottom: 1px solid var(--line); }
-    .opt:last-of-type { border-bottom: 0; }
-    .opt b { display: block; font-family: var(--serif); font-weight: 400; font-size: 19px; }
-    .opt span { display: block; font-size: 13px; color: var(--mist); margin-top: 2px; }
-    .opt:active { background: var(--night-3); }
-    .sheet .back-link { display: block; margin: 8px auto 0; font-size: 13px; color: var(--dim); padding: 8px; }
-
+    .sheet-in { max-width: var(--col); margin: 0 auto; background: var(--night-2); border-radius: 20px 20px 0 0; padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px)); }
+    .back-link { display: block; margin: 8px auto 0; font-size: 13px; color: var(--dim); padding: 8px; }
     .verdict h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.2; }
     .verdict .pts { font-size: 13px; color: var(--mist); margin-top: 4px; }
-    .finding { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
-    .finding .kind { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .finding .kind b { font-family: var(--serif); font-weight: 400; font-size: 21px; }
-    .finding .kind em { font-style: normal; font-size: 12px; color: var(--mist); }
-    .finding .kind small { font-size: 12px; color: var(--dim); }
-    .finding .line { font-size: 13.5px; color: var(--dim); margin: 6px 0 10px; }
-    .finding p { font-size: 15px; color: var(--moon); }
-    .finding .comeback { margin-top: 12px; }
-    .finding .comeback span { font-size: 12px; color: var(--dim); }
-    .finding .comeback q { display: block; font-family: var(--serif); font-size: 17px; line-height: 1.5; margin-top: 2px; quotes: none; }
-    .verdict .ecl-btn { width: 100%; margin-top: 22px; }
+    .verdict .note { font-size: 15px; line-height: 1.7; margin-top: 16px; }
+    .trap { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .trap .kind { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .trap .kind b { font-family: var(--serif); font-weight: 400; font-size: 23px; }
+    .trap .kind em { font-style: normal; font-size: 12px; color: var(--mist); }
+    .trap .def { font-size: 14px; color: var(--mist); margin-top: 4px; }
+    .trap h5 { font-size: 12px; color: var(--dim); font-weight: 500; margin: 16px 0 4px; }
+    .trap .story { font-size: 14.5px; line-height: 1.75; color: var(--mist); }
+    .trap .rule { font-family: var(--serif); font-size: 18px; line-height: 1.55; color: var(--moon); border-left: 1px solid var(--moon); padding-left: 12px; }
+    .verdict .ecl-btn { width: 100%; margin-top: 24px; }
 
     /* end */
     .end { text-align: center; padding: 30px 0 48px; }
@@ -154,7 +127,7 @@
     .end .newkinds b { color: var(--moon); font-weight: 500; }
     .end .acts { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
     .end .acts .ecl-btn { width: 100%; }
-    .end .acts a.plain, .end .acts button.plain { color: var(--mist); font-size: 14px; padding: 8px; }
+    .end .acts .plain { color: var(--mist); font-size: 14px; padding: 8px; }
     .review { text-align: left; margin-top: 36px; border-top: 1px solid var(--line); }
     .review h4 { font-size: 13px; color: var(--dim); font-weight: 500; margin: 16px 0 4px; }
     .rv { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
@@ -167,31 +140,27 @@
     .dex-top h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; }
     .dex-top p { color: var(--mist); font-size: 14px; }
     .kinds { margin: 18px 0 48px; border-top: 1px solid var(--line); }
-    .kindrow { padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .kindrow { padding: 18px 0; border-bottom: 1px solid var(--line); }
     .kindrow .h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-    .kindrow b { font-family: var(--serif); font-weight: 400; font-size: 20px; }
+    .kindrow b { font-family: var(--serif); font-weight: 400; font-size: 21px; }
     .kindrow .cnt { font-size: 12px; color: var(--mist); flex: none; }
     .kindrow p { font-size: 14px; color: var(--mist); margin-top: 3px; }
-    .kindrow .more { font-size: 13.5px; color: var(--moon); margin-top: 8px; opacity: .9; }
-    .kindrow.locked b { color: var(--dim); }
-    .kindrow.locked .cnt { color: var(--dim); }
+    .kindrow .story { font-size: 14px; line-height: 1.7; color: var(--mist); margin-top: 10px; }
+    .kindrow .rule { font-family: var(--serif); font-size: 16.5px; line-height: 1.55; border-left: 1px solid var(--moon); padding-left: 12px; margin-top: 10px; }
+    .kindrow.locked b, .kindrow.locked .cnt { color: var(--dim); }
   </style>
 </head>
 <body>
 
-<!-- 로비 -->
 <section class="screen" id="lobby">
   <div class="wrap">
-    <div class="rail">
-      <a href="index.html" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>홈</a>
-    </div>
+    <div class="rail"><a href="index.html" aria-label="홈으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>홈</a></div>
     <div class="lobby-head">
       <h1>궤변<br>사냥</h1>
       <div class="ecl-mark" aria-hidden="true"><i class="lit"></i><i class="rim"></i><i class="shade"></i></div>
     </div>
-    <p class="lede">맞는 말처럼 들리는데 논리가 무너진 문장이 있어요. 수배서를 보고, 대화 속에서 그 한 줄을 찾아 누르세요.</p>
+    <p class="lede">회의, 기사, 투자 리포트에는 숫자까지 갖춘 그럴듯한 주장이 많아요. 그 안에서 논리가 무너지는 지점을 찾아요.</p>
     <div class="rank"><b id="rankName">견습 사냥꾼</b><span id="rankSub"></span></div>
-
     <div class="modes">
       <div class="mode" id="dailyRow">
         <div><h2>오늘의 사냥 <i class="fresh" id="freshDot" aria-hidden="true"></i></h2><p id="dailySub">다섯 판 · 하루 한 번 · 모두 같은 문제</p></div>
@@ -202,23 +171,21 @@
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
       <button class="mode" id="dexBtn" type="button">
-        <div><h2>궤변 도감</h2><p id="dexSub">잡은 궤변이 여기 모여요</p></div>
+        <div><h2>함정 도감</h2><p id="dexSub"></p></div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
       </button>
     </div>
-
     <div class="how">
       <h3>하는 법</h3>
       <ol>
-      <li>판마다 수배서가 먼저 나와요. 이번에 잡을 궤변이 무엇인지 알려줘요.</li>
-      <li>대화가 올라오면 수배서에 맞는 문장을 바로 누르세요. 빨리, 연속으로 잡을수록 점수가 커져요.</li>
-      <li>수배된 궤변이 없는 대화도 있어요. 그럴 땐 여기엔 없어요를 누르세요. 엉뚱한 문장을 누르면 4초가 깎여요.</li>
+        <li>주장을 읽고 질문에 답하세요. 왜 틀렸는지 고르거나, 무너지는 문장을 직접 짚어요.</li>
+        <li>빨리 맞힐수록, 연속으로 맞힐수록 점수가 커져요.</li>
+        <li>판이 끝나면 이 함정에 실제로 걸려든 사례와 기억할 한 줄이 나와요. 맞힌 함정은 도감에 모여요.</li>
       </ol>
     </div>
   </div>
 </section>
 
-<!-- 게임 -->
 <section class="screen" id="game" hidden>
   <div class="hud">
     <div class="l"><button id="quitBtn" type="button" aria-label="그만하기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span id="hudLeft"></span></div>
@@ -226,12 +193,9 @@
     <div class="r num" id="hudScore">0</div>
   </div>
   <div class="timer" id="timer"><i id="timerFill"></i></div>
-  <div class="roomname" id="roomName"></div>
-  <div class="log" id="log"><div class="log-in" id="logIn" aria-live="polite"></div></div>
-  <div class="foot"><div class="wrap"><p id="footHint">수배서에 맞는 문장을 누르세요</p><button class="ecl-btn ghost" id="okBtn" type="button">여기엔 없어요</button></div></div>
+  <div class="stage" id="stage"><div class="stage-in" id="stageIn"></div></div>
 </section>
 
-<!-- 결과 -->
 <section class="screen" id="end" hidden>
   <div class="wrap">
     <div class="rail"><button id="endBack" type="button"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>궤변 사냥</button></div>
@@ -239,11 +203,10 @@
   </div>
 </section>
 
-<!-- 도감 -->
 <section class="screen" id="dex" hidden>
   <div class="wrap">
     <div class="rail"><button id="dexBack" type="button"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>궤변 사냥</button></div>
-    <div class="dex-top"><h1>궤변 도감</h1><p id="dexCountLine"></p></div>
+    <div class="dex-top"><h1>함정 도감</h1><p id="dexCountLine"></p></div>
     <div class="kinds" id="kinds"></div>
   </div>
 </section>
@@ -255,28 +218,28 @@
 <script src="hunt-data.js"></script>
 <script>
 (function () {
-  const F = window.FALLACIES, R = window.ROUNDS;
-  const KEY = 'eclipse_fallacy_hunt', PROFILE_KEY = 'eclipse_mindlab_profile';
+  const T = window.TRAPS, R = window.ROUNDS;
+  const KEY = 'eclipse_hunt', PROFILE_KEY = 'eclipse_mindlab_profile';
   const URL_ = 'https://eclipse-mindlab.github.io/mindlab/hunt.html';
+  const PENALTY = 5000;
   const $ = s => document.querySelector(s);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fmt = n => n.toLocaleString('ko-KR');
   const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
-  const PENALTY = 4000;
 
-  /* ---------- 날짜와 난수 ---------- */
-  function today(d) { const t = d || new Date(); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }
+  /* 날짜, 난수 */
+  function today() { const t = new Date(); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }
   function dayDiff(a, b) { return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000); }
+  function dateLabel(s) { const [, m, d] = s.split('-'); return `${+m}월 ${+d}일`; }
   function seedOf(str) { let h = 1779033703 ^ str.length; for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; } h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return (h ^= h >>> 16) >>> 0; }
   function rngOf(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function shuffle(a, rnd) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor((rnd || Math.random)() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-  /* ---------- 저장 ---------- */
+  /* 저장 */
   function load() {
     let s = null; try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
     if (!s || typeof s !== 'object') s = {};
-    s.v = 1; s.caught = s.caught || {}; s.first = s.first || {}; s.total = s.total || 0;
+    s.v = 2; s.caught = s.caught || {}; s.first = s.first || {}; s.total = s.total || 0;
     s.best = s.best || 0; s.bestRound = s.bestRound || 0; s.daily = s.daily || {};
     s.streak = s.streak || 0; s.maxStreak = s.maxStreak || 0;
     return s;
@@ -292,88 +255,73 @@
       localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
     } catch (e) {}
   }
-
   const RANKS = [[0, '견습 사냥꾼'], [10, '사냥꾼'], [30, '노련한 사냥꾼'], [70, '궤변 감별사'], [150, '소크라테스의 제자']];
   function rank(n) { let i = 0; while (i + 1 < RANKS.length && n >= RANKS[i + 1][0]) i++; return { name: RANKS[i][1], next: RANKS[i + 1] || null }; }
 
-  /* ---------- 판 고르기 ---------- */
-  const REG = R.filter(r => !r.clean && !r.boss), CLEAN = R.filter(r => r.clean), BOSS = R.filter(r => r.boss);
+  /* 판 고르기 */
   function dailyRounds(date) {
-    const rnd = rngOf(seedOf('hunt-' + date));
-    const used = new Set(), out = [];
-    const take = (pool) => { const c = shuffle(pool, rnd).find(r => !out.includes(r) && (r.clean || !used.has(r.f))); if (c) { out.push(c); if (!c.clean) used.add(c.f); } return c; };
-    take(REG.filter(r => r.lv === 1)); take(REG.filter(r => r.lv === 1));
-    take(REG.filter(r => r.lv === 2)); take(REG.filter(r => r.lv === 2));
-    if (rnd() < 0.5) out[1 + Math.floor(rnd() * 3)] = shuffle(CLEAN, rnd)[0];
-    out.push(rnd() < 0.6 ? shuffle(BOSS, rnd)[0] : shuffle(REG.filter(r => r.lv === 3), rnd)[0]);
-    return out;
+    const rnd = rngOf(seedOf('hunt2-' + date));
+    return shuffle(R, rnd).slice(0, 5).sort((a, b) => a.lv - b.lv);
   }
   function endlessNext(n) {
-    if (n > 0 && n % 6 === 5) { G.bossQ = G.bossQ && G.bossQ.length ? G.bossQ : shuffle(BOSS); return G.bossQ.shift(); }
-    const cap = n < 4 ? 1 : n < 10 ? 2 : 3;
-    if (!G.q || !G.q.length) G.q = shuffle(REG.concat(CLEAN));
+    const cap = n < 3 ? 1 : n < 7 ? 2 : 3;
+    if (!G.q || !G.q.length) G.q = shuffle(R);
     let i = G.q.findIndex(r => r.lv <= cap && r !== G.lastR);
     if (i < 0) i = 0;
     return G.q.splice(i, 1)[0];
   }
 
-  /* ---------- 화면 ---------- */
-  function show(id) {
-    ['lobby', 'game', 'end', 'dex'].forEach(s => { $('#' + s).hidden = s !== id; });
-    window.scrollTo(0, 0);
-  }
-  function dotsHTML(grid) { return [...grid].map(c => `<i class="dot ${c === '●' ? 'full' : c === '◐' ? 'half' : 'none'}"></i>`).join(''); }
+  /* 화면 */
+  function show(id) { ['lobby', 'game', 'end', 'dex'].forEach(s => { $('#' + s).hidden = s !== id; }); window.scrollTo(0, 0); }
+  const dotCls = c => c === '●' ? 'full' : c === '◐' ? 'half' : 'none';
+  const dotsHTML = grid => [...grid].map(c => `<i class="dot ${dotCls(c)}"></i>`).join('');
 
   function renderLobby() {
-    const t = today(), d = S.daily[t], rk = rank(S.total);
-    const kinds = Object.keys(F).filter(k => S.caught[k]).length;
+    const t = today(), d = S.daily[t], rk = rank(S.total), keys = Object.keys(T);
     $('#rankName').textContent = rk.name;
-    $('#rankSub').textContent = S.total ? `지금까지 ${S.total}번 잡았어요` + (rk.next ? ` · 다음 칭호까지 ${rk.next[0] - S.total}번` : '') : '아직 잡은 궤변이 없어요';
+    $('#rankSub').textContent = S.total ? `지금까지 ${S.total}번 맞혔어요` + (rk.next ? ` · 다음 칭호까지 ${rk.next[0] - S.total}번` : '') : '';
     const streakOn = S.lastDaily && dayDiff(S.lastDaily, t) <= 1 && S.streak > 1;
     if (d) {
-      $('#freshDot').style.display = 'none';
+      $('#freshDot').hidden = true;
       $('#dailySub').innerHTML = `<span class="dots" style="gap:6px;vertical-align:middle">${dotsHTML(d.grid)}</span>` + (streakOn ? ` · ${S.streak}일 연속` : '');
-      $('#dailySide').innerHTML = `<div class="num serif" style="font-size:22px;color:var(--moon)">${fmt(d.score)}</div><div>내일 새 문제</div>`;
-      $('#dailyRow').onclick = () => showDailyDone();
-      $('#dailyRow').style.cursor = 'pointer';
+      $('#dailySide').innerHTML = `<div class="num" style="font-family:var(--serif);font-size:22px;color:var(--moon)">${fmt(d.score)}</div><div>내일 새 문제</div>`;
+      $('#dailyRow').onclick = showDailyDone; $('#dailyRow').style.cursor = 'pointer';
     } else {
-      $('#freshDot').style.display = '';
+      $('#freshDot').hidden = false;
       $('#dailySub').textContent = '다섯 판 · 하루 한 번 · 모두 같은 문제' + (streakOn ? ` · ${S.streak}일 연속 중` : '');
       $('#dailySide').innerHTML = '<button class="ecl-btn" id="dailyBtn" type="button">시작</button>';
       $('#dailyBtn').onclick = e => { e.stopPropagation(); startGame('daily'); };
-      $('#dailyRow').onclick = null;
+      $('#dailyRow').onclick = null; $('#dailyRow').style.cursor = '';
     }
     $('#endlessSub').textContent = S.best ? `최고 ${fmt(S.best)}점 · ${S.bestRound}판까지` : '달 세 개가 다 가려질 때까지';
-    $('#dexSub').textContent = `${Object.keys(F).length}종 중 ${kinds}종을 잡았어요`;
+    $('#dexSub').textContent = `${keys.length}가지 중 ${keys.filter(k => S.caught[k]).length}가지를 모았어요`;
     show('lobby');
   }
 
   function renderDex() {
-    const keys = Object.keys(F), got = keys.filter(k => S.caught[k]);
-    $('#dexCountLine').textContent = `${keys.length}종 중 ${got.length}종을 잡았어요. 잡은 궤변은 설명이 하나 더 열려요.`;
-    const order = got.concat(keys.filter(k => !S.caught[k]));
-    $('#kinds').innerHTML = order.map(k => {
-      const f = F[k], n = S.caught[k] || 0;
-      return `<div class="kindrow ${n ? '' : 'locked'}"><div class="h"><b>${esc(f.name)}</b><span class="cnt">${n ? n + '번 잡음' : '아직 못 잡았어요'}</span></div>
-        <p>${esc(f.def)}</p>${n ? `<p class="more">${esc(f.more)}</p>` : ''}</div>`;
+    const keys = Object.keys(T), got = keys.filter(k => S.caught[k]);
+    $('#dexCountLine').textContent = `${keys.length}가지 중 ${got.length}가지. 맞힌 함정은 실제 사례와 기억할 한 줄이 열려요.`;
+    $('#kinds').innerHTML = got.concat(keys.filter(k => !S.caught[k])).map(k => {
+      const f = T[k], n = S.caught[k] || 0;
+      return `<div class="kindrow ${n ? '' : 'locked'}"><div class="h"><b>${esc(f.name)}</b><span class="cnt">${n ? n + '번 맞힘' : '아직 못 만났어요'}</span></div>
+        <p>${esc(f.def)}</p>${n ? `<p class="story">${esc(f.story)}</p><p class="rule">${esc(f.rule)}</p>` : ''}</div>`;
     }).join('');
     show('dex');
   }
 
-  /* ---------- 게임 상태 ---------- */
+  /* 게임 */
   let G = null, RS = null, raf = 0, lastTs = 0;
 
   function startGame(mode) {
     if (mode === 'daily' && S.daily[today()]) return showDailyDone();
-    G = { mode, date: today(), i: 0, score: 0, combo: 0, maxCombo: 0, lives: 3, results: [], newKinds: [], caughtN: 0, falseN: 0 };
+    G = { mode, date: today(), i: 0, score: 0, combo: 0, maxCombo: 0, lives: 3, results: [], newKinds: [], rightN: 0 };
     if (mode === 'daily') G.list = dailyRounds(G.date);
-    show('game');
-    nextRound();
+    show('game'); nextRound();
     if (!raf) raf = requestAnimationFrame(loop);
   }
 
   function hud() {
-    if (G.mode === 'daily') $('#hudLeft').textContent = `오늘의 사냥 ${Math.min(G.i + 1, 5)} / 5`;
+    if (G.mode === 'daily') $('#hudLeft').textContent = `오늘의 사냥 ${Math.min(G.i + 1, G.list.length)} / ${G.list.length}`;
     else $('#hudLeft').innerHTML = `<span class="lives" aria-label="남은 달 ${G.lives}개">${[0, 1, 2].map(k => `<i class="life ${k < G.lives ? '' : 'out'}"></i>`).join('')}</span><span>${G.i + 1}판</span>`;
     $('#hudScore').textContent = fmt(G.score);
     $('#hudCombo').textContent = G.combo >= 2 ? `연속 ${G.combo}` : '';
@@ -385,17 +333,19 @@
     if (G.mode === 'endless' && G.lives <= 0) return finish();
     const r = G.mode === 'daily' ? G.list[G.i] : endlessNext(G.i);
     G.lastR = r;
-    const sched = []; let t = 1500;
-    r.m.forEach((m, k) => { sched.push(t); t += Math.min(2600, Math.max(900, 380 + m[1].length * 38)); });
-    const extra = { 1: 14000, 2: 12500, 3: 11000 }[r.lv] + (r.boss ? 9000 : 0);
+    const chars = r.lines.join('').length + r.q.length + (r.opts ? r.opts.join('').length : 0);
     const diff = G.mode === 'endless' ? Math.max(0.6, 1 - 0.05 * Math.floor(G.i / 3)) : 1;
-    RS = { hit: [], r, sched, budget: sched[sched.length - 1] + extra * diff, t: 0, penalty: 0, next: 0, paused: false, done: false, falseN: 0, got: [], typing: null };
-    const wanted = r.clean ? [r.t] : r.boss ? r.f : [r.f];
-    $('#logIn').innerHTML = `<div class="poster"><div class="lbl">${wanted.length > 1 ? '수배 · 이 대화에 둘이 숨어 있어요' : '수배'}</div>
-      <div class="${wanted.length > 1 ? 'pair' : ''}">${wanted.map(f => `<div><div class="nm">${esc(F[f].name)}</div><div class="df">${esc(F[f].def)}</div></div>`).join('')}</div></div>`;
-    $('#roomName').textContent = r.room;
-    $('#footHint').textContent = '수배서에 맞는 문장을 누르세요';
-    $('#okBtn').disabled = false;
+    RS = { r, budget: (9000 + chars * 75) * diff, t: 0, penalty: 0, done: false, wrongN: 0 };
+    const where = r.type === 'where';
+    $('#stageIn').innerHTML = `
+      <div class="src">${esc(r.src)}</div>
+      <div class="claim ${where ? 'where' : ''}">${r.lines.map((x, k) => where ? `<button class="ln" type="button" data-k="${k}">${esc(x)}</button>` : `<p class="ln">${esc(x)}</p>`).join('')}</div>
+      <p class="q">${esc(r.q)}</p>
+      ${where ? '<p class="hint">해당 문장을 누르세요. 틀리면 5초가 깎여요.</p>' :
+        `<div class="opts" id="opts">${r.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}"><i>${'가나다라'[k]}</i><span>${esc(o)}</span></button>`).join('')}</div>`}`;
+    if (where) document.querySelectorAll('#stageIn .ln').forEach(b => b.onclick = () => tapLine(+b.dataset.k, b));
+    else document.querySelectorAll('#opts .opt').forEach(b => b.onclick = () => pickOpt(+b.dataset.k));
+    $('#stage').scrollTop = 0;
     $('#timer').classList.remove('low');
     hud();
   }
@@ -405,125 +355,72 @@
     const dt = lastTs ? Math.min(100, ts - lastTs) : 0; lastTs = ts;
     if (!RS || RS.done || RS.paused || $('#game').hidden) return;
     RS.t += dt;
-    stream();
     const rem = RS.budget - RS.t - RS.penalty, frac = Math.max(0, rem / RS.budget);
     $('#timerFill').style.transform = `scaleX(${frac})`;
     $('#timer').classList.toggle('low', frac < 0.25);
-    if (rem <= 0) endRound('timeout');
+    if (rem <= 0) endRound(false, 'timeout');
   }
 
-  function stream() {
-    const m = RS.r.m;
-    while (RS.next < m.length && RS.t >= RS.sched[RS.next]) addMsg(RS.next++);
-    if (RS.next < m.length && !RS.typing && RS.t >= RS.sched[RS.next] - 650) {
-      const who = m[RS.next][0], me = who === '나', cont = RS.next > 0 && m[RS.next - 1][0] === who;
-      const d = document.createElement('div'); d.className = 'msg typing' + (me ? ' me' : '') + (cont ? ' cont' : '');
-      d.innerHTML = `${me || cont ? '' : `<div class="who">${esc(who)}</div>`}<div class="bubble" aria-hidden="true"><i></i><i></i><i></i></div>`;
-      $('#logIn').appendChild(d); RS.typing = d; scrollDown();
-    }
+  function tapLine(k, el) {
+    if (!RS || RS.done || RS.paused || el.classList.contains('wrong')) return;
+    const ok = [].concat(RS.r.ans).includes(k);
+    if (ok) { el.classList.add('hit'); buzz(25); return endRound(true); }
+    el.classList.add('wrong'); RS.penalty += PENALTY; RS.wrongN++; buzz(60);
+    toast('여기는 아니에요. 5초가 깎였어요');
   }
-  function addMsg(k) {
-    if (RS.typing) { RS.typing.remove(); RS.typing = null; }
-    const [who, x] = RS.r.m[k], me = who === '나', cont = k > 0 && RS.r.m[k - 1][0] === who;
-    const d = document.createElement('div'); d.className = 'msg' + (me ? ' me' : '') + (cont ? ' cont' : ''); d.dataset.k = k;
-    d.innerHTML = `${me || cont ? '' : `<div class="who">${esc(who)}</div>`}<button class="bubble" type="button">${esc(x)}</button><div class="tag"></div>`;
-    d.querySelector('.bubble').onclick = () => tap(k);
-    $('#logIn').appendChild(d); scrollDown();
-  }
-  function scrollDown() { const l = $('#log'); l.scrollTo({ top: l.scrollHeight, behavior: reduce ? 'auto' : 'smooth' }); }
-  const msgEl = k => $(`#logIn .msg[data-k="${k}"]`);
-  function setTag(k, cls, text) { const e = msgEl(k); if (!e) return; e.classList.remove('sel'); e.classList.add(cls); e.querySelector('.tag').textContent = text; }
-
-  /* 이 문장이 범인인가: 보스는 몇 번째 범인인지, 일반은 0 */
-  function culpritIdx(k) {
-    const r = RS.r; if (r.clean) return -1;
-    if (r.boss) return r.bad.indexOf(k);
-    return [].concat(r.bad).includes(k) ? 0 : -1;
-  }
-  const kindOf = (r, j) => r.boss ? r.f[j] : r.f;
-
-  function tap(k) {
+  function pickOpt(k) {
     if (!RS || RS.done || RS.paused) return;
-    const e = msgEl(k); if (!e || e.classList.contains('accused') || e.classList.contains('caught')) return;
-    const r = RS.r, j = culpritIdx(k);
-    if (j < 0) {
-      RS.penalty += PENALTY; RS.falseN++; G.falseN++;
-      setTag(k, 'accused', '수배된 궤변이 아니에요'); toast('엉뚱한 문장이에요. 4초가 깎였어요'); buzz(60);
-      return;
-    }
-    if (RS.got[j]) return;
-    RS.hit[j] = k; RS.got[j] = 'caught';
-    setTag(k, 'caught', F[kindOf(r, j)].name); buzz(25);
-    if (r.boss && RS.got.filter(Boolean).length < 2) return toast('하나 잡았어요. 남은 하나를 찾으세요');
-    endRound(r.boss ? 'boss' : 'caught');
+    const ok = k === RS.r.ans;
+    document.querySelectorAll('#opts .opt').forEach((b, i) => b.classList.add(i === RS.r.ans ? 'right' : i === k ? 'wrongpick' : 'dim'));
+    $('#opts').classList.add('locked');
+    buzz(ok ? 25 : 60);
+    endRound(ok, ok ? '' : 'wrong');
   }
 
-  $('#okBtn').onclick = () => { if (!RS || RS.done || RS.paused) return; endRound(RS.r.clean ? 'clean' : 'wrongclean'); };
-
-  function endRound(kind) {
+  function endRound(ok, why) {
     if (RS.done) return; RS.done = true;
     const r = RS.r;
-    while (RS.next < r.m.length) addMsg(RS.next++);
-    if (RS.typing) { RS.typing.remove(); RS.typing = null; }
-    $('#okBtn').disabled = true;
-    const frac = Math.max(0, (RS.budget - RS.t - RS.penalty) / RS.budget), speed = Math.round(100 * frac);
-    let pts = 0, full = false;
-    const n = r.boss ? 2 : r.clean ? 0 : 1;
-    for (let j = 0; j < n; j++) {
-      const g = RS.got[j];
-      if (g === 'caught') { pts += 100 + speed; record(kindOf(r, j)); }
-      else if (g && g.half) pts += 30;
-      else { const ks = r.boss ? [r.bad[j]] : [].concat(r.bad); setTag(ks[ks.length - 1], 'missed', '여기 숨어 있었어요'); }
-    }
-    if (r.clean && kind === 'clean') pts = 100 + speed;
-    full = r.clean ? kind === 'clean' : RS.got.filter(g => g === 'caught').length === n;
-    const sym = full && RS.falseN === 0 ? '●' : (pts > 0 ? '◐' : '○');
+    if (!ok && r.type === 'where') [].concat(r.ans).forEach(k => { const e = $(`#stageIn .ln[data-k="${k}"]`); if (e) e.classList.add('reveal'); });
+    if (!ok && r.type === 'why' && why === 'timeout') document.querySelectorAll('#opts .opt').forEach((b, i) => b.classList.add(i === r.ans ? 'right' : 'dim'));
+    const speed = Math.round(100 * Math.max(0, (RS.budget - RS.t - RS.penalty) / RS.budget));
+    const sym = ok ? (RS.wrongN ? '◐' : '●') : '○';
     if (sym === '●') { G.combo++; G.maxCombo = Math.max(G.maxCombo, G.combo); } else G.combo = 0;
     const mult = sym === '●' ? Math.min(2, 1 + 0.2 * (G.combo - 1)) : 1;
-    pts = Math.round(pts * mult);
+    const pts = ok ? Math.round((100 + speed) * mult) : 0;
     G.score += pts;
-    if (G.mode === 'endless' && sym === '○') G.lives--;
+    let isNew = false;
+    if (ok) {
+      G.rightN++; S.caught[r.trap] = (S.caught[r.trap] || 0) + 1; S.total++;
+      if (!S.first[r.trap]) { S.first[r.trap] = today(); G.newKinds.push(r.trap); isNew = true; }
+    }
+    if (G.mode === 'endless' && !ok) G.lives--;
     G.results.push({ id: r.id, sym, pts });
     save(); hud();
-    buzz(sym === '○' ? [40, 60, 40] : 0);
-    setTimeout(() => verdict(kind, sym, pts, mult, speed), reduce ? 0 : 450);
+    setTimeout(() => verdict(ok, why, pts, mult, isNew), 700);
   }
 
-  function record(f) {
-    S.caught[f] = (S.caught[f] || 0) + 1; S.total++; G.caughtN++;
-    if (!S.first[f]) { S.first[f] = today(); G.newKinds.push(f); }
-  }
-
-  function verdict(kind, sym, pts, mult, speed) {
-    const r = RS.r;
-    let title;
-    if (r.clean) title = kind === 'clean' ? '맞아요. 여기엔 없었어요' : '시간이 다 됐어요. 여기엔 없었어요';
-    else if (r.boss) { const c = RS.got.filter(g => g === 'caught').length; title = c === 2 ? '둘 다 잡았어요' : c === 1 ? '하나만 잡았어요' : '둘 다 놓쳤어요'; }
-    else title = { caught: '잡았어요', timeout: '놓쳤어요', wrongclean: '여기 있었어요' }[kind] || '놓쳤어요';
-
-    let body = '';
-    if (r.clean) body = `<div class="finding"><div class="kind"><b>${esc(F[r.t].name)}</b><small>이 대화에는 없어요</small></div><p>${esc(r.why)}</p></div>`;
-    else for (let j = 0; j < (r.boss ? 2 : 1); j++) {
-      const f = kindOf(r, j), g = RS.got[j], line = RS.hit[j] !== undefined ? RS.hit[j] : r.boss ? r.bad[j] : [].concat(r.bad).slice(-1)[0];
-      const isNew = g === 'caught' && G.newKinds.includes(f) && S.caught[f] === 1;
-      body += `<div class="finding">
-        <div class="kind"><b>${esc(F[f].name)}</b>${isNew ? '<em>도감에 새로 올렸어요</em>' : ''}</div>
-        <div class="line">${esc(r.m[line][0])}: ${esc(r.m[line][1])}</div>
-        <p>${esc(r.boss ? r.why[j] : r.why)}</p>
-        <div class="comeback"><span>이렇게 받아칠 수 있어요</span><q>${esc(r.boss ? r.back[j] : r.back)}</q></div>
-      </div>`;
-    }
-    const bits = [`+${fmt(pts)}점`];
+  function verdict(ok, why, pts, mult, isNew) {
+    const r = RS.r, f = T[r.trap];
+    const title = ok ? (RS.wrongN ? '찾았어요' : '맞았어요') : why === 'timeout' ? '시간이 다 됐어요' : '아쉬워요';
+    const bits = [ok ? `+${fmt(pts)}점` : '0점'];
     if (mult > 1) bits.push(`연속 ${G.combo} · ${mult.toFixed(1)}배`);
-    if (RS.falseN) bits.push(`무고 ${RS.falseN}번`);
-    if (G.mode === 'endless' && sym === '○') bits.push(G.lives > 0 ? `달이 하나 가려졌어요` : '마지막 달이 가려졌어요');
+    if (RS.wrongN) bits.push(`헛짚음 ${RS.wrongN}번`);
+    if (G.mode === 'endless' && !ok) bits.push(G.lives > 0 ? '달이 하나 가려졌어요' : '마지막 달이 가려졌어요');
+    const answer = r.type === 'why' && !ok ? `<p class="note" style="color:var(--mist);margin-top:12px">정답: ${esc(r.opts[r.ans])}</p>` : '';
     const last = G.mode === 'daily' ? G.i + 1 >= G.list.length : G.lives <= 0;
-    openSheet(`<div class="verdict"><h3>${title}</h3><div class="pts">${bits.join(' · ')}</div>${body}
-      <button class="ecl-btn" type="button" id="nextBtn">${last ? '결과 보기' : '다음 판'}</button></div>`, true);
+    openSheet(`<div class="verdict"><h3>${title}</h3><div class="pts">${bits.join(' · ')}</div>${answer}
+      <p class="note">${esc(r.note)}</p>
+      <div class="trap">
+        <div class="kind"><b>${esc(f.name)}</b>${isNew ? '<em>도감에 새로 올렸어요</em>' : ''}</div>
+        <p class="def">${esc(f.def)}</p>
+        <h5>실제로 있었던 일</h5><p class="story">${esc(f.story)}</p>
+        <h5>기억할 한 줄</h5><p class="rule">${esc(f.rule)}</p>
+      </div>
+      <button class="ecl-btn" type="button" id="nextBtn">${last ? '결과 보기' : '다음 판'}</button></div>`);
     $('#nextBtn').onclick = () => { G.i++; nextRound(); };
   }
 
-  /* ---------- 끝 ---------- */
+  /* 끝 */
   function finish() {
     closeSheet(); RS = null;
     const grid = G.results.map(x => x.sym).join('');
@@ -535,75 +432,60 @@
         S.streak = S.lastDaily && dayDiff(S.lastDaily, t) === 1 ? S.streak + 1 : 1;
         S.lastDaily = t; S.maxStreak = Math.max(S.maxStreak, S.streak);
         grantExp(10);
-        note = (S.streak > 1 ? `${S.streak}일 연속 사냥 중이에요. ` : '') + '경험치 10을 받았어요.';
+        note = (S.streak > 1 ? `${S.streak}일 연속이에요. ` : '') + '경험치 10을 받았어요.';
       }
-    } else {
-      const rounds = G.results.length;
-      if (G.score > S.best) { S.best = G.score; S.bestRound = rounds; note = '최고 기록이에요.'; }
-    }
+    } else if (G.score > S.best) { S.best = G.score; S.bestRound = G.results.length; note = '최고 기록이에요.'; }
     save();
-    renderEnd(G.mode, G.score, grid, note, G.results);
+    renderEnd(G.mode, G.score, grid, note, G.results, false);
   }
 
   function renderEnd(mode, score, grid, note, results, already) {
-    const rk = rank(S.total);
-    const newK = G && !already ? G.newKinds : [];
-    const lbl = mode === 'daily' ? `오늘의 사냥 · ${dateLabel(G ? G.date : today())}` : `연속 사냥 · ${results.length}판`;
-    const reviewRows = (results || []).map(x => {
+    const rk = rank(S.total), newK = already ? [] : G.newKinds;
+    const lbl = mode === 'daily' ? `오늘의 사냥 · ${dateLabel(already ? today() : G.date)}` : `연속 사냥 · ${results.length}판`;
+    const rows = results.map(x => {
       const r = R.find(z => z.id === x.id); if (!r) return '';
-      const name = r.clean ? `없던 판 · ${F[r.t].name}` : r.boss ? r.f.map(f => F[f].name).join(', ') : F[r.f].name;
-      return `<div class="rv"><i class="dot ${x.sym === '●' ? 'full' : x.sym === '◐' ? 'half' : 'none'}"></i><div>${esc(name)} <span>${esc(r.room)}</span></div><small class="num">${x.pts !== undefined ? '+' + fmt(x.pts) : ''}</small></div>`;
+      return `<div class="rv"><i class="dot ${dotCls(x.sym)}"></i><div>${esc(T[r.trap].name)} <span>${esc(r.src)}</span></div><small class="num">${x.pts !== undefined ? '+' + fmt(x.pts) : ''}</small></div>`;
     }).join('');
     $('#endBody').innerHTML = `
       <div class="lbl">${esc(lbl)}</div>
       <div class="big num">${fmt(score)}</div>
       <div class="dots">${dotsHTML(grid)}</div>
-      ${already ? '' : `<div class="stats"><div><b>${G.caughtN}</b>잡음</div><div><b>${G.falseN}</b>무고</div><div><b>${G.maxCombo}</b>최고 연속</div></div>`}
+      ${already ? '<p class="note">오늘의 사냥은 끝났어요. 내일 새 문제가 나와요.</p>' : `<div class="stats"><div><b>${G.rightN}</b>맞힘</div><div><b>${G.results.length - G.rightN}</b>놓침</div><div><b>${G.maxCombo}</b>최고 연속</div></div>`}
       ${note ? `<p class="note">${esc(note)}</p>` : ''}
-      ${already ? `<p class="note">오늘의 사냥은 끝났어요. 내일 새 문제가 나와요.</p>` : ''}
-      ${newK.length ? `<p class="newkinds">도감에 새로 올린 궤변 <b>${newK.map(f => esc(F[f].name)).join(', ')}</b></p>` : ''}
-      <p class="note" style="color:var(--dim)">${esc(rk.name)} · 지금까지 ${S.total}번 잡았어요</p>
+      ${newK.length ? `<p class="newkinds">도감에 새로 올린 함정 <b>${newK.map(k => esc(T[k].name)).join(', ')}</b></p>` : ''}
+      <p class="note" style="color:var(--dim)">${esc(rk.name)} · 지금까지 ${S.total}번 맞혔어요</p>
       <div class="acts">
         <button class="ecl-btn" type="button" id="shareBtn">친구에게 보내기</button>
-        ${mode === 'daily' ? '<button class="ecl-btn ghost" type="button" id="goEndless">연속 사냥 하러 가기</button>' : '<button class="ecl-btn ghost" type="button" id="again">다시 하기</button>'}
-        <button class="plain" type="button" id="goDex">궤변 도감 보기</button>
+        <button class="ecl-btn ghost" type="button" id="goEndless">${mode === 'daily' ? '연속 사냥 하러 가기' : '다시 하기'}</button>
+        <button class="plain" type="button" id="goDex">함정 도감 보기</button>
       </div>
-      ${reviewRows ? `<div class="review"><h4>이번 사냥</h4>${reviewRows}</div>` : ''}`;
-    $('#shareBtn').onclick = () => share(mode, score, grid, results ? results.length : 0);
-    const ge = $('#goEndless'); if (ge) ge.onclick = () => startGame('endless');
-    const ag = $('#again'); if (ag) ag.onclick = () => startGame('endless');
+      ${rows ? `<div class="review"><h4>이번 사냥</h4>${rows}</div>` : ''}`;
+    $('#shareBtn').onclick = () => share(mode, score, grid, results.length);
+    $('#goEndless').onclick = () => startGame('endless');
     $('#goDex').onclick = renderDex;
     show('end');
   }
   function showDailyDone() {
     const d = S.daily[today()]; if (!d) return startGame('daily');
-    G = null;
     renderEnd('daily', d.score, d.grid, '', (d.ids || []).map((id, i) => ({ id, sym: d.grid[i] })), true);
   }
-  function dateLabel(s) { const [, m, d] = s.split('-'); return `${+m}월 ${+d}일`; }
-
   async function share(mode, score, grid, n) {
     const head = mode === 'daily' ? `궤변 사냥 ${dateLabel(today())}` : `궤변 사냥 연속 모드 ${n}판`;
-    const text = `${head}\n${grid} ${fmt(score)}점\n대화 속에 숨은 궤변을 찾아 잡는 게임\n${URL_}`;
+    const text = `${head}\n${grid} ${fmt(score)}점\n그럴듯한 주장에서 논리의 구멍을 찾는 게임\n${URL_}`;
     try { if (navigator.share) { await navigator.share({ title: '궤변 사냥', text }); return; } } catch (e) { return; }
     try { await navigator.clipboard.writeText(text); toast('결과를 복사했어요'); } catch (e) { toast('복사하지 못했어요'); }
   }
 
-  /* ---------- 시트, 토스트 ---------- */
-  function openSheet(html, locked) {
+  /* 시트, 토스트 */
+  function openSheet(html) {
     $('#sheetIn').innerHTML = html; $('#sheet').scrollTop = 0;
     $('#scrim').hidden = false; $('#sheet').hidden = false;
-    $('#scrim').onclick = locked ? null : () => { const u = $('#unpick'); if (u) u.click(); };
     requestAnimationFrame(() => { $('#scrim').classList.add('on'); $('#sheet').classList.add('on'); });
   }
-  function closeSheet() {
-    $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on');
-    $('#scrim').hidden = true; $('#sheet').hidden = true; $('#sheetIn').innerHTML = '';
-  }
+  function closeSheet() { $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on'); $('#scrim').hidden = true; $('#sheet').hidden = true; $('#sheetIn').innerHTML = ''; }
   let toastT = 0;
   function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 1800); }
 
-  /* ---------- 연결 ---------- */
   $('#endlessBtn').onclick = () => startGame('endless');
   $('#dexBtn').onclick = renderDex;
   $('#dexBack').onclick = renderLobby;
@@ -612,12 +494,12 @@
     if (!RS) return renderLobby();
     RS.paused = true;
     openSheet(`<div class="verdict"><h3>사냥을 멈출까요</h3><div class="pts">${G.mode === 'daily' ? '오늘의 사냥은 끝까지 해야 기록돼요.' : '지금까지 점수는 기록되지 않아요.'}</div>
-      <button class="ecl-btn" type="button" id="keep">계속하기</button><button class="back-link" type="button" id="stop">그만하기</button></div>`, true);
+      <button class="ecl-btn" type="button" id="keep">계속하기</button><button class="back-link" type="button" id="stop">그만하기</button></div>`);
     $('#keep').onclick = () => { closeSheet(); RS.paused = false; };
     $('#stop').onclick = () => { closeSheet(); RS = null; G = null; renderLobby(); };
   };
 
-  window.Hunt = { get round() { return RS && { id: RS.r.id, t: RS.r.t, bad: RS.r.bad, f: RS.r.f, clean: !!RS.r.clean, boss: !!RS.r.boss, shown: RS.next, done: RS.done }; }, get mode() { return G && G.mode; }, dailyRounds };
+  window.Hunt = { get round() { return RS && { id: RS.r.id, type: RS.r.type, ans: RS.r.ans, done: RS.done }; }, dailyRounds };
   renderLobby();
 })();
 </script>
