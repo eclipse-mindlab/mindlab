@@ -6,326 +6,108 @@
   <title>도전 현황 - 나를 읽어봐</title>
   
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <link rel="apple-touch-icon" href="icon-192.png">
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+    /* 도전 현황: the creator reads how well friends read them. */
+    body { word-break: keep-all; overflow-wrap: anywhere; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 64px; }
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
+    /* top bar */
+    .header { display: flex; align-items: center; gap: 10px; height: 64px; }
     .back-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #141417;
-      border: 1px solid #232326;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
+      width: 36px; height: 36px; margin-left: -8px; border-radius: 50%;
+      display: grid; place-items: center; color: var(--mist); flex: none;
     }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .top-logo { width: 26px; height: 26px; border-radius: 50%; flex: none; }
+    .header-title { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; }
+    .top-aside { margin-left: auto; font-size: 13px; color: var(--mist); }
+    .top-aside:hover { color: var(--moon); }
 
-    .header-title {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    /* 로딩 */
-    .loading-screen {
-      text-align: center;
-      padding: 80px 0;
-    }
-
-    .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 3px solid #232326;
-      border-top-color: #9580ff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      color: #8b8b92;
-      font-size: 14px;
-    }
-
-    /* 에러 */
-    .error-screen {
-      display: none;
-      text-align: center;
-      padding: 60px 0;
-    }
-
-    .error-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .error-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .error-desc {
-      color: #8b8b92;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    /* 메인 컨텐츠 */
-    .main-content {
-      display: none;
-    }
-
-    /* 요약 카드 */
-    .summary-card {
-      background: linear-gradient(135deg, #141417 0%, #1a1a2e 100%);
-      border: 1px solid #232326;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .summary-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-
-    .summary-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .summary-subtitle {
-      font-size: 14px;
-      color: #9580ff;
-      margin-bottom: 16px;
-    }
-
-    .summary-stats {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-    }
-
-    .summary-stat {
-      text-align: center;
-    }
-
-    .summary-stat-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #9580ff;
-    }
-
-    .summary-stat-label {
-      font-size: 12px;
-      color: #8b8b92;
-    }
-
-    /* 랭킹 섹션 */
-    .ranking-section {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .ranking-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #232326;
-      font-size: 15px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ranking-list {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .ranking-item {
-      display: flex;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #232326;
-    }
-
-    .ranking-item:last-child {
-      border-bottom: none;
-    }
-
-    .ranking-position {
-      width: 32px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #8b8b92;
-    }
-
-    .ranking-position.gold {
-      color: #fbbf24;
-    }
-
-    .ranking-position.silver {
-      color: #d1d5db;
-    }
-
-    .ranking-position.bronze {
-      color: #cd7f32;
-    }
-
-    .ranking-info {
-      flex: 1;
-    }
-
-    .ranking-name {
-      font-size: 15px;
-      font-weight: 500;
-      margin-bottom: 2px;
-    }
-
-    .ranking-time {
-      font-size: 12px;
-      color: #8b8b92;
-    }
-
-    .ranking-score {
-      font-size: 18px;
-      font-weight: 700;
-      color: #9580ff;
-    }
-
-    .ranking-score.perfect {
-      color: #22c55e;
-    }
-
-    /* 빈 상태 */
-    .empty-state {
-      text-align: center;
-      padding: 48px 20px;
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .empty-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .empty-desc {
-      font-size: 14px;
-      color: #8b8b92;
-      margin-bottom: 20px;
-    }
-
-    .share-link-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 20px;
-      background: linear-gradient(135deg, #6d5dbc, #9580ff);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .share-link-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    /* 액션 버튼 */
-    .action-section {
-      margin-top: 24px;
-    }
-
-    .action-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 16px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .action-btn:hover {
-      background: #35353a;
-    }
-
-    .action-btn.success {
-      background: #166534;
-      border-color: #22c55e;
-    }
-
-    /* 토스트 */
+    /* toast */
     .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
+      position: fixed; left: 50%; bottom: 96px; z-index: 100;
       transform: translateX(-50%);
-      background: #232326;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 100;
+      background: var(--night-3); color: var(--moon);
+      padding: 10px 18px; border-radius: 999px; font-size: 14px; white-space: nowrap;
+      box-shadow: inset 0 0 0 1px var(--line);
+      opacity: 0; transition: opacity .25s; pointer-events: none;
     }
+    .toast.show { opacity: 1; }
 
-    .toast.show {
-      opacity: 1;
+    /* loading */
+    .loading-spinner {
+      width: 28px; height: 28px; margin: 0 auto 14px; border-radius: 50%;
+      border: 1.5px solid var(--line); border-top-color: var(--mist);
+      animation: spin 1s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--dim); font-size: 14px; }
+
+    .ecl-btn.wide { width: 100%; height: 52px; font-size: 16px; }
+    .ecl-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+    .ecl-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    .kicker { font-size: 13px; color: var(--mist); }
+    .serif-title { font-family: var(--serif); font-weight: 400; letter-spacing: -.02em; line-height: 1.3; }
+    .loading-screen { text-align: center; padding: 120px 0; }
+
+    .error-screen { display: none; padding: 56px 0 0; }
+    .error-title { font-size: 28px; }
+    .error-desc { margin: 10px 0 28px; color: var(--mist); font-size: 14.5px; }
+    .share-link-btn { width: 100%; height: 50px; }
+
+    .main-content { display: none; }
+
+    /* summary: the average as the one big number */
+    .summary-card { padding: 22px 0 8px; }
+    .summary-title { font-size: 28px; overflow-wrap: anywhere; }
+    .summary-subtitle { margin-top: 4px; font-size: 14.5px; color: var(--mist); }
+    .summary-stats { display: flex; flex-wrap: wrap; align-items: baseline; margin-top: 26px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .summary-stat { display: flex; align-items: baseline; gap: 6px; }
+    .summary-stat-value { font-family: var(--serif); font-weight: 400; line-height: 1; font-variant-numeric: tabular-nums; font-size: 22px; }
+    .summary-stat-label { font-size: 13px; color: var(--dim); }
+    .summary-stat + .summary-stat { margin-left: 18px; padding-left: 18px; border-left: 1px solid var(--line); }
+    .summary-stat.lead { width: 100%; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 18px; }
+    .summary-stat.lead .summary-stat-value { font-size: 96px; letter-spacing: -.04em; }
+    .summary-stat.lead .summary-stat-label { font-size: 13.5px; color: var(--mist); }
+    .summary-stat.lead + .summary-stat { margin-left: 0; padding-left: 0; border-left: 0; }
+
+    /* ranking rows */
+    .ranking-section { margin-top: 40px; }
+    .ranking-header { font-family: var(--serif); font-size: 21px; padding-bottom: 8px; }
+    .ranking-list { border-top: 1px solid var(--line); }
+    .ranking-item { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .ranking-position { width: 22px; flex: none; font-family: var(--serif); font-size: 19px; color: var(--dim); font-variant-numeric: tabular-nums; }
+    .ranking-position.gold { color: var(--moon); }
+    .ranking-info { flex: 1; min-width: 0; }
+    .ranking-name { font-size: 15.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ranking-time { font-size: 12.5px; color: var(--dim); }
+    .ranking-score { font-family: var(--serif); font-size: 24px; font-variant-numeric: tabular-nums; }
+    .ranking-score.perfect { color: var(--ok); }
+
+    .empty-state { padding: 36px 0 28px; }
+    .empty-icon { display: none; }
+    .empty-title { font-family: var(--serif); font-size: 21px; }
+    .empty-desc { margin-top: 4px; font-size: 14px; color: var(--mist); }
+
+    .action-section { margin-top: 28px; }
+    .action-btn { width: 100%; height: 52px; font-size: 16px; }
+    .action-btn.success { box-shadow: inset 0 0 0 1px var(--ok); color: var(--ok); background: transparent; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <a href="index.html" class="back-btn">←</a>
+      <a href="index.html" class="back-btn" aria-label="뒤로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <img src="logo.png" alt="" class="top-logo">
       <div class="header-title">도전 현황</div>
     </div>
 
@@ -337,57 +119,50 @@
 
     <!-- 에러 -->
     <div class="error-screen" id="errorScreen">
-      <div class="error-icon">😢</div>
-      <div class="error-title">도전장을 찾을 수 없어요</div>
-      <div class="error-desc">링크가 잘못되었거나 만료된 도전장이에요</div>
-      <a href="read-me.html" class="share-link-btn">새 도전장 만들기</a>
+      <h1 class="error-title serif-title">도전장을 찾을 수 없어요</h1>
+      <p class="error-desc">링크가 잘못됐거나 사라진 도전장이에요.</p>
+      <a href="read-me.html" class="share-link-btn ecl-btn">새 도전장 만들기</a>
     </div>
 
     <!-- 메인 -->
     <div class="main-content" id="mainContent">
       <div class="summary-card">
-        <div class="summary-icon">🔮</div>
-        <div class="summary-title" id="summaryTitle">???의 도전장</div>
+        <h1 class="summary-title serif-title" id="summaryTitle">???의 도전장</h1>
         <div class="summary-subtitle">누가 나를 가장 잘 알까?</div>
         <div class="summary-stats">
-          <div class="summary-stat">
-            <div class="summary-stat-value" id="totalAttempts">0</div>
-            <div class="summary-stat-label">도전</div>
+          <div class="summary-stat lead">
+            <div class="summary-stat-value" id="avgScore">0%</div>
+            <div class="summary-stat-label">친구들 평균 점수</div>
           </div>
           <div class="summary-stat">
-            <div class="summary-stat-value" id="avgScore">0%</div>
-            <div class="summary-stat-label">평균</div>
+            <div class="summary-stat-value" id="totalAttempts">0</div>
+            <div class="summary-stat-label">명 도전</div>
           </div>
           <div class="summary-stat">
             <div class="summary-stat-value" id="perfectCount">0</div>
-            <div class="summary-stat-label">만점</div>
+            <div class="summary-stat-label">명 만점</div>
           </div>
         </div>
       </div>
 
       <div class="ranking-section">
-        <div class="ranking-header">
-          🏆 도전자 랭킹
-        </div>
+        <div class="ranking-header">도전한 친구들</div>
         <div class="ranking-list" id="rankingList">
           <!-- 동적 생성 -->
         </div>
       </div>
 
       <div class="action-section">
-        <button class="action-btn" id="shareLinkBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-          </svg>
+        <button class="action-btn ecl-btn" id="shareLinkBtn">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
           도전 링크 다시 공유하기
         </button>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast">복사되었습니다!</div>
+  <div class="toast" id="toast">복사했어요</div>
+
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
@@ -466,13 +241,13 @@
           
           if (idx === 0) {
             positionClass = 'gold';
-            positionText = '🥇';
+            positionText = 1;
           } else if (idx === 1) {
             positionClass = 'silver';
-            positionText = '🥈';
+            positionText = 2;
           } else if (idx === 2) {
             positionClass = 'bronze';
-            positionText = '🥉';
+            positionText = 3;
           }
 
           const timeAgo = getTimeAgo(r.timestamp);
@@ -495,9 +270,8 @@
         // 아직 도전자 없음
         document.getElementById('rankingList').innerHTML = `
           <div class="empty-state">
-            <div class="empty-icon">👀</div>
             <div class="empty-title">아직 도전자가 없어요</div>
-            <div class="empty-desc">친구들에게 링크를 공유해보세요!</div>
+            <div class="empty-desc">아래 버튼으로 링크를 복사해 친구에게 보내 보세요.</div>
           </div>
         `;
       }
@@ -508,18 +282,14 @@
         const text = `날 안다고 생각해?\n맞춰봐 👀\n\n🔮 도전하기\n${url}`;
         
         navigator.clipboard.writeText(text).then(() => {
-          showToast('링크가 복사되었습니다!');
+          showToast('링크를 복사했어요');
           const btn = document.getElementById('shareLinkBtn');
           btn.classList.add('success');
-          btn.innerHTML = '✓ 복사 완료!';
+          btn.innerHTML = '복사했어요';
           setTimeout(() => {
             btn.classList.remove('success');
             btn.innerHTML = `
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
               도전 링크 다시 공유하기
             `;
           }, 2000);

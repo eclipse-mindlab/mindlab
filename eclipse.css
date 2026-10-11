@@ -1,0 +1,89 @@
+/* ==========================================================================
+   ECLIPSE design system
+   Palette is taken from logo.png: a violet night, a moon-white crescent,
+   and a thin magenta corona. Corona is the only loud color; use it sparingly.
+   ========================================================================== */
+:root {
+  --night: #140a20;        /* page */
+  --night-2: #1c1029;      /* raised surface */
+  --night-3: #261638;      /* pressed / input */
+  --line: #33224a;         /* hairlines */
+  --moon: #f6eef4;         /* primary text, the crescent */
+  --mist: #b4a5c8;         /* secondary text */
+  --dim: #7c6b93;          /* tertiary text */
+  --violet: #8b54d4;       /* brand purple: buttons, bars */
+  --violet-soft: #5b3a86;  /* quiet fills */
+  --corona: #d847f3;       /* the magenta rim: one accent per screen */
+  --ok: #7fd3b0;
+
+  --serif: 'Song Myung', 'Nanum Myeongjo', 'AppleMyungjo', serif;
+  --sans: 'IBM Plex Sans KR', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
+  --r-s: 8px;
+  --r-m: 14px;
+  --col: 480px;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--night);
+  color: var(--moon);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img { max-width: 100%; display: block; }
+.hidden { display: none !important; }
+:focus-visible { outline: 2px solid var(--corona); outline-offset: 3px; border-radius: 4px; }
+
+/* ---------- buttons ---------- */
+.ecl-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 46px; padding: 0 20px; border-radius: 999px;
+  background: var(--moon); color: var(--night);
+  font-weight: 600; font-size: 15px;
+  transition: transform .15s ease, background .2s ease;
+}
+.ecl-btn:active { transform: scale(.97); }
+.ecl-btn.ghost { background: transparent; color: var(--moon); box-shadow: inset 0 0 0 1px var(--line); }
+.ecl-btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--mist); }
+
+/* ---------- the eclipse mark (CSS rendering of logo.png) ---------- */
+.ecl-mark { position: relative; aspect-ratio: 1; isolation: isolate; }
+.ecl-mark::before {            /* halo rings */
+  content: ""; position: absolute; inset: -32%; border-radius: 50%; z-index: -1;
+  background:
+    radial-gradient(circle, transparent 44%, rgba(139,84,212,.30) 45%, rgba(139,84,212,.10) 58%, transparent 59%),
+    radial-gradient(circle, transparent 60%, rgba(139,84,212,.14) 61%, transparent 72%);
+}
+.ecl-mark i { position: absolute; inset: 0; border-radius: 50%; }
+.ecl-mark .lit { background: var(--moon); box-shadow: 0 0 40px rgba(246,238,244,.18); }
+.ecl-mark .rim { background: var(--corona); transform: translate(12%, 3%); }
+.ecl-mark .shade { background: var(--night); transform: translate(13%, -3%); }
+
+/* ---------- bottom tab bar ---------- */
+.ecl-tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(20,10,32,.92);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+.ecl-tabbar nav { max-width: var(--col); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+.ecl-tabbar a {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 9px 0 8px; font-size: 11px; color: var(--dim);
+}
+.ecl-tabbar svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.ecl-tabbar a[aria-current="page"] { color: var(--moon); }
+.ecl-tabbar a[aria-current="page"] svg { stroke: var(--corona); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

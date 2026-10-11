@@ -5,357 +5,122 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>복제인간 - 이클립스의 딜렘</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d5dbc">
+  <meta name="theme-color" content="#140a20">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta property="og:title" content="복제인간 - 이클립스의 딜렘">
   <meta property="og:description" content="완벽한 복제본이 나타났다. 누가 진짜인가?">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="eclipse.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #09090b;
-      color: #fff;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px 16px;
-      min-height: 100vh;
-    }
+    /* 복제인간: a short film you play. One column, story first.
+       Corona marks progress while playing and the principle on the result. */
+    body { min-height: 100vh; word-break: keep-all; overflow-wrap: anywhere; }
+    .container { max-width: var(--col); margin: 0 auto; padding: 0 20px 64px; min-height: 100vh; }
 
+    /* top bar */
     .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 6px;
+      height: 56px; margin: 0 -20px; padding: 0 20px 0 10px;
+      background: rgba(20,10,32,.92);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
     }
+    .back-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; color: var(--mist); }
+    .back-btn:hover { color: var(--moon); }
+    .back-btn:active { transform: scale(.94); }
+    .back-btn svg { width: 22px; height: 22px; }
+    .header-title { font-family: var(--serif); font-size: 18px; letter-spacing: -.01em; }
 
-    .back-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #141417;
-      border: 1px solid #232326;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    /* 진행 바 */
-    .progress-container {
-      margin-bottom: 24px;
-    }
-
+    /* progress: a thin line */
+    .progress-container { margin: 4px 0 40px; }
     .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #8b8b92;
-      margin-bottom: 8px;
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--dim); margin-bottom: 8px; font-variant-numeric: tabular-nums;
     }
+    .progress-bar { height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--corona); transition: width .5s ease; }
 
-    .progress-bar {
-      height: 4px;
-      background: #232326;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #06b6d4, #9580ff);
-      transition: width 0.5s ease;
-    }
-
-    /* 챕터 표시 */
-    .chapter-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(167, 139, 250, 0.1));
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #22d3ee;
-      margin-bottom: 16px;
-    }
-
-    /* 상황 카드 */
-    .situation-card {
-      background: #141417;
-      border: 1px solid #232326;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
+    /* the scene */
+    .chapter-badge { font-size: 13px; color: var(--mist); margin-bottom: 10px; }
+    .situation-card { margin-bottom: 36px; }
     .situation-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      line-height: 1.4;
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(27px, 7.4vw, 32px); line-height: 1.3; letter-spacing: -.02em;
+      margin-bottom: 22px; text-wrap: balance;
     }
-
-    .situation-desc {
-      font-size: 15px;
-      color: #a1a1aa;
-      line-height: 1.8;
-      margin-bottom: 16px;
-    }
-
+    .situation-desc { font-size: 16px; line-height: 1.9; color: var(--moon); opacity: .9; }
     .situation-quote {
-      background: rgba(6, 182, 212, 0.1);
-      border-left: 3px solid #06b6d4;
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-size: 14px;
-      color: #67e8f9;
-      border-radius: 0 8px 8px 0;
-      font-style: italic;
+      margin-top: 26px; padding-left: 16px; border-left: 1px solid var(--violet);
+      font-family: var(--serif); font-size: 18px; line-height: 1.6; color: var(--mist);
     }
-
     .situation-dilemma {
-      background: rgba(251, 191, 36, 0.1);
-      border-left: 3px solid #fbbf24;
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-size: 14px;
-      color: #fcd34d;
-      border-radius: 0 8px 8px 0;
+      margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line);
+      font-family: var(--serif); font-size: 20px; line-height: 1.5; color: var(--moon);
     }
+    .situation-dilemma::before { content: "질문"; display: block; font-family: var(--sans); font-size: 12px; color: var(--dim); margin-bottom: 6px; }
 
-    /* 선택지 */
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    /* choices: large rows, hairlines between */
+    .choices { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
     .choice-btn {
-      padding: 18px 20px;
-      background: #1a1a1e;
-      border: 2px solid #232326;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-      line-height: 1.5;
+      display: grid; grid-template-columns: 30px 1fr; align-items: baseline; column-gap: 6px;
+      width: 100%; padding: 18px 12px 18px 4px; margin: 0;
+      text-align: left; font-size: 16px; line-height: 1.55; color: var(--moon);
+      border-bottom: 1px solid var(--line);
+      transition: background .2s ease, transform .15s ease;
     }
-
-    .choice-btn:hover {
-      border-color: #06b6d4;
-      background: #252529;
+    .choice-label { grid-row: 1 / span 2; font-family: var(--serif); font-size: 17px; color: var(--dim); }
+    .choice-subtext { grid-column: 2; font-size: 13.5px; color: var(--dim); margin-top: 3px; }
+    @media (hover: hover) {
+      .choice-btn:hover { background: var(--night-2); }
+      .choice-btn:hover .choice-label { color: var(--moon); }
     }
+    .choice-btn:active { transform: scale(.98); background: var(--night-3); box-shadow: inset 2px 0 0 var(--moon); }
+    .choice-btn:active .choice-label { color: var(--moon); }
 
-    .choice-btn:active {
-      transform: scale(0.98);
-    }
-
-    .choice-label {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #22d3ee;
-      margin-bottom: 4px;
-    }
-
-    .choice-subtext {
-      font-size: 13px;
-      color: #8b8b92;
-      margin-top: 4px;
-    }
-
-    /* 결과 화면 */
-    .result-screen {
-      display: none;
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .result-card {
-      background: linear-gradient(135deg, #141417 0%, #0c1825 100%);
-      border: 1px solid #232326;
-      border-radius: 20px;
-      padding: 32px 24px;
-      margin-bottom: 24px;
-    }
-
-    .result-icon {
-      font-size: 56px;
-      margin-bottom: 16px;
-    }
-
-    .result-type {
-      font-size: 14px;
-      color: #22d3ee;
-      margin-bottom: 8px;
-    }
-
+    /* result */
+    .result-screen { display: none; padding: 28px 0 0; }
+    .result-card { margin-bottom: 40px; }
+    .result-icon { display: none; }
+    .result-type { font-size: 13px; color: var(--mist); margin-bottom: 10px; }
     .result-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, #22d3ee, #9580ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .result-desc {
-      font-size: 15px;
-      color: #a1a1aa;
-      line-height: 1.7;
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(32px, 9vw, 40px); line-height: 1.2; letter-spacing: -.02em;
       margin-bottom: 24px;
-      text-align: left;
     }
+    .result-desc { font-size: 16px; line-height: 1.9; color: var(--moon); opacity: .9; white-space: pre-line; }
 
-    /* 에필로그 */
-    .epilogue {
-      background: #141417;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
+    .epilogue { padding-top: 20px; border-top: 1px solid var(--line); margin-bottom: 40px; }
+    .epilogue-title { font-size: 12px; color: var(--dim); margin-bottom: 10px; }
+    .epilogue-text { font-size: 15px; line-height: 1.85; color: var(--mist); }
 
-    .epilogue-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #22d3ee;
-      margin-bottom: 12px;
-    }
+    /* the one special object */
+    .principle-card { background: var(--night-2); border-radius: var(--r-m); padding: 22px 20px 24px; margin-bottom: 28px; }
+    .principle-label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mist); margin-bottom: 12px; }
+    .principle-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--corona); }
+    .principle-text { font-family: var(--serif); font-size: 21px; line-height: 1.55; color: var(--moon); }
 
-    .epilogue-text {
-      font-size: 14px;
-      color: #a1a1aa;
-      line-height: 1.7;
-    }
+    .action-buttons { display: flex; flex-direction: column; gap: 10px; }
+    .action-btn { width: 100%; height: 50px; }
 
-    /* 원칙 카드 */
-    .principle-card {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(167, 139, 250, 0.05));
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
-
-    .principle-label {
-      font-size: 12px;
-      color: #22d3ee;
-      margin-bottom: 8px;
-    }
-
-    .principle-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.5;
-    }
-
-    /* 액션 버튼 */
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .action-btn {
-      padding: 16px;
-      border-radius: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      text-align: center;
-      border: none;
-    }
-
-    .action-btn.primary {
-      background: linear-gradient(135deg, #06b6d4, #9580ff);
-      color: #fff;
-    }
-
-    .action-btn.secondary {
-      background: #232326;
-      color: #fff;
-      border: 1px solid #35353a;
-    }
-
-    /* 프로모션 섹션 */
-    .promo-section {
-      margin-top: 40px;
-      padding-top: 24px;
-      border-top: 1px solid #232326;
-    }
-
-    .promo-title {
-      text-align: center;
-      font-size: 13px;
-      color: #8b8b92;
-      margin-bottom: 16px;
-    }
-
-    .youtube-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      max-width: 200px;
-      margin: 0 auto 32px;
-      padding: 12px 24px;
-      background: #232326;
-      border: 1px solid #35353a;
-      border-radius: 12px;
-      color: #fff;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .youtube-icon {
-      width: 24px;
-      height: 24px;
-      background: #ff0000;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .books-section { text-align: center; }
-    .books-title { font-size: 13px; color: #8b8b92; margin-bottom: 16px; }
-    .books-grid { display: flex; justify-content: center; gap: 16px; }
-    .book-item { text-decoration: none; color: #fff; text-align: center; }
-    .book-cover { width: 100px; height: 140px; border-radius: 8px; object-fit: cover; margin-bottom: 8px; border: 1px solid #232326; }
-    .book-label { font-size: 12px; color: #a1a1aa; }
-
-    .hidden { display: none !important; }
+    /* books */
+    .promo-section { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .promo-title { font-size: 13px; color: var(--mist); margin-bottom: 18px; }
+    .books-grid { display: flex; gap: 18px; }
+    .book-item { display: flex; flex-direction: column; gap: 8px; width: 104px; }
+    .book-cover { width: 104px; height: 161px; object-fit: contain; object-position: left bottom; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
+    .book-item:active .book-cover { transform: scale(.97); }
+    .book-label { font-size: 13px; line-height: 1.35; color: var(--moon); }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <a href="index.html" class="back-btn">←</a>
+      <a href="index.html" class="back-btn" aria-label="홈으로">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
       <div class="header-title">복제인간</div>
     </div>
 
@@ -363,7 +128,7 @@
     <div id="gameScreen">
       <div class="progress-container">
         <div class="progress-label">
-          <span id="chapterLabel">CHAPTER 1</span>
+          <span id="chapterLabel">1장</span>
           <span id="chapterCount">1/6</span>
         </div>
         <div class="progress-bar">
@@ -371,7 +136,7 @@
         </div>
       </div>
 
-      <div class="chapter-badge" id="chapterBadge">CHAPTER 1</div>
+      <div class="chapter-badge" id="chapterBadge">각성</div>
 
       <div class="situation-card">
         <div class="situation-title" id="situationTitle">상황 제목</div>
@@ -388,40 +153,38 @@
     <!-- 결과 화면 -->
     <div class="result-screen" id="resultScreen">
       <div class="result-card">
-        <div class="result-icon" id="resultIcon">🪞</div>
+        <div class="result-icon" id="resultIcon"></div>
         <div class="result-type">당신의 정체성 관점</div>
         <div class="result-title" id="resultTitle">결과 타입</div>
         <div class="result-desc" id="resultDesc">결과 설명</div>
       </div>
 
       <div class="epilogue" id="epilogue">
-        <div class="epilogue-title">📖 에필로그</div>
+        <div class="epilogue-title">에필로그</div>
         <div class="epilogue-text" id="epilogueText">에필로그 내용</div>
       </div>
 
       <div class="principle-card">
-        <div class="principle-label">💎 발견한 원칙</div>
+        <div class="principle-label">발견한 원칙</div>
         <div class="principle-text" id="principleText">원칙 텍스트</div>
       </div>
 
       <div class="action-buttons">
-        <button class="action-btn primary" id="shareBtn">결과 공유하기</button>
-        <a href="index.html" class="action-btn secondary">홈으로 돌아가기</a>
+        <button class="action-btn primary ecl-btn" id="shareBtn">결과 공유하기</button>
+        <a href="index.html" class="action-btn secondary ecl-btn ghost">홈으로 돌아가기</a>
       </div>
 
       <!-- 프로모션 섹션 -->
       <div class="promo-section">
         <div class="promo-title">이 시뮬레이터의 바탕이 된 철학과 심리학이 궁금하다면</div>
-        
         <div class="books-section">
-          
           <div class="books-grid">
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-philosophy.png" alt="훔친 철학 편" class="book-cover">
+              <img src="img/book-philosophy.webp" alt="훔친 철학 편" class="book-cover" loading="lazy">
               <div class="book-label">훔친 철학 편</div>
             </a>
             <a href="https://litt.ly/eclipse.thinker" target="_blank" class="book-item">
-              <img src="book-psychology.png" alt="훔친 심리학 편" class="book-cover">
+              <img src="img/book-psychology.webp" alt="훔친 심리학 편" class="book-cover" loading="lazy">
               <div class="book-label">훔친 심리학 편</div>
             </a>
           </div>
@@ -688,10 +451,10 @@
       currentNode = nodeId;
       
       // 진행 업데이트
-      document.getElementById('chapterLabel').textContent = `CHAPTER ${node.chapter}`;
+      document.getElementById('chapterLabel').textContent = `${node.chapter}장`;
       document.getElementById('chapterCount').textContent = `${node.chapter}/${totalChapters}`;
       document.getElementById('progressFill').style.width = `${(node.chapter / totalChapters) * 100}%`;
-      document.getElementById('chapterBadge').textContent = node.badge;
+      document.getElementById('chapterBadge').textContent = node.badge.replace(/^CHAPTER\s*\d+\s*:\s*/, '');
       
       // 상황 업데이트
       document.getElementById('situationTitle').textContent = node.title;
@@ -708,7 +471,7 @@
       }
       
       if (node.dilemma) {
-        dilemmaEl.innerHTML = "❓ " + node.dilemma;
+        dilemmaEl.innerHTML = node.dilemma;
         dilemmaEl.classList.remove('hidden');
       } else {
         dilemmaEl.classList.add('hidden');

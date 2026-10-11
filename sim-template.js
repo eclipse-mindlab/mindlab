@@ -207,7 +207,7 @@ const SimTemplate = {
     const principlesList = document.getElementById('principlesList');
     if (this.discoveredPrinciples.length > 0) {
       principlesList.innerHTML = `
-        <div class="sim-principles-list-title">💎 발견한 원칙들</div>
+        <div class="sim-principles-list-title">발견한 원칙</div>
         ${this.discoveredPrinciples.map(p => `
           <div class="sim-principles-item">
             <div class="sim-principles-item-icon">${p.icon || '💡'}</div>

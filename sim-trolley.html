@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#140a20">
   <title>트롤리 딜레마 - 이클립스의 딜렘</title>
   <link rel="stylesheet" href="sim-template.css">
   <meta property="og:title" content="트롤리 딜레마 - 이클립스의 딜렘">
@@ -582,7 +583,7 @@
       // 원칙 리스트
       const principlesList = document.getElementById('principlesList');
       if (principles.length > 0) {
-        principlesList.innerHTML = '<div class="sim-principles-list-title">💎 발견한 원칙들</div>';
+        principlesList.innerHTML = '<div class="sim-principles-list-title">발견한 원칙</div>';
         principles.forEach(p => {
           principlesList.innerHTML += `
             <div class="sim-principles-item">
@@ -640,8 +641,9 @@
         profile = { version: 5, name: '익명 탐험가', level: 1, exp: 0, completedSims: [], principles: [] };
       }
       
-      // 경험치 추가
-      profile.exp = (profile.exp || 0) + 30;
+      // 경험치는 첫 완료 때만
+      if (!profile.completedSims) profile.completedSims = [];
+      if (!profile.completedSims.includes('trolley')) profile.exp = (profile.exp || 0) + 30;
       
       // 레벨업 체크
       const expNeeded = (profile.level || 1) * 100;
