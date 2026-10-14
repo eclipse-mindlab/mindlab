@@ -7,7 +7,7 @@
   <title>욕망의 시계추 - 이클립스의 딜렘</title>
   <meta name="description" content="원하고, 얻고, 지루해지고, 다시 원한다. 쇼펜하우어는 이것을 고통이라고 했고, 니체는 그 고통까지 긍정하라고 했다.">
   <meta property="og:title" content="욕망의 시계추 - 이클립스의 딜렘">
-  <meta property="og:description" content="원하던 걸 얻으면, 당신은 행복해질까?">
+  <meta property="og:description" content="원하던 걸 얻으면 행복해질까? 쇼펜하우어 vs 니체">
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
   <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/sim-pendulum.html">
   <link rel="stylesheet" href="sim-template.css">
@@ -71,7 +71,7 @@ calculateResult(choices,principles){
   const k=(c.N>c.S&&c.N>=c.L)?'N':(c.L>c.S&&c.L>c.N)?'L':'S';const r=RES[k];
   return {icon:'',label:'당신은',title:r.title,desc:r.body,stats:[{value:c.N+'번',label:'오르는 쪽'},{value:c.S+'번',label:'흔들리는 쪽'},{value:c.L+'번',label:'편한 쪽'}]};
 },
-getShareText(t){return '욕망의 시계추\n\n나는 '+t+'\n\n원하던 걸 얻으면, 당신은 행복해질까?\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-pendulum.html';}
+getShareText(t){return '욕망의 시계추\n\n나는 '+t+'\n\n원하던 걸 얻으면 행복해질까? 쇼펜하우어 vs 니체\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-pendulum.html';}
 };
 SimTemplate.init(CONFIG);
 document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('욕망의 시계추',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='18px sans-serif';x.fillStyle='#d847f3';x.fillText(document.getElementById('resultLabel')?document.getElementById('resultLabel').textContent:'',400,270);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);const l=document.createElement('a');l.download='욕망의시계추_결과.png';l.href=c.toDataURL();l.click();});
