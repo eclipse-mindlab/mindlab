@@ -9,17 +9,19 @@
    --night = page, --night-2 = surface, --night-3 = fill, --moon = text.
    Light is the default; phones in dark mode get the eclipse night. */
 :root {
-  --night: #f6f5fa;        /* page */
+  --night: #f5f4f7;        /* page */
   --night-2: #ffffff;      /* raised surface */
-  --night-3: #efedf5;      /* fill: tiles, inputs */
-  --line: #e6e3ee;         /* hairlines */
-  --moon: #17141f;         /* primary text */
-  --mist: #6e6880;         /* secondary text */
-  --dim: #a29db0;          /* tertiary text */
-  --violet: #5a3fd6;       /* brand: primary buttons, progress */
-  --violet-soft: #ece8fc;  /* brand tint: selected tile, chips */
+  --night-3: #f0eef3;      /* fill: tiles, inputs */
+  --line: #e8e5ec;         /* hairlines */
+  --moon: #1b1421;         /* primary text */
+  --mist: #6b6474;         /* secondary text */
+  --dim: #a39dab;          /* tertiary text */
+  --violet: #5b2a8c;       /* brand: primary buttons, progress */
+  --violet-soft: #f2ebf8;  /* brand tint: selected tile, chips */
   --on-violet: #ffffff;    /* text on brand */
   --corona: #c42fe0;       /* one accent per screen */
+  --eclipse: #200c36;      /* logo night: hero surfaces */
+  --on-eclipse: #f6eef4;   /* moon-white on eclipse */
   --ok: #1f9d6b;
   --scrim: rgba(23,20,31,.42);
   --bar: rgba(255,255,255,.92);
@@ -37,21 +39,23 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --night: #0f0d14;
-    --night-2: #1a1722;
-    --night-3: #24202e;
-    --line: #2c2737;
-    --moon: #f4f1f8;
-    --mist: #a29bb1;
-    --dim: #6f6880;
-    --violet: #8f74f5;
-    --violet-soft: #2a2342;
-    --on-violet: #120e1c;
+    --night: #0e0a13;
+    --night-2: #19131f;
+    --night-3: #241c2c;
+    --line: #2e2537;
+    --moon: #f6f1f8;
+    --mist: #a89dae;
+    --dim: #6f6578;
+    --violet: #b88ce6;
+    --violet-soft: #2c1d3d;
+    --on-violet: #1a0b28;
     --corona: #e070f6;
+    --eclipse: #2a1442;
+    --on-eclipse: #f6eef4;
     --ok: #7fd3b0;
     --scrim: rgba(0,0,0,.55);
-    --bar: rgba(15,13,20,.9);
-    --shadow: 0 0 0 1px #2c2737;
+    --bar: rgba(14,10,19,.9);
+    --shadow: 0 0 0 1px #2e2537;
     --cover-blend: lighten;
     color-scheme: dark;
   }
