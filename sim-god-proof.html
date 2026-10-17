@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#140a20">
+  <title>신의 증명 - 이클립스의 딜렘</title>
+  <meta name="description" content="시계공 논증부터 파스칼의 내기까지, 신을 둘러싼 2천 년 넘은 논쟁을 다섯 장면으로 겪어 본다.">
+  <meta property="og:title" content="신의 증명 - 이클립스의 딜렘">
+  <meta property="og:description" content="당신의 마음을 움직이는 논증은 무엇인가?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
+  <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/sim-god-proof.html">
+  <link rel="stylesheet" href="sim-template.css">
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header"><a href="index.html" class="sim-back-btn">←</a><div class="sim-header-title">신의 증명</div></div>
+    <div id="gameScreen">
+      <div class="sim-progress"><div class="sim-progress-label"><span id="stageLabel">STAGE 1</span><span id="stageCount">1/5</span></div><div class="sim-progress-bar"><div class="sim-progress-fill" id="progressFill" style="width:20%"></div></div></div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation"><div class="sim-situation-title" id="situationTitle"></div><div class="sim-situation-desc" id="situationDesc"></div><div class="sim-situation-highlight hidden" id="situationHighlight"></div><div class="sim-situation-quote hidden" id="situationQuote"></div></div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card"><div class="sim-explanation-label">당신의 선택</div><div class="sim-explanation-title" id="yourChoice"></div></div>
+      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">그다음 벌어지는 일</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
+      <div class="sim-principle-card hidden" id="principleCard"><div class="sim-principle-header"><span class="sim-principle-icon"></span><span>발견한 원칙</span></div><div class="sim-principle-name" id="principleName"></div><div class="sim-principle-desc" id="principleDesc"></div></div>
+      <div class="sim-quote-card hidden" id="quoteCard"><span class="sim-quote-icon"></span><span class="sim-quote-text" id="quoteText"></span></div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card"><div class="sim-result-icon" id="resultIcon"></div><div class="sim-result-label" id="resultLabel">당신은</div><div class="sim-result-title" id="resultTitle"></div><div class="sim-result-desc" id="resultDesc"></div><div class="sim-result-stats hidden" id="resultStats"></div></div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions"><button class="sim-action-btn primary" id="saveImageBtn">이미지로 저장하기</button><button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button><a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a></div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <p class="sn-hook">신이 있는지는 미룰 수 있어도, 죽음은 미룰 수 없다. 『죽음 리허설』은 파스칼의 내기를 비롯해 죽음을 끝까지 파고든 25명의 생각을 담았다.</p>
+        <a href="https://product.kyobobook.co.kr/detail/S000221636755" target="_blank" rel="noopener" class="sn-book">
+          <img src="img/book-death.webp" alt="죽음 리허설">
+          <div class="sn-book-title">죽음 리허설</div>
+          <div class="sn-book-sub">살기 위해, 한 번 죽어 보기</div>
+        </a>
+        <a href="https://product.kyobobook.co.kr/detail/S000221636755" target="_blank" rel="noopener" class="sim-action-btn primary sn-buy">교보문고에서 보기</a>
+      </div>
+    </div>
+  </div>
+  <style>
+    #choiceMeaning { white-space: pre-line; }
+    #resultStats { grid-template-columns: repeat(4, 1fr); }
+    #resultStats .sim-result-stat { padding-left: 10px; }
+    #resultStats .sim-result-stat:first-child { padding-left: 0; }
+    #resultStats .sim-result-stat-value { font-size: 24px; }
+    .sn-hook { font-size: 15px; line-height: 1.8; color: var(--mist); text-align: center; padding: 20px 8px 8px; }
+    .sn-book { display: block; margin: 16px 0 24px; padding: 24px 20px; text-align: center; border-radius: 14px; background: var(--night-2); box-shadow: inset 0 0 0 1px var(--line); }
+    .sn-book img { width: 170px; height: auto; margin: 0 auto 14px; }
+    .sn-book-no { font-size: 12px; color: var(--dim); }
+    .sn-book-title { font-family: var(--serif); font-size: 30px; color: var(--moon); margin: 4px 0 6px; }
+    .sn-book-sub { font-size: 13px; color: var(--mist); }
+    .sn-buy { margin: -8px 0 8px; }
+  </style>
+  <script src="sim-template.js"></script>
+  <script>
+const SIDE={"design1": "M", "evolve1": "N", "first1": "Q", "guard2": "M", "luck2": "N", "evil2": "Q", "moral3": "M", "evo3": "N", "euth3": "Q", "bet4": "P", "many4": "Q", "teapot4": "N", "habit4": "P", "heaven5": "M", "dunno5": "Q", "nothing5": "N", "change5": "P"};
+const RES={"M": {"title": "의미를 읽는 사람", "body": "정교한 몸, 기막힌 우연, 누가 뭐라 해도 나쁜 일 앞에서 그 뒤에 있는 뜻을 먼저 읽는 쪽입니다. 시계공 논증, 미세 조정 논증, 도덕 논증이 모두 이 직관에서 출발합니다.\n\n이 시선은 세상을 우연의 덩어리보다 의미 있는 곳으로 보게 해 줍니다. 다만 웅덩이가 자기에게 꼭 맞는 구덩이를 보고 자기를 위해 만들어졌다고 믿는 것처럼, 꼭 맞아떨어진다는 느낌이 곧 설계의 증거는 아닐 수 있습니다."}, "N": {"title": "과정을 읽는 사람", "body": "정교함도, 우연도, 도덕도 오랜 과정의 결과로 설명하는 쪽입니다. 다윈의 자연선택과 러셀의 찻주전자가 이쪽의 대표적인 무기입니다.\n\n이 시선은 설명할 수 있는 것을 끝까지 설명하게 해 줍니다. 다만 과정이 어떻게 흘러왔는지를 다 설명해도, 애초에 왜 무언가가 있는지라는 질문은 여전히 남습니다."}, "Q": {"title": "끝까지 묻는 사람", "body": "어떤 답 앞에서도 다음 질문을 던지는 쪽입니다. 신에게도 원인이 있느냐고 묻고, 신이 정했다는 선이 사실은 신보다 먼저 있던 게 아니냐고 묻습니다. 거북이 위의 거북이에서 멈추지 않습니다.\n\n이 태도는 쉽게 속지 않게 해 줍니다. 다만 파스칼은 판단을 끝까지 미루려는 사람에게 이렇게 말했습니다. 당신은 이미 배에 탔다. 질문은 미룰 수 있어도, 사는 일은 미룰 수 없습니다."}, "P": {"title": "배에 탄 사람", "body": "답이 나지 않는 질문 앞에서도 일단 오늘을 사는 쪽입니다. 손익을 따져 보고, 행동부터 해 보고, 무거운 질문은 내일로 미룹니다.\n\n파스칼의 말처럼 우리는 이미 배에 탔고, 어느 쪽이든 걸며 살고 있습니다. 다만 파스칼은 사람들이 죽음을 생각하지 않으려고 바쁜 일거리를 찾는다는 것도 알았습니다. 오늘을 사는 것과 질문을 피하는 것은 가끔 구분이 잘 안 됩니다."}};
+const CONFIG={id:'god-proof',title:'신의 증명',shareIcon:'',shareUrl:'https://eclipse-mindlab.github.io/mindlab/sim-god-proof.html',version:5,
+stages:[{"badge": "설계", "title": "조카의 손가락", "desc": "갓 태어난 조카를 처음 안았다. 작은 손이 내 손가락을 꽉 쥐고, 눈이 나를 따라 움직인다.\n\n손톱 하나, 속눈썹 하나까지 빠진 데가 없다.", "highlight": "어떤 생각이 드는가?", "choices": [{"id": "design1", "text": "\"누군가 만들었다고밖에 생각이 안 든다.\"", "meaning": "들판에서 시계를 주우면 누구도 저절로 생겼다고 생각하지 않는다. 시계보다 훨씬 정교한 생명을 보고 만든 이를 떠올리는 건 자연스러운 추론이다.\n\n다만 정교하다는 것만으로 한 번에 만들어졌다는 결론까지 나오지는 않는다. 아주 작은 변화가 오랜 시간 쌓여도 정교한 것은 생길 수 있다.", "principle": {"name": "시계공 논증", "desc": "들판의 돌멩이는 원래 거기 있었다고 생각해도 이상하지 않지만, 회중시계는 누군가 만들었다고 생각한다. 신학자 윌리엄 페일리는 시계보다 정교한 눈을 근거로, 생명에도 그것을 만든 이가 있어야 한다고 봤다. 정교함에서 설계자를 추론하는 논증이다.", "icon": ""}}, {"id": "evolve1", "text": "\"수억 년 동안 조금씩 다듬어진 결과겠지.\"", "meaning": "빛을 느끼는 세포 몇 개에서 렌즈 달린 눈까지, 단계마다 조금 더 나은 쪽이 살아남으면 설계자 없이도 설계한 것 같은 몸이 생긴다. 지금 생물학이 가장 잘 설명하는 방식이다.\n\n다만 이 설명은 생명이 어떻게 변해 왔는지를 말해 줄 뿐, 애초에 왜 이런 법칙이 돌아가는 세상이 있는지까지 답하지는 않는다.", "principle": {"name": "눈먼 시계공", "desc": "다윈은 정교한 것이 꼭 한 번에 만들어질 필요는 없다고 봤다. 조금 더 잘 보는 쪽이 살아남는 일이 수억 년 쌓이면 눈이 생긴다. 생물학자 리처드 도킨스는 그래서 자연선택을 앞을 보지 못하는 시계공, 눈먼 시계공이라고 불렀다.", "icon": ""}}, {"id": "first1", "text": "\"그럼 그 수억 년은 누가 시작했을까?\"", "meaning": "모든 일에는 원인이 있고, 그 원인에도 원인이 있다. 거슬러 올라가다 보면 맨 처음을 묻게 되는 건 당연하다.\n\n다만 맨 처음에 무언가가 있어야 한다는 데까지 동의해도, 그게 왜 뜻을 가진 신이어야 하는지는 또 다른 질문으로 남는다.", "principle": {"name": "첫 번째 원인", "desc": "토마스 아퀴나스는 원인을 끝없이 거슬러 올라갈 수는 없으니, 맨 처음에는 다른 원인 없이 스스로 있는 무언가가 있어야 한다고 봤다. 버트런드 러셀은 되물었다. 모든 것에 원인이 있다면 신에게도 원인이 있어야 하고, 신만은 원인 없이 있을 수 있다면 우주는 왜 그럴 수 없느냐고.", "icon": ""}}]}, {"badge": "우연", "title": "1초 차이", "desc": "횡단보도를 건너는데 신호를 무시한 차가 코앞에서 멈췄다. 1초만 늦었어도 치였을 거리였다.\n\n집에 와서도 손이 떨린다.", "highlight": "어떤 생각이 드는가?", "choices": [{"id": "guard2", "text": "\"누가 지켜 준 것 같다.\"", "meaning": "거의 일어나기 힘든 일이 일어나면, 사람은 우연보다 의도를 먼저 떠올린다. 쉰 명의 명사수가 쏜 총알이 모두 빗나갔다면, 누군가 일부러 빗나가게 했다고 의심하는 게 자연스럽다.\n\n다만 같은 날 같은 시각, 어딘가에서는 1초가 모자라 다친 사람도 있다. 그 사람 앞에서도 같은 말을 할 수 있을지는 생각해 볼 문제다.", "principle": {"name": "미세 조정 논증", "desc": "중력의 세기 같은 우주의 기본 설정값이 조금만 달랐어도 별도 생명도 생기지 못했을 거라는 계산이 있다. 철학자 존 레슬리는 이걸 총살대에 빗댔다. 쉰 발이 모두 빗나갔는데 살아 있으니 당연하다고 넘길 수는 없다는 것이다. 우주가 생명에 맞게 맞춰져 있다면, 맞춘 누군가를 떠올리는 게 자연스럽다는 논증이다.", "icon": ""}}, {"id": "luck2", "text": "\"운이 좋았을 뿐이다. 치였으면 이런 생각도 못 했겠지.\"", "meaning": "살아남은 사람만 왜 나는 살았을까를 묻는다. 다친 사람은 같은 질문을 할 기회조차 없다. 그러니 살아남았다는 사실만으로 누가 지켜 줬다고 결론 내리기는 어렵다.\n\n다만 이 설명은 냉정하다. 떨리는 손을 붙잡아 주지는 못한다.", "principle": {"name": "웅덩이의 착각", "desc": "작가 더글러스 애덤스는 이렇게 비유했다. 어느 아침 깨어난 웅덩이가, 내가 들어앉은 구덩이가 내 모양에 꼭 맞으니 나를 위해 만들어졌다고 생각한다. 하지만 물이 구덩이 모양대로 고였을 뿐이다. 생명이 생길 수 없는 우주였다면 이 질문을 던질 사람도 없었다.", "icon": ""}}, {"id": "evil2", "text": "\"그럼 오늘 다친 사람은? 그 사람은 왜 안 지켜 줬지?\"", "meaning": "나를 지켜 준 손이 있다면, 지켜 주지 않은 사람에게는 왜 그랬는지도 물어야 한다. 감사가 깊을수록 이 질문도 날카로워진다.\n\n이 질문에는 크게 두 가지 답이 있다. 사람에게 자유를 줬기 때문이라는 답, 고통 없이는 용기도 인내도 자랄 수 없다는 답. 다만 아무도 보지 못한 곳에서 홀로 고통받다 죽는 생명 앞에서는 두 답 모두 힘을 잃는다.", "principle": {"name": "악의 문제", "desc": "신이 악을 막으려 하지만 막을 수 없다면 전능하지 않다. 막을 수 있지만 막으려 하지 않는다면 선하지 않다. 둘 다라면 악은 어디서 오는가. 흔히 에피쿠로스의 것으로 전해지는 이 질문은, 신을 둘러싼 논쟁에서 가장 오래되고 가장 아픈 질문이다.", "icon": ""}}]}, {"badge": "선악", "title": "댓글 하나", "desc": "아이를 학대한 사건 기사를 읽었다. 댓글 사이에 이런 글이 보인다.\n\n\"도덕도 결국 사회가 정한 약속일 뿐이다. 시대가 바뀌면 기준도 바뀐다.\"", "highlight": "어떻게 생각하는가?", "choices": [{"id": "moral3", "text": "\"아니다. 이건 누가 뭐라 해도 나쁜 일이다.\"", "meaning": "아이를 재미로 괴롭히는 일이 짜장면보다 짬뽕이 좋다는 것 같은 취향의 문제라고 느끼는 사람은 거의 없다. 사회가 뭐라 하든 나쁜 건 나쁘다는 직관은 아주 강하다.\n\n다만 그 기준이 사람보다 높은 곳에 있다고 해서, 그게 곧 신이라는 결론까지 바로 이어지지는 않는다. 신 없이도 객관적인 도덕이 있다고 보는 철학자들도 많다.", "principle": {"name": "도덕 논증", "desc": "도덕이 사람마다, 사회마다 다른 취향일 뿐이라면, 학대가 나쁘다는 말도 결국 개인의 선호가 된다. 그런데 우리는 그것이 누가 뭐라 하든 나쁘다고 느낀다. 철학자 윌리엄 레인 크레이그는 여기서 사람의 취향보다 높은 기준이 있어야 하고, 그 기준이 신이라고 봤다.", "icon": ""}}, {"id": "evo3", "text": "\"오랜 세월 사람들이 함께 살면서 다듬어 온 기준이다.\"", "meaning": "서로 돕고 해치지 않는 무리가 더 잘 살아남았다면, 남을 해치면 안 된다는 감각도 오랜 시간에 걸쳐 단단해졌을 것이다. 신을 끌어오지 않고도 도덕이 왜 이렇게 강하게 느껴지는지 설명할 수 있다.\n\n다만 이렇게만 설명하면, 학대가 나쁘다는 말이 그렇게 진화했다는 말과 크게 다르지 않게 된다. 그 정도로 충분한지는 사람마다 다르게 느낀다.", "principle": {"name": "도덕감의 진화", "desc": "다윈은 『인간의 유래』에서 무리를 지어 사는 동물의 사회적 본능이 충분히 발달하면 도덕감이 생긴다고 봤다. 공감하고, 돕고, 배신을 미워하는 마음이 함께 살아남는 데 유리했기 때문이다. 도덕이 사람 바깥이 아니라 사람 안에서 자라났다는 관점이다.", "icon": ""}}, {"id": "euth3", "text": "\"신이 정했다면, 신이 명령해서 선한 걸까, 선해서 명령한 걸까?\"", "meaning": "신이 명령해서 선한 거라면, 신이 잔인함을 명령하면 잔인함이 선이 된다. 선하기 때문에 명령하는 거라면, 선은 신보다 먼저 있었던 셈이다. 어느 쪽을 골라도 곤란해진다.\n\n신을 믿는 쪽은 신이라는 존재가 곧 선이라고 답한다. 이 답이 질문을 풀었는지, 한 단계 미뤘는지가 다시 논쟁거리다.", "principle": {"name": "에우티프론 딜레마", "desc": "플라톤이 대화편 『에우티프론』에서 던진 질문이다. 경건한 것은 신들이 사랑해서 경건한가, 경건하기 때문에 신들이 사랑하는가. 2,400년이 지난 지금도 도덕과 신의 관계를 묻는 가장 유명한 딜레마로 쓰인다.", "icon": ""}}]}, {"badge": "내기", "title": "밑져야 본전", "desc": "오랜 친구가 다음 주에 교회에 같이 가자고 한다.\n\n\"밑져야 본전이잖아. 없으면 그만이고, 있으면 대박이고.\"", "highlight": "뭐라고 답하겠는가?", "choices": [{"id": "bet4", "text": "\"듣고 보니 일리가 있네. 한번 가 볼게.\"", "meaning": "신이 있는지 증명할 수 없다면, 걸린 것의 크기를 따져 보는 것도 방법이다. 믿었는데 없으면 잃는 게 크지 않고, 안 믿었는데 있으면 잃는 게 너무 크다.\n\n다만 계산으로 시작한 믿음이 진짜 믿음이 될 수 있는지는 또 다른 문제다. 손익을 따져 고른 믿음을 신이 반길지도 알 수 없다.", "principle": {"name": "파스칼의 내기", "desc": "수학자 블레즈 파스칼은 신이 있는지 이성으로는 판단할 수 없다고 먼저 인정한 뒤, 계산을 제안했다. 걸린 상이 무한하다면, 신이 있을 가능성이 아무리 작아도 믿는 쪽에 거는 게 합리적이라는 것이다.", "icon": ""}}, {"id": "many4", "text": "\"그럼 절에도 가고 성당에도 가야 하는 거 아니야?\"", "meaning": "무한한 보상을 약속하는 종교는 하나가 아니다. 한 신에게 걸면 다른 신에게는 걸지 않은 게 된다. 선택지가 둘일 때 깔끔하던 계산은 신이 여럿이 되는 순간 답을 내지 못한다.\n\n다만 이 반론은 내기의 계산을 흔들 뿐, 신이 없다는 걸 보여 주지는 않는다.", "principle": {"name": "많은 신 반론", "desc": "철학자 드니 디드로는 파스칼의 내기를 한 줄로 받아쳤다. 이슬람의 이맘도 똑같이 말할 수 있다. 같은 계산으로 어떤 종교든 정당화할 수 있다면, 그 계산은 아무것도 고르지 못한 셈이다.", "icon": ""}}, {"id": "teapot4", "text": "\"있다고 주장하는 쪽이 먼저 증명해야지.\"", "meaning": "보이지도 않고 확인할 방법도 없는 주장을, 아니라는 증거가 없다는 이유로 믿을 수는 없다. 증명할 책임은 있다고 말하는 쪽에 있다는 건 상식적인 기준이다.\n\n다만 신을 믿는 쪽은 신이 찻주전자와 다르다고 말한다. 신이 있느냐에 따라 세상이 왜 있는지, 선과 악이 무엇인지에 대한 답이 통째로 달라지기 때문이다.", "principle": {"name": "러셀의 찻주전자", "desc": "버트런드 러셀은 지구와 화성 사이에서, 어떤 망원경으로도 보이지 않을 만큼 작은 찻주전자가 태양을 돌고 있다고 주장하는 사람을 상상했다. 아무도 아니라고 증명할 수 없다고 해서 믿어야 하는 건 아니다. 증명할 책임은 주장하는 쪽에 있다.", "icon": ""}}, {"id": "habit4", "text": "\"믿지도 않는데, 간다고 믿어질까?\"", "meaning": "믿음은 마음먹는다고 생기지 않는다. 믿지 않으면서 교회에 앉아 있는 건 스스로를 속이는 일처럼 느껴질 수 있다.\n\n그런데 파스칼은 바로 이 질문에 답을 남겼다. 믿는 사람처럼 행동하다 보면 믿음이 따라온다는 것이다. 이 답이 설득력 있게 들리는지, 섬뜩하게 들리는지는 사람마다 다르다.", "principle": {"name": "습관이 만드는 믿음", "desc": "파스칼은 이성으로 믿음에 이르지 못하는 사람에게, 이미 믿게 된 사람들이 한 대로 성수를 찍고 미사를 드려 보라고 권했다. 행동이 먼저 바뀌면 생각이 따라온다는 것이다. 행동이 태도를 바꾼다는 오늘날 심리학의 발견과도 닮았다.", "icon": ""}}]}, {"badge": "죽음", "title": "병실의 질문", "desc": "할머니가 입원하신 지 한 달째다. 병실에 둘만 남았을 때, 할머니가 창밖을 보며 물으셨다.\n\n\"죽으면 어디로 가는 걸까.\"", "highlight": "뭐라고 대답하겠는가?", "choices": [{"id": "heaven5", "text": "\"좋은 곳으로 가실 거예요.\"", "meaning": "확인할 수 없는 일이지만, 지금 할머니에게 필요한 건 증명보다 위로일 수 있다. 근거가 끝나는 곳에서도 사람은 무언가를 믿으며 살아간다.\n\n다만 할머니가 정말 듣고 싶었던 게 확신이었는지, 같이 모르겠다고 말해 줄 사람이었는지는 끝내 알 수 없다.", "principle": {"name": "믿으려는 의지", "desc": "철학자 윌리엄 제임스는 증거만으로 답이 나지 않는데 어느 쪽이든 골라야만 하고, 그 선택이 삶을 크게 바꾸는 질문이라면, 사람에게는 믿기로 선택할 권리가 있다고 봤다. 증거가 없다고 판단을 미루는 것도 결국 하나의 선택이라는 것이다.", "icon": ""}}, {"id": "dunno5", "text": "\"저도 잘 모르겠어요. 그래도 제가 옆에 있을게요.\"", "meaning": "모르는 걸 모른다고 말하는 건 정직하다. 그 정직함이 오히려 할머니를 덜 외롭게 할 수도 있다.\n\n다만 모른다는 대답은 답을 미루는 것이지 없애는 것은 아니다. 언젠가 같은 질문은 나에게도 돌아온다.", "principle": {"name": "불가지론", "desc": "신이 있는지 없는지, 죽음 뒤에 무엇이 있는지는 사람이 알 수 없다는 입장이다. 믿는 것도 믿지 않는 것도 아닌, 모른다는 사실을 끝까지 붙드는 태도다.", "icon": ""}}, {"id": "nothing5", "text": "\"아무 데도 안 가요. 편히 주무시는 거예요.\"", "meaning": "죽음 뒤에 아무것도 없다면, 죽음은 두려워할 대상이 아니다. 고통을 느낄 나 자신도 없기 때문이다. 오래된 철학이 죽음 앞에서 건넨 가장 담담한 위로다.\n\n다만 이 말이 위로가 되는 사람도 있고, 더 쓸쓸하게 들리는 사람도 있다. 할머니가 어느 쪽인지는 표정을 보고서야 알 수 있다.", "principle": {"name": "에피쿠로스의 죽음관", "desc": "에피쿠로스는 죽음이 우리에게 아무것도 아니라고 했다. 우리가 있을 때 죽음은 없고, 죽음이 왔을 때 우리는 이미 없다. 그러니 죽음을 미리 두려워할 이유가 없다는 것이다.", "icon": ""}}, {"id": "change5", "text": "\"그런 생각 마시고, 내일 뭐 드시고 싶은지 말해 주세요.\"", "meaning": "무거운 질문을 피하고 지금 할 수 있는 일로 화제를 돌리는 건, 많은 사람이 병실에서 실제로 하는 일이다. 할머니도 잠깐은 웃으실지 모른다.\n\n그런데 파스칼은 이런 화제 돌리기를 날카롭게 봤다. 사람들은 죽음을 생각하지 않으려고 끊임없이 다른 일거리를 찾는다는 것이다. 그날 할머니의 질문은 그렇게 다시 묻힌다.", "principle": {"name": "기분 전환", "desc": "파스칼은 『팡세』에서 사람들이 사냥, 놀이, 일 같은 기분 전환에 몰두하는 이유를 이렇게 봤다. 혼자 조용히 앉아 자기 처지와 죽음을 생각하는 걸 견디지 못하기 때문이다. 그는 사람의 불행이 방 안에 조용히 머물 줄 모르는 데서 온다고 썼다.", "icon": ""}}]}],
+calculateResult(choices,principles){
+  const c={M:0,N:0,Q:0,P:0};choices.forEach(x=>{const k=SIDE[x.choiceId];if(k)c[k]++;});
+  const m=Math.max(c.M,c.N,c.Q,c.P);const k=['M','N','Q','P'].find(t=>c[t]===m);const r=RES[k];
+  return {icon:'',label:'당신은',title:r.title,desc:r.body,stats:[{value:c.M+'번',label:'의미'},{value:c.N+'번',label:'과정'},{value:c.Q+'번',label:'질문'},{value:c.P+'번',label:'오늘'}]};
+},
+getShareText(t){return '신의 증명\n\n나는 '+t+'\n\n당신의 마음을 움직이는 논증은 무엇인가?\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-god-proof.html';}
+};
+SimTemplate.init(CONFIG);
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('신의 증명',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='18px sans-serif';x.fillStyle='#d847f3';x.fillText(document.getElementById('resultLabel')?document.getElementById('resultLabel').textContent:'',400,270);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);const l=document.createElement('a');l.download='신의증명_결과.png';l.href=c.toDataURL();l.click();});
+  </script>
+</body>
+</html>
