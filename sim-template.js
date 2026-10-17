@@ -40,6 +40,7 @@ const SimTemplate = {
     document.getElementById('stageLabel').textContent = `STAGE ${index + 1}`;
     document.getElementById('stageCount').textContent = `${index + 1}/${total}`;
     document.getElementById('progressFill').style.width = `${((index + 1) / total) * 100}%`;
+    this.renderDots(index, total);
     
     // 뱃지
     document.getElementById('stageBadge').textContent = stage.badge || `STAGE ${index + 1}`;
@@ -77,9 +78,15 @@ const SimTemplate = {
     `).join('');
     
     // 선택지 이벤트
+    // 누르면 잠깐 선택 표시를 보여 준 뒤 바로 해설 시트를 올린다
+    this.locked = false;
     choicesEl.querySelectorAll('.sim-choice-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.handleChoice(btn.dataset.choiceId);
+        if (this.locked) return;
+        this.locked = true;
+        btn.classList.add('sel');
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        setTimeout(() => this.handleChoice(btn.dataset.choiceId), reduce ? 0 : 220);
       });
     });
     
@@ -87,6 +94,7 @@ const SimTemplate = {
     document.getElementById('gameScreen').classList.remove('hidden');
     document.getElementById('explanationScreen').classList.add('hidden');
     document.getElementById('resultScreen').classList.add('hidden');
+    this.setSheet(false);
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -151,16 +159,31 @@ const SimTemplate = {
       quoteCard.classList.add('hidden');
     }
     
-    // 화면 전환
-    document.getElementById('gameScreen').classList.add('hidden');
+    // 화면 전환: 질문 화면 위로 해설 시트를 올린다
     document.getElementById('explanationScreen').classList.remove('hidden');
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('explanationScreen').scrollTop = 0;
+    this.setSheet(true);
   },
 
   /**
    * 다음 스테이지로
    */
+  renderDots(index, total) {
+    const wrap = document.querySelector('.sim-progress');
+    if (!wrap) return;
+    let dots = wrap.querySelector('.sim-dots');
+    if (!dots) { dots = document.createElement('div'); dots.className = 'sim-dots'; dots.setAttribute('aria-hidden', 'true'); wrap.prepend(dots); }
+    dots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i < index ? 'done' : i === index ? 'now' : ''}"></i>`).join('');
+  },
+
+  setSheet(open) {
+    let scrim = document.querySelector('.sim-scrim');
+    if (!scrim) { scrim = document.createElement('div'); scrim.className = 'sim-scrim'; scrim.hidden = true; document.body.appendChild(scrim); }
+    scrim.hidden = !open;
+    if (this.cta) this.cta.bar.hidden = open || !document.getElementById('resultScreen').classList.contains('hidden');
+    document.body.style.overflow = open ? 'hidden' : '';
+  },
+
   nextStage() {
     this.currentStage++;
     
@@ -230,6 +253,8 @@ const SimTemplate = {
     document.getElementById('gameScreen').classList.add('hidden');
     document.getElementById('explanationScreen').classList.add('hidden');
     document.getElementById('resultScreen').classList.remove('hidden');
+    this.setSheet(false);
+    if (this.cta) this.cta.bar.hidden = true;
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },

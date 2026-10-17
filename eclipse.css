@@ -3,32 +3,69 @@
    Palette is taken from logo.png: a violet night, a moon-white crescent,
    and a thin magenta corona. Corona is the only loud color; use it sparingly.
    ========================================================================== */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+/* Token names are kept from the old night palette so every page keeps working:
+   --night = page, --night-2 = surface, --night-3 = fill, --moon = text.
+   Light is the default; phones in dark mode get the eclipse night. */
 :root {
-  --night: #140a20;        /* page */
-  --night-2: #1c1029;      /* raised surface */
-  --night-3: #261638;      /* pressed / input */
-  --line: #33224a;         /* hairlines */
-  --moon: #f6eef4;         /* primary text, the crescent */
-  --mist: #b4a5c8;         /* secondary text */
-  --dim: #7c6b93;          /* tertiary text */
-  --violet: #8b54d4;       /* brand purple: buttons, bars */
-  --violet-soft: #5b3a86;  /* quiet fills */
-  --corona: #d847f3;       /* the magenta rim: one accent per screen */
-  --ok: #7fd3b0;
+  --night: #f5f4f7;        /* page */
+  --night-2: #ffffff;      /* raised surface */
+  --night-3: #f0eef3;      /* fill: tiles, inputs */
+  --line: #e8e5ec;         /* hairlines */
+  --moon: #1b1421;         /* primary text */
+  --mist: #6b6474;         /* secondary text */
+  --dim: #a39dab;          /* tertiary text */
+  --violet: #5b2a8c;       /* brand: primary buttons, progress */
+  --violet-soft: #f2ebf8;  /* brand tint: selected tile, chips */
+  --on-violet: #ffffff;    /* text on brand */
+  --corona: #c42fe0;       /* one accent per screen */
+  --eclipse: #200c36;      /* logo night: hero surfaces */
+  --on-eclipse: #f6eef4;   /* moon-white on eclipse */
+  --ok: #1f9d6b;
+  --scrim: rgba(23,20,31,.42);
+  --bar: rgba(255,255,255,.92);
+  --shadow: 0 1px 2px rgba(23,20,31,.06), 0 8px 24px -12px rgba(23,20,31,.18);
+  --cover-blend: normal;
 
-  --serif: 'Song Myung', 'Nanum Myeongjo', 'AppleMyungjo', serif;
-  --sans: 'IBM Plex Sans KR', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --serif: var(--sans);
 
-  --r-s: 8px;
-  --r-m: 14px;
+  --r-s: 10px;
+  --r-m: 16px;
+  --r-l: 22px;
   --col: 480px;
-  color-scheme: dark;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --night: #0e0a13;
+    --night-2: #19131f;
+    --night-3: #241c2c;
+    --line: #2e2537;
+    --moon: #f6f1f8;
+    --mist: #a89dae;
+    --dim: #6f6578;
+    --violet: #b88ce6;
+    --violet-soft: #2c1d3d;
+    --on-violet: #1a0b28;
+    --corona: #e070f6;
+    --eclipse: #2a1442;
+    --on-eclipse: #f6eef4;
+    --ok: #7fd3b0;
+    --scrim: rgba(0,0,0,.55);
+    --bar: rgba(14,10,19,.9);
+    --shadow: 0 0 0 1px #2e2537;
+    --cover-blend: lighten;
+    color-scheme: dark;
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   background: var(--night);
+  letter-spacing: -0.01em;
   color: var(--moon);
   font-family: var(--sans);
   font-size: 15px;
@@ -45,9 +82,9 @@ img { max-width: 100%; display: block; }
 /* ---------- buttons ---------- */
 .ecl-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 46px; padding: 0 20px; border-radius: 999px;
-  background: var(--moon); color: var(--night);
-  font-weight: 600; font-size: 15px;
+  height: 50px; padding: 0 20px; border-radius: var(--r-m);
+  background: var(--violet); color: var(--on-violet);
+  font-weight: 700; font-size: 15px;
   transition: transform .15s ease, background .2s ease;
 }
 .ecl-btn:active { transform: scale(.97); }
@@ -71,7 +108,7 @@ img { max-width: 100%; display: block; }
 .ecl-tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(20,10,32,.92);
+  background: var(--bar);
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
 }
@@ -82,7 +119,8 @@ img { max-width: 100%; display: block; }
 }
 .ecl-tabbar svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
 .ecl-tabbar a[aria-current="page"] { color: var(--moon); }
-.ecl-tabbar a[aria-current="page"] svg { stroke: var(--corona); }
+.ecl-tabbar a[aria-current="page"] svg { stroke: var(--violet); }
+.ecl-tabbar a[aria-current="page"] { font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

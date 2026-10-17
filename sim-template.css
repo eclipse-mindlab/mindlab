@@ -1,25 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
 @import url('eclipse.css');
 
 /* ==========================================================================
-   Simulator template: a short film you play.
-   Uses the Eclipse tokens from eclipse.css. Each sim still declares its own
-   --sim-primary colors inline; they are deliberately ignored here so every
-   sim reads as one series. Corona appears once per screen:
-     game screen        -> the rule above the highlight line
-     explanation screen -> the outline of the principle card
-     result screen      -> nothing loud; the title carries it
-   Some sims keep inline styles in their book promos; the !important rules
-   in the promo section exist only to quiet those.
+   Simulator template
+   One question per screen, choices as large tiles, a confirm button pinned
+   to the bottom, and the explanation rising as a sheet over the question.
+   Progress is five little eclipses that darken as the stages pass.
+   Each sim still declares its own --sim-primary colors inline; they are
+   deliberately ignored so every sim reads as one series. The !important
+   rules in the promo section exist only to quiet older inline styles.
    ========================================================================== */
 
 :root {
-  /* defaults kept for pages that read them; the template itself does not */
   --sim-primary: var(--violet);
   --sim-primary-light: var(--violet);
   --sim-primary-bg: var(--night-2);
   --sim-primary-border: var(--line);
-  --sim-body: color-mix(in srgb, var(--moon) 84%, var(--mist));
+  --sim-body: var(--moon);
 }
 
 body { min-height: 100vh; }
@@ -27,287 +23,251 @@ body { min-height: 100vh; }
 .sim-container {
   max-width: var(--col);
   margin: 0 auto;
-  padding: 0 20px 72px;
+  padding: 0 20px 120px;
   min-height: 100vh;
 }
 
 /* ---------- top bar ---------- */
 .sim-header {
   position: sticky; top: 0; z-index: 20;
-  display: flex; align-items: center; gap: 6px;
-  height: 54px; margin: 0 -20px; padding: 0 20px 0 10px;
-  background: color-mix(in srgb, var(--night) 90%, transparent);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  display: flex; align-items: center; gap: 4px;
+  height: 56px; margin: 0 -20px; padding: 0 20px 0 8px;
+  background: var(--night);
 }
 .sim-back-btn {
-  flex: none; width: 40px; height: 40px; border-radius: 50%;
+  flex: none; width: 40px; height: 40px; border-radius: 12px;
   display: grid; place-items: center;
-  font-size: 0; color: var(--mist);
-  transition: color .2s ease, background .2s ease;
+  font-size: 0; color: var(--moon);
 }
-.sim-back-btn::before {        /* stroke arrow drawn with a mask, colored by currentColor */
-  content: ""; width: 20px; height: 20px; background: currentColor;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M11 6l-6 6 6 6'/%3E%3C/svg%3E") center / contain no-repeat;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M11 6l-6 6 6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+.sim-back-btn::before {
+  content: ""; width: 22px; height: 22px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-.sim-back-btn:hover { color: var(--moon); }
 .sim-back-btn:active { background: var(--night-3); }
 .sim-header-title {
-  font-family: var(--serif); font-weight: 400; font-size: 17px; letter-spacing: -.01em;
+  font-weight: 700; font-size: 16px; letter-spacing: -.02em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* ---------- progress ---------- */
-.sim-progress { position: relative; margin: 6px 0 16px; }
-.sim-progress-bar { height: 2px; background: var(--line); border-radius: 1px; overflow: hidden; }
-.sim-progress-fill { height: 100%; background: var(--moon); border-radius: 1px; transition: width .5s ease; }
-/* the count sits on the same line as the stage badge, right-aligned */
-.sim-progress-label {
-  position: absolute; right: 0; top: calc(100% + 14px);
-  font-size: 12.5px; line-height: 20px; color: var(--dim); font-variant-numeric: tabular-nums;
+/* ---------- progress: eclipse dots ---------- */
+.sim-progress { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: -44px 0 22px; height: 32px; pointer-events: none; position: relative; z-index: 21; }
+.sim-progress-bar { display: none; }
+.sim-progress-label { order: 2; font-size: 13px; font-weight: 700; color: var(--mist); font-variant-numeric: tabular-nums; }
+#stageLabel { display: none; }
+.sim-dots { display: flex; gap: 5px; }
+.sim-dots i {
+  width: 11px; height: 11px; border-radius: 50%; background: var(--night-3);
+  position: relative; overflow: hidden;
 }
-#stageLabel { display: none; }     /* "STAGE n" duplicates the count */
+.sim-dots i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--violet); transform: translateX(-110%); transition: transform .4s ease; }
+.sim-dots i.done::after { transform: none; }
+.sim-dots i.now::after { transform: translateX(-50%); }
 
-/* ---------- stage badge: quiet text ---------- */
+/* ---------- stage ---------- */
 .sim-stage-badge {
-  display: block; margin: 0 64px 22px 0; padding: 0;
-  font-size: 12.5px; line-height: 20px; font-weight: 400; color: var(--mist);
-  background: none; border: 0; border-radius: 0;
+  display: inline-block; margin: 0 0 14px; padding: 6px 10px;
+  font-size: 13px; line-height: 1.2; font-weight: 700;
+  color: var(--violet); background: var(--violet-soft); border: 0; border-radius: 8px;
 }
-
-/* ---------- situation ---------- */
-.sim-situation { margin-bottom: 30px; }
+.sim-situation { margin-bottom: 26px; }
 .sim-situation-title {
-  font-family: var(--serif); font-weight: 400;
-  font-size: clamp(27px, 7.6vw, 34px); line-height: 1.3; letter-spacing: -.02em;
-  margin-bottom: 20px; text-wrap: balance;
+  font-weight: 800; font-size: clamp(26px, 7.4vw, 30px); line-height: 1.3; letter-spacing: -.04em;
+  margin-bottom: 14px; text-wrap: balance;
 }
 .sim-situation-desc {
-  font-size: 17px; line-height: 1.85; color: var(--sim-body);
+  font-size: 17px; line-height: 1.75; color: var(--sim-body);
   word-break: keep-all; overflow-wrap: break-word;
 }
 .sim-situation-highlight {
-  margin-top: 28px; padding-top: 16px; position: relative;
-  font-family: var(--serif); font-size: 21px; line-height: 1.5; color: var(--moon);
+  margin-top: 28px;
+  font-weight: 800; font-size: 21px; line-height: 1.45; letter-spacing: -.03em; color: var(--moon);
   word-break: keep-all; overflow-wrap: break-word; text-wrap: balance;
 }
-.sim-situation-highlight::before {
-  content: ""; position: absolute; left: 0; top: 0; width: 28px; height: 1px; background: var(--corona);
-}
 .sim-situation-quote {
-  margin-top: 20px; padding-left: 14px; box-shadow: inset 1px 0 0 var(--line);
-  font-size: 15px; line-height: 1.75; color: var(--mist);
+  margin-top: 16px; padding: 14px 16px; border-radius: var(--r-m); background: var(--night-3);
+  font-size: 15px; line-height: 1.7; color: var(--mist);
 }
 
-/* ---------- choices: tappable rows ---------- */
-.sim-choices { display: flex; flex-direction: column; margin: 0 -12px 24px; }
-.sim-choice-btn:first-child::before {  /* hairline above the first row */
-  content: ""; position: absolute; left: 12px; right: 12px; top: 0; height: 1px; background: var(--line);
-}
-.sim-choice-btn:first-child:active::before { opacity: 0; }
+/* ---------- choices: tiles ---------- */
+.sim-choices { display: flex; flex-direction: column; gap: 10px; margin: 0 0 24px; }
 .sim-choice-btn {
   position: relative;
-  display: grid; grid-template-columns: auto 1fr; align-items: baseline;
-  width: 100%; padding: 18px 12px 19px; border-radius: 12px;
-  text-align: left; font-size: 16px; line-height: 1.55; font-weight: 500; color: var(--moon);
+  display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: start;
+  width: 100%; padding: 16px 16px 17px; border-radius: var(--r-m);
+  background: var(--night-3); box-shadow: inset 0 0 0 2px transparent;
+  text-align: left; font-size: 16px; line-height: 1.5; font-weight: 600; letter-spacing: -.02em; color: var(--moon);
   word-break: keep-all; overflow-wrap: break-word;
-  transition: background .15s ease, transform .15s ease;
-}
-.sim-choice-btn::after {         /* hairline between rows */
-  content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 1px; background: var(--line);
+  transition: background .15s ease, box-shadow .15s ease, transform .12s ease;
 }
 .sim-choice-btn > :not(.sim-choice-label) { grid-column: 2; }
 .sim-choice-label {
-  grid-row: 1 / span 3; width: 30px;
-  font-family: var(--serif); font-size: 15px; font-weight: 400; color: var(--dim);
+  grid-row: 1 / span 3; width: 20px; height: 20px; margin-top: 2px; border-radius: 50%;
+  font-size: 0; box-shadow: inset 0 0 0 2px var(--dim); transition: box-shadow .15s ease, background .15s ease;
 }
 .sim-choice-text { display: block; }
-.sim-choice-subtext { display: block; margin-top: 3px; font-size: 14px; font-weight: 400; line-height: 1.55; color: var(--mist); }
-@media (hover: hover) {
-  .sim-choice-btn:hover { background: var(--night-2); }
-  .sim-choice-btn:hover .sim-choice-label { color: var(--moon); }
-}
-.sim-choice-btn:active { background: var(--night-3); transform: scale(.985); }
-.sim-choice-btn:active::after { opacity: 0; }
-.sim-choice-btn:active .sim-choice-label { color: var(--moon); }
-.sim-choice-btn:focus-visible { outline-offset: -2px; border-radius: 12px; }
+.sim-choice-subtext { display: block; margin-top: 4px; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--mist); }
+.sim-choice-btn:active { transform: scale(.985); }
+.sim-choice-btn.sel { background: var(--violet-soft); box-shadow: inset 0 0 0 2px var(--violet); }
+.sim-choice-btn.sel .sim-choice-label { background: var(--violet); box-shadow: inset 0 0 0 2px var(--violet), inset 0 0 0 5px var(--violet-soft); }
+@media (hover: hover) { .sim-choice-btn:not(.sel):hover { background: color-mix(in srgb, var(--night-3) 80%, var(--violet) 8%); } }
+.sim-choice-btn:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; border-radius: var(--r-m); }
 
-/* ---------- explanation ---------- */
+/* ---------- bottom confirm bar ---------- */
+.sim-cta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  padding: 14px max(20px, env(safe-area-inset-left, 0px)) calc(16px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to bottom, transparent, var(--night) 28%);
+}
+.sim-cta > * { display: block; max-width: calc(var(--col) - 40px); margin: 0 auto; }
+.sim-cta[hidden] { display: none; }
+
+/* ---------- explanation: a sheet over the question ---------- */
+.sim-scrim { position: fixed; inset: 0; z-index: 40; background: var(--scrim); animation: simFade .2s ease-out; }
+.sim-scrim[hidden] { display: none; }
+#explanationScreen {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 41;
+  max-height: 88vh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--night-2); border-radius: 24px 24px 0 0;
+  padding: 10px max(20px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px));
+  animation: simSheet .32s cubic-bezier(.2,.8,.2,1);
+}
+#explanationScreen > * { max-width: calc(var(--col) - 40px); margin-left: auto; margin-right: auto; }
+#explanationScreen::before { content: ""; display: block; width: 40px; height: 5px; border-radius: 5px; background: var(--line); margin: 0 auto 18px; }
 .sim-explanation { display: none; }
 .sim-explanation.show { display: block; }
-#explanationScreen { padding-top: 22px; }
-
-.sim-explanation-card { margin-bottom: 28px; }
-.sim-explanation-label { font-size: 12.5px; color: var(--dim); margin-bottom: 8px; }
+.sim-explanation-card { margin-bottom: 18px; }
+.sim-explanation-label { font-size: 13px; font-weight: 700; color: var(--mist); margin-bottom: 6px; }
 .sim-explanation-title {
-  font-family: var(--serif); font-weight: 400; font-size: 23px; line-height: 1.45; color: var(--moon);
+  font-weight: 800; font-size: 20px; line-height: 1.45; letter-spacing: -.03em; color: var(--moon);
   word-break: keep-all; overflow-wrap: break-word; text-wrap: balance;
 }
 .sim-explanation-desc {
-  font-size: 16.5px; line-height: 1.85; color: var(--sim-body);
+  font-size: 16px; line-height: 1.78; color: var(--sim-body);
   word-break: keep-all; overflow-wrap: break-word;
 }
+#meaningCard .sim-explanation-label { display: none; }
 
-/* the one special object */
 .sim-principle-card {
-  background: var(--night-2);
-  border-radius: var(--r-m);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--corona) 45%, transparent);
-  padding: 22px 22px 24px; margin: 8px 0 32px;
+  background: var(--night-3); border-radius: var(--r-m);
+  padding: 16px 16px 18px; margin: 4px 0 18px;
 }
-.sim-principle-header { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--mist); margin-bottom: 10px; }
+.sim-principle-header { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: var(--corona); margin-bottom: 6px; }
+.sim-principle-header span:last-child { font-size: 0; }
+.sim-principle-header span:last-child::after { content: "원칙을 하나 모았어요"; font-size: 13px; }
 .sim-principle-icon { display: none; }
-.sim-principle-name { font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.3; color: var(--moon); margin-bottom: 10px; }
-.sim-principle-desc { font-size: 15px; line-height: 1.8; color: var(--mist); word-break: keep-all; overflow-wrap: break-word; }
+.sim-principle-name { font-weight: 800; font-size: 20px; line-height: 1.35; letter-spacing: -.03em; color: var(--moon); margin-bottom: 6px; }
+.sim-principle-desc { font-size: 14.5px; line-height: 1.7; color: var(--mist); word-break: keep-all; overflow-wrap: break-word; }
 
-/* quote as an epigraph */
-.sim-quote-card { display: block; margin: 0 0 36px; padding: 0 8px 0 18px; position: relative; }
-.sim-quote-card::before {
-  content: "\201C"; position: absolute; left: -2px; top: -6px;
-  font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--dim);
-}
+.sim-quote-card { display: block; margin: 0 0 18px; padding: 14px 16px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px var(--line); }
 .sim-quote-icon { display: none; }
-.sim-quote-text {
-  font-family: var(--serif); font-size: 17px; line-height: 1.7; color: var(--mist); font-style: normal;
-  word-break: keep-all; overflow-wrap: break-word;
-}
+.sim-quote-text { font-size: 15px; line-height: 1.7; color: var(--mist); font-style: normal; word-break: keep-all; overflow-wrap: break-word; }
 
-/* next: moon pill */
+/* primary button: next, confirm */
 .sim-next-btn {
   display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 52px; border-radius: 999px;
-  background: var(--moon); color: var(--night); font-size: 15.5px; font-weight: 600;
-  transition: transform .15s ease;
+  width: 100%; height: 56px; border-radius: var(--r-m);
+  background: var(--violet); color: var(--on-violet); font-size: 17px; font-weight: 700; letter-spacing: -.02em;
+  transition: transform .12s ease, opacity .15s ease;
 }
-.sim-next-btn:active { transform: scale(.97); }
+.sim-next-btn:active { transform: scale(.98); }
+.sim-next-btn:disabled { opacity: .35; cursor: default; }
 
 /* ---------- result ---------- */
 .sim-result { display: none; }
 .sim-result.show { display: block; }
-#resultScreen { padding-top: 30px; }
-
-.sim-result-card { text-align: left; margin-bottom: 44px; }
-.sim-result-icon { display: none; }   /* result emoji is data; the serif title carries the result */
-.sim-result-label { font-size: 13px; color: var(--mist); margin-bottom: 6px; }
-.sim-result-card .sim-result-rarity {   /* some sims style this inline as a gradient badge */
-  display: inline-block; margin: 0 0 10px; padding: 2px 10px; border-radius: 999px;
-  background: none; box-shadow: inset 0 0 0 1px var(--line);
-  color: var(--mist); font-size: 12px; font-weight: 400;
+#resultScreen { padding-top: 4px; }
+.sim-result-card { text-align: left; margin-bottom: 30px; }
+.sim-result-icon { display: none; }
+.sim-result-label { font-size: 14px; font-weight: 700; color: var(--mist); margin-bottom: 6px; }
+.sim-result-card .sim-result-rarity {
+  display: inline-block; margin: 0 0 10px; padding: 5px 10px; border-radius: 8px;
+  background: var(--violet-soft); color: var(--violet); font-size: 12.5px; font-weight: 700;
 }
 .sim-result-title {
-  font-family: var(--serif); font-weight: 400;
-  font-size: clamp(32px, 9vw, 40px); line-height: 1.25; letter-spacing: -.02em;
-  color: var(--moon); margin-bottom: 22px; text-wrap: balance;
+  font-weight: 800; font-size: clamp(30px, 8.6vw, 36px); line-height: 1.25; letter-spacing: -.045em;
+  color: var(--moon); margin-bottom: 16px; text-wrap: balance;
   background: none; -webkit-text-fill-color: currentColor;
 }
-.sim-result-desc {
-  font-size: 16.5px; line-height: 1.85; color: var(--sim-body); text-align: left;
-  word-break: keep-all; overflow-wrap: break-word;
-}
+.sim-result-desc { font-size: 16px; line-height: 1.8; color: var(--sim-body); text-align: left; word-break: keep-all; overflow-wrap: break-word; }
 
-.sim-result-stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  margin: 26px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-}
-.sim-result-stat { padding: 14px 0 14px 16px; text-align: left; }
-.sim-result-stat:first-child { padding-left: 0; }
-.sim-result-stat + .sim-result-stat { box-shadow: inset 1px 0 0 var(--line); }
-.sim-result-stat-value { font-family: var(--serif); font-weight: 400; font-size: 30px; line-height: 1.15; color: var(--moon); font-variant-numeric: tabular-nums; }
-.sim-result-stat-label { font-size: 12.5px; color: var(--dim); margin-top: 4px; }
+.sim-result-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 8px; margin: 22px 0 4px; }
+.sim-result-stat { padding: 14px 12px; border-radius: var(--r-m); background: var(--night-3); text-align: left; }
+.sim-result-stat-value { font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.03em; color: var(--moon); font-variant-numeric: tabular-nums; }
+.sim-result-stat-label { font-size: 12.5px; color: var(--mist); margin-top: 4px; font-weight: 500; }
 
-/* principles: a hairline list */
-.sim-principles-list { margin-bottom: 40px; text-align: left; }
-.sim-principles-list-title { font-family: var(--serif); font-size: 22px; line-height: 1.4; color: var(--moon); margin-bottom: 6px; }
-.sim-principles-item {
-  display: grid; grid-template-columns: 1fr; align-items: start;
-  padding: 15px 0; border-bottom: 1px solid var(--line);
-}
+.sim-principles-list { margin-bottom: 30px; text-align: left; }
+.sim-principles-list-title { font-weight: 800; font-size: 18px; letter-spacing: -.03em; color: var(--moon); margin-bottom: 4px; }
+.sim-principles-item { display: grid; grid-template-columns: 1fr; padding: 14px 0; border-bottom: 1px solid var(--line); }
 .sim-principles-item:last-child { border-bottom: 0; }
-.sim-principles-item-icon { display: none; }   /* principle icons are emoji data; the list reads cleaner without them */
-.sim-principles-item-name { font-family: var(--serif); font-size: 18px; line-height: 1.4; color: var(--moon); }
-.sim-principles-item-desc { font-size: 13.5px; line-height: 1.65; color: var(--mist); margin-top: 3px; word-break: keep-all; overflow-wrap: break-word; }
+.sim-principles-item-icon { display: none; }
+.sim-principles-item-name { font-weight: 700; font-size: 16px; letter-spacing: -.02em; color: var(--moon); }
+.sim-principles-item-desc { font-size: 14px; line-height: 1.65; color: var(--mist); margin-top: 3px; word-break: keep-all; overflow-wrap: break-word; }
 
-/* actions: pills */
-.sim-actions { display: flex; flex-direction: column; gap: 10px; }
+.sim-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .sim-action-btn {
   display: flex; align-items: center; justify-content: center;
-  height: 50px; padding: 0 20px; border-radius: 999px;
-  font-size: 15px; font-weight: 600; text-align: center;
-  transition: transform .15s ease, box-shadow .2s ease;
+  height: 54px; padding: 0 14px; border-radius: var(--r-m);
+  font-size: 15.5px; font-weight: 700; letter-spacing: -.02em; text-align: center;
+  transition: transform .12s ease;
 }
-.sim-action-btn:active { transform: scale(.97); }
-.sim-action-btn.primary { background: var(--moon); color: var(--night); }
-.sim-action-btn.secondary { background: transparent; color: var(--moon); font-weight: 500; box-shadow: inset 0 0 0 1px var(--line); }
-.sim-action-btn.secondary:hover { box-shadow: inset 0 0 0 1px var(--mist); }
-a.sim-action-btn.secondary[href="index.html"] { color: var(--mist); box-shadow: none; height: 44px; font-weight: 400; }
-a.sim-action-btn.secondary[href="index.html"]:hover { color: var(--moon); }
-/* the static label carries a camera emoji; show plain words instead */
-
-
+.sim-action-btn:active { transform: scale(.98); }
+.sim-action-btn.primary { background: var(--night-3); color: var(--moon); }
+.sim-action-btn.secondary { background: var(--violet); color: var(--on-violet); }
+a.sim-action-btn.secondary[href="index.html"] { grid-column: 1 / -1; background: transparent; color: var(--mist); height: 44px; font-weight: 500; }
 
 .hidden { display: none !important; }
 
 /* ---------- book promo ---------- */
-.sim-promo { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--line); text-align: center; }
+.sim-promo { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); text-align: center; }
 .sim-promo-title, .sim-books-title {
-  font-family: var(--serif); font-size: 18px; line-height: 1.5; color: var(--moon);
-  margin: 0 auto 18px; max-width: 18em; text-wrap: balance; word-break: keep-all;
+  font-weight: 800; font-size: 18px; line-height: 1.5; letter-spacing: -.03em; color: var(--moon);
+  margin: 0 auto 18px; max-width: 20em; text-wrap: balance; word-break: keep-all;
 }
 .sim-books { text-align: center; margin-top: 0 !important; }
-
-/* quiet the inline-styled copy some sims carry */
-.sim-promo [style*="color"] { color: var(--mist) !important; font-weight: 400 !important; letter-spacing: 0 !important; }
+.sim-promo [style*="color"] { color: var(--mist) !important; font-weight: 500 !important; letter-spacing: 0 !important; }
 .sim-promo > div[style*="font-size: 12px"], .sim-promo > div[style*="font-size:12px"] { color: var(--dim) !important; font-size: 12.5px !important; }
 .sim-promo .sim-books-desc { font-size: 14px !important; }
 .sim-promo > div[style*="padding"] { font-size: 15px !important; padding: 0 8px 18px !important; }
-
-/* the main book: one raised block; lighten blending removes the black square */
 .sim-promo [style*="gradient"] {
-  background: var(--night-2) !important; border: 0 !important; border-radius: var(--r-m) !important;
-  padding: 0 20px 22px !important; overflow: hidden;
+  background: var(--night-2) !important; border: 0 !important; border-radius: var(--r-l) !important;
+  box-shadow: var(--shadow); padding: 0 20px 22px !important; overflow: hidden;
 }
 .sim-promo a > div > img {
-  width: 230px !important; max-width: 100%; height: auto !important;
-  margin: -6px auto -18px !important; border-radius: 0 !important; box-shadow: none !important;
-  mix-blend-mode: lighten;
+  width: 150px !important; max-width: 100%; height: auto !important;
+  margin: 22px auto 16px !important; border-radius: 0 !important; box-shadow: none !important;
 }
-.sim-promo a > div > img + div {
-  font-family: var(--serif); font-size: 20px !important; font-weight: 400 !important; line-height: 1.4;
-  color: var(--moon) !important; margin-bottom: 4px !important;
-}
-.sim-promo a > div > img + div + div { color: var(--dim) !important; font-size: 13px !important; }
-
-/* series shelf */
-.sim-books-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 14px; }
+.sim-promo a > div > img + div { font-weight: 800; font-size: 20px !important; line-height: 1.4; color: var(--moon) !important; margin-bottom: 4px !important; }
+.sim-promo a > div > img + div + div { color: var(--mist) !important; font-size: 13px !important; }
+.sim-books-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 14px; }
 .sim-book-item { display: flex !important; flex-direction: column; align-items: center; width: 100px; color: var(--moon); }
 .sim-book-cover {
-  width: 100px !important; height: 148px !important; object-fit: cover; object-position: center;
-  border: 0; border-radius: 0 !important; margin: 0 0 4px;
-  mix-blend-mode: lighten; transition: transform .15s ease;
+  width: 92px !important; height: auto !important; object-fit: contain;
+  border: 0; border-radius: 0 !important; margin: 0 0 8px;
 }
-/* a lone book outside the grid (sim-death) */
 .sim-books > .sim-book-item { width: auto; max-width: 240px; margin: 0 auto; }
 .sim-promo, .sim-promo * { word-break: keep-all; overflow-wrap: break-word; }
-.sim-book-item:active .sim-book-cover { transform: scale(.97); }
 .sim-book-title { font-size: 12.5px !important; line-height: 1.4; color: var(--mist) !important; margin-top: 0 !important; }
 
-/* youtube link (kept for pages that use it) */
 .sim-youtube-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 40px; margin: 0 auto 28px; padding: 0 16px; border-radius: 999px;
-  font-size: 13.5px; color: var(--mist); box-shadow: inset 0 0 0 1px var(--line);
+  height: 44px; margin: 0 auto 28px; padding: 0 16px; border-radius: var(--r-m);
+  font-size: 14px; font-weight: 600; color: var(--moon); background: var(--night-3);
 }
-.sim-youtube-btn:hover { color: var(--moon); box-shadow: inset 0 0 0 1px var(--mist); }
 .sim-youtube-icon { display: none; }
 
-/* ---------- motion: one quiet fade when the screen changes ---------- */
+/* ---------- motion ---------- */
 @keyframes simFade { from { opacity: 0; } to { opacity: 1; } }
-#gameScreen:not(.hidden),
-#explanationScreen:not(.hidden),
-#resultScreen:not(.hidden) { animation: simFade .28s ease-out; }
+@keyframes simSheet { from { transform: translateY(100%); } to { transform: none; } }
+#gameScreen:not(.hidden), #resultScreen:not(.hidden) { animation: simFade .25s ease-out; }
 
 @media (max-width: 360px) {
-  .sim-container { padding: 0 16px 64px; }
-  .sim-header { margin: 0 -16px; padding: 0 16px 0 6px; }
-  .sim-choice-btn { padding-left: 10px; padding-right: 10px; }
+  .sim-container { padding: 0 16px 120px; }
+  .sim-header { margin: 0 -16px; padding: 0 16px 0 4px; }
 }
+@media (prefers-reduced-motion: reduce) {
+  #explanationScreen, .sim-scrim { animation: none; }
+}
+
+/* single-book promo button (자기기만, 신의 증명) */
+.sn-buy { background: var(--violet) !important; color: var(--on-violet) !important; }

@@ -12,7 +12,8 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#140a20">
+  <meta name="theme-color" content="#f6f5fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f0d14" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="딜렘">
@@ -34,7 +35,6 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="eclipse.css">
   <style>
     /* Home: one column, read top to bottom like a theatre programme.
@@ -45,13 +45,13 @@
     .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0 6px; }
     .brand { display: flex; align-items: center; gap: 10px; }
     .brand-logo { width: 30px; height: 30px; border-radius: 50%; }
-    .brand-text { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; }
+    .brand-text { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; font-weight: 700;}
     .top-links { display: flex; gap: 16px; font-size: 13px; color: var(--mist); }
     .top-links a:hover { color: var(--moon); }
 
     /* hero: today's dilemma */
-    .hero { position: relative; display: block; padding: 120px 0 34px; overflow: hidden; margin: 0 -20px; padding-inline: 20px; }
-    .hero-mark { position: absolute; width: 196px; right: -40px; top: -4px; z-index: -1; }
+    .hero { position: relative; display: block; padding: 150px 0 34px; overflow: hidden; margin: 0 -20px; padding-inline: 20px; }
+    .hero-mark { position: absolute; width: 136px; right: -18px; top: 6px; z-index: -1; }
     .new-tag { font-family: var(--sans); font-size: 11px; color: var(--corona); margin-left: 8px; vertical-align: 3px; letter-spacing: 0; }
     .hero-mark .shade { animation: wax 2s cubic-bezier(.55,0,.2,1) .15s both; }
     .hero-mark .rim { animation: rim 1s ease-out 1.6s both; }
@@ -60,7 +60,7 @@
     .hero-kicker { font-size: 13px; color: var(--mist); display: flex; gap: 10px; }
     .hero-kicker span { color: var(--dim); }
     .hero-q {
-      font-family: var(--serif); font-weight: 400;
+      font-family: var(--serif); font-weight: 700;
       font-size: clamp(27px, 7.4vw, 34px); line-height: 1.32; letter-spacing: -.02em;
       margin-top: 10px; max-width: 13em; text-wrap: balance;
     }
@@ -91,7 +91,7 @@
     .tier-label { font-size: 11px; padding: 1px 8px; border-radius: 999px; }
     .profile-info { flex: 1; min-width: 0; }
     .profile-name-row { display: flex; align-items: center; gap: 6px; }
-    .profile-name { font-family: var(--serif); font-size: 22px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-name { font-family: var(--serif); font-size: 22px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700;}
     .edit-name-btn { color: var(--dim); padding: 4px; }
     .edit-name-btn:hover { color: var(--moon); }
     .profile-title { font-size: 13px; color: var(--mist); margin-top: 2px; }
@@ -103,7 +103,7 @@
     .journey-title { display: none; }
     .journey-stats { display: grid; grid-template-columns: repeat(3, 1fr); }
     .journey-stat + .journey-stat { border-left: 1px solid var(--line); padding-left: 14px; }
-    .journey-stat-value { font-family: var(--serif); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .journey-stat-value { font-family: var(--serif); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; font-weight: 700;}
     .journey-stat-label { font-size: 12px; color: var(--dim); margin-top: 2px; }
     .profile-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
     .save-profile-btn, .share-app-btn, .install-btn {
@@ -119,7 +119,7 @@
     /* sections */
     .block { margin-top: 52px; }
     .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-    .block-head h2 { font-family: var(--serif); font-weight: 400; font-size: 23px; letter-spacing: -.01em; }
+    .block-head h2 { font-family: var(--serif); font-weight: 700; font-size: 23px; letter-spacing: -.01em; }
     .block-sub { font-size: 13px; color: var(--dim); margin: -2px 0 8px; }
     .count { font-size: 13px; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
@@ -139,9 +139,8 @@
     .sim-item.completed .sim-status::before { background: var(--night); box-shadow: inset 5px -2px 0 0 var(--moon), 0 0 0 1px var(--line); }
     .sim-item.locked { opacity: .45; pointer-events: none; }
     .sim-item.locked .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--dim); border: 1.5px dashed var(--night); }
-    .recommend .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--corona); }
     .sim-info { min-width: 0; }
-    .sim-title { font-family: var(--serif); font-size: 18px; line-height: 1.35; }
+    .sim-title { font-family: var(--serif); font-size: 18px; line-height: 1.35; font-weight: 700;}
     .sim-desc { font-size: 13.5px; color: var(--mist); margin-top: 3px; line-height: 1.5; }
     .sim-reward { font-size: 12px; color: var(--dim); padding-top: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
     .sim-item.completed .sim-reward { color: var(--mist); }
@@ -150,7 +149,7 @@
     /* dex */
     .dex-link { display: block; margin-top: 52px; padding: 20px; border-radius: var(--r-m); background: var(--night-2); }
     .dex-header { display: flex; justify-content: space-between; align-items: baseline; }
-    .dex-title { font-family: var(--serif); font-size: 23px; }
+    .dex-title { font-family: var(--serif); font-size: 23px; font-weight: 700;}
     .dex-count { font-size: 14px; color: var(--mist); font-variant-numeric: tabular-nums; }
     .dex-progress { height: 3px; background: var(--line); border-radius: 2px; margin-top: 14px; overflow: hidden; }
     .dex-progress-fill { height: 100%; background: var(--corona); transition: width .8s ease; }
@@ -175,7 +174,7 @@
 
     /* read-me */
     .readme { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; padding: 20px; border-radius: var(--r-m); background: var(--night-2); }
-    .readme h2 { font-family: var(--serif); font-weight: 400; font-size: 21px; }
+    .readme h2 { font-family: var(--serif); font-weight: 700; font-size: 21px; }
     .readme p { font-size: 13.5px; color: var(--mist); grid-column: 1; }
     .readme .ecl-btn { grid-row: 1 / span 2; grid-column: 2; height: 40px; font-size: 14px; }
     .my-challenges-btn { display: flex; justify-content: space-between; margin-top: 10px; padding: 12px 4px; font-size: 14px; color: var(--mist); border-bottom: 1px solid var(--line); }
@@ -192,7 +191,7 @@
     .mindset-bar-fill { height: 100%; border-radius: 3px; }
     .mindset-percent { text-align: right; font-variant-numeric: tabular-nums; }
     .mindset-summary { margin-top: 18px; font-size: 14px; color: var(--mist); line-height: 1.7; }
-    .mindset-dominant { font-family: var(--serif); font-size: 17px; color: var(--moon); }
+    .mindset-dominant { font-family: var(--serif); font-size: 17px; color: var(--moon); font-weight: 700;}
 
     /* tiers */
     .tier-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
@@ -205,7 +204,7 @@
 
     /* footer */
     .footer { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 18px; }
-    .footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 17px; }
+    .footer-brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 17px; font-weight: 700;}
     .footer-brand .ecl-mark { width: 22px; }
     .footer-brand .ecl-mark::before { display: none; }
     .footer-links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13.5px; color: var(--mist); }
@@ -220,7 +219,7 @@
     }
     .modal, .book-modal { width: 100%; max-width: 360px; background: var(--night-2); border-radius: 18px; padding: 28px 24px; text-align: center; box-shadow: 0 0 0 1px var(--line); }
     .modal-logo { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 14px; }
-    .modal-title { font-family: var(--serif); font-size: 22px; }
+    .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 700;}
     .modal-desc { font-size: 14px; color: var(--mist); margin: 8px 0 18px; }
     .modal-input { width: 100%; height: 48px; border-radius: 12px; border: 0; background: var(--night-3); color: var(--moon); font: inherit; padding: 0 16px; text-align: center; }
     .modal-input::placeholder { color: var(--dim); }
@@ -230,13 +229,87 @@
     .modal-btn.cancel { background: transparent; color: var(--mist); }
     .modal-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .book-modal img { width: 140px; margin: 0 auto 18px; filter: drop-shadow(0 16px 24px rgba(0,0,0,.55)); }
-    .book-modal-title { font-family: var(--serif); font-size: 22px; }
+    .book-modal-title { font-family: var(--serif); font-size: 22px; font-weight: 700;}
     .book-modal-sub { font-size: 13.5px; color: var(--mist); margin: 6px 0 18px; }
     #bookModalButtons { display: grid; gap: 8px; }
     .book-modal-btn { display: flex; align-items: center; justify-content: center; height: 46px; border-radius: 999px; font-size: 14.5px; font-weight: 500; }
     .book-modal-btn.buy { background: var(--moon); color: var(--night); font-weight: 600; }
     .book-modal-btn.read { box-shadow: inset 0 0 0 1px var(--line); }
     .book-modal-btn.unread, .book-modal-btn.close { color: var(--dim); height: 38px; }
+
+    /* ===== 2026 리디자인: 홈 =====
+       오늘의 질문은 브랜드 색 카드 하나로 크게, 작품은 분야별 가로 카드 줄로. */
+    .top { padding: 14px 0 10px; }
+    .brand-text { font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
+    .top-links { font-weight: 500; }
+
+    .hero {
+      margin: 6px 0 0; padding: 22px 22px 22px; border-radius: 26px;
+      background: var(--eclipse); color: var(--on-eclipse); isolation: isolate; overflow: hidden;
+    }
+    .hero-mark { width: 104px; right: -26px; top: -30px; opacity: 1; }
+    .hero-q { padding-right: 40px; word-break: keep-all; }
+    .hero-mark .lit { background: var(--on-eclipse); box-shadow: 0 0 36px rgba(246,238,244,.22); }
+    .hero-mark .rim { background: var(--corona); }
+    .hero-mark .shade { background: var(--eclipse); }
+    .hero-mark::before { display: none; }
+    .hero-kicker { color: var(--on-eclipse); opacity: .9; font-weight: 700; font-size: 13px; }
+    .hero-kicker span { color: inherit; opacity: .7; font-weight: 500; }
+    .hero-q { color: var(--on-eclipse); font-weight: 800; font-size: clamp(26px, 7.2vw, 31px); line-height: 1.3; letter-spacing: -.04em; margin-top: 14px; max-width: 11em; }
+    .hero-situation { color: var(--on-eclipse); opacity: .72; font-size: 15px; margin-top: 10px; }
+    .hero-foot { margin-top: 20px; }
+    .hero .ecl-btn { background: var(--on-eclipse); color: var(--eclipse); height: 48px; font-weight: 800; }
+    .hero-meta { color: var(--on-eclipse); opacity: .72; }
+    .daily-desc.is-done { color: var(--on-eclipse); font-weight: 700; }
+    .daily-streak { color: var(--on-eclipse); opacity: .7; }
+
+    .profile-card { margin-top: 12px; border-radius: 22px; box-shadow: var(--shadow); padding: 18px; }
+    .profile-name { font-weight: 800; font-size: 20px; letter-spacing: -.03em; }
+    .journey-section { border-top: 0; margin-top: 14px; padding-top: 0; }
+    .journey-stats { gap: 8px; }
+    .journey-stat, .journey-stat + .journey-stat { border-left: 0; padding: 12px; border-radius: 14px; background: var(--night-3); }
+    .journey-stat-value { font-weight: 800; font-size: 22px; letter-spacing: -.03em; }
+    .journey-stat-label { color: var(--mist); }
+    .exp-bar { height: 6px; border-radius: 3px; background: var(--night-3); }
+    .exp-fill { background: var(--violet); }
+    .save-profile-btn, .share-app-btn, .install-btn { border-radius: 12px; box-shadow: none; background: var(--night-3); color: var(--moon); font-weight: 600; }
+
+    .block { margin-top: 36px; }
+    .block-head h2 { font-weight: 800; font-size: 21px; letter-spacing: -.035em; }
+    .block-head { margin-bottom: 10px; }
+
+    .sim-list {
+      flex-direction: row; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+      margin: 0 -20px; padding: 2px 20px 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .sim-list::-webkit-scrollbar { display: none; }
+    .sim-list > .sim-item, .sim-list > .sim-item:last-child {
+      flex: none; width: 172px; min-height: 190px; scroll-snap-align: start;
+      display: flex; flex-direction: column; gap: 0; align-items: stretch;
+      padding: 16px; border: 0; border-radius: 20px; background: var(--night-2); box-shadow: var(--shadow);
+    }
+    .sim-list > .sim-item:active { transform: scale(.98); opacity: 1; }
+    /* 작품마다 다른 위상의 달: 안 본 작품은 초승달, 본 작품은 가득 찬 달 */
+    .sim-status { padding: 0 0 16px; }
+    .sim-status::before {
+      width: 34px; height: 34px; background: var(--violet);
+      box-shadow: inset var(--dx, 10px) var(--dy, -4px) 0 0 var(--night-2);
+      transform: rotate(var(--rot, 0deg));
+    }
+    .sim-item.completed .sim-status::before { background: var(--violet); box-shadow: none; opacity: .35; }
+    .sim-item.locked .sim-status::before { background: var(--night-3); box-shadow: none; border: 0; }
+    .sim-info { flex: 1; }
+    .sim-title { font-weight: 800; font-size: 17px; line-height: 1.35; letter-spacing: -.03em; }
+    .sim-desc { font-size: 13px; line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .sim-reward { padding-top: 12px; font-weight: 700; font-size: 12px; color: var(--violet); }
+    .sim-item.completed .sim-reward { color: var(--dim); }
+    .new-tag { display: block; margin: 6px 0 0; font-size: 11.5px; font-weight: 800; vertical-align: 0; }
+    @media (hover: hover) { .sim-item:hover .sim-title { color: inherit; text-decoration: none; } .sim-list > .sim-item:hover { box-shadow: var(--shadow), 0 0 0 2px var(--violet-soft); } }
+
+    .dex-link { margin-top: 36px; border-radius: 22px; box-shadow: var(--shadow); }
+    .dex-title { font-weight: 800; font-size: 20px; letter-spacing: -.03em; }
+    .dex-progress { height: 6px; border-radius: 3px; background: var(--night-3); }
+    .dex-progress-fill { background: var(--violet); }
   </style>
 </head>
 <body>
@@ -1739,6 +1812,24 @@
       document.getElementById('heroCategory').textContent = d.category || '';
       var first = (d.situation || '').split('\n').filter(Boolean).slice(0, 2).join(' ');
       document.getElementById('heroSituation').textContent = first;
+    })();
+  </script>
+
+  <script>
+    /* 홈 작품 카드에 작품마다 다른 달의 위상을 준다 (제목으로 정해져서 늘 같다) */
+    (function () {
+      function phase(el) {
+        if (el.dataset.phased) return;
+        const t = (el.querySelector('.sim-title') || el).textContent || '';
+        let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+        el.style.setProperty('--dx', (6 + h % 14) + 'px');
+        el.style.setProperty('--dy', (-(h >> 4) % 8) + 'px');
+        el.style.setProperty('--rot', ((h >> 8) % 360) + 'deg');
+        el.dataset.phased = '1';
+      }
+      const run = () => document.querySelectorAll('.sim-list .sim-item').forEach(phase);
+      new MutationObserver(run).observe(document.body, { childList: true, subtree: true });
+      document.addEventListener('DOMContentLoaded', run);
     })();
   </script>
 </body>
