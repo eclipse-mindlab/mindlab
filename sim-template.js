@@ -40,6 +40,7 @@ const SimTemplate = {
     document.getElementById('stageLabel').textContent = `STAGE ${index + 1}`;
     document.getElementById('stageCount').textContent = `${index + 1}/${total}`;
     document.getElementById('progressFill').style.width = `${((index + 1) / total) * 100}%`;
+    this.renderDots(index, total);
     
     // 뱃지
     document.getElementById('stageBadge').textContent = stage.badge || `STAGE ${index + 1}`;
@@ -77,9 +78,18 @@ const SimTemplate = {
     `).join('');
     
     // 선택지 이벤트
+    this.selected = null;
+    const cta = this.ensureCta();
+    cta.btn.disabled = true;
+    cta.bar.hidden = false;
     choicesEl.querySelectorAll('.sim-choice-btn').forEach(btn => {
+      btn.setAttribute('aria-pressed', 'false');
       btn.addEventListener('click', () => {
-        this.handleChoice(btn.dataset.choiceId);
+        choicesEl.querySelectorAll('.sim-choice-btn').forEach(b => { b.classList.remove('sel'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('sel');
+        btn.setAttribute('aria-pressed', 'true');
+        this.selected = btn.dataset.choiceId;
+        cta.btn.disabled = false;
       });
     });
     
@@ -87,6 +97,7 @@ const SimTemplate = {
     document.getElementById('gameScreen').classList.remove('hidden');
     document.getElementById('explanationScreen').classList.add('hidden');
     document.getElementById('resultScreen').classList.add('hidden');
+    this.setSheet(false);
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -151,16 +162,43 @@ const SimTemplate = {
       quoteCard.classList.add('hidden');
     }
     
-    // 화면 전환
-    document.getElementById('gameScreen').classList.add('hidden');
+    // 화면 전환: 질문 화면 위로 해설 시트를 올린다
     document.getElementById('explanationScreen').classList.remove('hidden');
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('explanationScreen').scrollTop = 0;
+    this.setSheet(true);
   },
 
   /**
    * 다음 스테이지로
    */
+  renderDots(index, total) {
+    const wrap = document.querySelector('.sim-progress');
+    if (!wrap) return;
+    let dots = wrap.querySelector('.sim-dots');
+    if (!dots) { dots = document.createElement('div'); dots.className = 'sim-dots'; dots.setAttribute('aria-hidden', 'true'); wrap.prepend(dots); }
+    dots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i < index ? 'done' : i === index ? 'now' : ''}"></i>`).join('');
+  },
+
+  ensureCta() {
+    if (this.cta) return this.cta;
+    const bar = document.createElement('div');
+    bar.className = 'sim-cta';
+    bar.innerHTML = '<button class="sim-next-btn" id="confirmBtn" type="button">이걸로 할게요</button>';
+    document.body.appendChild(bar);
+    const btn = bar.querySelector('button');
+    btn.addEventListener('click', () => { if (this.selected) this.handleChoice(this.selected); });
+    this.cta = { bar, btn };
+    return this.cta;
+  },
+
+  setSheet(open) {
+    let scrim = document.querySelector('.sim-scrim');
+    if (!scrim) { scrim = document.createElement('div'); scrim.className = 'sim-scrim'; scrim.hidden = true; document.body.appendChild(scrim); }
+    scrim.hidden = !open;
+    if (this.cta) this.cta.bar.hidden = open || !document.getElementById('resultScreen').classList.contains('hidden');
+    document.body.style.overflow = open ? 'hidden' : '';
+  },
+
   nextStage() {
     this.currentStage++;
     
@@ -230,6 +268,8 @@ const SimTemplate = {
     document.getElementById('gameScreen').classList.add('hidden');
     document.getElementById('explanationScreen').classList.add('hidden');
     document.getElementById('resultScreen').classList.remove('hidden');
+    this.setSheet(false);
+    if (this.cta) this.cta.bar.hidden = true;
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },

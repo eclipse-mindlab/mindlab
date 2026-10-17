@@ -129,14 +129,17 @@ def play_template_sim(page, errors):
     if not sim_id:
         return
     before = get_profile(page)
-    for _ in range(40):
+    for _ in range(80):
         if page.is_visible('#resultScreen'):
             break
-        btn = page.query_selector('.sim-choice-btn:visible')
-        if btn:
-            btn.click()
-        elif page.is_visible('#nextBtn'):
+        if page.is_visible('#nextBtn'):
             page.click('#nextBtn')
+        elif page.is_visible('#confirmBtn') and page.is_enabled('#confirmBtn'):
+            page.click('#confirmBtn')
+        else:
+            btn = page.query_selector('.sim-choice-btn:visible')
+            if btn:
+                btn.click()
         page.wait_for_timeout(150)
     if not page.is_visible('#resultScreen'):
         errors.append('결과 화면까지 도달 못함'); return

@@ -7,13 +7,13 @@
   
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#140a20">
+  <meta name="theme-color" content="#f6f5fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f0d14" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="eclipse.css">
 
   <style>
@@ -36,7 +36,7 @@
     .back-btn:hover { color: var(--moon); }
     .back-btn:active { transform: scale(.94); }
     .bar-title {
-      flex: 1; min-width: 0; font-family: var(--serif); font-weight: 400; font-size: 19px;
+      flex: 1; min-width: 0; font-family: var(--serif); font-weight: 700; font-size: 19px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .stage-label { flex: none; font-size: 12.5px; color: var(--dim); font-variant-numeric: tabular-nums; }
@@ -52,7 +52,7 @@
     /* scene */
     .scenario-card { padding: 22px 0 0; }
     .context { font-size: 15.5px; line-height: 1.9; color: var(--mist); margin-bottom: 20px; }
-    .situation { font-family: var(--serif); font-weight: 400; font-size: 23px; line-height: 1.55; color: var(--moon); }
+    .situation { font-family: var(--serif); font-weight: 700; font-size: 23px; line-height: 1.55; color: var(--moon); }
 
     /* choices: tappable rows */
     .choices { margin-top: 28px; border-top: 1px solid var(--line); counter-reset: ch; }
@@ -64,7 +64,7 @@
       font-size: 15.5px; line-height: 1.65; color: var(--moon);
       transition: background .2s ease, transform .15s ease;
     }
-    .choice-btn::before { content: counter(ch); font-family: var(--serif); font-size: 18px; line-height: 1.45; color: var(--dim); }
+    .choice-btn::before { content: counter(ch); font-family: var(--serif); font-size: 18px; line-height: 1.45; color: var(--dim); font-weight: 700;}
     .choice-btn::after {
       content: ""; width: 8px; height: 8px; margin-top: 9px;
       border-top: 1.5px solid var(--dim); border-right: 1.5px solid var(--dim); transform: rotate(45deg);
@@ -92,7 +92,7 @@
     .principle-icon { display: grid; color: var(--violet); }
     .principle-icon svg { width: 16px; height: 16px; }
     .principle-label { font-size: 12.5px; color: var(--mist); }
-    .principle-name { font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.35; margin-bottom: 8px; }
+    .principle-name { font-family: var(--serif); font-weight: 700; font-size: 25px; line-height: 1.35; margin-bottom: 8px; }
     .principle-explanation { font-size: 14.5px; line-height: 1.8; color: var(--mist); }
 
     /* verdict: label + one line */
@@ -148,7 +148,7 @@
     .container:has(.final-screen.show) .stage-label { display: none; }
     .clear-card { text-align: center; padding-bottom: 32px; }
     .clear-icon { width: 56px; margin: 0 auto 30px; }
-    .clear-title { font-family: var(--serif); font-weight: 400; font-size: 30px; line-height: 1.3; }
+    .clear-title { font-family: var(--serif); font-weight: 700; font-size: 30px; line-height: 1.3; }
     .clear-subtitle { font-size: 14.5px; color: var(--mist); margin-top: 8px; }
     .clear-exp { font-size: 13px; color: var(--dim); margin-top: 6px; }
 
@@ -156,7 +156,7 @@
     .principles-title { font-size: 12.5px; color: var(--dim); margin-bottom: 2px; }
     .principle-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
     .principle-item-icon { display: none; }
-    .principle-item-name { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.4; margin-bottom: 4px; }
+    .principle-item-name { font-family: var(--serif); font-weight: 700; font-size: 20px; line-height: 1.4; margin-bottom: 4px; }
     .principle-item-desc { font-size: 14px; line-height: 1.75; color: var(--mist); }
 
     .share-section { margin-bottom: 12px; }
@@ -175,7 +175,7 @@
     }
     .book-feature:active { transform: scale(.98); }
     .book-feature img { width: 92px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.5)); }
-    .book-feature-title { font-family: var(--serif); font-size: 19px; line-height: 1.35; }
+    .book-feature-title { font-family: var(--serif); font-size: 19px; line-height: 1.35; font-weight: 700;}
     .book-feature-sub { font-size: 13px; color: var(--mist); margin-top: 4px; }
     .book-feature-more { font-size: 13px; color: var(--dim); margin-top: 10px; }
     .books-grid { display: flex; gap: 20px; }
@@ -186,6 +186,14 @@
       filter: drop-shadow(0 12px 18px rgba(0,0,0,.5));
     }
     .book-item-title { font-size: 13px; line-height: 1.35; color: var(--mist); }
+  </style>
+  <style id="redesign-choices">
+    /* 2026 리디자인: 선택지를 둥근 타일로 */
+    .choices { border-top: 0 !important; display: flex; flex-direction: column; gap: 10px; }
+    .choice-btn { background: var(--night-3) !important; border: 0 !important; border-radius: var(--r-m) !important; padding: 16px !important; box-shadow: none !important; font-weight: 600; letter-spacing: -.02em; margin: 0 !important; }
+    .choice-btn::before { color: var(--violet) !important; font-weight: 800 !important; }
+    .choice-btn:active { background: var(--violet-soft) !important; box-shadow: inset 0 0 0 2px var(--violet) !important; }
+    @media (hover: hover) { .choice-btn:hover { background: color-mix(in srgb, var(--night-3) 85%, var(--violet) 10%) !important; } }
   </style>
 </head>
 <body>

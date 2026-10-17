@@ -6,12 +6,12 @@
   <title>내 도전장 - 이클립스의 딜렘</title>
   
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#140a20">
+  <meta name="theme-color" content="#f6f5fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f0d14" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="icon-192.png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="eclipse.css">
   <style>
     /* 내 도전장: every challenge I sent, newest first. */
@@ -27,7 +27,7 @@
     .back-btn:hover { color: var(--moon); }
     .back-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     .top-logo { width: 26px; height: 26px; border-radius: 50%; flex: none; }
-    .header-title { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; }
+    .header-title { font-family: var(--serif); font-size: 19px; letter-spacing: -.01em; font-weight: 700;}
     .top-aside { margin-left: auto; font-size: 13px; color: var(--mist); }
     .top-aside:hover { color: var(--moon); }
 
@@ -56,7 +56,7 @@
     .ecl-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
     .kicker { font-size: 13px; color: var(--mist); }
-    .serif-title { font-family: var(--serif); font-weight: 400; letter-spacing: -.02em; line-height: 1.3; }
+    .serif-title { font-family: var(--serif); font-weight: 700; letter-spacing: -.02em; line-height: 1.3; }
     .page-title { font-size: 30px; margin-top: 20px; }
     .page-desc { margin-top: 4px; color: var(--mist); font-size: 14.5px; }
 
@@ -64,7 +64,7 @@
 
     .empty-state { padding: 40px 0 0; }
     .empty-icon { display: none; }
-    .empty-title { font-family: var(--serif); font-size: 23px; }
+    .empty-title { font-family: var(--serif); font-size: 23px; font-weight: 700;}
     .empty-desc { margin: 6px 0 24px; font-size: 14.5px; color: var(--mist); }
     .create-btn { width: 100%; height: 50px; }
 
@@ -74,7 +74,7 @@
     .challenge-card { display: block; padding: 18px 0 16px; border-bottom: 1px solid var(--line); }
     .challenge-card:active { opacity: .75; }
     .challenge-card-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-    .challenge-card-title { font-family: var(--serif); font-size: 20px; line-height: 1.3; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .challenge-card-title { font-family: var(--serif); font-size: 20px; line-height: 1.3; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700;}
     .challenge-card-date { font-size: 12.5px; color: var(--dim); font-variant-numeric: tabular-nums; flex: none; }
     .challenge-stats { display: flex; gap: 18px; margin-top: 8px; }
     .challenge-stat { display: flex; align-items: baseline; gap: 5px; }
