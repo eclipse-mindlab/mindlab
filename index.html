@@ -139,7 +139,6 @@
     .sim-item.completed .sim-status::before { background: var(--night); box-shadow: inset 5px -2px 0 0 var(--moon), 0 0 0 1px var(--line); }
     .sim-item.locked { opacity: .45; pointer-events: none; }
     .sim-item.locked .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--dim); border: 1.5px dashed var(--night); }
-    .recommend .sim-status::before { box-shadow: inset 0 0 0 1.5px var(--corona); }
     .sim-info { min-width: 0; }
     .sim-title { font-family: var(--serif); font-size: 18px; line-height: 1.35; font-weight: 700;}
     .sim-desc { font-size: 13.5px; color: var(--mist); margin-top: 3px; line-height: 1.5; }
@@ -237,6 +236,79 @@
     .book-modal-btn.buy { background: var(--moon); color: var(--night); font-weight: 600; }
     .book-modal-btn.read { box-shadow: inset 0 0 0 1px var(--line); }
     .book-modal-btn.unread, .book-modal-btn.close { color: var(--dim); height: 38px; }
+
+    /* ===== 2026 리디자인: 홈 =====
+       오늘의 질문은 브랜드 색 카드 하나로 크게, 작품은 분야별 가로 카드 줄로. */
+    .top { padding: 14px 0 10px; }
+    .brand-text { font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
+    .top-links { font-weight: 500; }
+
+    .hero {
+      margin: 6px 0 0; padding: 22px 22px 22px; border-radius: 26px;
+      background: var(--violet); color: var(--on-violet); isolation: isolate;
+    }
+    .hero-mark { width: 92px; right: -30px; top: -34px; opacity: .9; }
+    .hero-q { padding-right: 36px; word-break: keep-all; }
+    .hero-mark .lit { background: var(--on-violet); box-shadow: none; }
+    .hero-mark .shade { background: var(--violet); }
+    .hero-mark::before { display: none; }
+    .hero-kicker { color: var(--on-violet); opacity: .85; font-weight: 700; font-size: 13px; }
+    .hero-kicker span { color: inherit; opacity: .8; font-weight: 500; }
+    .hero-q { font-weight: 800; font-size: clamp(26px, 7.2vw, 31px); line-height: 1.3; letter-spacing: -.04em; margin-top: 14px; max-width: 11em; }
+    .hero-situation { color: var(--on-violet); opacity: .85; font-size: 15px; margin-top: 10px; }
+    .hero-foot { margin-top: 20px; }
+    .hero .ecl-btn { background: var(--on-violet); color: var(--violet); height: 48px; font-weight: 800; }
+    .hero-meta { color: var(--on-violet); opacity: .85; }
+    .daily-desc.is-done { color: var(--on-violet); font-weight: 700; }
+    .daily-streak { color: var(--on-violet); opacity: .8; }
+
+    .profile-card { margin-top: 12px; border-radius: 22px; box-shadow: var(--shadow); padding: 18px; }
+    .profile-name { font-weight: 800; font-size: 20px; letter-spacing: -.03em; }
+    .journey-section { border-top: 0; margin-top: 14px; padding-top: 0; }
+    .journey-stats { gap: 8px; }
+    .journey-stat, .journey-stat + .journey-stat { border-left: 0; padding: 12px; border-radius: 14px; background: var(--night-3); }
+    .journey-stat-value { font-weight: 800; font-size: 22px; letter-spacing: -.03em; }
+    .journey-stat-label { color: var(--mist); }
+    .exp-bar { height: 6px; border-radius: 3px; background: var(--night-3); }
+    .exp-fill { background: var(--violet); }
+    .save-profile-btn, .share-app-btn, .install-btn { border-radius: 12px; box-shadow: none; background: var(--night-3); color: var(--moon); font-weight: 600; }
+
+    .block { margin-top: 36px; }
+    .block-head h2 { font-weight: 800; font-size: 21px; letter-spacing: -.035em; }
+    .block-head { margin-bottom: 10px; }
+
+    .sim-list {
+      flex-direction: row; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+      margin: 0 -20px; padding: 2px 20px 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .sim-list::-webkit-scrollbar { display: none; }
+    .sim-list > .sim-item, .sim-list > .sim-item:last-child {
+      flex: none; width: 172px; min-height: 190px; scroll-snap-align: start;
+      display: flex; flex-direction: column; gap: 0; align-items: stretch;
+      padding: 16px; border: 0; border-radius: 20px; background: var(--night-2); box-shadow: var(--shadow);
+    }
+    .sim-list > .sim-item:active { transform: scale(.98); opacity: 1; }
+    /* 작품마다 다른 위상의 달: 안 본 작품은 초승달, 본 작품은 가득 찬 달 */
+    .sim-status { padding: 0 0 16px; }
+    .sim-status::before {
+      width: 34px; height: 34px; background: var(--violet);
+      box-shadow: inset var(--dx, 10px) var(--dy, -4px) 0 0 var(--night-2);
+      transform: rotate(var(--rot, 0deg));
+    }
+    .sim-item.completed .sim-status::before { background: var(--violet); box-shadow: none; opacity: .35; }
+    .sim-item.locked .sim-status::before { background: var(--night-3); box-shadow: none; border: 0; }
+    .sim-info { flex: 1; }
+    .sim-title { font-weight: 800; font-size: 17px; line-height: 1.35; letter-spacing: -.03em; }
+    .sim-desc { font-size: 13px; line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .sim-reward { padding-top: 12px; font-weight: 700; font-size: 12px; color: var(--violet); }
+    .sim-item.completed .sim-reward { color: var(--dim); }
+    .new-tag { display: block; margin: 6px 0 0; font-size: 11.5px; font-weight: 800; vertical-align: 0; }
+    @media (hover: hover) { .sim-item:hover .sim-title { color: inherit; text-decoration: none; } .sim-list > .sim-item:hover { box-shadow: var(--shadow), 0 0 0 2px var(--violet-soft); } }
+
+    .dex-link { margin-top: 36px; border-radius: 22px; box-shadow: var(--shadow); }
+    .dex-title { font-weight: 800; font-size: 20px; letter-spacing: -.03em; }
+    .dex-progress { height: 6px; border-radius: 3px; background: var(--night-3); }
+    .dex-progress-fill { background: var(--violet); }
   </style>
 </head>
 <body>
@@ -1739,6 +1811,24 @@
       document.getElementById('heroCategory').textContent = d.category || '';
       var first = (d.situation || '').split('\n').filter(Boolean).slice(0, 2).join(' ');
       document.getElementById('heroSituation').textContent = first;
+    })();
+  </script>
+
+  <script>
+    /* 홈 작품 카드에 작품마다 다른 달의 위상을 준다 (제목으로 정해져서 늘 같다) */
+    (function () {
+      function phase(el) {
+        if (el.dataset.phased) return;
+        const t = (el.querySelector('.sim-title') || el).textContent || '';
+        let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+        el.style.setProperty('--dx', (6 + h % 14) + 'px');
+        el.style.setProperty('--dy', (-(h >> 4) % 8) + 'px');
+        el.style.setProperty('--rot', ((h >> 8) % 360) + 'deg');
+        el.dataset.phased = '1';
+      }
+      const run = () => document.querySelectorAll('.sim-list .sim-item').forEach(phase);
+      new MutationObserver(run).observe(document.body, { childList: true, subtree: true });
+      document.addEventListener('DOMContentLoaded', run);
     })();
   </script>
 </body>

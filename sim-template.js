@@ -78,18 +78,15 @@ const SimTemplate = {
     `).join('');
     
     // 선택지 이벤트
-    this.selected = null;
-    const cta = this.ensureCta();
-    cta.btn.disabled = true;
-    cta.bar.hidden = false;
+    // 누르면 잠깐 선택 표시를 보여 준 뒤 바로 해설 시트를 올린다
+    this.locked = false;
     choicesEl.querySelectorAll('.sim-choice-btn').forEach(btn => {
-      btn.setAttribute('aria-pressed', 'false');
       btn.addEventListener('click', () => {
-        choicesEl.querySelectorAll('.sim-choice-btn').forEach(b => { b.classList.remove('sel'); b.setAttribute('aria-pressed', 'false'); });
+        if (this.locked) return;
+        this.locked = true;
         btn.classList.add('sel');
-        btn.setAttribute('aria-pressed', 'true');
-        this.selected = btn.dataset.choiceId;
-        cta.btn.disabled = false;
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        setTimeout(() => this.handleChoice(btn.dataset.choiceId), reduce ? 0 : 220);
       });
     });
     
@@ -177,18 +174,6 @@ const SimTemplate = {
     let dots = wrap.querySelector('.sim-dots');
     if (!dots) { dots = document.createElement('div'); dots.className = 'sim-dots'; dots.setAttribute('aria-hidden', 'true'); wrap.prepend(dots); }
     dots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i < index ? 'done' : i === index ? 'now' : ''}"></i>`).join('');
-  },
-
-  ensureCta() {
-    if (this.cta) return this.cta;
-    const bar = document.createElement('div');
-    bar.className = 'sim-cta';
-    bar.innerHTML = '<button class="sim-next-btn" id="confirmBtn" type="button">이걸로 할게요</button>';
-    document.body.appendChild(bar);
-    const btn = bar.querySelector('button');
-    btn.addEventListener('click', () => { if (this.selected) this.handleChoice(this.selected); });
-    this.cta = { bar, btn };
-    return this.cta;
   },
 
   setSheet(open) {
