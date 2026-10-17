@@ -22,6 +22,7 @@
   --corona: #c42fe0;       /* one accent per screen */
   --eclipse: #200c36;      /* logo night: hero surfaces */
   --on-eclipse: #f6eef4;   /* moon-white on eclipse */
+  --art-tile: #f1edf6;     /* behind illustration stickers */
   --ok: #1f9d6b;
   --scrim: rgba(23,20,31,.42);
   --bar: rgba(255,255,255,.92);
@@ -52,6 +53,7 @@
     --corona: #e070f6;
     --eclipse: #2a1442;
     --on-eclipse: #f6eef4;
+    --art-tile: #d8cfe2;
     --ok: #7fd3b0;
     --scrim: rgba(0,0,0,.55);
     --bar: rgba(14,10,19,.9);

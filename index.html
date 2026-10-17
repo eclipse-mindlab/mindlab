@@ -298,12 +298,22 @@
     }
     .sim-item.completed .sim-status::before { background: var(--violet); box-shadow: none; opacity: .35; }
     .sim-item.locked .sim-status::before { background: var(--night-3); box-shadow: none; border: 0; }
+    /* 작품 대표 그림: img/sim/<파일명>.webp. 그림이 없는 작품은 위의 달 모양을 그대로 쓴다 */
+    .sim-list > .sim-item { padding-top: 10px; }
+    .sim-item.has-art .sim-status { padding: 0 0 14px; margin: 0 -4px; }
+    .sim-item.has-art .sim-status::before {
+      width: 100%; height: 104px; border-radius: 14px; border: 0; opacity: 1;
+      padding: 12px; box-sizing: border-box; transform: none; box-shadow: none;
+      background: var(--art) center / contain no-repeat content-box, var(--art-tile);
+    }
+    .sim-item.has-art.completed .sim-status::before { filter: grayscale(1); opacity: .45; }
+    .sim-item.has-art.completed .sim-title { color: var(--mist); }
     .sim-info { flex: 1; }
     .sim-title { font-weight: 800; font-size: 17px; line-height: 1.35; letter-spacing: -.03em; }
     .sim-desc { font-size: 13px; line-height: 1.5; margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .sim-reward { padding-top: 12px; font-weight: 700; font-size: 12px; color: var(--violet); }
     .sim-item.completed .sim-reward { color: var(--dim); }
-    .new-tag { display: block; margin: 6px 0 0; font-size: 11.5px; font-weight: 800; vertical-align: 0; }
+    .new-tag { display: block; margin: 6px 0 0; font-size: 11.5px; font-weight: 800; vertical-align: 0; color: var(--violet); }
     @media (hover: hover) { .sim-item:hover .sim-title { color: inherit; text-decoration: none; } .sim-list > .sim-item:hover { box-shadow: var(--shadow), 0 0 0 2px var(--violet-soft); } }
 
     .dex-link { margin-top: 36px; border-radius: 22px; box-shadow: var(--shadow); }
@@ -1818,6 +1828,7 @@
   <script>
     /* 홈 작품 카드에 작품마다 다른 달의 위상을 준다 (제목으로 정해져서 늘 같다) */
     (function () {
+      const ART = ["armor", "awakening", "breakup", "brinkmanship", "clone", "death", "experience-machine", "gaslighting", "god", "god-proof", "gossip", "i-thou", "idea-thief", "immortality", "last-human", "left-on-read", "love-temp", "money-friend", "pendulum", "price", "replacement", "ressentiment", "revenge", "rich", "self-deception", "shadow", "survival-test", "think-layer", "time-master", "trolley", "truth"];
       function phase(el) {
         if (el.dataset.phased) return;
         const t = (el.querySelector('.sim-title') || el).textContent || '';
@@ -1825,6 +1836,11 @@
         el.style.setProperty('--dx', (6 + h % 14) + 'px');
         el.style.setProperty('--dy', (-(h >> 4) % 8) + 'px');
         el.style.setProperty('--rot', ((h >> 8) % 360) + 'deg');
+        const m = (el.getAttribute('href') || '').match(/sim-([a-z-]+)\.html/);
+        if (m && ART.indexOf(m[1]) > -1) {
+          el.style.setProperty('--art', 'url(img/sim/' + m[1] + '.webp)');
+          el.classList.add('has-art');
+        }
         el.dataset.phased = '1';
       }
       const run = () => document.querySelectorAll('.sim-list .sim-item').forEach(phase);
