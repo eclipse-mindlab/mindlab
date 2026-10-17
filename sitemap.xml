@@ -66,6 +66,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://eclipse-mindlab.github.io/mindlab/sim-god-proof.html</loc>
+    <lastmod>2026-10-17</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://eclipse-mindlab.github.io/mindlab/dex.html</loc>
     <lastmod>2025-01-30</lastmod>
     <priority>0.7</priority>
