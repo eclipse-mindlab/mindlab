@@ -202,6 +202,7 @@
     .shelf a:active img { transform: scale(.97); }
     .shelf span { font-size: 12.5px; line-height: 1.35; color: var(--mist); }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="container">
@@ -808,10 +809,7 @@
       btn.innerHTML = '저장 중...';
       
       html2canvas(card, { backgroundColor: getComputedStyle(document.body).backgroundColor, scale: 2 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'dilem-' + formatDateShort() + '.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        EclipseSaveImage(canvas, 'dilem-' + formatDateShort() + '.png');
         
         btn.classList.add('success');
         btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 저장 완료!';
@@ -957,10 +955,7 @@
       btn.innerHTML = '저장 중...';
       
       html2canvas(card, { backgroundColor: getComputedStyle(document.body).backgroundColor, scale: 2 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'dilem-' + formatDateShort() + '.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        EclipseSaveImage(canvas, 'dilem-' + formatDateShort() + '.png');
         
         btn.classList.add('success');
         btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 저장 완료!';

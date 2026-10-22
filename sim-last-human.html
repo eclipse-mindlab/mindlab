@@ -29,6 +29,7 @@
       margin-bottom: 8px;
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -828,10 +829,7 @@
       const canvas = generateImage();
       
       // 다운로드
-      const link = document.createElement('a');
-      link.download = '마지막인류_결과.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      EclipseSaveImage(canvas, '마지막인류_결과.png');
     });
     
     // 공유 (텍스트)

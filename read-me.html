@@ -169,6 +169,7 @@
     .results-link svg, .home-link svg { width: 18px; height: 18px; flex: none; stroke: var(--dim); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     .results-link:hover svg, .home-link:hover svg { stroke: var(--moon); }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="container">
@@ -666,10 +667,7 @@
         logging: false,
         useCORS: true
       }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `dilem-challenge-${userName}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        EclipseSaveImage(canvas, `dilem-challenge-${userName}.png`);
         
         btn.classList.add('success');
         btn.innerHTML = '저장했어요';

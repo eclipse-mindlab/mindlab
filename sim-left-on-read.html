@@ -29,6 +29,7 @@
       margin-bottom: 8px;
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -828,10 +829,7 @@
     document.getElementById('saveImageBtn').addEventListener('click', () => {
       const canvas = generateImage();
       
-      const link = document.createElement('a');
-      link.download = '읽씹시뮬레이터_결과.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      EclipseSaveImage(canvas, '읽씹시뮬레이터_결과.png');
     });
     
     // 공유 (텍스트)

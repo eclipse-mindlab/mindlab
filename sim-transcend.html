@@ -8,6 +8,7 @@
   <title>초월자의 자격 - 이클립스의 딜렘</title>
   <link rel="stylesheet" href="sim-template.css">
   <style>:root{--sim-primary:#c9a84c;--sim-primary-light:#e0c068;--sim-primary-bg:rgba(201,168,76,0.1);--sim-primary-border:rgba(201,168,76,0.3);}</style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -114,7 +115,7 @@ const obs=new MutationObserver(()=>{
 obs.observe(document.getElementById('resultScreen'),{attributes:true});
 
 document.getElementById('shareBtn').addEventListener('click',async()=>{const t='🏔️ 초월자의 자격\n\n'+document.getElementById('resultTitle').textContent+'\n\nhttps://bit.ly/transcend-sim';if(navigator.share){try{await navigator.share({title:'초월자의 자격',text:t});}catch{}}else{navigator.clipboard.writeText(t).then(()=>{document.getElementById('shareBtn').textContent='링크 복사됨!';setTimeout(()=>{document.getElementById('shareBtn').textContent='친구한테 시켜보기';},2000);});}});
-document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#141210';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#c9a84c';x.fillText('초월자의 자격',400,205);const l=document.createElement('a');l.download='초월자의자격_결과.png';l.href=c.toDataURL();l.click();});
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#141210';x.fillRect(0,0,800,420);x.font='80px serif';x.textAlign='center';x.fillText(document.getElementById('resultIcon').textContent,400,100);x.font='bold 36px sans-serif';x.fillStyle='#fff';x.fillText(document.getElementById('resultTitle').textContent,400,170);x.font='16px sans-serif';x.fillStyle='#c9a84c';x.fillText('초월자의 자격',400,205);EclipseSaveImage(c, '초월자의자격_결과.png');});
   </script>
 </body>
 </html>

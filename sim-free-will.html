@@ -12,6 +12,7 @@
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
   <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/sim-free-will.html">
   <link rel="stylesheet" href="sim-template.css">
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -73,7 +74,7 @@ calculateResult(choices,principles){
 getShareText(t){return '자유의지 시뮬레이터\n\n나는 '+t+'\n\n내 선택은 정말 내가 한 걸까?\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-free-will.html';}
 };
 SimTemplate.init(CONFIG);
-document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('자유의지 시뮬레이터',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);const l=document.createElement('a');l.download='자유의지_결과.png';l.href=c.toDataURL();l.click();});
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('자유의지 시뮬레이터',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);EclipseSaveImage(c, '자유의지_결과.png');});
   </script>
 </body>
 </html>

@@ -321,6 +321,7 @@
     .dex-progress { height: 6px; border-radius: 3px; background: var(--night-3); }
     .dex-progress-fill { background: var(--violet); }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="modal-overlay" id="nameModal" style="display:none">
@@ -1492,12 +1493,9 @@
         scale: 2,
         logging: false
       }).then(canvas => {
-        const link = document.createElement('a');
         const today = new Date();
         const dateStr = today.getFullYear() + '.' + String(today.getMonth()+1).padStart(2,'0') + '.' + String(today.getDate()).padStart(2,'0');
-        link.download = 'dilem-profile-' + dateStr + '.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        EclipseSaveImage(canvas, 'dilem-profile-' + dateStr + '.png');
         
         btn.classList.add('success');
         btn.innerHTML = `

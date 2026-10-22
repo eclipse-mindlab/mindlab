@@ -18,6 +18,7 @@
       --sim-primary-border: rgba(201, 168, 76, 0.3);
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -477,10 +478,7 @@
       ctx.fillStyle = '#888';
       ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
       
-      const link = document.createElement('a');
-      link.download = '돈의가격_결과.png';
-      link.href = canvas.toDataURL();
-      link.click();
+      EclipseSaveImage(canvas, '돈의가격_결과.png');
     });
   </script>
 </body>

@@ -172,6 +172,7 @@
     .action-buttons-desc { font-size: 14px; color: var(--mist); margin: 2px 0 10px; }
     .action-btn { width: 100%; height: 50px; }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="container">
@@ -543,10 +544,7 @@
         scale: 2,
         logging: false
       }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `dilem-result-${percentage}percent.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        EclipseSaveImage(canvas, `dilem-result-${percentage}percent.png`);
         
         btn.classList.add('success');
         btn.innerHTML = '저장했어요';
