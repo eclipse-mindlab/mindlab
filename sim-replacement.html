@@ -28,6 +28,7 @@
       margin-bottom: 8px;
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -380,10 +381,7 @@
       ctx.fillStyle = '#888';
       ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
       
-      const link = document.createElement('a');
-      link.download = '완벽한_대체자_결과.png';
-      link.href = canvas.toDataURL();
-      link.click();
+      EclipseSaveImage(canvas, '완벽한_대체자_결과.png');
     });
     
     document.getElementById('shareBtn').addEventListener('click', async () => {

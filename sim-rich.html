@@ -18,6 +18,7 @@
       --sim-primary-border: rgba(212, 168, 67, 0.3);
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -467,10 +468,7 @@
       ctx.fillStyle = '#888';
       ctx.fillText('eclipse-mindlab.github.io/mindlab', 400, 410);
       
-      const link = document.createElement('a');
-      link.download = '부자의조건_결과.png';
-      link.href = canvas.toDataURL();
-      link.click();
+      EclipseSaveImage(canvas, '부자의조건_결과.png');
     });
     
     // 친구한테 시켜보기 (기존 리스너 제거 후 재바인딩)

@@ -12,6 +12,7 @@
   <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
   <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/sim-pendulum.html">
   <link rel="stylesheet" href="sim-template.css">
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -99,7 +100,7 @@ SimTemplate.init(CONFIG);
   SimTemplate.renderStage=function(i){orig(i);box.hidden=rest.hidden=i!==0;};
   apply();box.hidden=rest.hidden=SimTemplate.currentStage!==0;
 })();
-document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('욕망의 시계추',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='18px sans-serif';x.fillStyle='#d847f3';x.fillText(document.getElementById('resultLabel')?document.getElementById('resultLabel').textContent:'',400,270);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);const l=document.createElement('a');l.download='욕망의시계추_결과.png';l.href=c.toDataURL();l.click();});
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('욕망의 시계추',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='18px sans-serif';x.fillStyle='#d847f3';x.fillText(document.getElementById('resultLabel')?document.getElementById('resultLabel').textContent:'',400,270);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);EclipseSaveImage(c, '욕망의시계추_결과.png');});
   </script>
 </body>
 </html>

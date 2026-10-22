@@ -28,6 +28,7 @@
       margin-bottom: 8px;
     }
   </style>
+  <script src="save-image.js"></script>
 </head>
 <body>
   <div class="sim-container">
@@ -337,7 +338,7 @@
     
     document.getElementById('saveImageBtn').addEventListener('click', () => {
       const canvas = generateImage();
-      const link = document.createElement('a'); link.download = '이별시뮬레이터_결과.png'; link.href = canvas.toDataURL('image/png'); link.click();
+      EclipseSaveImage(canvas, '이별시뮬레이터_결과.png');
     });
     
     document.getElementById('shareBtn').addEventListener('click', async () => {
