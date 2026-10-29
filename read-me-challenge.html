@@ -282,6 +282,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script type="module">
+    // 다른 사람이 적은 글자는 화면에 넣기 전에 꼭 이걸 거친다
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     // Firebase SDK
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
     import { getFirestore, doc, getDoc, updateDoc, increment, arrayUnion } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
@@ -401,7 +403,7 @@
       progressFill.style.width = `${((currentQuestionIndex + 1) / 5) * 100}%`;
 
       optionsContainer.innerHTML = q.options.map((opt, idx) => `
-        <button class="option-btn" data-index="${idx}">${opt}</button>
+        <button class="option-btn" data-index="${idx}">${esc(opt)}</button>
       `).join('');
 
       optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
@@ -485,10 +487,10 @@
           const q = challengeData.questions[a.questionIndex];
           return `
             <div class="review-item">
-              <div class="review-question">${q.text}</div>
+              <div class="review-question">${esc(q.text)}</div>
               <div class="review-answers">
-                <span class="review-answer mine">내 선택: ${q.options[a.myAnswer]}</span>
-                <span class="review-answer theirs">정답: ${q.options[a.correctAnswer]}</span>
+                <span class="review-answer mine">내 선택: ${esc(q.options[a.myAnswer])}</span>
+                <span class="review-answer theirs">정답: ${esc(q.options[a.correctAnswer])}</span>
               </div>
             </div>
           `;

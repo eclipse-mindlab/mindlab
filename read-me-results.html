@@ -165,6 +165,8 @@
 
 
   <script type="module">
+    // 다른 사람이 적은 글자는 화면에 넣기 전에 꼭 이걸 거친다
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
     import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
@@ -257,10 +259,10 @@
             <div class="ranking-item">
               <div class="ranking-position ${positionClass}">${positionText}</div>
               <div class="ranking-info">
-                <div class="ranking-name">${r.name}</div>
+                <div class="ranking-name">${esc(r.name)}</div>
                 <div class="ranking-time">${timeAgo}</div>
               </div>
-              <div class="ranking-score ${scoreClass}">${r.score}%</div>
+              <div class="ranking-score ${scoreClass}">${Number(r.score) || 0}%</div>
             </div>
           `;
         }).join('');
