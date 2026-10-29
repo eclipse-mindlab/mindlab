@@ -78,6 +78,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ward{position:absolute;inset:0;z-index:9;background:rgba(10,8,24,.5);display:flex;align-items:flex-end}
 .wsheet{width:100%;max-height:82%;overflow:auto;background:var(--paper);color:var(--ink);border-top:3px solid #000;border-radius:26px 26px 0 0;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-sizing:border-box;display:flex;flex-direction:column;gap:10px;animation:sheet .3s cubic-bezier(.2,1.2,.4,1)}
 @keyframes sheet{from{transform:translateY(40%)}}
+.wsheet>*{flex-shrink:0}
 .whead{display:flex;align-items:center;gap:10px}.whead b{font-family:var(--hand);font-weight:400;font-size:22px;flex:1}
 .wfruit{font-family:var(--hand);font-size:17px;background:#fff1c2;border:2px solid #000;border-radius:999px;padding:2px 12px}
 .icon.wx{background:#fff;color:var(--ink);border-color:#000;width:36px;height:36px}
@@ -792,6 +793,7 @@ async function postScore() {
   try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); } catch (e) {}
 }
 let box = null, busyL = false, renaming = false;
+const LEGAL = '<p class="mw lgme"><a class="lnk" href="privacy.html">개인정보처리방침</a> · <a class="lnk" href="privacy.html#delete">기록 삭제 요청</a></p>';
 // names that would read as the channel itself or as staff
 const RESERVED = /^(이클립스|eclipse|이클립스공식)$|운영자|관리자|admin/i;
 function repaint() { if (box && box.isConnected && bt === 'league') render(box); }
@@ -800,7 +802,7 @@ async function render(el) {
   if (failed) { el.innerHTML = '<div class="mis"><p class="mt">리그는 인터넷이 될 때 열려요</p></div>'; return; }
   if (!ready) { el.innerHTML = '<p class="mempty">불러오는 중이에요</p>'; return; }
   if (!me) {
-    el.innerHTML = `<div class="mis"><p class="mt">이번 주 리그</p><p class="mw">구글로 로그인하면 정원이 저장되고, 이번 주 미션 수로 다른 정원사들과 겨뤄요. 딜렘에서 쓰던 계정이면 이름도 그대로 이어져요.${NATIVE ? '' : ' 앱 베타 신청도 로그인하면 할 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgIn">구글로 로그인</button></div></div>`;
+    el.innerHTML = `<div class="mis"><p class="mt">이번 주 리그</p><p class="mw">구글로 로그인하면 정원이 저장되고, 이번 주 미션 수로 다른 정원사들과 겨뤄요. 딜렘에서 쓰던 계정이면 이름도 그대로 이어져요.${NATIVE ? '' : ' 앱 베타 신청도 로그인하면 할 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgIn">구글로 로그인</button></div>${LEGAL}</div>`;
     el.querySelector('#lgIn').onclick = () => { sfx.boop(); signIn(); };
     return;
   }
@@ -829,7 +831,7 @@ async function render(el) {
       <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
-      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p></div>${betaCard()}`;
+      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p>${LEGAL}</div>${betaCard()}`;
     const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
