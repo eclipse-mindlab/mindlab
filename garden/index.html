@@ -71,6 +71,15 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 @keyframes sway{50%{transform:rotate(1.6deg)}}
 
 .hl{display:flex;gap:8px;align-items:center}
+.appb{pointer-events:auto;appearance:none;position:relative;height:40px;padding:0 13px;border:2.5px solid #000;border-radius:999px;background:var(--gold);color:var(--ink);font-family:var(--hand);font-size:15.5px;white-space:nowrap;cursor:pointer;box-shadow:0 3px 0 #000}
+.appb:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.appb.new::after{content:'';position:absolute;top:-3px;right:-2px;width:11px;height:11px;border-radius:50%;background:#ff5d73;border:2px solid #000;animation:apdot 1.6s ease-in-out infinite}
+@keyframes apdot{50%{transform:scale(1.25)}}
+#appSh .wsheet{display:flex;flex-direction:column;gap:10px}
+#appSh .opt{display:block;text-align:center;text-decoration:none}
+#appSh .mis.ok{background:#f3fbe9}
+#appSh .opt[disabled]{background:#ece7dc;color:#857c99;border-color:#857c99;box-shadow:0 3px 0 #857c99;cursor:default}
+#appSh .alink{font-family:var(--hand);font-size:18px;text-align:center;margin:2px 0;user-select:all;word-break:break-all}
 .icon.pulse{animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 6px rgba(255,207,90,.45)}}
 .devs{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;gap:6px}
@@ -200,6 +209,20 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
+.ta .act .sp{flex:1}
+.rbt{appearance:none;border:0;background:none;padding:2px 0;font-family:var(--hand);font-size:14px;color:#5b3fd0;cursor:pointer;display:flex;align-items:center;gap:6px}
+.rbt.on{color:var(--ink)}
+.rbt .new{font-style:normal;font-size:12px;background:#ff5d73;color:#fff;border:1.5px solid #000;border-radius:999px;padding:0 7px}
+.th{display:flex;flex-direction:column;gap:6px;margin-top:4px;padding-left:10px;border-left:3px solid #e6dcc8}
+.rp{display:flex;flex-direction:column;gap:2px}
+.rp .who{display:flex;align-items:center;gap:6px;font-size:12px;color:#7a6fa0}.rp .who b{font-family:var(--hand);font-weight:400;font-size:13.5px;color:var(--ink)}.rp .who .lnk{margin-left:auto;font-size:12px}
+.rp p{margin:0;font-size:14.5px;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+.rin{display:flex;gap:6px;align-items:center}.rin input{flex:1;min-width:0;font:inherit;font-size:14.5px;border:2px solid #000;border-radius:10px;padding:7px 10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}.rin .opt{flex:none;font-size:14.5px;padding:6px 12px}
+.tday{display:flex;gap:6px;margin-bottom:2px}.tday button{appearance:none;border:2px solid #000;border-radius:999px;background:#fff;padding:4px 12px;font-family:var(--hand);font-size:14px;color:var(--ink);cursor:pointer}.tday button.on{background:#f6f1ff;border-color:#5b3fd0;color:#5b3fd0}
+.wit.sel{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
+.wmsg .wtry{display:block;margin-bottom:6px}.wbuy{display:flex;gap:6px;justify-content:center}.wbuy .opt{flex:0 1 auto;font-size:15px;padding:7px 12px}.wbuy .opt[disabled]{opacity:.6}
+.calt{width:100%;margin-top:-2px}
+.sc.pick{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 
@@ -226,7 +249,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
   <div class="hud">
     <div class="hl"><div class="chip" id="dropChip" aria-live="polite"><img src="a/drop.webp" alt="물방울"><span id="dropN">0</span></div>
     <div class="chip" id="fruitChip" aria-live="polite"><img src="a/fruit.webp" alt="열매"><span id="fruitN">0</span></div></div>
-    <div class="hl"><button class="icon" type="button" id="wardBtn" aria-label="옷장"><img src="a/ui_hanger.webp" alt=""></button><button class="icon" type="button" id="mute" aria-label="소리 끄기"><img id="muteImg" src="a/ui_sound_on.webp" alt=""></button></div>
+    <div class="hl"><button class="appb" type="button" id="appBtn" hidden>앱 받기</button><button class="icon" type="button" id="wardBtn" aria-label="옷장"><img src="a/ui_hanger.webp" alt=""></button><button class="icon" type="button" id="mute" aria-label="소리 끄기"><img id="muteImg" src="a/ui_sound_on.webp" alt=""></button></div>
   </div>
   <button class="doing" type="button" id="doingPill" hidden></button>
   <div class="devs"><button class="dev" type="button" id="dev2">시험용 · 해 질 녘</button><button class="dev" type="button" id="dev">시험용 · 하루 넘기기</button></div>
@@ -250,7 +273,28 @@ const PH={
       {q:'모르는 걸 아는 척한 적 있어?',o:[['있지','모른다고 하면 뭐가 그렇게 무서웠어?'],['거의 없어','정말? 오늘 들은 말 중에 진짜 아는 건 몇 개야?']]},
       {q:'요즘 이건 꼭 맞다고 믿는 거 하나 있어?',o:[['있어','누가 반대하면, 왜 맞는지 세 가지 댈 수 있어?'],['딱히 없어','그럼 넌 뭘 기준으로 고르며 살아?']]},
       {q:'착하게 살면 손해 본다고 생각해?',o:[['좀 그렇지','돈을 잃는 거랑 내가 나쁜 사람이 되는 거, 뭐가 더 큰 손해야?'],['아니','왜? 남들 말 말고 네 이유로.']]},
-      {q:'죽는 게 무서워?',o:[['응','죽음이 나쁜 건지 아는 사람, 본 적 있어? 모르는 걸 무서워하는 거네.'],['별로','다들 무서워하는데, 넌 왜 안 무서워?']]}],
+      {q:'죽는 게 무서워?',o:[['응','죽음이 나쁜 건지 아는 사람, 본 적 있어? 모르는 걸 무서워하는 거네.'],['별로','다들 무서워하는데, 넌 왜 안 무서워?']]},
+      {q:'공부는 왜 하는 걸까?',o:[['시험 때문에','시험이 끝나면? 그다음에도 알고 싶은 게 남아 있어?'],['알고 싶어서','좋아. 그 마음이 철학이야. 철학은 원래 지혜를 사랑한다는 뜻이거든.']]},
+      {q:'칭찬이랑 아첨은 뭐가 달라?',o:[['진심이냐 아니냐','그 진심을 어떻게 알아? 듣기 좋은 말은 다 진심 같거든.'],['모르겠어','나는 이렇게 봐. 듣는 사람을 더 좋게 만들면 칭찬, 기분만 좋게 하면 아첨.']]},
+      {q:'오늘 들은 말 중에 진짜 맞는지 확인한 거 있어?',o:[['있어','멋지다. 어떻게 확인했어? 그 방법이 너의 무기야.'],['없어','그럼 하나만 골라서 왜 맞는지 물어봐. 그게 내가 매일 한 일이야.']]},
+      {q:'넌 누구한테 배우고 싶어?',o:[['잘 아는 사람','잘 아는지 어떻게 알아? 말 잘하는 거랑 아는 건 달라.'],['아무한테나','좋아. 나는 구두 고치는 사람한테도 물어보고 배웠어.']]},
+      {q:'정의가 뭐라고 생각해?',o:[['공평한 거','똑같이 나누면 늘 공평해? 아기랑 어른한테 밥을 똑같이 줘?'],['착하게 사는 거','그럼 착한 건 또 뭔데? 거봐, 질문이 끝이 없지.']]},
+      {q:'말싸움에서 이기는 게 중요해, 맞는 게 중요해?',o:[['이기는 거','이겼는데 틀렸으면, 넌 뭘 얻은 거야?'],['맞는 거','그럼 지는 걸 겁내지 마. 지면서 맞는 걸 배우기도 하니까.']]},
+      {q:'친구가 나쁜 짓을 하면 어떻게 해?',o:[['모른 척해','그 친구가 망가지는 걸 보고만 있는 게 친구야?'],['말해 줘','어떻게 말할 거야? 혼내는 것보다 물어보는 게 덜 아파.']]},
+      {q:'너를 화나게 하는 건 상대야, 너야?',o:[['상대지','같은 말에도 안 화나는 날이 있지? 그날은 뭐가 달랐어?'],['나일지도','알아챘네. 그럼 고칠 수 있는 것도 너야.']]},
+      {q:"하루에 '왜?'라고 몇 번 물어?",o:[['거의 안 해','어릴 땐 하루에 백 번은 물었을걸. 그 질문들, 어디서 잃어버렸을까?'],['자주 해',"좋아. 그럼 그 '왜' 하나 나한테도 던져 봐."]]},
+      {q:'거짓말이 필요한 순간도 있을까?',o:[['있지','그게 정말 상대를 위한 건지, 내가 편하려는 건지 따져 봤어?'],['없어','살인자가 친구 어디 있냐고 물어도? 우리 학파 칸트 형은 그래도 안 된다고 했어.']]},
+      {q:'겸손한 사람이랑 자신 없는 사람은 같을까?',o:[['비슷하지','자신 없는 사람은 묻지도 않아. 겸손한 사람은 모르니까 계속 묻지.'],['다르지','어떻게 달라? 네 말로 한번 말해 봐.']]},
+      {q:'부모님 말씀은 늘 옳을까?',o:[['대체로','대체로면, 아닐 때도 있다는 거네. 그건 어떻게 알아봐?'],['아닐 때도 있어','그럼 사랑하면서도 반대할 수 있어? 그게 어른이야.']]},
+      {q:'좋은 사람 되는 거, 배워서 될까?',o:[['응','그럼 누가 가르쳐? 나는 그런 선생을 평생 찾았는데.'],['타고나는 거야','그럼 나쁜 사람은 영영 못 고치겠네. 정말 그럴까?']]},
+      {q:'나쁜 짓 하고도 행복한 사람이 있을까?',o:[['있을걸','겉으로는 그렇겠지. 밤에 혼자 있을 때도 행복할까?'],['없을걸','나도 그렇게 봐. 나쁜 짓은 남보다 먼저 자기 영혼을 망쳐.']]},
+      {q:'넌 뭘 할 때 시간 가는 줄 몰라?',o:[['놀 때','좋아. 그 놀이가 너를 더 좋은 사람으로 만들어?'],['뭔가 만들 때','좋다. 그게 네가 제일 잘하는 쪽일지도 몰라.']]},
+      {q:'무서운 걸 피하는 게 똑똑한 거야?',o:[['응','다 피하면 지켜야 할 건 누가 지켜? 나는 전쟁터에서도 도망 안 치고 걸어서 물러났어.'],['아니','그럼 피할 무서움이랑 맞설 무서움, 어떻게 구분해?']]},
+      {q:'아무도 모르게 나쁜 짓 할 기회가 생기면?',o:[['할지도','솔직하네. 그럼 넌 남이 볼 때만 착한 거야?'],['안 해','왜? 들킬 일도 없는데. 그 이유가 진짜 너야.']]},
+      {q:'네가 제일 아끼는 건 뭐야?',o:[['사람','그 사람한테 그걸 말해 본 적 있어?'],['물건','그게 없어지면 너도 없어져?']]},
+      {q:'질문을 많이 하면 사람들이 싫어할까?',o:[['싫어하더라','맞아. 그래서 나는 사형까지 받았어. 그래도 멈추진 않았지.'],['좋아하더라','운이 좋네. 그런 친구는 꼭 붙잡아.']]},
+      {q:'너는 너한테 솔직해?',o:[['응','그럼 하나 물어볼게. 요즘 남 탓 한 거, 정말 남 탓이었어?'],['가끔 아니야','나도 그래. 그래서 나는 매일 나한테 질문했어.']]},
+      {q:'잘 사는 사람은 어떤 사람일까?',o:[['돈 많은 사람','돈은 많은데 매일 불안한 사람도 잘 사는 거야?'],['마음 편한 사람','좋아. 그럼 마음은 어떻게 해야 편해질까? 그게 다음 질문이야.']]}],
     idle:['오늘은 여기까지. 내일 또 물어볼게.','물은 줬어? 나무는 대답이 없어도 자라.','음냐, 생각하는 중이야.']},
   nie:{nm:'꼬마 니체',robe:'#5a4636',trim:'#2e231a',
     hi:'여기 춤출 자리 있어?',who:'콧수염 보면 몰라? 망치 들고 다니는 애야.',after:'좋아. 내 질문은 좀 세. 괜찮지?',
@@ -260,7 +304,31 @@ const PH={
       {q:'너를 힘들게 한 일 중에 지금 고마운 것도 있어?',o:[['있어','그것 봐. 너를 죽이지 못한 건 너를 더 세게 만들어.'],['없어','아직 없을 수도 있지. 그 일이 아직 안 끝났을지도 몰라.']]},
       {q:'착하다는 말 들으면 좋아?',o:[['좋지','혹시 그 착하다는 게 말 잘 듣는다는 뜻은 아니야?'],['글쎄','그 "글쎄"가 마음에 들어.']]},
       {q:'요즘 진짜 원하는 게 있어?',o:[['있어','그거 원하는 게 너야, 아니면 남들이 부러워할 너야?'],['모르겠어','그럼 원하지 않는 것부터 하나씩 버려 봐.']]},
-      {q:'아무도 안 볼 때 춤춰 본 적 있어?',o:[['있어','좋아. 한 번도 춤추지 않은 날은 잃어버린 날이야.'],['없어','오늘 해 봐. 아무도 안 봐.']]}],
+      {q:'아무도 안 볼 때 춤춰 본 적 있어?',o:[['있어','좋아. 한 번도 춤추지 않은 날은 잃어버린 날이야.'],['없어','오늘 해 봐. 아무도 안 봐.']]},
+      {q:'오늘 너답게 한 일 하나 있어?',o:[['있어','좋아. 그런 일이 쌓이면 그게 네가 돼.'],['없어','그럼 오늘 하나만. 사소해도 돼.']]},
+      {q:'실수하면 오래 곱씹어?',o:[['응','잊는 것도 힘이야. 배울 건 챙기고, 나머지는 소화해서 넘겨.'],['금방 잊어','소화를 잘하는구나. 다만 배울 건 꼭 챙겨.']]},
+      {q:'남이 정해 준 목표, 지금도 쫓고 있어?',o:[['그런 것 같아','그거 이루면 기쁜 건 너야, 그 사람이야?'],['아니','그럼 네 목표는 뭐야? 한 줄로 말해 봐.']]},
+      {q:'편한 게 좋아, 성장하는 게 좋아?',o:[['편한 거',"편한 것만 찾는 사람을 나는 '마지막 인간'이라고 불렀어. 눈만 깜빡이며 행복하대."],['성장하는 거','좋아. 대신 좀 아플 거야. 그래도?']]},
+      {q:'걸으면서 생각해 본 적 있어?',o:[['있어','그렇지. 걸으면서 떠오른 생각만 쓸모 있어. 앉아서 한 생각은 의심해.'],['없어','오늘 10분만 걸어 봐. 머리가 달라져.']]},
+      {q:'누가 너를 비웃으면?',o:[['신경 쓰여','그 사람은 네 길을 걸어 본 적 없어. 모르는 사람 웃음까지 짊어질 필요 없어.'],['상관없어','좋아. 웃음은 웃음으로 받아쳐도 돼.']]},
+      {q:'지금 버리고 싶은 생각 하나 있어?',o:[['있어','망치로 한번 두드려 봐. 속 빈 소리가 나면 버려.'],['없어','정말? 남이 넣어 준 생각도 하나 없어?']]},
+      {q:'친구는 편한 사람이어야 할까?',o:[['응','나는 친구한테서 가장 좋은 적을 찾으라고 했어. 너를 자극하는 사람.'],['아니','맞아. 좋은 친구는 너를 더 높이 끌어올려.']]},
+      {q:'넌 뭘 할 때 살아 있다고 느껴?',o:[['뭔가 해낼 때','그 느낌, 내 힘이 커지는 느낌. 나는 그걸 행복이라고 불렀어.'],['쉴 때','쉼도 좋아. 다시 일어날 힘을 모으는 쉼이라면.']]},
+      {q:'좋은 사람이랑 강한 사람, 뭐가 되고 싶어?',o:[['좋은 사람',"그 '좋다'는 누가 정한 거야? 한번 따져 봐."],['강한 사람','좋아. 남을 누르는 힘 말고 나를 넘는 힘이면.']]},
+      {q:'제일 흔한 거짓말은 뭘까?',o:[['남한테 하는 거','아니. 제일 흔한 건 자기한테 하는 거짓말이야.'],['자기한테 하는 거','맞아. 내 책에도 썼어. 제일 흔한 거짓말은 자기를 속이는 거라고.']]},
+      {q:'남들 기대대로 사는 게 편해?',o:[['좀 편해','편한 대신 무거워. 남의 짐을 지고 사막을 걷는 낙타처럼.'],['답답해','그럼 사자처럼 \'싫어\' 한번 해 봐. 그다음엔 아이처럼 새로 놀면 돼.']]},
+      {q:'위험한 선택 해 본 적 있어?',o:[['있어','그때 살아 있었지? 위험하게 살라고 내가 말했어.'],['없어','작은 거라도 해 봐. 안 가 본 길로 집에 가는 것부터.']]},
+      {q:'너를 제일 힘들게 하는 건 몸이야, 마음이야?',o:[['몸','나도 평생 머리가 아팠어. 그 덕에 안 아픈 날을 더 사랑했지.'],['마음','마음은 근육 같아. 버티면서 커.']]},
+      {q:'존경하는 사람 있어?',o:[['있어','좋아. 근데 계속 제자로만 남으면 스승한테 잘못 갚는 거야. 언젠간 넘어서.'],['없어','그럼 네가 되고 싶은 모습을 한 줄로 그려 봐.']]},
+      {q:'후회되는 일, 지울 수 있다면 지울래?',o:[['응','그 일이 지워지면 지금의 너도 없어. 그래도?'],['아니','좋아. 그게 운명을 사랑하는 거야.']]},
+      {q:'남과 다른 게 무서워?',o:[['좀','무리에서 벗어나면 춥지. 대신 별이 보여.'],['아니','좋아. 그럼 너만 다른 점 하나 말해 봐.']]},
+      {q:'쉬운 길 두고 어려운 길 골라 본 적 있어?',o:[['있어','왜 그랬어? 그 이유가 바로 너야.'],['없어','쉬운 길만 가면 다리에 힘이 안 붙어.']]},
+      {q:'요즘 화나는 일 있어?',o:[['있어','그 화로 뭘 만들 수 있을까? 화도 힘이야. 어디에 쓰느냐가 문제지.'],['없어','좋은 날이네. 그 힘은 하고 싶은 데 써.']]},
+      {q:'너는 너 자신을 좋아해?',o:[['응','좋아. 자기를 사랑하는 것도 배워야 하는 기술이야.'],['잘 모르겠어','나도 배워야 했어. 자기를 사랑하는 건 저절로 안 되더라.']]},
+      {q:'음악 없는 하루, 버틸 수 있어?',o:[['못 버텨','맞아. 음악 없는 삶은 실수야. 내가 한 말이야.'],['버틸 수 있어','그래도 오늘 노래 하나만 크게 들어 봐.']]},
+      {q:'높이 올라가고 싶어?',o:[['응','오를 땐 짐부터 덜어야 해. 뭘 내려놓을래?'],['아니','넓게 가도 돼. 네가 고른 길이기만 하면.']]},
+      {q:'오늘의 너는 어제의 너보다 나아?',o:[['응','어디가? 하나만 말해 봐.'],['모르겠어','그럼 내일 하나만 넘어 봐. 상대는 어제의 너야.']]},
+      {q:'진짜 원하는 걸 말하는 게 부끄러워?',o:[['응','원하는 걸 숨기면 남이 대신 정해 줘. 그게 더 아깝지 않아?'],['아니','좋아. 그럼 지금 하나 말해 봐.']]}],
     idle:['오늘은 춤추러 갈래. 내일 봐.','망치는 내일 다시 들게.','생각은 걸으면서 하는 거야.']},
   dio:{nm:'꼬마 디오게네스',robe:'#b7ad9a',trim:'#7d735f',
     Q:[
@@ -268,7 +336,32 @@ const PH={
       {q:'남들 눈 신경 쓰여?',o:[['많이','남들도 네 생각 별로 안 해. 다들 자기 걱정하느라 바빠.'],['별로','좋아. 그럼 대낮에 등불 들고 다녀도 되겠네.']]},
       {q:'부자가 부러워?',o:[['좀','알렉산드로스 대왕이 소원을 말해 보래서, 햇빛 가리지 말랬어. 그게 다였어.'],['아니','진짜로? 하나도?']]},
       {q:'눈치 보느라 참은 말, 많아?',o:[['많지','그 사람이 네 밥 차려 줘?'],['별로','좋네. 대신 듣기 싫은 말도 들을 줄 알아야 해.']]},
-      {q:'정직한 사람, 본 적 있어?',o:[['있어','어디서? 나는 등불 들고 대낮에 찾아다녀도 못 찾았는데.'],['글쎄','나도 아직 찾는 중이야.']]}],
+      {q:'정직한 사람, 본 적 있어?',o:[['있어','어디서? 나는 등불 들고 대낮에 찾아다녀도 못 찾았는데.'],['글쎄','나도 아직 찾는 중이야.']]},
+      {q:'오늘 산 것 중에 없어도 됐던 거 있어?',o:[['있어','그거 사려고 일한 시간은 몇 시간이야?'],['없어','대단하네. 나는 그래서 지갑도 없어.']]},
+      {q:'좋은 옷 입으면 좋은 사람 돼?',o:[['기분은 좋아지지','기분은 옷이 만들어도, 사람은 네가 만들어.'],['아니','그럼 옷 고르는 시간 반만 다른 데 써 봐.']]},
+      {q:'거절당하는 거 무서워?',o:[['무서워','거절당해도 너는 그대로야. 잃은 건 부탁 한 번뿐이야.'],['괜찮아','좋아. 그럼 오늘 하나 부탁해 봐.']]},
+      {q:'왕이 소원을 들어준다면 뭐 달라 할 거야?',o:[['돈','그 돈 지키느라 이제 왕 눈치 봐야겠네.'],['아무것도','좋아. 그럼 너를 묶을 것도 없어.']]},
+      {q:'아침에 일어나기 싫은 이유는 뭐야?',o:[['피곤해서','그럼 오늘은 일찍 자. 잠은 철학보다 먼저야.'],['할 일이 싫어서','마르쿠스 황제도 이불 속에서 똑같았대. 그래서 일기에 썼지. \'나는 일하려고 태어났다.\'']]},
+      {q:'남들 사는 대로 살면 편해?',o:[['편하지','편하긴 하지. 근데 남들이 다 낭떠러지로 가면?'],['답답해','그럼 하나만 다르게 해 봐. 오늘 점심 메뉴라도 네가 골라.']]},
+      {q:'부끄러워서 못 한 일 있어?',o:[['있어','누가 부끄럽게 만들었어? 그 사람이 네 인생 대신 살아 줘?'],['없어','멋지다. 나는 시장 한복판에서 밥도 먹었어.']]},
+      {q:'휴대폰 없이 하루 버틸 수 있어?',o:[['못 버텨','그럼 폰이 너를 가진 거네.'],['버틸 수 있어','해 봐. 하루면 세상이 얼마나 조용한지 알 거야.']]},
+      {q:'칭찬 들으면 하루 종일 기분 좋아?',o:[['응','그럼 욕 들으면 하루 종일 나쁘겠네. 둘 다 남 손에 있어.'],['별로','좋아. 네 기분 열쇠는 네가 갖고 있구나.']]},
+      {q:'정말 필요한 건 몇 개일까?',o:[['많아','하나씩 세어 봐. 숨, 물, 밥, 잠… 그다음은?'],['몇 개 안 돼','맞아. 나는 망토 한 벌, 지팡이, 자루면 됐어.']]},
+      {q:'높은 사람 앞에서 할 말 해 본 적 있어?',o:[['있어','멋지다. 나는 대왕한테도 비켜 달라고 했어.'],['없어','높은 사람도 너처럼 밥 먹고 잠자. 똑같은 사람이야.']]},
+      {q:'걱정 중에 네 힘으로 바꿀 수 있는 건 몇 개야?',o:[['몇 개 있어','그것만 해. 나머지는 내려놔. 에픽테토스 형 말이야.'],['거의 없어','그럼 걱정도 내려놔. 못 바꾸는 걸 쥐고 있으면 손만 아파.']]},
+      {q:'화내고 나면 속이 시원해?',o:[['응','잠깐이지. 그다음엔 치울 게 많아.'],['아니','세네카 형은 화를 잠깐 미친 거라고 했어. 맞는 말이야.']]},
+      {q:'사람을 볼 때 뭐부터 봐?',o:[['옷이나 얼굴','그럼 나를 봤으면 거지라고 했겠네. 나는 철학자였는데.'],['하는 짓','좋아. 말 말고 하는 짓을 봐.']]},
+      {q:'너는 누구 거야?',o:[['내 거지','정말? 네 시간을 누가 쓰는지 한번 봐.'],['잘 모르겠어','노예 시장에 팔려 갈 때, 나는 주인이 필요한 사람한테 팔라고 했어.']]},
+      {q:'오늘 웃긴 일 있었어?',o:[['있어','좋아. 웃을 줄 알면 가난해도 부자야.'],['없어','그럼 네가 만들어. 나는 대낮에 등불 들고 다녔어.']]},
+      {q:'비싼 밥이 더 맛있어?',o:[['그렇지','배고플 때 먹는 빵을 이길 요리는 없어.'],['아닐 때도 있어','맞아. 제일 좋은 반찬은 배고픔이야.']]},
+      {q:'혼자 있는 시간 무서워?',o:[['좀','통 안에 혼자 있어 봐. 생각보다 할 게 많아.'],['좋아','그럼 넌 이미 반은 자유야.']]},
+      {q:'거울 보면 무슨 생각 해?',o:[['외모 생각','얼굴은 못 바꿔도 하는 짓은 오늘 바꿀 수 있어.'],['별생각 없어','좋아. 거울 볼 시간에 햇빛 봐.']]},
+      {q:'너한테 진짜 위험한 건 뭐야?',o:[['사고나 병','그건 조심하면 돼. 더 위험한 건 남들처럼만 살다 끝나는 거야.'],['나 자신','맞아. 제일 무서운 적은 내 욕심이야.']]},
+      {q:'유행 따라 산 거 있어?',o:[['많아','유행은 남들이 네 지갑을 여는 방법이야.'],['별로','좋아. 유행은 금방 가도 너는 남아.']]},
+      {q:'오늘 누구한테 친절했어?',o:[['응','좋아. 대신 바라는 거 없이.'],['아니','그럼 지금 하나. 문 잡아 주기라도.']]},
+      {q:'집이 좁아서 불편해?',o:[['좀','짐을 줄이면 집이 넓어져. 나는 통에서도 넓었어.'],['괜찮아','좋아. 집이 작으면 청소도 금방이야.']]},
+      {q:'남을 따라 하는 거 나빠?',o:[['나쁘진 않아','좋은 걸 따라 하는 건 괜찮아. 나는 쥐한테서 사는 법을 배웠어.'],['나빠','그럼 아이한테 손으로 물 마시는 법을 배운 나는 뭐가 돼?']]},
+      {q:'오늘 남 탓 한 번 했어?',o:[['했어','남 탓은 쉽지. 근데 남은 못 바꿔. 너는 바꿀 수 있고.'],['안 했어','멋지다. 그것만으로 오늘 반은 성공이야.']]}],
     idle:['햇빛 가리지 마.','통 안이 제일 편해.','오늘은 그만. 낮잠 잘 거야.']},
   epi:{nm:'꼬마 에피쿠로스',robe:'#d6ecd0',trim:'#6aa86a',
     hi:'정원이 있다길래 왔어. 여기 있어도 돼?',who:'에피쿠로스. 아테네에서 정원을 가꾸며 친구들이랑 살았어.',after:'고마워. 맛있는 건 같이 먹자.',
@@ -277,7 +370,32 @@ const PH={
       {q:'걱정했던 일, 대부분 일어났어?',o:[['대부분 일어났지','정말? 그중에 걱정해서 막은 건 몇 개야?'],['거의 안 일어났어','그럼 그 걱정은 뭘 위해 한 걸까?']]},
       {q:'죽고 나면 아플까?',o:[['아플 것 같아','내가 있을 땐 죽음이 없고, 죽음이 오면 내가 없어. 둘이 만날 일이 없어.'],['모르겠어','생각해 봐. 내가 있을 땐 죽음이 없고, 죽음이 오면 내가 없어.']]},
       {q:'제일 큰 즐거움이 뭐야?',o:[['맛있는 거','좋지. 근데 배탈 나면 끝이야. 내일까지 좋은 걸로 골라.'],['걱정 없는 거','나도. 몸이 안 아프고 마음이 안 시끄러운 거. 그게 제일이야.']]},
-      {q:'힘들 때 부를 친구 있어?',o:[['있어','그럼 넌 부자야. 지혜가 주는 것 중에 제일 큰 게 우정이래.'],['잘 모르겠어','그럼 오늘 한 명한테 먼저 연락해 봐. 정원은 같이 가꾸는 거야.']]}],
+      {q:'힘들 때 부를 친구 있어?',o:[['있어','그럼 넌 부자야. 지혜가 주는 것 중에 제일 큰 게 우정이라고 나는 늘 말했어.'],['잘 모르겠어','그럼 오늘 한 명한테 먼저 연락해 봐. 정원은 같이 가꾸는 거야.']]},
+      {q:'오늘 맛있게 먹은 거 있어?',o:[['있어','누구랑 먹었어? 나는 그게 더 궁금해.'],['없어','그럼 저녁은 좋아하는 사람이랑 먹어 봐.']]},
+      {q:'친구한테 마지막으로 고맙다고 한 게 언제야?',o:[['최근에','좋아. 우정은 자주 물을 줘야 자라.'],['기억 안 나','오늘 한 줄 보내 봐. 길 필요 없어.']]},
+      {q:'행복은 많이 즐기는 걸까, 덜 괴로운 걸까?',o:[['많이 즐기기','많이 즐기면 다음 날 머리가 아파. 나는 덜 괴로운 쪽을 골랐어.'],['덜 괴롭기','나랑 같네. 몸이 편하고 마음이 조용하면 그게 최고야.']]},
+      {q:'요즘 잠은 잘 자?',o:[['잘 자','좋아. 그게 제일 큰 즐거움 중 하나야.'],['잘 못 자','자기 전에 걱정 하나만 종이에 적고 내려놔 봐.']]},
+      {q:'갖고 싶은 게 생기면 바로 사?',o:[['응','사고 사흘 뒤에도 기쁠까? 그걸 기준으로 해 봐.'],['좀 참아','좋아. 원하는 걸 하나 줄이면 그만큼 부자가 돼.']]},
+      {q:'벌받을까 봐 무서웠던 적 있어?',o:[['있어','나는 신들이 우리 일로 화내지 않는다고 봤어. 무서움부터 내려놔.'],['없어','좋아. 두려움 없는 마음이 즐거움의 시작이야.']]},
+      {q:'시끄러운 곳이 좋아, 조용한 곳이 좋아?',o:[['시끄러운 곳','재밌지. 대신 마음까지 시끄러워지면 일찍 나와.'],['조용한 곳','나도. 그래서 아테네 성 밖에 정원을 샀어.']]},
+      {q:'오늘 몸은 괜찮아?',o:[['괜찮아','그럼 반은 행복한 거야. 그거 잊지 마.'],['좀 아파','오늘은 쉬어. 쉬는 것도 즐거움이야.']]},
+      {q:'좋았던 기억 하나만 꺼내 볼래?',o:[['있어','좋아. 나는 많이 아플 때 친구들이랑 나눈 대화를 떠올리며 버텼어.'],['잘 안 떠올라','천천히. 작은 거라도 돼. 따뜻했던 밥 한 끼.']]},
+      {q:'인기가 많으면 좋을까?',o:[['좋지','인기는 남이 주는 거라 남이 가져가. 친구는 안 그래.'],['피곤할 것 같아','맞아. 나는 숨어서 조용히 살라고 했어.']]},
+      {q:'오늘 제일 좋았던 순간은?',o:[['있었어','그 순간 뭐가 좋았는지 기억해 둬. 내일 또 만들 수 있게.'],['없었어','그럼 지금 하나 만들자. 물 한 잔 천천히 마시기.']]},
+      {q:'일을 너무 많이 하는 것 같아?',o:[['응','뭘 위해 일해? 그게 일을 더 해야만 얻는 거야?'],['적당해','좋아. 남는 시간은 친구한테 써.']]},
+      {q:'돈이 많아지면 걱정이 줄까?',o:[['줄겠지','큰돈은 큰 걱정을 데려와. 지킬 게 생기거든.'],['아니','맞아. 걱정은 돈보다 생각이 만들어.']]},
+      {q:'술 마시면 즐거워?',o:[['응','그날은. 다음 날은? 나는 다음 날까지 계산해.'],['별로','좋아. 나는 물만 마시면서도 잔치했어.']]},
+      {q:'작은 일에도 기뻐할 줄 알아?',o:[['응','그게 재능이야. 작은 걸로 기쁘면 매일 기쁠 수 있어.'],['잘 안 돼','연습하면 돼. 오늘 밥 한 숟갈만 천천히 먹어 봐.']]},
+      {q:'미래가 걱정돼?',o:[['응','미래는 반은 네 거, 반은 아니야. 네 쪽 반만 챙겨.'],['별로','좋아. 오늘을 잘 쓰면 미래도 덜 무서워.']]},
+      {q:'좋아하는 사람이랑 매일 밥 먹을 수 있다면?',o:[['좋지','그럼 넌 거의 다 가진 거야. 나는 우정을 제일 큰 행복으로 꼽았어.'],['부담스러워','매일은 아니어도 돼. 자주면 돼.']]},
+      {q:'남한테 잘 보이려고 쓴 돈, 아까워?',o:[['아까워','다음엔 너를 위해 써. 좋은 친구랑 밥 한 끼.'],['아니','그게 너를 기쁘게 했으면 괜찮아. 사흘 뒤에도 기쁘다면.']]},
+      {q:'쉬는 날 뭐 하면 제일 좋아?',o:[['아무것도 안 하기','좋아. 아무것도 안 하는 것도 기술이야.'],['사람 만나기','좋아. 혼자 쉰 날보다 오래 남아.']]},
+      {q:'슬픈 일이 생기면 어떻게 해?',o:[['혼자 삭혀','혼자 들기엔 무거워. 친구한테 반만 나눠 줘.'],['누구한테 말해','좋아. 나눈 슬픔은 가벼워져.']]},
+      {q:'좋은 하루의 조건, 하나만 꼽으면?',o:[['잘 먹기','좋아. 대신 배탈 안 나게.'],['마음 편하기','나랑 같네. 그게 제일이야.']]},
+      {q:'너무 바쁘면 행복할 틈이 있을까?',o:[['없지','그래서 일부러 틈을 만들어야 해. 하루 10분이라도.'],['바빠도 행복해','좋아. 그 바쁨이 네가 고른 거라면.']]},
+      {q:'친구랑 다투면 먼저 연락해?',o:[['응','멋지다. 이기는 것보다 친구가 남는 게 커.'],['기다려','얼마나? 그 사이 우정은 목이 말라.']]},
+      {q:'행복한 척해 본 적 있어?',o:[['있어','척은 오래 못 가. 진짜 즐거운 거 하나만 찾아보자.'],['없어','좋아. 솔직한 게 마음이 편하지.']]},
+      {q:'살면서 꼭 피하고 싶은 건?',o:[['아픔','센 아픔은 대개 짧고, 긴 아픔은 대개 약해. 나는 그렇게 버텼어.'],['후회','그럼 오늘 할 말은 오늘 해. 미루면 후회가 돼.']]}],
     idle:['오늘은 그만 쉬자. 쉬는 것도 즐거움이야.','배부르다. 낮잠 잘래.','내일은 무화과나무 얘기 해 줄게.']},
   owl:{nm:'미네르바의 부엉이'},ecl:{nm:'이클립스'}};
 const KIDS=['soc','nie','dio','epi'];
@@ -361,6 +479,10 @@ const per=v=>Object.fromEntries(KIDS.map(k=>[k,typeof v==='function'?v():v]));
 function fresh(){return {off:0,intro:0,drops:0,given:0,fruit:0,day:'',asked:per(()=>[]),cnt:per(0),met:per(0),own:[],wear:per(()=>({})),mis:{},misI:per(0),misDone:per(0),misN:{},owlDay:'',barrelN:0,wardSeen:0,muted:false,pd:1,arr:'',xp:per(0),lv:per(1),trees:0,log:{},best:{streak:0,week:0},weekWin:'',streakSeen:0};}
 try{S=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
 if(!S||typeof S!=='object')S=fresh();
+// a garden handed over from an in-app browser: only taken when it is fresh (30 min) and has grown more than this one
+try{const m=location.hash.match(/carry=([A-Za-z0-9_-]+)/);if(m){history.replaceState(null,'',location.pathname+location.search+(/[#&]app\b/.test(location.hash)?'#app':''));
+  const c=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));const g=x=>!x?-1:(x.trees||0)*100+(x.given||0)+Object.values(x.xp||{}).reduce((a,b)=>a+b,0)+Object.values(x.misDone||{}).reduce((a,b)=>a+b,0)*3;
+  if(c&&c.s&&typeof c.s==='object'&&Math.abs(Date.now()-c.t)<18e5&&g(c.s)>g(S)){try{localStorage.setItem('eclipse_kid_garden_backup',JSON.stringify(S));}catch(e){}S=c.s;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}}}catch(e){}
 {const F=fresh();for(const k in F)if(S[k]==null)S[k]=F[k];['asked','cnt','met','wear','misI','misDone','xp','lv'].forEach(f=>KIDS.forEach(k=>{if(S[f][k]==null)S[f][k]=F[f][k];}));}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(window.onGardenSave)window.onGardenSave();};
 function rollDay(){const t=today();if(S.day!==t){if(S.day)S.pd++;S.day=t;S.cnt=per(0);save();return true;}return false;}
@@ -387,67 +509,195 @@ const SORT=[{q:'큰 결정을 앞두고 너는?',o:[['soc','장단점을 하나�
   {q:'갑자기 돈이 아주 많아지면?',o:[['epi','친구들이랑 맛있는 것부터 먹으러 간다'],['nie','평생 미뤄 둔 꿈에 다 건다'],['soc','제대로 쓰는 법부터 공부한다'],['dio','지금처럼 산다. 없어도 괜찮았으니까']]},
   {q:'죽음을 생각하면?',o:[['nie','끝이 있으니까 지금 선택이 의미 있다'],['dio','자주 생각할수록 덜 무섭다'],['epi','죽으면 끝. 그러니 지금을 즐긴다'],['soc','죽음이 대체 뭔지부터 알고 싶다']]}];
 // the square: one question a day for everyone, answered in one line
-const TQ=[['soc','제일 자신 있게 아는 척했던 거, 하나만 말해 봐.'],
-  ['nie','오늘 하루를 똑같이 무한히 반복해도 괜찮아?'],
-  ['dio','없어도 사는 데 아무 지장 없는 물건 하나는?'],
-  ['epi','요즘 가장 소소하게 행복했던 순간은?'],
-  ['soc','착하게 굴다가 손해 본 일, 하나만 말해 봐.'],
-  ['nie','남들이 다 하니까 하고 있는 일, 하나만 꼽아 봐.'],
-  ['dio','남 눈치를 하나도 안 봐도 된다면, 오늘 뭘 하겠어?'],
-  ['epi','가지면 행복할 줄 알았는데 아니었던 건?'],
-  ['epi','새벽 3시에 전화할 수 있는 친구, 몇 명이야?'],
-  ['nie','너를 무너뜨리지 못하고 오히려 강하게 만든 일은?'],
-  ['dio','제일 쓸데없이 돈 쓴 건 뭐야?'],
-  ['epi','같이 밥 먹고 싶은 사람 한 명만 꼽으면?'],
-  ['soc','로또 1등 되면 다음 날 바로 회사 그만둘 거야?'],
-  ['nie','다들 말렸는데 결국 해 버린 일은?'],
-  ['dio','부자와 자유로운 사람, 하나만 될 수 있다면?'],
-  ['epi','오늘 걱정 중에 실제로 일어날 것 같은 건 몇 개야?'],
-  ['soc','다들 맞다는데 너만 아니라고 생각하는 거 있어?'],
-  ['nie','요즘 계속 미루고 있는 일 하나만.'],
-  ['dio','아무도 안 볼 때만 하는 습관 있어?'],
-  ['epi','죽기 전에 이건 꼭 해 보고 싶다, 하나만.'],
-  ['soc','지금 와서 보면 제일 잘한 선택 하나는?'],
-  ['nie','10년 뒤의 네가 지금의 너에게 할 말은?'],
-  ['dio','요즘 너를 제일 귀찮게 하는 건?'],
-  ['epi','돈 안 들고 기분 좋아지는 방법 하나만.'],
-  ['soc','무서운데도 해 버린 일, 하나만.'],
-  ['nie','남한테 들은 말 중에 아직도 남아 있는 한마디는?'],
-  ['dio','버리고 싶은 습관 하나는?'],
-  ['epi','요즘 제일 맛있게 먹은 건?']];
-// the asking philosopher's own answer, pinned on top so the square is never empty
-const TA=['나는 아는 척을 안 해서 아테네에서 제일 미움받았어.',
-  '아니라면 내일 하나를 바꿔. 내가 이 질문을 던지는 이유야.',
-  '컵. 손으로 떠 마시면 되더라.',
-  '친구가 보내 준 치즈 한 단지. 그걸로 충분했어.',
-  '나는 그러다 사형까지 받았어. 그래도 나쁜 짓 하는 쪽보단 나아.',
-  '무리 속에 있으면 편하지. 대신 네 목소리는 안 들려.',
-  '나는 원래 안 봐. 대낮에 등불 들고 광장을 걸었지.',
-  '다들 내가 파티만 하는 줄 알더라. 나는 빵이랑 물이면 됐어.',
-  '나는 그런 친구들이랑 아예 정원에서 같이 살았어.',
-  '나를 죽이지 못하는 것은 나를 더 강하게 만들어. 나는 평생 아팠거든.',
-  '나는 통에 살아서 쓸 데가 없었어. 너는 영수증을 보면 알 거야.',
-  '무엇을 먹느냐보다 누구와 먹느냐가 먼저야.',
-  '그만두고 뭐 할지부터 말해 봐. 그걸 모르면 돈이 있어도 똑같아.',
-  '대학 교수 그만두고 산골로 갔어. 다들 미쳤다고 했지.',
-  '알렉산드로스한테도 비키라고 했던 나야. 답은 정해져 있지.',
-  '대부분은 오지도 않을 일이야. 마음이 고요한 게 진짜 쾌락이고.',
-  '아테네 사람 대부분이 나한테 사형을 줬어. 그래도 생각은 안 바꿨지.',
-  '말하는 순간 반은 한 거야. 나머지 반은 오늘 10분만.',
-  '나는 다 보는 데서 했어. 숨길 게 없으면 편해.',
-  '나는 친구들이랑 저녁 먹기. 매일 했는데 매일 또 하고 싶었어.',
-  '도망치지 않은 거. 독배를 마시는 날까지 친구들이랑 이야기했어.',
-  '아마 이럴걸. 그때 좀 더 과감했어야 했다고.',
-  '햇빛 가리는 사람. 좀 비켜 줄래?',
-  '좋았던 대화를 떠올려 봐. 나는 많이 아플 때도 그걸로 버텼어.',
-  '전쟁터에서 후퇴할 때도 천천히 걸었어. 솔직히 좀 무서웠지.',
-  '남의 말이 오래 남는다면, 이제 그 말을 넘어설 때가 된 거야.',
-  '필요 없는 걸 원하는 습관. 그게 제일 무거워.',
-  '배고플 때 먹은 빵. 소박한 음식이 제일 맛있어.'];
-const philAnswer=()=>{const i=(talkIdx()+TQ.length)%TQ.length,k=TQ[i][0];return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${TA[i]}</p></div>`;};
-const TQ_EPOCH=Date.UTC(2026,9,26);
-const talkIdx=()=>{const d=nowD();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5)%TQ.length;};
-const talkQ=()=>TQ[(talkIdx()+TQ.length)%TQ.length];
+// the square: one question a day for everyone, answered in one line. The asking philosopher's own answer is pinned on top.
+const TQ_OLD=[['soc','제일 자신 있게 아는 척했던 거, 하나만 말해 봐.'],['nie','딱 하루만 다시 살 수 있다면, 언제로 갈래?'],['dio','없어도 사는 데 아무 지장 없는 물건 하나는?'],['epi','요즘 가장 소소하게 행복했던 순간은?'],['soc','착하게 굴다가 손해 본 일, 하나만 말해 봐.']],TA_OLD=["나는 아는 척을 안 해서 아테네에서 제일 미움받았어.","\"이게 삶이었어? 좋아, 한 번 더!\" 이렇게 외칠 수 있는 날. 아직 없으면 내일을 그런 날로 만들면 돼.","컵. 손으로 떠 마시면 되더라.","친구가 보내 준 치즈 한 단지. 그걸로 충분했어.","나는 바른 말 하다가 사형까지 받았어. 그래도 나쁜 일을 저지르느니 당하는 게 나아."];
+const TQ=[
+  ['soc','행복해지고 싶지? 그럼 행복이 뭔데?'],
+  ['epi','돈으로 행복을 살 수 있을까?'],
+  ['nie','남들이 부러워하는 삶이랑 내가 원하는 삶, 하나만 고르면?'],
+  ['dio','가진 게 많을수록 자유로울까?'],
+  ['soc','좋은 사람이랑 잘나가는 사람, 하나만 될 수 있다면?'],
+  ['epi','친구 많은 사람이랑 깊은 친구 한 명 있는 사람, 누가 더 잘 살까?'],
+  ['nie','힘든 일을 겪으면 사람이 강해질까, 망가질까?'],
+  ['dio','오늘이 마지막 날이라면, 지금 하는 거 계속할 거야?'],
+  ['soc','나쁜 짓인 줄 알면서도 하는 사람, 진짜 있을까?'],
+  ['epi','행복해지려면 더 가져야 할까, 덜 원해야 할까?'],
+  ['nie','다시 태어나도 지금의 나로 살고 싶어?'],
+  ['dio','남의 말에 상처받는 건 누구 탓일까?'],
+  ['soc','진짜 친구는 듣기 싫은 말도 해 줄까?'],
+  ['epi','걱정을 줄이는 제일 좋은 방법은?'],
+  ['nie','싫은 사람이랑 싸우다 보면 나도 닮아 갈까?'],
+  ['dio','인생이 짧다고 느껴져? 왜일까?'],
+  ['soc','칭찬받고 싶어서 한 착한 일도 착한 일일까?'],
+  ['epi','부러운 사람 있어? 왜 부러워?'],
+  ['nie','나를 제일 잘 아는 사람은 나일까?'],
+  ['dio','남 눈치 안 보고 살면 손해일까?'],
+  ['soc','다들 하는 거짓말, 나도 해도 될까?'],
+  ['epi','즐거움을 참아야 할 때도 있을까?'],
+  ['nie','\'원래 그런 거야\'라는 말, 믿어도 될까?'],
+  ['dio','남이랑 비교 안 하고 살 수 있을까?'],
+  ['soc','정답이 없는 질문, 고민할 필요가 있을까?'],
+  ['epi','기분이 바닥일 때 제일 잘 듣는 처방은?'],
+  ['nie','고통 없는 삶이 좋은 삶일까?'],
+  ['dio','남한테 부탁하는 거, 창피해?'],
+  ['soc','투명 인간이 돼도 바르게 살 수 있을까?'],
+  ['epi','나이 드는 게 아쉬워?'],
+  ['nie','질투는 나쁜 감정일까?'],
+  ['dio','화가 나면 바로 말하는 게 좋을까, 참는 게 좋을까?'],
+  ['soc','말 잘하는 사람이 옳은 사람일까?'],
+  ['epi','쉬는 날 아무것도 안 하면 낭비일까?'],
+  ['nie','남을 바꾸는 게 쉬워, 나를 바꾸는 게 쉬워?'],
+  ['dio','어디 출신인지가 그 사람을 말해 줄까?'],
+  ['soc','\'너 자신을 알라.\' 너는 너를 얼마나 알아?'],
+  ['epi','감사할 줄 아는 사람이 더 행복할까?'],
+  ['nie','시켜서 한 일이랑 원해서 한 일, 결과가 같으면 똑같을까?'],
+  ['dio','체면 때문에 하는 일, 하루에 몇 개나 돼?'],
+  ['soc','내가 틀렸다는 걸 알게 되면 기분이 어때?'],
+  ['epi','혼자가 편해, 같이가 좋아?'],
+  ['nie','실패한 날도 의미가 있을까?'],
+  ['dio','사람들이 나를 싫어하면 어떡하지?'],
+  ['soc','사랑이 뭘까, 한 줄로?'],
+  ['epi','행복은 큰 일에서 올까, 작은 일에서 올까?'],
+  ['nie','꿈을 포기하면 실패일까?'],
+  ['dio','가난하면 불행할까?'],
+  ['soc','화내는 사람한테 화로 갚아야 할까?'],
+  ['epi','제일 좋은 대화는 어떤 대화야?'],
+  ['nie','내 단점이 장점이 될 수도 있을까?'],
+  ['dio','할 말은 하고 사는 게 좋을까?'],
+  ['soc','사람은 바뀔 수 있을까?'],
+  ['epi','미래가 불안할 때 어떻게 해?'],
+  ['nie','진지한 사람이 더 깊은 사람일까?'],
+  ['dio','제일 쓸데없는 걱정은 뭘까?'],
+  ['soc','좋은 질문 하나가 답 열 개보다 나을까?'],
+  ['epi','욕심 중에 버려도 되는 건 뭘까?'],
+  ['nie','혼자 있는 시간이 꼭 필요할까?'],
+  ['dio','좋은 집이 꼭 필요할까?'],
+  ['soc','돈 버는 법이랑 잘 사는 법, 학교에서 뭘 더 가르쳐야 할까?'],
+  ['epi','운이 나쁠 때 어떻게 버텨?'],
+  ['nie','남들이 다 말리는 꿈, 해 봐야 할까?'],
+  ['dio','불평하면 뭐가 달라질까?'],
+  ['soc','친구랑 의견이 다르면 어떻게 해?'],
+  ['epi','어떤 친구가 좋은 친구야?'],
+  ['nie','자유롭다는 건 뭘까?'],
+  ['dio','정말 강한 사람은 어떤 사람일까?'],
+  ['soc','아름다운 사람은 어떤 사람일까?'],
+  ['epi','행복한 사람은 무엇을 무서워하지 않을까?'],
+  ['nie','인생에 정해진 의미가 있을까?'],
+  ['dio','멀리 떠나면 고민이 사라질까?'],
+  ['soc','어른이 되면 저절로 지혜로워질까?'],
+  ['epi','좋은 사람 곁에 있으면 나도 좋아질까?'],
+  ['nie','인정받는 게 그렇게 중요할까?'],
+  ['dio','남들이 비웃는 일을 해 본 적 있어?'],
+  ['soc','너는 언제 제일 너다워?'],
+  ['epi','오늘 하루를 잘 보냈는지 어떻게 알 수 있을까?'],
+  ['nie','지금 가장 넘고 싶은 나는 어떤 나야?'],
+  ['dio','부끄러운 일은 뭘까?'],
+  ['soc','많이 아는 사람이 지혜로운 사람일까?'],
+  ['epi','죽음을 생각하면 삶이 달라질까?'],
+  ['nie','책은 왜 읽어야 할까?'],
+  ['dio','행복한 사람은 뭘 덜 가졌을까?'],
+  ['soc','지금 네가 확신하는 거, 틀릴 수도 있을까?'],
+  ['epi','제일 작은 사치 하나만 고르면?'],
+  ['nie','사람들이 다 좋다는 건 나한테도 좋을까?'],
+  ['dio','진짜 친구는 몇 명이면 될까?'],
+  ['soc','죽기 전에 무엇을 남기고 싶어?'],
+  ['epi','지금 당장 행복해지는 가장 쉬운 방법은?']];
+const TA=[
+  '나는 좋은 사람이 되는 게 행복이라고 봤어. 나쁜 짓 하면서 행복한 사람은 못 봤거든.',
+  '배고픔은 돈으로 없애도 시끄러운 마음은 못 없애. 나는 빵이랑 물이면 됐어.',
+  '당연히 내 거. 무리가 부러워하는 건 대개 무리가 원하는 거야.',
+  '가진 게 많으면 지킬 것도 많아. 나는 통 하나라 어디든 갔어.',
+  '좋은 사람. 잘나가는 건 뺏길 수 있지만, 좋은 사람은 아무도 해칠 수 없어.',
+  '깊은 쪽. 친구의 도움보다, 도와줄 거라는 믿음이 우리를 살게 해.',
+  '나를 죽이지 못하는 건 나를 더 강하게 만들어. 대신 그 일을 내 것으로 소화해야 해.',
+  '우리 학파 마르쿠스 아우렐리우스 황제는 매일을 마지막 날처럼 살라고 일기에 썼어.',
+  '나는 없다고 봤어. 그게 좋은 줄 착각해서 하는 거야. 그래서 제대로 아는 게 중요해.',
+  '누구를 부자로 만들고 싶으면 돈을 보태지 말고 욕심을 덜어 줘. 내가 친구한테 해 준 말이야.',
+  '나는 \'운명을 사랑하라\'고 했어. 고칠 건 고치고, 나머지는 끌어안는 거야.',
+  '에픽테토스 형은 그 말보다 그 말에 대한 내 생각이 나를 아프게 한대.',
+  '해 줘야 친구지. 나는 나를 등에라고 했어. 졸고 있는 말을 따끔하게 물어 깨우는 벌레 말이야.',
+  '물어봐. 정말 일어날까? 일어나면 정말 못 견딜까? 대부분 둘 다 아니야.',
+  '괴물과 싸우는 사람은 자기가 괴물이 되지 않게 조심해야 해. 오래 보면 닮아.',
+  '세네카 형은 인생은 충분히 긴데 우리가 흘려보내서 짧아진대.',
+  '우리 학파 칸트 형 말로는, 칭찬 때문이면 좋아 보이는 일이고 옳아서 하면 좋은 일이래.',
+  '있는 걸 없는 것 때문에 망치지 마. 지금 가진 것도 한때는 바라던 거야.',
+  '아니. 우리는 자기한테 제일 낯선 사람이야. 그래서 평생 알아 가는 거지.',
+  '알렉산드로스 대왕한테도 햇빛 가리지 말라고 했어. 손해 본 건 하나도 없었어.',
+  '다들 한다고 옳아지진 않아. 나는 많은 사람 말보다 제대로 아는 한 사람 말을 들으라고 했어.',
+  '있어. 나중에 더 큰 괴로움을 부르는 즐거움은 참고, 더 큰 즐거움을 주는 괴로움은 견뎌.',
+  '나는 그 말을 망치로 두드려 봐. 속 빈 소리가 나면 그건 우상이야.',
+  '나는 쥐 한 마리 보고 배웠어. 침대도 집도 안 찾고 잘만 살더라.',
+  '검토하지 않는 삶은 살 가치가 없어. 답을 못 찾아도 묻는 동안 덜 틀리게 돼.',
+  '배 안 고프고, 목 안 마르고, 안 추우면 신도 안 부러워. 기본부터 채워 봐.',
+  '살아야 할 이유가 있는 사람은 거의 어떤 고통도 견뎌. 고통을 없애기보다 이유를 찾아.',
+  '나는 동상한테 구걸 연습을 했어. 거절당하는 데 익숙해지려고.',
+  '플라톤의 형 글라우콘이 나한테 그걸 물었어. 나는 그래도 바르게 사는 사람이 더 행복하다고 했지.',
+  '젊은이는 운에 흔들려. 잘 산 늙은이는 좋은 기억이라는 항구에 닻을 내려.',
+  '질투는 네가 뭘 원하는지 알려 줘. 남을 끌어내리지 말고 네가 올라가.',
+  '세네카 형은 화를 다스리는 제일 좋은 약이 기다림이래. 하루만 묵혀 봐.',
+  '아니. 말로 아무거나 이기게 만드는 사람들이 많았어. 나는 맞는지만 물었지.',
+  '아니. 몸이 편하고 마음이 조용하면 그게 제일 큰 즐거움이야.',
+  '나. 남은 잘 안 바뀌어. \'너 자신이 되어라.\' 내가 제일 좋아한 말이야.',
+  '누가 어디 사람이냐고 묻길래, 나는 세계 시민이라고 했어.',
+  '델포이 신전에 새겨진 말이야. 나는 평생 그거 하나 붙들고 살았어.',
+  '응. 지나간 좋은 일을 고마워하면 그 즐거움을 한 번 더 누리는 거야.',
+  '달라. 짐 진 낙타처럼 걷는 거랑 노는 아이처럼 걷는 건 같은 길이어도 달라.',
+  '하나도 없어. 그래서 사람들이 나를 개라고 불렀지. 그 별명, 마음에 들었어.',
+  '나는 고마웠어. 틀린 걸 하나 버렸으니 그만큼 덜 틀린 사람이 됐잖아.',
+  '둘 다. 나는 친구들이랑 정원에 살면서도 조용히 생각할 시간은 꼭 지켰어.',
+  '춤추는 별을 낳으려면 마음속에 혼돈이 있어야 해. 엉망인 날도 재료야.',
+  '에픽테토스 형은, 누가 네 욕을 하면 \'내 다른 단점은 몰랐나 보네\' 하래.',
+  '플라톤이 내 얘기로 썼어. 사랑은 아름다운 걸 향해 더 좋아지려는 마음이래.',
+  '작은 쪽. 큰 즐거움은 대개 큰 대가를 데려와.',
+  '다른 꿈으로 건너간 거면 아니야. 나도 교수 자리 버리고 떠돌면서 책을 썼어.',
+  '세네카 형 말이야. 가진 게 적은 사람 말고, 더 원하는 사람이 가난한 거래.',
+  '나쁜 일을 당해도 나쁜 일로 갚으면 안 돼. 그건 내 영혼을 해치는 거야.',
+  '밥 먹으면서 하는 대화. 뭘 먹을지보다 누구랑 먹을지 먼저 찾아.',
+  '나무는 높이 자랄수록 뿌리를 더 깊은 어둠으로 내려. 나쁜 데서 좋은 게 나와.',
+  '나는 할 말 다 하고 살았어. 대신 미움도 다 받았지. 둘 다 받을 각오면 해.',
+  '알면 바뀐다고 봐. 그래서 나는 가르치지 않고 묻기만 했어.',
+  '미래는 다 내 것도 아니고 다 남의 것도 아니야. 너무 믿지도, 너무 포기하지도 마.',
+  '웃음 한 번 없는 진리는 가짜라고 했어. 내 차라투스트라가.',
+  '에픽테토스 형은 내 힘으로 못 바꾸는 건 내려놓으래. 남의 생각이 딱 그거야.',
+  '응. 답은 남이 줄 수 있지만 질문은 네가 해야 생기거든.',
+  '나는 욕심을 셋으로 나눴어. 꼭 필요한 것, 없어도 되는 것, 헛된 것. 명예랑 큰돈은 헛된 쪽이야.',
+  '도망쳐, 친구. 혼자만의 자리로. 시장의 파리 떼는 끝이 없거든.',
+  '나는 신전 앞 통에서 잤어. 비만 피하면 돼.',
+  '잘 사는 법. 나는 돈이랑 명예만 챙기고 영혼은 안 챙기는 아테네 사람들한테 따졌어.',
+  '현명하게 했는데 운이 나쁜 게, 어리석게 했는데 운 좋은 것보다 나아.',
+  '다들 말리면 한 번은 의심해 봐. 그래도 하고 싶으면 그게 네 길이야.',
+  '마르쿠스 황제는 불평 대신 이불 밖으로 나오라고 썼어. 일하려고 태어났다면서.',
+  '같이 물어봐. 누가 이기는 것보다 둘 다 덜 틀리는 게 목적이야.',
+  '늘 도와 달라는 친구도, 도움을 한 번도 안 바라는 친구도 아니야. 그 사이가 좋은 친구야.',
+  '\'너는 해야 해\' 대신 \'나는 원해\'라고 말할 수 있는 거. 거기서 새로 시작해.',
+  '에픽테토스 형은 노예였는데, 그 마음은 아무도 못 묶었대. 마음을 지키는 사람이 제일 세.',
+  '나는 못생기기로 유명했어. 그래서 속이 아름다워지게 해 달라고 빌었지.',
+  '신과 죽음. 이 둘이 안 무서우면 반은 행복한 거야.',
+  '신은 죽었다고 내가 말했지. 정해진 의미가 없으니 네가 만들 수 있어.',
+  '세네카 형은, 어딜 가도 너 자신을 데리고 가는데 무슨 소용이냐고 했어.',
+  '나이 든다고 저절로 알게 되진 않아. 묻지 않으면 그냥 늙기만 해.',
+  '응. 그래서 나는 친구들이랑 아예 정원에 모여 살았어. 혼자 좋아지긴 어렵거든.',
+  '인정받으려 하면 남의 자로 나를 재게 돼. 그 자는 남 거야.',
+  '나는 대낮에 등불 들고 사람을 찾았어. 비웃는 사람은 많았는데, 진짜 사람은 못 찾았어.',
+  '물을 때. 사형 전날 밤에도 친구들이랑 영혼 이야기를 했어.',
+  '잠들 때 마음이 조용하면 잘 산 거야. 그게 내가 말한 즐거움이야.',
+  '인간은 넘어서야 할 무엇이야. 넘을 상대는 늘 어제의 나지.',
+  '나는 시장에서 밥 먹었다고 욕먹었어. 나쁜 짓이 부끄럽지, 남다르게 사는 건 하나도 안 부끄러워.',
+  '아는 척하는 사람들을 다 만나 봤어. 모른다는 걸 아는 내가 조금 더 낫더라.',
+  '죽음이 안 무서우면 끝없는 삶을 바라지 않게 돼. 그럼 오늘이 더 달아.',
+  '나는 피로 쓴 글만 사랑했어. 너를 흔드는 한 권이 쉬운 책 백 권보다 나아.',
+  '아무것도 필요 없는 건 신뿐이야. 필요한 게 적을수록 신에 가까워지지.',
+  '그럼. 그래서 나는 확신하는 사람한테 제일 많이 물었어. 대부분 대답을 못 하더라.',
+  '나는 치즈 한 단지. 친구한테 보내 달랬어. 그걸로 잔치하게.',
+  '남들이 다 입에 올리는 순간, 좋은 건 더 이상 좋지 않아. 네 입맛은 네가 찾아.',
+  '많을 필요 없어. 대낮에 등불 들고 찾아도 한 명 찾기 힘들거든.',
+  '나는 책 한 권 안 썼어. 질문만 남겼지. 그걸 플라톤이 받아 적었어.',
+  '지금 괴롭지 않은지 봐. 괴롭지 않으면 이미 즐거운 거야.'];
+const philAnswer=(b=0)=>{const [k]=talkQ(b);return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${talkA(b)}</p></div>`;};
+const TQ_EPOCH=Date.UTC(2026,9,31);
+const talkN=(b=0)=>{const d=nowD();d.setDate(d.getDate()-b);return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5);};
+const talkQ=(b=0)=>{const n=talkN(b);return n<0&&n>=-5?TQ_OLD[n+5]:TQ[((n%TQ.length)+TQ.length)%TQ.length];};
+const talkA=(b=0)=>{const n=talkN(b);return n<0&&n>=-5?TA_OLD[n+5]:TA[((n%TA.length)+TA.length)%TA.length];};
 function sameDaySum(){const d=nowD(),wd=(d.getDay()+6)%7;return weekDays(1).slice(0,wd+1).reduce((n,k)=>n+(S.log[k]||0),0);}
 function streak(){const d=nowD();let n=0;if(!S.log[dkey(d)])d.setDate(d.getDate()-1);while(S.log[dkey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 const stageOf=g=>{let s=0;STAGE.forEach((n,i)=>{if(g>=n)s=i;});return s;};
@@ -542,7 +792,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
 function openGate(){const g=$('gateImg');if(!g)return;g.setAttribute('href',A('gate_open'));clearTimeout(openGate.t);openGate.t=setTimeout(()=>g.setAttribute('href',A('gate_closed')),2800);}
 function paintPlant(anim){const st=stageOf(S.given);
   $('plantG').innerHTML=`<rect class="hit" x="${POT.x-50}" y="${POT.y-185}" width="100" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
-function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
+function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
   $('wardBtn').classList.toggle('pulse',S.fruit>0&&!S.wardSeen);}
 const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');};
 
@@ -692,7 +942,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   on('[data-skip]',k=>{S.mis[k].st='skip';S.mis[k].day=today();save();sfx.boop();drawBoard('내일 다른 미션이 붙어요');});
   on('[data-start]',k=>{S.mis[k].start=Date.now();save();window.GL&&GL.timer(MIS[k][S.mis[k].i],S.mis[k].start);sfx.boop();buzz(10);drawBoard('시작했어요. 다녀와서 다시 열어 주세요');});
   on('[data-share]',k=>{sfx.boop();shareCard(k);});
-  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{levelUp(k);checkRecords();},1500);window.GL&&GL.onMission();});}
+  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{if(!levelUp(k))whenFree(askApp,2500);checkRecords();},1500);window.GL&&GL.onMission();});}
 
 // ---------- easter eggs ----------
 // Nietzsche: a shadow at the gate one stage early. Epicurus: comes once the garden bears fruit (his school was called the Garden).
@@ -732,13 +982,14 @@ function showClear(o,then){CQ.push([o,then]);if(!clrEl)nextClear();}
 function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBub();
   const el=document.createElement('div');el.className='clr';el.setAttribute('role','dialog');el.setAttribute('aria-label',o.title);
   const pic=o.k?A(o.k+'_happy'):A(o.img);
-  el.innerHTML=`<div class="ccard"><span class="ctag">${o.tag}</span><div class="cpic"><img class="csp${o.img?' tree':''}" src="${pic}" alt=""><img class="cst" src="${A('stamp')}" alt=""></div><b class="ctit">${o.title}</b>${o.card?`<div class="cstory"><i>이야기 카드 · ${o.card[0]}</i><p>${o.card[1]}</p></div>`:''}${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="opt cgo" type="button"><img src="${A('fruit')}" alt="">${o.gift}개 받기</button></div>`;
+  el.innerHTML=`<div class="ccard"><span class="ctag">${o.tag}</span><div class="cpic"><img class="csp${o.img?' tree':''}" src="${pic}" alt=""><img class="cst" src="${A('stamp')}" alt=""></div><b class="ctit">${o.title}</b>${o.card?`<div class="cstory"><i>이야기 카드 · ${o.card[0]}</i><p>${o.card[1]}</p></div>`:''}${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="opt cgo" type="button">${o.gift?`${o.go||''}<img src="${A('fruit')}" alt="">${o.gift}개 받기`:(o.go?o.go.replace(/고 $/,'기'):'확인')}</button>${o.alt?`<button class="opt alt calt" type="button">${o.alt}</button>`:''}</div>`;
   $('app').appendChild(el);clrEl=el;setTimeout(()=>{sfx.stage();buzz([30,40,30,40,90]);},120);setTimeout(()=>sfx.stamp(),450);
+  const ca=el.querySelector('.calt');if(ca)ca.onclick=()=>{ac();sfx.boop();el.remove();clrEl=null;o.onAlt&&o.onAlt();nextClear();};
   el.querySelector('.cgo').onclick=ev=>{ac();sfx.boop();S.fruit+=o.gift;save();const r=ev.currentTarget.getBoundingClientRect();
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k))askSave('clear');},1500);}});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k)&&!askApp())askSave('clear');},1500);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -787,7 +1038,10 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
   if(!S.met.nie&&actors.nie&&actors.nie.mode==='shadow'&&S.pd<DAY_AT.nie)hint='근데 아까부터 문밖에 누가 서 있어. 콧수염이 보이던데.';
   else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
   else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
-  const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn()){askTalk();}else askSave('day');};
+  const next=()=>{const G=window.GL;if(!(G&&G.isIn&&G.isIn()))return askSave('day');
+    if(!G.newReplies)return askTalk();
+    Promise.race([G.newReplies(),new Promise(r=>setTimeout(()=>r(0),2500))]).then(n=>{if(!n)return askTalk();const k=S.met.epi&&actors.epi?'epi':'soc';
+      say(k,`어제 네가 광장에 남긴 답에 답글이 ${n}개 달렸어. 보러 갈래?`,['보러 가기','나중에'],c=>{if(c===0){openBoard();bt='talk';G.talkView(1);drawBoard();}else askTalk();});});};
   const chain=[[who,line]];
   const go=()=>{if(hint)chain.push(['soc',hint]);(function step(i){if(i>=chain.length)return next();const [k,t]=chain[i];say(actors[k]?k:'soc',t,null,()=>setTimeout(()=>step(i+1),300));})(0);};
   // on a new week, tell how last week's school match went
@@ -798,7 +1052,7 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
       else chain.push([sp,`지난주 대항전은 ${SCHOOL[r.win].nm}가 가져갔어. 이번 주엔 우리 ${SCHOOL[me].nm}가 이겨 보자.`]);}go();});}
   else go();}
 // wait until nobody is talking and no sheet is open
-function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||!$('board').hidden||!$('ward').hidden)return setTimeout(go,1200);f();},ms||0);}
+function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||!$('board').hidden||!$('ward').hidden||($('appSh')&&!$('appSh').hidden))return setTimeout(go,1200);f();},ms||0);}
 // reaching a new level, a philosopher may ask you into their school
 function invite(k){if(S.school||(S.invited||{}).quiz||!actors.soc)return false;S.invited=S.invited||{};S.invited.quiz=1;save();
   say('soc','너는 어느 학파일까? 질문 네 개면 알 수 있어.',['해 볼래','나중에'],n=>{if(n===0)sortQuiz(()=>askSave('clear'));else askSave('clear');});return true;}
@@ -809,8 +1063,8 @@ function sortQuiz(done){closeBub();const tally={};let i=0;
     el.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);const k=Q.o[+b.dataset.j][0];tally[k]=(tally[k]||0)+1;i++;
       if(i<SORT.length)return draw();
       const best=SCHOOL_ORDER.reduce((a,b2)=>(tally[b2]||0)>(tally[a]||0)?b2:a,Q.o[+b.dataset.j][0]);
-      S.school=best;S.schoolLock=weekKey();save();el.remove();clrEl=null;
-      showClear({k:best,tag:'학파 찾기',title:`${SCHOOL[best].nm}예요`,sub:`"${SCHOOL[best].line}"\n같은 학파: ${SCHOOL[best].mem}`,gift:3},()=>{done&&done();});});};
+      el.remove();clrEl=null;
+      showClear({k:best,tag:'학파 찾기',title:`${SCHOOL[best].nm}예요`,sub:`"${SCHOOL[best].line}"\n같은 학파: ${SCHOOL[best].mem}`,gift:S.school?0:3,go:'이 학파로 들어가고 ',alt:'다시 해 보기',onAlt:()=>sortQuiz(done)},()=>{if(S.school!==best){S.school=best;S.schoolLock=weekKey();save();}done&&done();});});};
   draw();}
 window.sortQuiz=sortQuiz;
 function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()||(S.saveAsk||0)>=2||S.saveAskDay===today())return;
@@ -819,37 +1073,47 @@ function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()
       if(n!==0)return;const ok=await G.login();if(!ok)return;toast('정원을 저장했어요');setTimeout(askBeta,1200);});},400);}
 function askTalk(){const [k,q]=talkQ();if(S.talkDay===today())return askBeta();S.talkDay=today();save();
   say(actors[k]?k:'soc',`오늘 광장 질문은 이거야.\n${q}`,['답하러 가기','나중에'],n=>{if(n===0){openBoard();bt='talk';drawBoard();}else askBeta();});}
-function askBeta(){const G=window.GL;if(!G||!G.wantsBeta||!G.wantsBeta()||S.betaAsk)return;S.betaAsk=1;save();
-  say('soc','안드로이드 폰이면 앱으로도 먼저 받아 볼 수 있어. 아침마다 알림도 오고.',['신청할래','괜찮아'],async n=>{if(n===0&&await G.beta())toast('앱 베타 신청했어요. 등록되면 메일로 알려 드려요');});}
+function askApp(){const G=window.GL;if(!G||!G.wantsApp||!G.wantsApp()||S.appAsk||!actors.soc||pend||clrOn())return false;S.appAsk=1;save();
+  say('soc','폰에 앱으로 받아 두면 아침마다 내가 먼저 미션을 알려 줄게. 지금 받아 볼래?',['받아 볼래','나중에'],n=>{if(n===0)G.appSheet();});return true;}
+const askBeta=askApp;
 
 // ---------- wardrobe ----------
 let wk='soc';
 function openWard(){if(S.intro<2)return;closeBub();ac();sfx.boop();S.wardSeen=1;save();hud();const ks=present();if(!ks.includes(wk))wk=ks[0]||'soc';$('ward').hidden=false;drawWard();}
+// tapping an item you don't own only tries it on; buying is a second, separate tap
+let wsel=null;
+const eul=t=>'을를'[/[가-힣]$/.test(t)&&(t.charCodeAt(t.length-1)-0xAC00)%28?0:1];
 function drawWard(msg){const ks=present();
   $('wFruit').textContent=`열매 ${S.fruit}`;
   $('wTabs').innerHTML=ks.length>1?ks.map(k=>`<button class="wtab${k===wk?' on':''}" type="button" data-wk="${k}">${PH[k].nm.replace('꼬마 ','')}</button>`).join(''):'';
-  $('wPrev').innerHTML=kidSVG(wk,'awake',S.wear[wk]);
-  $('wMsg').textContent=msg||'';
-  const W=S.wear[wk];
+  const W=S.wear[wk],sel=wsel&&IT[wsel];
+  $('wPrev').innerHTML=kidSVG(wk,'awake',sel?{...W,[sel.slot]:sel.id}:W);
+  if(sel){const can=S.fruit>=sel.p;
+    $('wMsg').innerHTML=`<span class="wtry">${sel.nm} 입어 보는 중</span><span class="wbuy"><button class="opt" type="button" id="wBuy"${can?'':' disabled'}>${can?`열매 ${sel.p}개로 사기`:`열매 ${sel.p-S.fruit}개 더 필요해요`}</button><button class="opt alt" type="button" id="wNo">그만두기</button></span>`;}
+  else $('wMsg').textContent=msg||'';
   $('wGrid').innerHTML=ITEMS.map(x=>{const own=S.own.includes(x.id),on=W[x.slot]===x.id,can=S.fruit>=x.p;
-    const lock=lockedItem(x);return `<button class="wit${own?' own':''}${on?' on':''}${!own&&(!can||lock)?' no':''}" type="button" data-it="${x.id}"><img class="ic" src="${A('i_'+IF[x.id])}" alt=""${lock?' style="filter:brightness(0) opacity(.35)"':''}><b>${lock?'???':x.nm}</b><span>${lock?'곧 들어와요':on?'입는 중':own?'입기':`<img src="${A('fruit')}" alt="">${x.p}`}</span></button>`;}).join('');
-  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{wk=b.dataset.wk;sfx.boop();drawWard();});
+    const lock=lockedItem(x);return `<button class="wit${own?' own':''}${on?' on':''}${wsel===x.id?' sel':''}${!own&&(!can||lock)?' no':''}" type="button" data-it="${x.id}"><img class="ic" src="${A('i_'+IF[x.id])}" alt=""${lock?' style="filter:brightness(0) opacity(.35)"':''}><b>${lock?'???':x.nm}</b><span>${lock?'곧 들어와요':on?'입는 중':own?'입기':`<img src="${A('fruit')}" alt="">${x.p}`}</span></button>`;}).join('');
+  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{wk=b.dataset.wk;wsel=null;sfx.boop();drawWard();});
   document.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{const x=IT[b.dataset.it],W=S.wear[wk];
-    if(S.own.includes(x.id)){if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
-    if(lockedItem(x)){sfx.no();buzz([20,30,20]);$('wMsg').textContent='며칠 뒤에 들어와요';return;}
-    if(S.fruit<x.p){sfx.no();buzz([20,30,20]);b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');$('wMsg').textContent=`열매가 ${x.p-S.fruit}개 더 필요해요`;return;}
-    S.fruit-=x.p;S.own.push(x.id);W[x.slot]=x.id;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${x.nm}${'을를'[/[가-힣]$/.test(x.nm)&&(x.nm.charCodeAt(x.nm.length-1)-0xAC00)%28?0:1]} 샀어요`);});}
-function closeWard(){$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
+    if(S.own.includes(x.id)){wsel=null;if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
+    if(lockedItem(x)){sfx.no();buzz([20,30,20]);wsel=null;drawWard('며칠 뒤에 들어와요');return;}
+    sfx.boop();buzz(8);wsel=wsel===x.id?null:x.id;drawWard();});
+  const by=$('wBuy');if(by)by.onclick=()=>{const x=sel;if(!x||S.fruit<x.p)return;S.fruit-=x.p;S.own.push(x.id);S.wear[wk][x.slot]=x.id;wsel=null;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${x.nm}${eul(x.nm)} 샀어요`);};
+  const no=$('wNo');if(no)no.onclick=()=>{wsel=null;sfx.boop();drawWard();};}
+function closeWard(){wsel=null;$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
 
 // first visit: an empty garden, then the gate creaks
-function introAsk(){say('soc',PH.soc.hi,['응, 앉아','누구야?'],n=>{if(n===1){say('soc',PH.soc.who,null,introAsk);return;}
-  say('soc','이거 같이 심자. 물은 질문으로 줄게.',null,()=>{S.intro=2;S.met.soc=1;save();postMissions();paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);});});}
+function introAsk(){const G=window.GL,load=G&&G.ready&&G.ready()&&!G.isIn();
+  say('soc',PH.soc.hi,['응, 앉아','누구야?'].concat(load?['전에 하던 정원 있어']:[]),async n=>{if(n===1){say('soc',PH.soc.who,null,introAsk);return;}
+  if(n===2){if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',introAsk);say('soc','구글 계정으로 불러올게. 잠깐만.');const ok=await G.login();setTimeout(()=>{closeBub();say('soc',ok?'저장된 정원이 없네. 그럼 여기서 새로 시작하자.':'불러오지 못했어. 나중에 게시판의 리그에서 다시 해 볼 수 있어.',null,introAsk);},ok?3500:200);return;}
+  say('soc','이거 같이 심자. 물은 질문으로 줄게.',null,()=>{S.intro=2;S.met.soc=1;save();postMissions();setTimeout(appGift,8000);paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);});});}
 function intro(){if(S.intro>=2){S.met.soc=1;place('soc',restMode('soc'),SPOTS.soc.x,SPOTS.soc.y);return;}
   if(S.intro===1){place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);setTimeout(introAsk,700);return;}
   place('soc','awake',-40,SPOTS.soc.y);
   setTimeout(()=>{sfx.gate();openGate();walk('soc',SPOTS.soc.x,2400,()=>{S.intro=1;save();introAsk();});},900);}
 
-function boot(){rollDay();paintPlant(false);hud();intro();if(S.intro>=2)postMissions();
+function appGift(){if(window.GL&&GL.native&&S.intro>=2&&!S.appGift)whenFree(()=>{if(S.appGift)return;S.appGift=1;S.fruit+=5;save();hud();bump('fruitChip');sfx.fruit();toast('앱으로 와 줘서 고마워요. 열매 5개 선물이에요');},0);}
+function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(appGift,4000);if(S.intro>=2)postMissions();
   // the barrel is there from the first day; who's inside is a secret
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
@@ -861,7 +1125,7 @@ function boot(){rollDay();paintPlant(false);hud();intro();if(S.intro>=2)postMiss
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
-  $('wardBtn').onclick=openWard;$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
+  $('wardBtn').onclick=openWard;$('appBtn').onclick=()=>{if(window.GL&&GL.appSheet){closeBub();ac();sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
   $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
@@ -906,6 +1170,7 @@ async function load() {
 // ---- sign in ----
 async function signIn() {
   if (!ready) return;
+  if (INAPP) { outToBrowser('이 창에서는 구글이 로그인을 막아 둬서 저장이 안 돼.', ''); return; }
   try {
     if (NATIVE) {
       const FA = plug('FirebaseAuthentication');
@@ -955,13 +1220,14 @@ async function nickFromDilem() {
 }
 let posted = '', lgCache = null;
 // your school stays until you change it (once a week); the match compares average points, so a small school can win
-let picking = false;
+let picking = false, scPick = null;
 function schoolCard(mine) {
   const face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
   if (!S.school || picking) {
     return `<div class="mis"><p class="mt">학파를 골라 주세요</p><p class="mw">학파 대항전에서 같은 편이 돼요. 학파 점수는 그 학파 사람들 점수의 평균이에요.</p>
       <div class="mb"><button class="opt" type="button" id="scQuiz">질문 네 개로 내 학파 찾기</button></div>
-      <div class="scs">${SCHOOL_ORDER.map(k => { const v = SCHOOL[k]; return `<button class="sc${S.school === k ? ' on' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`; }).join('')}</div></div>`;
+      <div class="scs">${SCHOOL_ORDER.map(k => { const v = SCHOOL[k]; return `<button class="sc${S.school === k ? ' on' : ''}${scPick === k ? ' pick' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`; }).join('')}</div>
+      ${scPick ? `<p class="mw">${SCHOOL[scPick].nm}의 철학자들: ${SCHOOL[scPick].mem}</p><div class="mb"><button class="opt" type="button" id="scJoin">${SCHOOL[scPick].nm}로 들어가기</button>${S.school ? '<button class="opt alt" type="button" id="scKeep">그대로 두기</button>' : ''}</div>` : ''}</div>`;
   }
   const sch = (lgCache && lgCache.sch) || {};
   const rows = Object.keys(SCHOOL).map(k => { const x = sch[k] || {c: 0, t: 0}; const t = x.t + (k === S.school ? mine - (lgCache.mineAt || 0) : 0);
@@ -1031,10 +1297,12 @@ async function render(el) {
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
       <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p>${LEGAL}</div>${betaCard()}`;
-    const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
+    const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { sfx.boop(); appSheet(); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
-    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => { const was = S.school; S.school = b.dataset.sc; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); });
+    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = () => { sfx.boop(); buzz(8); scPick = scPick === b.dataset.sc ? null : b.dataset.sc; busyL = false; render(el); });
+    const sj = el.querySelector('#scJoin'); if (sj) sj.onclick = async () => { const was = S.school; S.school = scPick; scPick = null; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); };
+    const sk = el.querySelector('#scKeep'); if (sk) sk.onclick = () => { sfx.boop(); scPick = null; picking = false; busyL = false; render(el); };
     const ch = el.querySelector('#scChange'); if (ch) ch.onclick = () => { sfx.boop(); picking = true; busyL = false; render(el); };
     const qz = el.querySelector('#scQuiz'); if (qz) qz.onclick = () => { sfx.boop(); sortQuiz(async () => { picking = false; lgCache = null; busyL = false; await postScore(); render(el); }); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
@@ -1043,12 +1311,72 @@ async function render(el) {
 let outArm = 0;
 function confirmOut() { if (Date.now() - outArm < 3000) return true; outArm = Date.now(); toast('한 번 더 누르면 로그아웃돼요'); return false; }
 
-// ---- app beta sign-up (web only): the Google email goes on the Play tester list ----
+// ---- getting the app (web only) ----
+// Android: join the tester group, then install from Play. In-app browsers (KakaoTalk, Instagram...) block Google
+// sign-in, so the garden first moves to the phone's own browser and carries its progress along in the link.
 const OS = /iphone|ipad|ipod/i.test(navigator.userAgent) ? 'ios' : /android/i.test(navigator.userAgent) ? 'android' : 'pc';
+const UA = navigator.userAgent, KAKAO = /KAKAOTALK/i.test(UA);
+const INAPP = !NATIVE && (KAKAO || /Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|Line\/|DaumApps|everytimeApp|Threads|; wv\)/i.test(UA));
+const GROUP = 'https://groups.google.com/g/little-philosopher-beta';
+const OPTIN = 'https://play.google.com/apps/testing/io.github.eclipse_mindlab.garden';
+const STORE_OPEN = false;   // true once the closed test passes Google's review
+const SHORT = 'bit.ly/little-philosopher';
+const HOME = 'https://eclipse-mindlab.github.io/mindlab/garden/';
+function carryUrl(extra) {
+  let c = '';
+  try { c = btoa(unescape(encodeURIComponent(JSON.stringify({t: Date.now(), s: S})))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) {}
+  return HOME + '#' + (extra ? extra + '&' : '') + (c ? 'carry=' + c : '');
+}
+// returns false when the page has to be opened from the browser menu by hand
+function openOut(url) {
+  if (KAKAO) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return true; }
+  if (OS === 'android') { location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end'; return true; }
+  try { history.replaceState(null, '', url.slice(url.indexOf('#'))); } catch (e) {}
+  return false;
+}
+function outToBrowser(why, extra, cancel) {
+  const go = () => { if (!openOut(carryUrl(extra))) say('soc', '화면 위나 아래의 메뉴에서 "다른 브라우저로 열기"를 눌러 줘. 정원은 그대로 따라가.', null, cancel); };
+  say('soc', `${why}\n폰 브라우저로 옮겨서 이어 하자. 정원은 그대로 따라가.`, ['브라우저로 열기', '그만두기'], n => { if (n === 0) go(); else if (cancel) cancel(); });
+}
+let appEl = null;
+function appSheet() {
+  if (NATIVE) return;
+  if (!appEl) {
+    appEl = document.createElement('div'); appEl.className = 'ward'; appEl.id = 'appSh';
+    document.getElementById('app').appendChild(appEl);
+    appEl.addEventListener('click', e => { if (e.target === appEl) closeApp(); });
+  }
+  if (!S.appSeen) { S.appSeen = 1; save(); hud(); }
+  appEl.hidden = false; paintApp();
+}
+function closeApp() { if (appEl && !appEl.hidden) { appEl.hidden = true; sfx.boop(); } }
+function paintApp() {
+  const st = S.appStep || 0, step = (n, title, done, text, btn) => `<div class="mis${done ? ' ok' : ''}"><div class="mh"><b>${n}. ${title}</b>${done ? `<span class="lv">${done}</span>` : ''}</div><p class="mw">${text}</p>${btn ? `<div class="mb">${btn}</div>` : ''}</div>`;
+  let body;
+  if (OS === 'android' && INAPP) body = `<p class="mw">이 창은 ${KAKAO ? '카카오톡' : '앱'} 안의 브라우저라서 구글 로그인과 플레이 스토어 가입이 막혀 있어요. 폰 브라우저로 옮기면 바로 받을 수 있어요. 지금 정원도 그대로 따라가요.</p>
+    <div class="mb"><button class="opt" type="button" id="apOut">폰 브라우저에서 이어 하기</button></div>`;
+  else if (OS === 'android') body = `<p class="mw">앱에서는 아침마다 미션 알림이 오고, 연속 기록이 끊기기 전에 한 번 더 알려 줘요. 앱에서는 열매 5개도 선물로 드려요.</p>
+    ${step(1, '정원 챙기기', me ? '완료' : '', me ? `${esc(me.email || '')} 에 저장돼 있어요. 앱에서 같은 계정으로 불러오면 그대로 이어져요.` : '구글로 저장해 두면 앱에서 지금 정원을 그대로 불러올 수 있어요.', me ? '' : '<button class="opt alt" type="button" id="apSave">구글로 저장</button>')}
+    ${step(2, '테스터 모임 들어가기', st >= 1 ? '눌렀어요' : '', '구글 그룹 페이지가 열리면 "그룹 가입"을 눌러 주세요. 폰의 플레이 스토어와 같은 구글 계정이어야 해요.', `<a class="opt" id="apGroup" href="${GROUP}" target="_blank" rel="noopener">모임 들어가기</a>`)}
+    ${STORE_OPEN ? step(3, '플레이 스토어에서 받기', st >= 2 ? '눌렀어요' : '', '"테스터 되기"를 누르고, 그 아래 "Google Play에서 다운로드"를 누르면 설치돼요.', `<a class="opt" id="apStore" href="${OPTIN}" target="_blank" rel="noopener">받으러 가기</a>`)
+      : step(3, '플레이 스토어에서 받기', '', '지금 구글이 앱을 검토하고 있어요. 열리는 날 모임 메일로 설치 링크를 보내 드려요.', '<button class="opt" type="button" disabled>곧 열려요</button>')}`;
+  else if (OS === 'ios') body = `<p class="mw">아이폰 앱은 아직 준비 중이에요. 나오면 메일로 알려 드릴게요. 그때까지는 사파리 아래쪽 공유 버튼에서 "홈 화면에 추가"를 누르면 앱처럼 열 수 있어요.</p>
+    ${S.beta ? '<div class="mis ok"><p class="mt">알림 신청해 두었어요</p></div>' : `<div class="mb"><button class="opt" type="button" id="apIos">아이폰 앱 나오면 알려 주세요</button></div>`}`;
+  else body = `<p class="mw">앱은 안드로이드 폰에서 받을 수 있어요. 폰에서 이 주소를 열고 "앱 받기"를 눌러 주세요. 컴퓨터에서 저장한 정원은 폰에서 같은 구글 계정으로 불러오면 이어져요.</p>
+    <p class="alink">${SHORT}</p><div class="mb"><button class="opt alt" type="button" id="apCopy">주소 복사</button></div>`;
+  appEl.innerHTML = `<div class="wsheet" role="dialog" aria-label="앱 받기"><div class="whead"><b>앱으로 받기</b><button class="icon wx" type="button" id="apX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div>${body}</div>`;
+  const q = id => appEl.querySelector('#' + id);
+  q('apX').onclick = closeApp;
+  if (q('apOut')) q('apOut').onclick = () => { if (!openOut(carryUrl('app'))) toast('메뉴에서 "다른 브라우저로 열기"를 눌러 주세요'); };
+  if (q('apSave')) q('apSave').onclick = async () => { sfx.boop(); if (await GL.login()) { toast('정원을 저장했어요'); paintApp(); } };
+  if (q('apGroup')) q('apGroup').onclick = () => { S.appStep = Math.max(st, 1); save(); setTimeout(paintApp, 400); };
+  if (q('apStore')) q('apStore').onclick = () => { S.appStep = 2; save(); setTimeout(paintApp, 400); };
+  if (q('apIos')) q('apIos').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('아이폰 앱이 나오면 메일로 알려 드려요'); paintApp(); } };
+  if (q('apCopy')) q('apCopy').onclick = async () => { try { await navigator.clipboard.writeText('https://' + SHORT); toast('주소를 복사했어요'); } catch (e) { toast(SHORT); } };
+}
 function betaCard() {
-  if (NATIVE) return '';
-  if (S.beta) return `<div class="mis"><p class="mt">앱 베타 신청 완료</p><p class="mw">${OS === 'ios' ? '아이폰 앱이 나오면 이 이메일로 알려 드려요.' : '테스터로 등록되면 이 이메일로 설치 링크를 보내 드려요.'}</p></div>`;
-  return `<div class="mis"><p class="mt">앱으로 먼저 받아 보기</p><p class="mw">앱에서는 아침 미션 알림과 연속 기록 알림이 와요. 신청하면 로그인한 구글 이메일을 테스터 명단에만 써요.</p><div class="mb"><button class="opt" type="button" id="lgBeta">${OS === 'ios' ? '아이폰 앱 나오면 알림 받기' : '앱 베타 신청'}</button></div></div>`;
+  return '';
+  return `<div class="mis"><p class="mt">앱으로 받기</p><p class="mw">${OS === 'android' ? '앱에서는 아침 미션 알림과 연속 기록 알림이 와요.' : OS === 'ios' ? '아이폰 앱이 나오면 메일로 알려 드려요.' : '안드로이드 폰에서 받을 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgBeta">앱 받기</button></div></div>`;
 }
 async function betaJoin(el) {
   if (!me) return false;
@@ -1056,14 +1384,30 @@ async function betaJoin(el) {
   catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
 
-// ---- the square: one question a day, one-line answers, hearts, reports ----
+// ---- the square: one question a day, one-line answers, hearts, replies, reports ----
 const BAD = /(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www\.|\.com|\.kr|카톡|오픈채팅)/i;
-let talkCache = null, talkBusy = false;
+let talkCache = null, talkBusy = false, tView = 0;
+const thOpen = new Set(), thCache = {};
+const talkDay = b => b ? yesterKey() : today();
+async function cleanText(raw) {
+  const t = raw.replace(/\s+/g, ' ').trim().slice(0, 60);
+  if (t.length < 2) return null;
+  if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return null; }
+  if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
+  $('bMsg').textContent = ''; return t;
+}
+async function loadThread(day, aid) {
+  const got = []; (await F.getDocs(F.query(F.collection(db, 'gardenTalk', day, 'a', aid, 'r'), F.orderBy('at', 'asc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
+  got.sort((a, b) => (a.at && a.at.seconds != null ? a.at.seconds : +a.at || 0) - (b.at && b.at.seconds != null ? b.at.seconds : +b.at || 0));
+  thCache[day + '/' + aid] = got.filter(x => (x.rep || 0) < 3);
+}
 async function renderTalk(el) {
-  const [ak, q] = talkQ(), day = today(), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
-  const head = `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer()}`;
-  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; return; }
-  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; return; }
+  const b = tView, day = talkDay(b), [ak, q] = talkQ(b), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  const tabs = `<div class="tday"><button type="button" class="${b ? '' : 'on'}" data-tv="0">오늘 질문</button><button type="button" class="${b ? 'on' : ''}" data-tv="1">어제 질문</button></div>`;
+  const head = tabs + `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer(b)}`;
+  const wire = () => el.querySelectorAll('[data-tv]').forEach(x => x.onclick = () => { const v = +x.dataset.tv; if (v === tView) return; sfx.boop(); tView = v; talkCache = null; talkBusy = false; renderTalk(el); });
+  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; wire(); return; }
+  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; wire(); return; }
   if (talkBusy) return; talkBusy = true;
   try {
     // reading needs any sign-in: people who haven't logged in read as a guest
@@ -1075,36 +1419,75 @@ async function renderTalk(el) {
       if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
       talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3), mine};
     }
-    const liked = (S.liked && S.liked[day]) || [];
-    const row = (x, isMine) => `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
-      <div class="act">${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div></div>`;
+    const liked = (S.liked && S.liked[day]) || [], seen = (S.rcSeen || {})[day] || 0;
+    const thread = x => {
+      if (!thOpen.has(day + '/' + x.id)) return '';
+      const L = thCache[day + '/' + x.id];
+      if (!L) return '<div class="th"><p class="mw">불러오는 중이에요</p></div>';
+      const canDel = r => me && (r.uid === me.uid || x.id === me.uid);
+      return `<div class="th">${L.map(r => `<div class="rp"><div class="who"><b>${esc(r.name || '')}</b>${r.sc && SCHOOL[r.sc] ? `<span class="hb ${r.sc}">${SCHOOL[r.sc].nm}</span>` : ''}${canDel(r) ? `<button class="lnk" type="button" data-rdel="${x.id}|${r.id}">지우기</button>` : me ? `<button class="lnk" type="button" data-rrep="${x.id}|${r.id}">신고</button>` : ''}</div><p>${esc(r.t)}</p></div>`).join('')}
+        ${me ? `<div class="rin"><input type="text" maxlength="60" placeholder="${esc(x.name || '')}에게 답글" data-rtx="${x.id}"><button class="opt" type="button" data-rgo="${x.id}">보내기</button></div>` : '<p class="mw">구글로 로그인하면 답글을 달 수 있어요.</p>'}</div>`;
+    };
+    const row = (x, isMine) => { const rc = Math.max(x.rc || 0, (thCache[day + '/' + x.id] || []).length), fresh = isMine && rc > seen;
+      return `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
+      <div class="act"><button class="rbt${thOpen.has(day + '/' + x.id) ? ' on' : ''}" type="button" data-th="${x.id}">답글 ${rc}${fresh ? `<i class="new">새 답글 ${rc - seen}</i>` : ''}</button><span class="sp"></span>${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div>${thread(x)}</div>`; };
     const m = talkCache.mine, n = talkCache.list.length + (m ? 1 : 0);
-    const box = !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고 공감할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
-      : m ? '<p class="mw">오늘 답을 남겼어요. 내일 새 질문이 와요.</p>'
+    const box = b ? `<p class="mw">어제 질문이에요. 답은 하루에 한 줄이고, 답글은 계속 달 수 있어요.</p>`
+      : !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고, 답글로 이야기할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
+      : m ? '<p class="mw">오늘 답을 남겼어요. 다른 사람 답에 답글로 이야기해 보세요.</p>'
       : `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
-    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : '<p class="mempty">아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.</p>');
+    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : (m ? '' : `<p class="mempty">${b ? '어제는 아무도 답하지 않았어요.' : '아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.'}</p>`));
+    wire();
     const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
     const tx = el.querySelector('#tTx');
     if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
-      el.querySelector('#tGo').onclick = async () => { const t = tx.value.replace(/\s+/g, ' ').trim().slice(0, 60);
-        if (t.length < 2) return; if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return; }
-        if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
+      el.querySelector('#tGo').onclick = async () => { const t = await cleanText(tx.value); if (!t) return;
         try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
-          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]); $('bMsg').textContent = '';
+          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]);
           talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
         catch (e) { toast('남기지 못했어요. 잠시 뒤에 다시 해 주세요'); } }; }
-    el.querySelectorAll('[data-like]').forEach(b => b.onclick = async () => { const id = b.dataset.like; S.liked = S.liked || {}; const L = S.liked[day] = S.liked[day] || []; if (L.includes(id)) return;
-      L.push(id); Object.keys(S.liked).forEach(k => { if (k !== day) delete S.liked[k]; }); save(); sfx.boop(); buzz(8);
-      const x = talkCache.list.find(r => r.id === id); if (x) x.likes = (x.likes || 0) + 1; b.classList.add('on'); b.textContent = `공감 ${x ? x.likes : ''}`;
+    el.querySelectorAll('[data-th]').forEach(x => x.onclick = async () => { const id = x.dataset.th; sfx.boop();
+      if (thOpen.has(day + '/' + id)) { thOpen.delete(day + '/' + id); talkBusy = false; return renderTalk(el); }
+      thOpen.add(day + '/' + id); talkBusy = false; renderTalk(el);
+      try { await loadThread(day, id); } catch (e) { thCache[day + '/' + id] = []; }
+      if (m && id === m.id) { S.rcSeen = {[day]: Math.max(m.rc || 0, thCache[day + '/' + id].length)}; save(); }
+      talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rgo]').forEach(x => x.onclick = async () => { const aid = x.dataset.rgo, inp = el.querySelector(`[data-rtx="${aid}"]`);
+      const t = await cleanText(inp.value); if (!t) return; x.disabled = true;
+      const rid = me.uid + '_' + Date.now(), r = {t, sc: S.school || '', name: S.lname, uid: me.uid, rep: 0, at: F.serverTimestamp()};
+      try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid), r);
+        try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', aid), {rc: F.increment(1)}); } catch (e) {}
+        (thCache[day + '/' + aid] = thCache[day + '/' + aid] || []).push({id: rid, ...r, at: Date.now()});
+        const a = aid === uid ? talkCache.mine : talkCache.list.find(z => z.id === aid); if (a) a.rc = (a.rc || 0) + 1;
+        if (aid === uid) { S.rcSeen = {[day]: a.rc}; save(); }
+        sfx.boop(); buzz(10); }
+      catch (e) { toast('보내지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+      talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rdel]').forEach(x => x.onclick = async () => { const [aid, rid] = x.dataset.rdel.split('|'); if (!confirmRep('d' + rid, '한 번 더 누르면 지워져요')) return;
+      try { await F.deleteDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid)); thCache[day + '/' + aid] = (thCache[day + '/' + aid] || []).filter(r => r.id !== rid); toast('지웠어요'); }
+      catch (e) { toast('지우지 못했어요'); } talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rrep]').forEach(x => x.onclick = async () => { const [aid, rid] = x.dataset.rrep.split('|'); if (!confirmRep('r' + rid)) return;
+      thCache[day + '/' + aid] = (thCache[day + '/' + aid] || []).filter(r => r.id !== rid); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답글은 숨겼어요');
+      try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid), {rep: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-like]').forEach(x => x.onclick = async () => { const id = x.dataset.like; S.liked = S.liked || {}; const L = S.liked[day] = S.liked[day] || []; if (L.includes(id)) return;
+      L.push(id); Object.keys(S.liked).forEach(k => { if (k !== today() && k !== yesterKey()) delete S.liked[k]; }); save(); sfx.boop(); buzz(8);
+      const a = talkCache.list.find(r => r.id === id); if (a) a.likes = (a.likes || 0) + 1; x.classList.add('on'); x.textContent = `공감 ${a ? a.likes : ''}`;
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {likes: F.increment(1)}); } catch (e) {} });
-    el.querySelectorAll('[data-rep]').forEach(b => b.onclick = async () => { const id = b.dataset.rep; if (!confirmRep(id)) return;
+    el.querySelectorAll('[data-rep]').forEach(x => x.onclick = async () => { const id = x.dataset.rep; if (!confirmRep(id)) return;
       talkCache.list = talkCache.list.filter(r => r.id !== id); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답은 숨겼어요');
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {rep: F.increment(1)}); } catch (e) {} });
-  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; }
+  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; wire(); }
   talkBusy = false;
 }
+// how many replies came in on yesterday's answer since I last looked
+async function newReplies() {
+  await loading; for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150)); if (!me) return 0;
+  const day = yesterKey();
+  try { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid)); if (!d.exists()) return 0;
+    const rc = d.data().rc || 0, seen = (S.rcSeen || {})[day] || 0; return rc > seen ? rc - seen : 0; } catch (e) { return 0; }
+}
 let repArm = '';
-function confirmRep(id) { if (repArm === id) return true; repArm = id; toast('한 번 더 누르면 신고돼요'); return false; }
+function confirmRep(id, msg) { if (repArm === id) return true; repArm = id; toast(msg || '한 번 더 누르면 신고돼요'); return false; }
 
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
 const LN = () => NATIVE ? plug('LocalNotifications') : null;
@@ -1149,14 +1532,17 @@ window.gardenShare = async (dataUrl, name) => {
 
 window.GL = {render, renderTalk, ask, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
-  login: async () => { await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
+  login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
   // who won last week's school match (highest average points)
   lastWeek: async () => { await loading; for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150)); if (!me) return null;
     const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
     for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
-    return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
+    return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta,
+  appSheet, offerApp: false, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => false};
 const loading = load();
+if (/[#&]app\b/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} setTimeout(() => { if (S.intro >= 2) appSheet(); }, 1800); }
+if (window.hud) hud();
 reminders();
 </script>
 
