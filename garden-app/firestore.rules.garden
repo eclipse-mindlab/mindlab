@@ -1,0 +1,19 @@
+// 꼬마 철학자의 정원: 기존 딜렘 규칙의 `match /databases/{database}/documents { ... }` 안에 이 두 블록을 "추가"하세요.
+// 기존 users 규칙은 건드리지 않습니다.
+
+    // 내 정원 저장본: 나만 읽고 씀
+    match /garden/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.s is string && request.resource.data.s.size() < 200000;
+    }
+
+    // 주간 리그: 로그인한 사람은 다 읽고, 자기 줄만 씀
+    match /gardenLeague/{week}/p/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['name', 'n', 'upd'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 10
+        && request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 70;
+    }
