@@ -396,7 +396,9 @@ const IF={flower:'flower_pin',glasses:'round_glasses',bowtie:'bow_tie',beanie:'p
 const U=.16;  // kid-local units per canvas pixel
 const IMG=(f,cls)=>`<image ${cls?`class="${cls}" `:''}href="${A(f)}" x="${-300*U}" y="${-760*U}" width="${600*U}" height="${800*U}"/>`;
 const hasProp=k=>k==='soc'||k==='nie';
-function kidSVG(k,mode,W){W=W||{};
+// side of the head for floating marks: front-row kids use the side facing the middle, back row uses the top
+const sideOf=k=>{const sp=SPOTS[k];return !sp||sp.back?'t':sp.x<195?'r':'l';};
+function kidSVG(k,mode,W,side){W=W||{};side=side||'t';
   if(k==='owl')return `<rect class="hit" x="-24" y="-48" width="48" height="48" fill="transparent"/><g class="breathe"><image class="spr" href="${A('owl_basic')}" x="-26" y="-50" width="52" height="52"/></g>`;
   if(k==='ecl')return `<rect class="hit" x="-22" y="-118" width="44" height="120" fill="transparent"/>${IMG('ecl_'+mode,'spr')}`;
   if(mode==='barrel')return `<rect class="hit" x="-40" y="-64" width="66" height="66" fill="transparent"/><g class="bar">${IMG('dio_barrel','spr')}</g>`;
@@ -406,7 +408,7 @@ function kidSVG(k,mode,W){W=W||{};
     ${W.neck==='cape'?wear('neck'):''}<g class="handw">${wear('hand')}</g>
     ${IMG(`${k}_${base}${np?'_np':''}`,'spr')}
     ${W.neck&&W.neck!=='cape'?wear('neck'):''}<g class="headw"${mode==='sleep'?` transform="translate(0 ${8*U})"`:''}>${wear('face')}${wear('head')}</g>
-    ${mode==='sleep'?`<image class="zz" href="${A('fx_zz')}" x="10" y="-130" width="30" height="20"/>`:''}</g>`;}
+    ${mode==='sleep'?`<image class="zz" href="${A('fx_zz')}" x="${side==='r'?28:side==='l'?-58:10}" y="${side==='t'?-130:-114}" width="30" height="20"/>`:''}</g>`;}
 // swap the drawing for blink, talk and happy without rebuilding the kid
 function setFrame(k,f){const a=actors[k];if(!a)return;const img=a.g.querySelector('.spr');if(!img)return;
   if(k==='owl'){img.setAttribute('href',A('owl_'+({blink:'blink',talk:'hoot',happy:'hoot'}[f]||'basic')));return;}
@@ -418,7 +420,7 @@ function setFrame(k,f){const a=actors[k];if(!a)return;const img=a.g.querySelecto
 
 // ---------- the scene ----------
 const POT={x:234,y:628},PP=.19,TP=.235;
-const SPOTS={soc:{x:54,y:706,s:1.3,lo:46,hi:64},nie:{x:324,y:706,s:1.3,lo:318,hi:334},epi:{x:58,y:568,s:1.05,back:1,lo:50,hi:66},dio:{x:336,y:566,s:1,back:1,lo:332,hi:342},owl:{x:146,y:448,s:.8,back:1},ecl:{x:140,y:738,s:1.2}};
+const SPOTS={soc:{x:58,y:706,s:1.3,lo:56,hi:66},nie:{x:318,y:706,s:1.3,lo:312,hi:322},epi:{x:58,y:568,s:1.05,back:1,lo:50,hi:66},dio:{x:336,y:566,s:1,back:1,lo:332,hi:342},owl:{x:146,y:448,s:.8,back:1},ecl:{x:148,y:738,s:1.2}};
 const SHADOW={x:16,y:568,s:1.05,back:1};
 const actors={};
 const spotOf=(k,mode)=>mode==='shadow'?SHADOW:(SPOTS[k]||{s:1.5});
@@ -437,7 +439,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
   crickets(t==='night');eclEgg();}
 function openGate(){const g=$('gateImg');if(!g)return;g.setAttribute('href',A('gate_open'));clearTimeout(openGate.t);openGate.t=setTimeout(()=>g.setAttribute('href',A('gate_closed')),2800);}
 function paintPlant(anim){const st=stageOf(S.given);
-  $('plantG').innerHTML=`<rect class="hit" x="${POT.x-52}" y="${POT.y-185}" width="104" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
+  $('plantG').innerHTML=`<rect class="hit" x="${POT.x-50}" y="${POT.y-185}" width="100" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
 function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
   $('wardBtn').classList.toggle('pulse',S.fruit>0&&!S.wardSeen);}
 const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');};
@@ -445,7 +447,7 @@ const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.cl
 // an actor is someone in the scene with its own x and mode
 function place(k,mode,x,y){let a=actors[k];const sp=spotOf(k,mode);
   if(!a){const g=document.createElementNS(NS,'g');g.dataset.k=k;g.style.cursor='pointer';$(sp.back?'castBack':'cast').appendChild(g);a=actors[k]={g,x,y,mode:null,s:sp.s};g.addEventListener('click',()=>tapKid(k));}
-  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k])}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);return a;}
+  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);return a;}
 function walk(k,toX,ms,done,idle,toY,toS){const a=actors[k];const x0=a.x,y0=a.y,s0=a.s,t0=performance.now();a.walking=true;a.idle=!!idle;a.cancel=0;if(toY==null)toY=y0;if(toS==null)toS=s0;
   const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
     a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);done&&done();}};
@@ -455,7 +457,11 @@ const misOf=k=>S.mis[k]&&MIS[k]?MIS[k][S.mis[k].i]:null;
 const newMis=k=>!!(S.mis[k]&&S.mis[k].st==='new');
 function refreshNote(k){const a=actors[k];if(!a||!KIDS.includes(k))return;const old=a.g.querySelector('.note');if(old)old.remove();
   if(!(a.mode==='awake'||a.mode==='sleep')||!newMis(k)||left(k)>0)return;
-  const ch='!';a.g.insertAdjacentHTML('beforeend',`<g class="note"><g class="nbob"><path d="M-13 -150 h26 a6 6 0 0 1 6 6 v14 a6 6 0 0 1 -6 6 h-9 l-5 7 l-2 -7 h-10 a6 6 0 0 1 -6 -6 v-14 a6 6 0 0 1 6 -6Z" fill="#ffcf5a" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/><text x="0" y="-131" text-anchor="middle" font-family="Jua" font-size="19" fill="#1b1530">${ch}</text></g></g>`);}
+  const side=sideOf(k),st='fill="#ffcf5a" stroke="#000" stroke-width="2.6" stroke-linejoin="round"',tx='text-anchor="middle" font-family="Jua" font-size="19" fill="#1b1530"';
+  // a speech-bubble "!" with its tail on the head: above it for the back row, beside it for the front row
+  const body=side==='t'?`<path d="M-13 -150 h26 a6 6 0 0 1 6 6 v14 a6 6 0 0 1 -6 6 h-9 l-5 7 l-2 -7 h-10 a6 6 0 0 1 -6 -6 v-14 a6 6 0 0 1 6 -6Z" ${st}/><text x="0" y="-131" ${tx}>!</text>`
+    :`<g transform="scale(${side==='r'?1:-1} 1)"><path d="M36 -112 h20 a6 6 0 0 1 6 6 v14 a6 6 0 0 1 -6 6 h-20 a6 6 0 0 1 -6 -6 v-3 l-8 -4 l8 -3 v-4 a6 6 0 0 1 6 -6Z" ${st}/></g><text x="${side==='r'?46:-46}" y="-93" ${tx}>!</text>`;
+  a.g.insertAdjacentHTML('beforeend',`<g class="note"><g class="nbob">${body}</g></g>`);}
 function hop(k){const a=actors[k],b=a&&a.g.querySelector('.body');if(!b)return;b.classList.remove('hop');void b.getBoundingClientRect();b.classList.add('hop');
   if(a.mode==='awake'&&!a.talk){a.held=1;setFrame(k,'happy');clearTimeout(a.ht);a.ht=setTimeout(()=>{a.held=0;if(!a.talk)setFrame(k,'basic');},650);}}
 function wobble(k){const b=actors[k].g.querySelector('.body');b.classList.remove('wobble');void b.getBoundingClientRect();b.classList.add('wobble');setFrame(k,'shake');setTimeout(()=>setFrame(k,'basic'),520);}
@@ -512,7 +518,8 @@ let busy=false;
 function water(){if(busy||S.intro<2)return;if(pend&&pend.opts)return;if(pend)closeBub();ac();
   if(S.drops<=0){const ks=present();say(ks[(Date.now()/1000|0)%ks.length]||'soc','물방울은 질문에 답하면 생겨. 나를 눌러 봐.');return;}
   busy=true;const before=stageOf(S.given);S.drops--;S.given++;save();hud();sfx.water();buzz([15,40,15]);
-  const fx=$('fx');fx.innerHTML=`<g transform="translate(${POT.x+44} ${POT.y-118}) rotate(-24) scale(-1 1)"><image href="${A('can')}" x="-40" y="-30" width="80" height="60"/></g><g transform="translate(${POT.x-2} ${POT.y-96}) scale(-1 1)"><image class="drip" href="${A('fx_water')}" x="-14" y="0" width="28" height="44"/></g>`;
+  const fx=$('fx');// the can stands left of the pot and pours onto the rim, under the leaves (spout sits 41 right, 7 down of its centre)
+  fx.innerHTML=`<g transform="translate(${POT.x-62} ${POT.y-60}) rotate(24)"><image href="${A('can')}" x="-40" y="-30" width="80" height="60"/></g><g transform="translate(${POT.x-21} ${POT.y-53})"><image class="drip" href="${A('fx_water')}" x="-14" y="0" width="28" height="44"/></g>`;
   setTimeout(()=>{fx.innerHTML='';const after=stageOf(S.given);paintPlant(true);
     // every watering drops one golden fruit
     const pr=$('plantG').getBoundingClientRect();fly({left:pr.left,width:pr.width,top:pr.top+pr.height*.35},'fruitChip',()=>{sfx.fruit();S.fruit++;save();hud();bump('fruitChip');
