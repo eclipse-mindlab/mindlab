@@ -134,6 +134,8 @@
 
 
   <script type="module">
+    // 다른 사람이 적은 글자는 화면에 넣기 전에 꼭 이걸 거친다
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
     import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
@@ -200,7 +202,7 @@
           <a href="read-me-results.html?id=${challenge.id}" class="challenge-card">
             <div class="challenge-card-header">
               <div class="challenge-card-title">
-                ${challenge.creatorName || '???'}의 도전장
+                ${esc(challenge.creatorName || '???')}의 도전장
               </div>
               <div class="challenge-card-date">${dateStr}</div>
             </div>
