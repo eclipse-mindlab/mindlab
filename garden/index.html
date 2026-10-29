@@ -209,6 +209,16 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
+.ta .act .sp{flex:1}
+.rbt{appearance:none;border:0;background:none;padding:2px 0;font-family:var(--hand);font-size:14px;color:#5b3fd0;cursor:pointer;display:flex;align-items:center;gap:6px}
+.rbt.on{color:var(--ink)}
+.rbt .new{font-style:normal;font-size:12px;background:#ff5d73;color:#fff;border:1.5px solid #000;border-radius:999px;padding:0 7px}
+.th{display:flex;flex-direction:column;gap:6px;margin-top:4px;padding-left:10px;border-left:3px solid #e6dcc8}
+.rp{display:flex;flex-direction:column;gap:2px}
+.rp .who{display:flex;align-items:center;gap:6px;font-size:12px;color:#7a6fa0}.rp .who b{font-family:var(--hand);font-weight:400;font-size:13.5px;color:var(--ink)}.rp .who .lnk{margin-left:auto;font-size:12px}
+.rp p{margin:0;font-size:14.5px;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+.rin{display:flex;gap:6px;align-items:center}.rin input{flex:1;min-width:0;font:inherit;font-size:14.5px;border:2px solid #000;border-radius:10px;padding:7px 10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}.rin .opt{flex:none;font-size:14.5px;padding:6px 12px}
+.tday{display:flex;gap:6px;margin-bottom:2px}.tday button{appearance:none;border:2px solid #000;border-radius:999px;background:#fff;padding:4px 12px;font-family:var(--hand);font-size:14px;color:var(--ink);cursor:pointer}.tday button.on{background:#f6f1ff;border-color:#5b3fd0;color:#5b3fd0}
 .wit.sel{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
 .wmsg .wtry{display:block;margin-bottom:6px}.wbuy{display:flex;gap:6px;justify-content:center}.wbuy .opt{flex:0 1 auto;font-size:15px;padding:7px 12px}.wbuy .opt[disabled]{opacity:.6}
 .calt{width:100%;margin-top:-2px}
@@ -683,11 +693,11 @@ const TA=[
   '많을 필요 없어. 대낮에 등불 들고 찾아도 한 명 찾기 힘들거든.',
   '나는 책 한 권 안 썼어. 질문만 남겼지. 그걸 플라톤이 받아 적었어.',
   '지금 괴롭지 않은지 봐. 괴롭지 않으면 이미 즐거운 거야.'];
-const philAnswer=()=>{const [k]=talkQ();return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${talkA()}</p></div>`;};
+const philAnswer=(b=0)=>{const [k]=talkQ(b);return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${talkA(b)}</p></div>`;};
 const TQ_EPOCH=Date.UTC(2026,9,31);
-const talkN=()=>{const d=nowD();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5);};
-const talkQ=()=>{const n=talkN();return n<0&&n>=-5?TQ_OLD[n+5]:TQ[((n%TQ.length)+TQ.length)%TQ.length];};
-const talkA=()=>{const n=talkN();return n<0&&n>=-5?TA_OLD[n+5]:TA[((n%TA.length)+TA.length)%TA.length];};
+const talkN=(b=0)=>{const d=nowD();d.setDate(d.getDate()-b);return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5);};
+const talkQ=(b=0)=>{const n=talkN(b);return n<0&&n>=-5?TQ_OLD[n+5]:TQ[((n%TQ.length)+TQ.length)%TQ.length];};
+const talkA=(b=0)=>{const n=talkN(b);return n<0&&n>=-5?TA_OLD[n+5]:TA[((n%TA.length)+TA.length)%TA.length];};
 function sameDaySum(){const d=nowD(),wd=(d.getDay()+6)%7;return weekDays(1).slice(0,wd+1).reduce((n,k)=>n+(S.log[k]||0),0);}
 function streak(){const d=nowD();let n=0;if(!S.log[dkey(d)])d.setDate(d.getDate()-1);while(S.log[dkey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 const stageOf=g=>{let s=0;STAGE.forEach((n,i)=>{if(g>=n)s=i;});return s;};
@@ -782,7 +792,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
 function openGate(){const g=$('gateImg');if(!g)return;g.setAttribute('href',A('gate_open'));clearTimeout(openGate.t);openGate.t=setTimeout(()=>g.setAttribute('href',A('gate_closed')),2800);}
 function paintPlant(anim){const st=stageOf(S.given);
   $('plantG').innerHTML=`<rect class="hit" x="${POT.x-50}" y="${POT.y-185}" width="100" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
-function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
+function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
   $('wardBtn').classList.toggle('pulse',S.fruit>0&&!S.wardSeen);}
 const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');};
 
@@ -1028,7 +1038,10 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
   if(!S.met.nie&&actors.nie&&actors.nie.mode==='shadow'&&S.pd<DAY_AT.nie)hint='근데 아까부터 문밖에 누가 서 있어. 콧수염이 보이던데.';
   else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
   else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
-  const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn()){askTalk();}else askSave('day');};
+  const next=()=>{const G=window.GL;if(!(G&&G.isIn&&G.isIn()))return askSave('day');
+    if(!G.newReplies)return askTalk();
+    Promise.race([G.newReplies(),new Promise(r=>setTimeout(()=>r(0),2500))]).then(n=>{if(!n)return askTalk();const k=S.met.epi&&actors.epi?'epi':'soc';
+      say(k,`어제 네가 광장에 남긴 답에 답글이 ${n}개 달렸어. 보러 갈래?`,['보러 가기','나중에'],c=>{if(c===0){openBoard();bt='talk';G.talkView(1);drawBoard();}else askTalk();});});};
   const chain=[[who,line]];
   const go=()=>{if(hint)chain.push(['soc',hint]);(function step(i){if(i>=chain.length)return next();const [k,t]=chain[i];say(actors[k]?k:'soc',t,null,()=>setTimeout(()=>step(i+1),300));})(0);};
   // on a new week, tell how last week's school match went
@@ -1362,7 +1375,7 @@ function paintApp() {
   if (q('apCopy')) q('apCopy').onclick = async () => { try { await navigator.clipboard.writeText('https://' + SHORT); toast('주소를 복사했어요'); } catch (e) { toast(SHORT); } };
 }
 function betaCard() {
-  if (NATIVE) return '';
+  return '';
   return `<div class="mis"><p class="mt">앱으로 받기</p><p class="mw">${OS === 'android' ? '앱에서는 아침 미션 알림과 연속 기록 알림이 와요.' : OS === 'ios' ? '아이폰 앱이 나오면 메일로 알려 드려요.' : '안드로이드 폰에서 받을 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgBeta">앱 받기</button></div></div>`;
 }
 async function betaJoin(el) {
@@ -1371,14 +1384,30 @@ async function betaJoin(el) {
   catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
 
-// ---- the square: one question a day, one-line answers, hearts, reports ----
+// ---- the square: one question a day, one-line answers, hearts, replies, reports ----
 const BAD = /(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www\.|\.com|\.kr|카톡|오픈채팅)/i;
-let talkCache = null, talkBusy = false;
+let talkCache = null, talkBusy = false, tView = 0;
+const thOpen = new Set(), thCache = {};
+const talkDay = b => b ? yesterKey() : today();
+async function cleanText(raw) {
+  const t = raw.replace(/\s+/g, ' ').trim().slice(0, 60);
+  if (t.length < 2) return null;
+  if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return null; }
+  if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
+  $('bMsg').textContent = ''; return t;
+}
+async function loadThread(day, aid) {
+  const got = []; (await F.getDocs(F.query(F.collection(db, 'gardenTalk', day, 'a', aid, 'r'), F.orderBy('at', 'asc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
+  got.sort((a, b) => (a.at && a.at.seconds != null ? a.at.seconds : +a.at || 0) - (b.at && b.at.seconds != null ? b.at.seconds : +b.at || 0));
+  thCache[day + '/' + aid] = got.filter(x => (x.rep || 0) < 3);
+}
 async function renderTalk(el) {
-  const [ak, q] = talkQ(), day = today(), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
-  const head = `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer()}`;
-  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; return; }
-  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; return; }
+  const b = tView, day = talkDay(b), [ak, q] = talkQ(b), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  const tabs = `<div class="tday"><button type="button" class="${b ? '' : 'on'}" data-tv="0">오늘 질문</button><button type="button" class="${b ? 'on' : ''}" data-tv="1">어제 질문</button></div>`;
+  const head = tabs + `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer(b)}`;
+  const wire = () => el.querySelectorAll('[data-tv]').forEach(x => x.onclick = () => { const v = +x.dataset.tv; if (v === tView) return; sfx.boop(); tView = v; talkCache = null; talkBusy = false; renderTalk(el); });
+  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; wire(); return; }
+  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; wire(); return; }
   if (talkBusy) return; talkBusy = true;
   try {
     // reading needs any sign-in: people who haven't logged in read as a guest
@@ -1390,36 +1419,75 @@ async function renderTalk(el) {
       if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
       talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3), mine};
     }
-    const liked = (S.liked && S.liked[day]) || [];
-    const row = (x, isMine) => `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
-      <div class="act">${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div></div>`;
+    const liked = (S.liked && S.liked[day]) || [], seen = (S.rcSeen || {})[day] || 0;
+    const thread = x => {
+      if (!thOpen.has(day + '/' + x.id)) return '';
+      const L = thCache[day + '/' + x.id];
+      if (!L) return '<div class="th"><p class="mw">불러오는 중이에요</p></div>';
+      const canDel = r => me && (r.uid === me.uid || x.id === me.uid);
+      return `<div class="th">${L.map(r => `<div class="rp"><div class="who"><b>${esc(r.name || '')}</b>${r.sc && SCHOOL[r.sc] ? `<span class="hb ${r.sc}">${SCHOOL[r.sc].nm}</span>` : ''}${canDel(r) ? `<button class="lnk" type="button" data-rdel="${x.id}|${r.id}">지우기</button>` : me ? `<button class="lnk" type="button" data-rrep="${x.id}|${r.id}">신고</button>` : ''}</div><p>${esc(r.t)}</p></div>`).join('')}
+        ${me ? `<div class="rin"><input type="text" maxlength="60" placeholder="${esc(x.name || '')}에게 답글" data-rtx="${x.id}"><button class="opt" type="button" data-rgo="${x.id}">보내기</button></div>` : '<p class="mw">구글로 로그인하면 답글을 달 수 있어요.</p>'}</div>`;
+    };
+    const row = (x, isMine) => { const rc = Math.max(x.rc || 0, (thCache[day + '/' + x.id] || []).length), fresh = isMine && rc > seen;
+      return `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
+      <div class="act"><button class="rbt${thOpen.has(day + '/' + x.id) ? ' on' : ''}" type="button" data-th="${x.id}">답글 ${rc}${fresh ? `<i class="new">새 답글 ${rc - seen}</i>` : ''}</button><span class="sp"></span>${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div>${thread(x)}</div>`; };
     const m = talkCache.mine, n = talkCache.list.length + (m ? 1 : 0);
-    const box = !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고 공감할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
-      : m ? '<p class="mw">오늘 답을 남겼어요. 내일 새 질문이 와요.</p>'
+    const box = b ? `<p class="mw">어제 질문이에요. 답은 하루에 한 줄이고, 답글은 계속 달 수 있어요.</p>`
+      : !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고, 답글로 이야기할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
+      : m ? '<p class="mw">오늘 답을 남겼어요. 다른 사람 답에 답글로 이야기해 보세요.</p>'
       : `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
-    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : '<p class="mempty">아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.</p>');
+    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : (m ? '' : `<p class="mempty">${b ? '어제는 아무도 답하지 않았어요.' : '아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.'}</p>`));
+    wire();
     const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
     const tx = el.querySelector('#tTx');
     if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
-      el.querySelector('#tGo').onclick = async () => { const t = tx.value.replace(/\s+/g, ' ').trim().slice(0, 60);
-        if (t.length < 2) return; if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return; }
-        if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
+      el.querySelector('#tGo').onclick = async () => { const t = await cleanText(tx.value); if (!t) return;
         try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
-          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]); $('bMsg').textContent = '';
+          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]);
           talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
         catch (e) { toast('남기지 못했어요. 잠시 뒤에 다시 해 주세요'); } }; }
-    el.querySelectorAll('[data-like]').forEach(b => b.onclick = async () => { const id = b.dataset.like; S.liked = S.liked || {}; const L = S.liked[day] = S.liked[day] || []; if (L.includes(id)) return;
-      L.push(id); Object.keys(S.liked).forEach(k => { if (k !== day) delete S.liked[k]; }); save(); sfx.boop(); buzz(8);
-      const x = talkCache.list.find(r => r.id === id); if (x) x.likes = (x.likes || 0) + 1; b.classList.add('on'); b.textContent = `공감 ${x ? x.likes : ''}`;
+    el.querySelectorAll('[data-th]').forEach(x => x.onclick = async () => { const id = x.dataset.th; sfx.boop();
+      if (thOpen.has(day + '/' + id)) { thOpen.delete(day + '/' + id); talkBusy = false; return renderTalk(el); }
+      thOpen.add(day + '/' + id); talkBusy = false; renderTalk(el);
+      try { await loadThread(day, id); } catch (e) { thCache[day + '/' + id] = []; }
+      if (m && id === m.id) { S.rcSeen = {[day]: Math.max(m.rc || 0, thCache[day + '/' + id].length)}; save(); }
+      talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rgo]').forEach(x => x.onclick = async () => { const aid = x.dataset.rgo, inp = el.querySelector(`[data-rtx="${aid}"]`);
+      const t = await cleanText(inp.value); if (!t) return; x.disabled = true;
+      const rid = me.uid + '_' + Date.now(), r = {t, sc: S.school || '', name: S.lname, uid: me.uid, rep: 0, at: F.serverTimestamp()};
+      try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid), r);
+        try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', aid), {rc: F.increment(1)}); } catch (e) {}
+        (thCache[day + '/' + aid] = thCache[day + '/' + aid] || []).push({id: rid, ...r, at: Date.now()});
+        const a = aid === uid ? talkCache.mine : talkCache.list.find(z => z.id === aid); if (a) a.rc = (a.rc || 0) + 1;
+        if (aid === uid) { S.rcSeen = {[day]: a.rc}; save(); }
+        sfx.boop(); buzz(10); }
+      catch (e) { toast('보내지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+      talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rdel]').forEach(x => x.onclick = async () => { const [aid, rid] = x.dataset.rdel.split('|'); if (!confirmRep('d' + rid, '한 번 더 누르면 지워져요')) return;
+      try { await F.deleteDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid)); thCache[day + '/' + aid] = (thCache[day + '/' + aid] || []).filter(r => r.id !== rid); toast('지웠어요'); }
+      catch (e) { toast('지우지 못했어요'); } talkBusy = false; renderTalk(el); });
+    el.querySelectorAll('[data-rrep]').forEach(x => x.onclick = async () => { const [aid, rid] = x.dataset.rrep.split('|'); if (!confirmRep('r' + rid)) return;
+      thCache[day + '/' + aid] = (thCache[day + '/' + aid] || []).filter(r => r.id !== rid); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답글은 숨겼어요');
+      try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid), {rep: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-like]').forEach(x => x.onclick = async () => { const id = x.dataset.like; S.liked = S.liked || {}; const L = S.liked[day] = S.liked[day] || []; if (L.includes(id)) return;
+      L.push(id); Object.keys(S.liked).forEach(k => { if (k !== today() && k !== yesterKey()) delete S.liked[k]; }); save(); sfx.boop(); buzz(8);
+      const a = talkCache.list.find(r => r.id === id); if (a) a.likes = (a.likes || 0) + 1; x.classList.add('on'); x.textContent = `공감 ${a ? a.likes : ''}`;
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {likes: F.increment(1)}); } catch (e) {} });
-    el.querySelectorAll('[data-rep]').forEach(b => b.onclick = async () => { const id = b.dataset.rep; if (!confirmRep(id)) return;
+    el.querySelectorAll('[data-rep]').forEach(x => x.onclick = async () => { const id = x.dataset.rep; if (!confirmRep(id)) return;
       talkCache.list = talkCache.list.filter(r => r.id !== id); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답은 숨겼어요');
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {rep: F.increment(1)}); } catch (e) {} });
-  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; }
+  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; wire(); }
   talkBusy = false;
 }
+// how many replies came in on yesterday's answer since I last looked
+async function newReplies() {
+  await loading; for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150)); if (!me) return 0;
+  const day = yesterKey();
+  try { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid)); if (!d.exists()) return 0;
+    const rc = d.data().rc || 0, seen = (S.rcSeen || {})[day] || 0; return rc > seen ? rc - seen : 0; } catch (e) { return 0; }
+}
 let repArm = '';
-function confirmRep(id) { if (repArm === id) return true; repArm = id; toast('한 번 더 누르면 신고돼요'); return false; }
+function confirmRep(id, msg) { if (repArm === id) return true; repArm = id; toast(msg || '한 번 더 누르면 신고돼요'); return false; }
 
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
 const LN = () => NATIVE ? plug('LocalNotifications') : null;
@@ -1471,7 +1539,7 @@ window.GL = {render, renderTalk, ask, timer, onMission: () => { postScore(); pus
     const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
     for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
     return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta,
-  appSheet, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => !NATIVE && OS === 'android'};
+  appSheet, offerApp: false, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => false};
 const loading = load();
 if (/[#&]app\b/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} setTimeout(() => { if (S.intro >= 2) appSheet(); }, 1800); }
 if (window.hud) hud();
