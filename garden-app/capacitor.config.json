@@ -1,0 +1,12 @@
+{
+  "appId": "io.github.eclipse_mindlab.garden",
+  "appName": "꼬마 철학자의 정원",
+  "webDir": "www",
+  "android": { "backgroundColor": "#1d1838" },
+  "ios": { "backgroundColor": "#1d1838", "contentInset": "never" },
+  "plugins": {
+    "FirebaseAuthentication": { "skipNativeAuth": true, "providers": ["google.com"] },
+    "SplashScreen": { "launchShowDuration": 700, "backgroundColor": "#1d1838", "showSpinner": false },
+    "LocalNotifications": { "iconColor": "#ffcf5a" }
+  }
+}

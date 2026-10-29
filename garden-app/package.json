@@ -1,0 +1,29 @@
+{
+  "name": "eclipse-garden",
+  "version": "0.1.0",
+  "private": true,
+  "description": "꼬마 철학자의 정원 앱 (Capacitor). 화면은 ../garden 을 그대로 씁니다.",
+  "scripts": {
+    "www": "rm -rf www && cp -r ../garden www",
+    "sync": "npm run www && cap sync",
+    "android": "npm run sync && cap open android",
+    "ios": "npm run sync && cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
+    "@capacitor-firebase/authentication": "^8.0.0",
+    "firebase": "^12.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.0.0"
+  }
+}

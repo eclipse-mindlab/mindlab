@@ -1,6 +1,7 @@
 include:
   - .well-known
 exclude:
+  - garden-app
   - tools
   - CLAUDE.md
   - GUIDE.md
