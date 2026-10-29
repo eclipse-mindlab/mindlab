@@ -309,21 +309,22 @@ const CARD={
        ['치즈 한 단지','쾌락을 말한 철학자인데 정작 빵과 물로 살았어요. 친구에게 "치즈 한 단지만 보내 줘. 가끔 호사 좀 부리게"라고 편지를 썼대요.'],
        ['죽음','"죽음은 우리에게 아무것도 아니다. 우리가 있을 때 죽음은 없고, 죽음이 오면 우리는 없다." 두려움을 내려놓는 데서 행복이 시작된다고 봤어요.'],
        ['마지막 편지','죽는 날, 몹시 아팠는데도 친구에게 편지를 썼어요. 함께 나눈 대화를 떠올리면 그 기쁨이 아픔보다 크다고요.']]};
-// wardrobe: everything is bought with fruit, one item per slot
+// wardrobe: everything is bought with fruit, one item per slot.
+// prices: the first two are bought on day one; the lantern (Diogenes' key) by day four; the whole set takes a few weeks.
 const ITEMS=[
-  {id:'flower',nm:'꽃 핀',slot:'head',p:1,vb:'6 -96 28 28'},
-  {id:'glasses',nm:'동그란 안경',slot:'face',p:1,vb:'-20 -70 40 22'},
-  {id:'bowtie',nm:'나비넥타이',slot:'neck',p:2,vb:'-14 -42 28 18'},
-  {id:'beanie',nm:'털모자',slot:'head',p:2,vb:'-34 -108 68 52'},
-  {id:'book',nm:'책',slot:'hand',p:2,vb:'8 -34 30 32'},
-  {id:'scarf',nm:'목도리',slot:'neck',p:3,vb:'-19 -40 38 30'},
-  {id:'lantern',nm:'등불',slot:'hand',p:3,vb:'6 -42 38 38'},
-  {id:'straw',nm:'밀짚모자',slot:'head',p:3,vb:'-46 -106 92 38'},
-  {id:'shades',nm:'선글라스',slot:'face',p:4,vb:'-20 -70 40 22'},
-  {id:'sunflower',nm:'해바라기',slot:'hand',p:4,vb:'6 -66 36 66'},
-  {id:'laurel',nm:'월계관',slot:'head',p:5,vb:'-36 -98 72 44'},
-  {id:'cape',nm:'망토',slot:'neck',p:5,vb:'-30 -38 60 44'},
-  {id:'crown',nm:'왕관',slot:'head',p:8,vb:'-24 -108 48 32'}];
+  {id:'flower',nm:'꽃 핀',slot:'head',p:2,vb:'6 -96 28 28'},
+  {id:'glasses',nm:'동그란 안경',slot:'face',p:3,vb:'-20 -70 40 22'},
+  {id:'bowtie',nm:'나비넥타이',slot:'neck',p:5,vb:'-14 -42 28 18'},
+  {id:'beanie',nm:'털모자',slot:'head',p:6,vb:'-34 -108 68 52'},
+  {id:'book',nm:'책',slot:'hand',p:8,vb:'8 -34 30 32'},
+  {id:'scarf',nm:'목도리',slot:'neck',p:10,vb:'-19 -40 38 30'},
+  {id:'lantern',nm:'등불',slot:'hand',p:12,vb:'6 -42 38 38'},
+  {id:'straw',nm:'밀짚모자',slot:'head',p:15,vb:'-46 -106 92 38'},
+  {id:'shades',nm:'선글라스',slot:'face',p:18,vb:'-20 -70 40 22'},
+  {id:'sunflower',nm:'해바라기',slot:'hand',p:22,vb:'6 -66 36 66'},
+  {id:'laurel',nm:'월계관',slot:'head',p:30,vb:'-36 -98 72 44'},
+  {id:'cape',nm:'망토',slot:'neck',p:40,vb:'-30 -38 60 44'},
+  {id:'crown',nm:'왕관',slot:'head',p:60,vb:'-24 -108 48 32'}];
 const IT=Object.fromEntries(ITEMS.map(x=>[x.id,x]));
 
 // ---------- state ----------
@@ -799,7 +800,7 @@ async function render(el) {
   if (failed) { el.innerHTML = '<div class="mis"><p class="mt">리그는 인터넷이 될 때 열려요</p></div>'; return; }
   if (!ready) { el.innerHTML = '<p class="mempty">불러오는 중이에요</p>'; return; }
   if (!me) {
-    el.innerHTML = `<div class="mis"><p class="mt">이번 주 리그</p><p class="mw">구글로 로그인하면 정원이 저장되고, 이번 주 미션 수로 다른 정원사들과 겨뤄요. 딜렘에서 쓰던 계정이면 이름도 그대로 이어져요.</p><div class="mb"><button class="opt" type="button" id="lgIn">구글로 로그인</button></div></div>`;
+    el.innerHTML = `<div class="mis"><p class="mt">이번 주 리그</p><p class="mw">구글로 로그인하면 정원이 저장되고, 이번 주 미션 수로 다른 정원사들과 겨뤄요. 딜렘에서 쓰던 계정이면 이름도 그대로 이어져요.${NATIVE ? '' : ' 앱 베타 신청도 로그인하면 할 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgIn">구글로 로그인</button></div></div>`;
     el.querySelector('#lgIn').onclick = () => { sfx.boop(); signIn(); };
     return;
   }
@@ -828,7 +829,8 @@ async function render(el) {
       <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
-      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p></div>`;
+      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p></div>${betaCard()}`;
+    const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
@@ -836,6 +838,18 @@ async function render(el) {
 }
 let outArm = 0;
 function confirmOut() { if (Date.now() - outArm < 3000) return true; outArm = Date.now(); toast('한 번 더 누르면 로그아웃돼요'); return false; }
+
+// ---- app beta sign-up (web only): the Google email goes on the Play tester list ----
+const OS = /iphone|ipad|ipod/i.test(navigator.userAgent) ? 'ios' : /android/i.test(navigator.userAgent) ? 'android' : 'pc';
+function betaCard() {
+  if (NATIVE) return '';
+  if (S.beta) return `<div class="mis"><p class="mt">앱 베타 신청 완료</p><p class="mw">${OS === 'ios' ? '아이폰 앱이 나오면 이 이메일로 알려 드려요.' : '테스터로 등록되면 이 이메일로 설치 링크를 보내 드려요.'}</p></div>`;
+  return `<div class="mis"><p class="mt">앱으로 먼저 받아 보기</p><p class="mw">앱에서는 아침 미션 알림과 연속 기록 알림이 와요. 신청하면 로그인한 구글 이메일을 테스터 명단에만 써요.</p><div class="mb"><button class="opt" type="button" id="lgBeta">${OS === 'ios' ? '아이폰 앱 나오면 알림 받기' : '앱 베타 신청'}</button></div></div>`;
+}
+async function betaJoin(el) {
+  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; save(); sfx.buy(); render(el); }
+  catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+}
 
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
 const LN = () => NATIVE ? plug('LocalNotifications') : null;

@@ -17,3 +17,11 @@
         && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 10
         && request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 70;
     }
+
+    // 앱 베타 신청: 자기 신청서만 쓰고 읽음. 명단은 Firebase 콘솔에서 봄
+    match /gardenBeta/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'name', 'os', 'at'])
+        && request.resource.data.email == request.auth.token.email;
+    }
