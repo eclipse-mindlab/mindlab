@@ -191,6 +191,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .tin small{align-self:flex-end;color:#8b82a8}
 .ta{border:2px solid #000;border-radius:14px;background:#fff;padding:9px 12px;display:flex;flex-direction:column;gap:4px}
 .ta.mine{background:#fff1c2}
+.ta.phil{background:#f6f1ff;margin-top:8px}
 .ta .who{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#7a6fa0}
 .ta .who b{font-family:var(--hand);font-weight:400;font-size:14px;color:var(--ink)}
 .hb{font-family:var(--hand);font-size:12px;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#efe9fb}
@@ -393,6 +394,15 @@ const TQ=[['soc','지금 확실히 안다고 믿는 것 하나만 말해 봐.'],
   ['soc','다들 맞다는데 너만 아니라고 생각하는 거 있어?'],['nie','지금 너를 제일 붙잡고 있는 건 뭐야?'],['dio','안 해도 아무도 모를 일, 그래도 하는 거 있어?'],['epi','죽는 게 무서운 이유는 뭘까?'],
   ['soc','후회 없는 선택이란 게 있을까?'],['nie','10년 뒤의 네가 지금의 너에게 할 말은?'],['dio','요즘 너를 제일 귀찮게 하는 건?'],['epi','돈 안 들고 기분 좋아지는 방법 하나만.'],
   ['soc','용기 있는 사람은 겁이 없는 사람일까?'],['nie','남한테 들은 말 중에 아직도 남아 있는 한마디는?'],['dio','버리고 싶은 습관 하나는?'],['epi','요즘 제일 맛있게 먹은 건?']];
+// the asking philosopher's own answer, pinned on top so the square is never empty
+const TA=['나는 내가 모른다는 것 하나는 알아.','아니라면 내일 하나를 바꿔. 내가 이 질문을 던지는 이유야.','컵. 손으로 떠 마시면 되더라.','친구가 보내 준 치즈 한 단지. 그걸로 충분했어.',
+  '나쁜 일을 당하는 것보다 저지르는 게 더 큰 손해야.','무리 속에 있으면 편하지. 대신 네 목소리는 안 들려.','나는 원래 안 봐. 대낮에 등불 들고 광장을 걸었지.','헛된 욕심은 채워도 끝이 없어. 빵과 물이면 충분할 때가 많아.',
+  '내가 틀렸을 때 틀렸다고 말해 주는 사람이 친구야.','나를 죽이지 못하는 것은 나를 더 강하게 만들어. 나는 평생 아팠거든.','나는 통에 살아서 쓸 데가 없었어. 너는 영수증을 보면 알 거야.','무엇을 먹느냐보다 누구와 먹느냐가 먼저야.',
+  '돈을 어떻게 쓸지 모르면, 많을수록 더 망가질걸.','너는 너 자신이 되어야 해. 남이 정해 준 너 말고.','알렉산드로스한테도 비키라고 했던 나야. 답은 정해져 있지.','대부분은 오지도 않을 일이야. 마음이 고요한 게 진짜 쾌락이고.',
+  '아테네 사람 대부분이 나한테 사형을 줬어. 그래도 생각은 안 바꿨지.','왜 사는지 아는 사람은 거의 어떤 어려움도 견뎌.','정직한 사람은 보는 사람이 없어도 똑같이 살아.','죽음은 우리에게 아무것도 아니야. 우리가 있을 땐 죽음이 없고, 죽음이 오면 우리가 없어.',
+  '충분히 따져 보고 골랐다면, 결과가 나빠도 부끄럽진 않아.','아마 이럴걸. 그때 좀 더 과감했어야 했다고.','햇빛 가리는 사람. 좀 비켜 줄래?','좋았던 대화를 떠올려 봐. 나는 많이 아플 때도 그걸로 버텼어.',
+  '겁이 없는 건 무모한 거야. 무서운데도 옳은 걸 하는 게 용기지.','남의 말이 오래 남는다면, 이제 그 말을 넘어설 때가 된 거야.','필요 없는 걸 원하는 습관. 그게 제일 무거워.','배고플 때 먹은 빵. 소박한 음식이 제일 맛있어.'];
+const philAnswer=()=>{const i=(talkIdx()+TQ.length)%TQ.length,k=TQ[i][0];return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${TA[i]}</p></div>`;};
 const TQ_EPOCH=Date.UTC(2026,9,26);
 const talkIdx=()=>{const d=nowD();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5)%TQ.length;};
 const talkQ=()=>TQ[(talkIdx()+TQ.length)%TQ.length];
@@ -603,6 +613,9 @@ let boardTick=null;
 function openBoard(){if(S.intro<2)return;closeBub();ac();sfx.boop();postMissions();bt='mis';$('board').hidden=false;drawBoard();clearInterval(boardTick);boardTick=setInterval(()=>{if(!$('board').hidden&&KIDS.some(k=>S.mis[k]&&S.mis[k].st==='doing'&&S.mis[k].start))drawBoard();},1000);}
 function closeBoard(){$('board').hidden=true;clearInterval(boardTick);sfx.boop();paintBoard();present().forEach(refreshNote);}
 let bt='mis';
+function drawSchool(){const k=S.school;
+  if(!k)return `<div class="mis"><p class="mt">내 학파</p><p class="mw">이성파, 쾌락파, 평정파, 실존파. 질문 네 개면 내가 어디인지 알 수 있어요.</p><div class="mb"><button class="opt" type="button" id="sqz">학파 찾기</button></div></div>`;
+  return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${SCHOOL[k].nm}</b></div><p class="mt">"${SCHOOL[k].line}"</p><p class="mw">같은 학파: ${SCHOOL[k].mem}</p></div>`;}
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
   return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
     return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
@@ -616,11 +629,11 @@ function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max
     <p class="mw">${st}</p><p class="mw">최고 기록 · 한 주 ${S.best.week}개 · 연속 ${S.best.streak}일</p></div>`;}
 function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&MIS[k]);
   $('bStats').innerHTML=`<div class="bst"><b>${streak()}일</b><span>연속</span></div><div class="bst"><b>${weekSum(0)}개</b><span>이번 주 미션</span></div><div class="bst"><b>${S.trees}그루</b><span>키운 나무</span></div>`;
-  $('bTabs').innerHTML=[['mis','미션']].concat(window.GL?[['talk','광장'],['league','리그']]:[]).concat([['story','기록']]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
+  $('bTabs').innerHTML=[['mis','미션'],['talk','광장']].concat(window.GL?[['league','리그']]:[]).concat([['story','기록']]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
-  if(bt==='talk'&&window.GL){$('bMsg').textContent=msg||'';GL.renderTalk($('bList'));return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawRace()+drawStory();$('bMsg').textContent=msg||'';return;}
+  if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
   const done=KIDS.reduce((n,k)=>n+(S.misDone[k]||0),0);
   $('bSub').textContent=done?`지금까지 해낸 미션 ${done}개`:'철학자들이 매일 아침 하나씩 붙여요';
   $('bList').innerHTML=ks.length?ks.map(k=>{const m=S.mis[k],M=MIS[k][m.i];let btn='';
@@ -801,7 +814,8 @@ function boot(){rollDay();paintPlant(false);hud();intro();if(S.intro>=2)postMiss
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
   paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);
     // newcomers wait until nobody is talking
-    const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
+    const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
+    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
@@ -939,7 +953,7 @@ async function render(el) {
     const n = renaming ? S.lname : await nickFromDilem();
     el.innerHTML = `<div class="mis"><p class="mt">리그에서 쓸 이름</p><p class="mw">순위표에 보이는 이름이에요. 열 글자까지 돼요.</p><input class="lname" id="lgName" maxlength="10" value="${esc(n)}" autocomplete="off"><div class="mb"><button class="opt" type="button" id="lgJoin">${renaming ? '이름 바꾸기' : '리그 들어가기'}</button></div></div>`;
     el.querySelector('#lgJoin').onclick = async () => { const v = el.querySelector('#lgName').value.trim().slice(0, 10); if (!v) return;
-      if (RESERVED.test(v.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '이 이름은 쓸 수 없어요'; return; }
+      if (RESERVED.test(v.replace(/\s/g, '')) || BAD.test(v.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '이 이름은 쓸 수 없어요'; return; }
       $('bMsg').textContent = ''; S.lname = v; renaming = false; save(); sfx.buy(); await postScore(); push(); render(el); };
     return;
   }
@@ -1005,32 +1019,34 @@ const BAD = /(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져
 let talkCache = null, talkBusy = false;
 async function renderTalk(el) {
   const [ak, q] = talkQ(), day = today(), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
-  const head = `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>`;
-  if (failed) { el.innerHTML = head + '<p class="mw">광장은 인터넷이 될 때 열려요.</p></div>'; return; }
+  const head = `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer()}`;
+  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; return; }
   if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; return; }
-  if (!me) { el.innerHTML = head + `<p class="mw">구글로 로그인하면 한 줄로 답하고, 다른 사람들 답을 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인</button></div>${LEGAL}</div>`;
-    el.querySelector('#tIn').onclick = () => { sfx.boop(); signIn().then(() => setTimeout(() => renderTalk(el), 600)); }; return; }
-  if (!S.lname) { el.innerHTML = head + '<p class="mw">답을 남기려면 먼저 리그 탭에서 이름을 정해 주세요.</p></div>'; return; }
   if (talkBusy) return; talkBusy = true;
   try {
-    const col = F.collection(db, 'gardenTalk', day, 'a');
-    if (!talkCache || talkCache.day !== day || Date.now() - talkCache.t > 120000) {
+    // reading needs any sign-in: people who haven't logged in read as a guest
+    if (!auth.currentUser) { try { await F.signInAnonymously(auth); } catch (e) {} }
+    const col = F.collection(db, 'gardenTalk', day, 'a'), uid = me ? me.uid : '';
+    if (!talkCache || talkCache.day !== day || talkCache.uid !== uid || Date.now() - talkCache.t > 120000) {
       const got = []; (await F.getDocs(F.query(col, F.orderBy('likes', 'desc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
-      let mine = got.find(x => x.id === me.uid) || null;
-      if (!mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
-      talkCache = {day, t: Date.now(), list: got.filter(x => x.id !== me.uid && (x.rep || 0) < 3), mine};
+      let mine = uid ? got.find(x => x.id === uid) || null : null;
+      if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
+      talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3), mine};
     }
     const liked = (S.liked && S.liked[day]) || [];
     const row = (x, isMine) => `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
-      <div class="act">${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>`}</div></div>`;
-    const m = talkCache.mine;
-    el.innerHTML = head + (m ? '<p class="mw">오늘 답을 남겼어요. 내일 새 질문이 와요.</p>' :
-      `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`) + '</div>'
-      + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : '<p class="mempty">아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.</p>');
+      <div class="act">${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div></div>`;
+    const m = talkCache.mine, n = talkCache.list.length + (m ? 1 : 0);
+    const box = !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고 공감할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
+      : m ? '<p class="mw">오늘 답을 남겼어요. 내일 새 질문이 와요.</p>'
+      : `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
+    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : '<p class="mempty">아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.</p>');
+    const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
     const tx = el.querySelector('#tTx');
     if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
       el.querySelector('#tGo').onclick = async () => { const t = tx.value.replace(/\s+/g, ' ').trim().slice(0, 60);
         if (t.length < 2) return; if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return; }
+        if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
         try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
           S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]); $('bMsg').textContent = '';
           talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
@@ -1042,7 +1058,7 @@ async function renderTalk(el) {
     el.querySelectorAll('[data-rep]').forEach(b => b.onclick = async () => { const id = b.dataset.rep; if (!confirmRep(id)) return;
       talkCache.list = talkCache.list.filter(r => r.id !== id); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답은 숨겼어요');
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {rep: F.increment(1)}); } catch (e) {} });
-  } catch (e) { el.innerHTML = head + '<p class="mw">광장을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; }
+  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; }
   talkBusy = false;
 }
 let repArm = '';

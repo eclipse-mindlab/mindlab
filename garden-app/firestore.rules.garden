@@ -34,6 +34,8 @@
         && request.auth.token.firebase.sign_in_provider == 'google.com'
         && request.resource.data.keys().hasOnly(['t', 'sc', 'name', 'likes', 'rep', 'at'])
         && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 80
+        && !request.resource.data.t.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
         && request.resource.data.likes == 0 && request.resource.data.rep == 0;
       allow update: if request.auth != null && request.auth.uid != uid
         && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) && request.resource.data.likes == resource.data.likes + 1)
