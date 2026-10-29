@@ -779,7 +779,7 @@ async function push() {
   if (!me || !pulled) return;
   try { await F.setDoc(F.doc(db, 'garden', me.uid), {s: JSON.stringify(S), p: progress(S), upd: F.serverTimestamp()}); } catch (e) {}
 }
-window.onGardenSave = () => { if (me && pulled && !pushT) pushT = setTimeout(push, 15000); reminders(); };
+window.onGardenSave = () => { if (me && pulled && !pushT) pushT = setTimeout(push, 60000); reminders(); };
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && pushT) push(); });
 
 // ---- weekly league ----
@@ -788,9 +788,11 @@ async function nickFromDilem() {
   try { const d = await F.getDoc(F.doc(db, 'users', me.uid)); const n = d.exists() && d.data().name; if (n) return String(n).slice(0, 10); } catch (e) {}
   return (me.displayName || '').split(' ')[0].slice(0, 10);
 }
+let posted = '', lgCache = null;
 async function postScore() {
   if (!me || !S.lname) return;
-  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); } catch (e) {}
+  const key = weekId() + '|' + S.lname + '|' + weekSum(0); if (key === posted) return;
+  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); posted = key; } catch (e) {}
 }
 let box = null, busyL = false, renaming = false;
 const LEGAL = '<p class="mw lgme"><a class="lnk" href="privacy.html">개인정보처리방침</a> · <a class="lnk" href="privacy.html#delete">기록 삭제 요청</a></p>';
@@ -819,13 +821,22 @@ async function render(el) {
   try {
     await postScore();
     const col = F.collection(db, 'gardenLeague', weekId(), 'p');
-    const top = await F.getDocs(F.query(col, F.orderBy('n', 'desc'), F.limit(30)));
-    const mine = weekSum(0);
-    let rank = null; const rows = [];
-    top.forEach(d => { const x = d.data(); rows.push({id: d.id, name: x.name, n: x.n}); });
+    const mine = weekSum(0), wk = weekId();
+    if (!lgCache || lgCache.wk !== wk || Date.now() - lgCache.t > 300000) {
+      const top = await F.getDocs(F.query(col, F.orderBy('n', 'desc'), F.limit(30)));
+      const got = []; top.forEach(d => { const x = d.data(); got.push({id: d.id, name: x.name, n: x.n}); });
+      lgCache = {wk, t: Date.now(), rows: got, above: {}};
+    }
+    // my own row is always current, even from a cached table
+    const rows = lgCache.rows.filter(r => r.id !== me.uid);
+    const low = rows.length ? rows[rows.length - 1].n : -1;
+    if (rows.length < 30 || mine >= low) rows.push({id: me.uid, name: S.lname, n: mine});
+    rows.sort((a, b) => b.n - a.n);
+    if (rows.length > 30) rows.length = 30;
     const i = rows.findIndex(r => r.id === me.uid);
+    let rank;
     if (i >= 0) rank = rows.filter(r => r.n > mine).length + 1;
-    else { const c = await F.getCountFromServer(F.query(col, F.where('n', '>', mine))); rank = c.data().count + 1; }
+    else { if (lgCache.above[mine] == null) { const c = await F.getCountFromServer(F.query(col, F.where('n', '>', mine))); lgCache.above[mine] = c.data().count; } rank = lgCache.above[mine] + 1; }
     const d = nowD(), left = 7 - (d.getDay() + 6) % 7;
     el.innerHTML = `<div class="mis"><div class="mh"><b>이번 주 리그</b><span class="lv">${rank}등</span></div>
       <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
