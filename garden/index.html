@@ -78,6 +78,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ward{position:absolute;inset:0;z-index:9;background:rgba(10,8,24,.5);display:flex;align-items:flex-end}
 .wsheet{width:100%;max-height:82%;overflow:auto;background:var(--paper);color:var(--ink);border-top:3px solid #000;border-radius:26px 26px 0 0;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-sizing:border-box;display:flex;flex-direction:column;gap:10px;animation:sheet .3s cubic-bezier(.2,1.2,.4,1)}
 @keyframes sheet{from{transform:translateY(40%)}}
+.wsheet>*{flex-shrink:0}
 .whead{display:flex;align-items:center;gap:10px}.whead b{font-family:var(--hand);font-weight:400;font-size:22px;flex:1}
 .wfruit{font-family:var(--hand);font-size:17px;background:#fff1c2;border:2px solid #000;border-radius:999px;padding:2px 12px}
 .icon.wx{background:#fff;color:var(--ink);border-color:#000;width:36px;height:36px}
