@@ -790,7 +790,9 @@ async function postScore() {
   if (!me || !S.lname) return;
   try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); } catch (e) {}
 }
-let box = null, busyL = false;
+let box = null, busyL = false, renaming = false;
+// names that would read as the channel itself or as staff
+const RESERVED = /^(이클립스|eclipse|이클립스공식)$|운영자|관리자|admin/i;
 function repaint() { if (box && box.isConnected && bt === 'league') render(box); }
 async function render(el) {
   box = el;
@@ -801,10 +803,12 @@ async function render(el) {
     el.querySelector('#lgIn').onclick = () => { sfx.boop(); signIn(); };
     return;
   }
-  if (!S.lname) {
-    const n = await nickFromDilem();
-    el.innerHTML = `<div class="mis"><p class="mt">리그에서 쓸 이름</p><p class="mw">순위표에 보이는 이름이에요. 열 글자까지 돼요.</p><input class="lname" id="lgName" maxlength="10" value="${esc(n)}" autocomplete="off"><div class="mb"><button class="opt" type="button" id="lgJoin">리그 들어가기</button></div></div>`;
-    el.querySelector('#lgJoin').onclick = async () => { const v = el.querySelector('#lgName').value.trim().slice(0, 10); if (!v) return; S.lname = v; save(); sfx.buy(); await postScore(); push(); render(el); };
+  if (!S.lname || renaming) {
+    const n = renaming ? S.lname : await nickFromDilem();
+    el.innerHTML = `<div class="mis"><p class="mt">리그에서 쓸 이름</p><p class="mw">순위표에 보이는 이름이에요. 열 글자까지 돼요.</p><input class="lname" id="lgName" maxlength="10" value="${esc(n)}" autocomplete="off"><div class="mb"><button class="opt" type="button" id="lgJoin">${renaming ? '이름 바꾸기' : '리그 들어가기'}</button></div></div>`;
+    el.querySelector('#lgJoin').onclick = async () => { const v = el.querySelector('#lgName').value.trim().slice(0, 10); if (!v) return;
+      if (RESERVED.test(v.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '이 이름은 쓸 수 없어요'; return; }
+      $('bMsg').textContent = ''; S.lname = v; renaming = false; save(); sfx.buy(); await postScore(); push(); render(el); };
     return;
   }
   if (busyL) return; busyL = true;
@@ -824,8 +828,9 @@ async function render(el) {
       <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
-      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgOut">로그아웃</button></p></div>`;
+      <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p></div>`;
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
+    el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
   busyL = false;
 }
