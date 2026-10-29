@@ -200,6 +200,10 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
+.wit.sel{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
+.wmsg .wtry{display:block;margin-bottom:6px}.wbuy{display:flex;gap:6px;justify-content:center}.wbuy .opt{flex:0 1 auto;font-size:15px;padding:7px 12px}.wbuy .opt[disabled]{opacity:.6}
+.calt{width:100%;margin-top:-2px}
+.sc.pick{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 
@@ -388,7 +392,7 @@ const SORT=[{q:'큰 결정을 앞두고 너는?',o:[['soc','장단점을 하나�
   {q:'죽음을 생각하면?',o:[['nie','끝이 있으니까 지금 선택이 의미 있다'],['dio','자주 생각할수록 덜 무섭다'],['epi','죽으면 끝. 그러니 지금을 즐긴다'],['soc','죽음이 대체 뭔지부터 알고 싶다']]}];
 // the square: one question a day for everyone, answered in one line
 const TQ=[['soc','제일 자신 있게 아는 척했던 거, 하나만 말해 봐.'],
-  ['nie','오늘 하루를 똑같이 무한히 반복해도 괜찮아?'],
+  ['nie','무한히 반복해도 좋을 하루, 언제였어?'],
   ['dio','없어도 사는 데 아무 지장 없는 물건 하나는?'],
   ['epi','요즘 가장 소소하게 행복했던 순간은?'],
   ['soc','착하게 굴다가 손해 본 일, 하나만 말해 봐.'],
@@ -401,8 +405,8 @@ const TQ=[['soc','제일 자신 있게 아는 척했던 거, 하나만 말해 �
   ['epi','같이 밥 먹고 싶은 사람 한 명만 꼽으면?'],
   ['soc','로또 1등 되면 다음 날 바로 회사 그만둘 거야?'],
   ['nie','다들 말렸는데 결국 해 버린 일은?'],
-  ['dio','부자와 자유로운 사람, 하나만 될 수 있다면?'],
-  ['epi','오늘 걱정 중에 실제로 일어날 것 같은 건 몇 개야?'],
+  ['dio','돈 때문에 포기한 것 하나는?'],
+  ['epi','요즘 제일 쓸데없는 걱정 하나만.'],
   ['soc','다들 맞다는데 너만 아니라고 생각하는 거 있어?'],
   ['nie','요즘 계속 미루고 있는 일 하나만.'],
   ['dio','아무도 안 볼 때만 하는 습관 있어?'],
@@ -417,7 +421,7 @@ const TQ=[['soc','제일 자신 있게 아는 척했던 거, 하나만 말해 �
   ['epi','요즘 제일 맛있게 먹은 건?']];
 // the asking philosopher's own answer, pinned on top so the square is never empty
 const TA=['나는 아는 척을 안 해서 아테네에서 제일 미움받았어.',
-  '아니라면 내일 하나를 바꿔. 내가 이 질문을 던지는 이유야.',
+  '그런 하루가 없다면 내일을 그렇게 만들어 봐. 내가 이 질문을 던지는 이유야.',
   '컵. 손으로 떠 마시면 되더라.',
   '친구가 보내 준 치즈 한 단지. 그걸로 충분했어.',
   '나는 그러다 사형까지 받았어. 그래도 나쁜 짓 하는 쪽보단 나아.',
@@ -430,7 +434,7 @@ const TA=['나는 아는 척을 안 해서 아테네에서 제일 미움받았�
   '무엇을 먹느냐보다 누구와 먹느냐가 먼저야.',
   '그만두고 뭐 할지부터 말해 봐. 그걸 모르면 돈이 있어도 똑같아.',
   '대학 교수 그만두고 산골로 갔어. 다들 미쳤다고 했지.',
-  '알렉산드로스한테도 비키라고 했던 나야. 답은 정해져 있지.',
+  '나는 거꾸로 돈을 포기했어. 통 하나면 충분하더라.',
   '대부분은 오지도 않을 일이야. 마음이 고요한 게 진짜 쾌락이고.',
   '아테네 사람 대부분이 나한테 사형을 줬어. 그래도 생각은 안 바꿨지.',
   '말하는 순간 반은 한 거야. 나머지 반은 오늘 10분만.',
@@ -732,8 +736,9 @@ function showClear(o,then){CQ.push([o,then]);if(!clrEl)nextClear();}
 function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBub();
   const el=document.createElement('div');el.className='clr';el.setAttribute('role','dialog');el.setAttribute('aria-label',o.title);
   const pic=o.k?A(o.k+'_happy'):A(o.img);
-  el.innerHTML=`<div class="ccard"><span class="ctag">${o.tag}</span><div class="cpic"><img class="csp${o.img?' tree':''}" src="${pic}" alt=""><img class="cst" src="${A('stamp')}" alt=""></div><b class="ctit">${o.title}</b>${o.card?`<div class="cstory"><i>이야기 카드 · ${o.card[0]}</i><p>${o.card[1]}</p></div>`:''}${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="opt cgo" type="button"><img src="${A('fruit')}" alt="">${o.gift}개 받기</button></div>`;
+  el.innerHTML=`<div class="ccard"><span class="ctag">${o.tag}</span><div class="cpic"><img class="csp${o.img?' tree':''}" src="${pic}" alt=""><img class="cst" src="${A('stamp')}" alt=""></div><b class="ctit">${o.title}</b>${o.card?`<div class="cstory"><i>이야기 카드 · ${o.card[0]}</i><p>${o.card[1]}</p></div>`:''}${o.sub?`<p class="csub">${o.sub}</p>`:''}<button class="opt cgo" type="button">${o.gift?`${o.go||''}<img src="${A('fruit')}" alt="">${o.gift}개 받기`:(o.go?o.go.replace(/고 $/,'기'):'확인')}</button>${o.alt?`<button class="opt alt calt" type="button">${o.alt}</button>`:''}</div>`;
   $('app').appendChild(el);clrEl=el;setTimeout(()=>{sfx.stage();buzz([30,40,30,40,90]);},120);setTimeout(()=>sfx.stamp(),450);
+  const ca=el.querySelector('.calt');if(ca)ca.onclick=()=>{ac();sfx.boop();el.remove();clrEl=null;o.onAlt&&o.onAlt();nextClear();};
   el.querySelector('.cgo').onclick=ev=>{ac();sfx.boop();S.fruit+=o.gift;save();const r=ev.currentTarget.getBoundingClientRect();
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
@@ -809,8 +814,8 @@ function sortQuiz(done){closeBub();const tally={};let i=0;
     el.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);const k=Q.o[+b.dataset.j][0];tally[k]=(tally[k]||0)+1;i++;
       if(i<SORT.length)return draw();
       const best=SCHOOL_ORDER.reduce((a,b2)=>(tally[b2]||0)>(tally[a]||0)?b2:a,Q.o[+b.dataset.j][0]);
-      S.school=best;S.schoolLock=weekKey();save();el.remove();clrEl=null;
-      showClear({k:best,tag:'학파 찾기',title:`${SCHOOL[best].nm}예요`,sub:`"${SCHOOL[best].line}"\n같은 학파: ${SCHOOL[best].mem}`,gift:3},()=>{done&&done();});});};
+      el.remove();clrEl=null;
+      showClear({k:best,tag:'학파 찾기',title:`${SCHOOL[best].nm}예요`,sub:`"${SCHOOL[best].line}"\n같은 학파: ${SCHOOL[best].mem}`,gift:S.school?0:3,go:'이 학파로 들어가고 ',alt:'다시 해 보기',onAlt:()=>sortQuiz(done)},()=>{if(S.school!==best){S.school=best;S.schoolLock=weekKey();save();}done&&done();});});};
   draw();}
 window.sortQuiz=sortQuiz;
 function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()||(S.saveAsk||0)>=2||S.saveAskDay===today())return;
@@ -825,21 +830,27 @@ function askBeta(){const G=window.GL;if(!G||!G.wantsBeta||!G.wantsBeta()||S.beta
 // ---------- wardrobe ----------
 let wk='soc';
 function openWard(){if(S.intro<2)return;closeBub();ac();sfx.boop();S.wardSeen=1;save();hud();const ks=present();if(!ks.includes(wk))wk=ks[0]||'soc';$('ward').hidden=false;drawWard();}
+// tapping an item you don't own only tries it on; buying is a second, separate tap
+let wsel=null;
+const eul=t=>'을를'[/[가-힣]$/.test(t)&&(t.charCodeAt(t.length-1)-0xAC00)%28?0:1];
 function drawWard(msg){const ks=present();
   $('wFruit').textContent=`열매 ${S.fruit}`;
   $('wTabs').innerHTML=ks.length>1?ks.map(k=>`<button class="wtab${k===wk?' on':''}" type="button" data-wk="${k}">${PH[k].nm.replace('꼬마 ','')}</button>`).join(''):'';
-  $('wPrev').innerHTML=kidSVG(wk,'awake',S.wear[wk]);
-  $('wMsg').textContent=msg||'';
-  const W=S.wear[wk];
+  const W=S.wear[wk],sel=wsel&&IT[wsel];
+  $('wPrev').innerHTML=kidSVG(wk,'awake',sel?{...W,[sel.slot]:sel.id}:W);
+  if(sel){const can=S.fruit>=sel.p;
+    $('wMsg').innerHTML=`<span class="wtry">${sel.nm} 입어 보는 중</span><span class="wbuy"><button class="opt" type="button" id="wBuy"${can?'':' disabled'}>${can?`열매 ${sel.p}개로 사기`:`열매 ${sel.p-S.fruit}개 더 필요해요`}</button><button class="opt alt" type="button" id="wNo">그만두기</button></span>`;}
+  else $('wMsg').textContent=msg||'';
   $('wGrid').innerHTML=ITEMS.map(x=>{const own=S.own.includes(x.id),on=W[x.slot]===x.id,can=S.fruit>=x.p;
-    const lock=lockedItem(x);return `<button class="wit${own?' own':''}${on?' on':''}${!own&&(!can||lock)?' no':''}" type="button" data-it="${x.id}"><img class="ic" src="${A('i_'+IF[x.id])}" alt=""${lock?' style="filter:brightness(0) opacity(.35)"':''}><b>${lock?'???':x.nm}</b><span>${lock?'곧 들어와요':on?'입는 중':own?'입기':`<img src="${A('fruit')}" alt="">${x.p}`}</span></button>`;}).join('');
-  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{wk=b.dataset.wk;sfx.boop();drawWard();});
+    const lock=lockedItem(x);return `<button class="wit${own?' own':''}${on?' on':''}${wsel===x.id?' sel':''}${!own&&(!can||lock)?' no':''}" type="button" data-it="${x.id}"><img class="ic" src="${A('i_'+IF[x.id])}" alt=""${lock?' style="filter:brightness(0) opacity(.35)"':''}><b>${lock?'???':x.nm}</b><span>${lock?'곧 들어와요':on?'입는 중':own?'입기':`<img src="${A('fruit')}" alt="">${x.p}`}</span></button>`;}).join('');
+  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{wk=b.dataset.wk;wsel=null;sfx.boop();drawWard();});
   document.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{const x=IT[b.dataset.it],W=S.wear[wk];
-    if(S.own.includes(x.id)){if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
-    if(lockedItem(x)){sfx.no();buzz([20,30,20]);$('wMsg').textContent='며칠 뒤에 들어와요';return;}
-    if(S.fruit<x.p){sfx.no();buzz([20,30,20]);b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');$('wMsg').textContent=`열매가 ${x.p-S.fruit}개 더 필요해요`;return;}
-    S.fruit-=x.p;S.own.push(x.id);W[x.slot]=x.id;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${x.nm}${'을를'[/[가-힣]$/.test(x.nm)&&(x.nm.charCodeAt(x.nm.length-1)-0xAC00)%28?0:1]} 샀어요`);});}
-function closeWard(){$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
+    if(S.own.includes(x.id)){wsel=null;if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
+    if(lockedItem(x)){sfx.no();buzz([20,30,20]);wsel=null;drawWard('며칠 뒤에 들어와요');return;}
+    sfx.boop();buzz(8);wsel=wsel===x.id?null:x.id;drawWard();});
+  const by=$('wBuy');if(by)by.onclick=()=>{const x=sel;if(!x||S.fruit<x.p)return;S.fruit-=x.p;S.own.push(x.id);S.wear[wk][x.slot]=x.id;wsel=null;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${x.nm}${eul(x.nm)} 샀어요`);};
+  const no=$('wNo');if(no)no.onclick=()=>{wsel=null;sfx.boop();drawWard();};}
+function closeWard(){wsel=null;$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
 
 // first visit: an empty garden, then the gate creaks
 function introAsk(){say('soc',PH.soc.hi,['응, 앉아','누구야?'],n=>{if(n===1){say('soc',PH.soc.who,null,introAsk);return;}
@@ -955,13 +966,14 @@ async function nickFromDilem() {
 }
 let posted = '', lgCache = null;
 // your school stays until you change it (once a week); the match compares average points, so a small school can win
-let picking = false;
+let picking = false, scPick = null;
 function schoolCard(mine) {
   const face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
   if (!S.school || picking) {
     return `<div class="mis"><p class="mt">학파를 골라 주세요</p><p class="mw">학파 대항전에서 같은 편이 돼요. 학파 점수는 그 학파 사람들 점수의 평균이에요.</p>
       <div class="mb"><button class="opt" type="button" id="scQuiz">질문 네 개로 내 학파 찾기</button></div>
-      <div class="scs">${SCHOOL_ORDER.map(k => { const v = SCHOOL[k]; return `<button class="sc${S.school === k ? ' on' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`; }).join('')}</div></div>`;
+      <div class="scs">${SCHOOL_ORDER.map(k => { const v = SCHOOL[k]; return `<button class="sc${S.school === k ? ' on' : ''}${scPick === k ? ' pick' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`; }).join('')}</div>
+      ${scPick ? `<p class="mw">${SCHOOL[scPick].nm}의 철학자들: ${SCHOOL[scPick].mem}</p><div class="mb"><button class="opt" type="button" id="scJoin">${SCHOOL[scPick].nm}로 들어가기</button>${S.school ? '<button class="opt alt" type="button" id="scKeep">그대로 두기</button>' : ''}</div>` : ''}</div>`;
   }
   const sch = (lgCache && lgCache.sch) || {};
   const rows = Object.keys(SCHOOL).map(k => { const x = sch[k] || {c: 0, t: 0}; const t = x.t + (k === S.school ? mine - (lgCache.mineAt || 0) : 0);
@@ -1034,7 +1046,9 @@ async function render(el) {
     const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
-    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => { const was = S.school; S.school = b.dataset.sc; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); });
+    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = () => { sfx.boop(); buzz(8); scPick = scPick === b.dataset.sc ? null : b.dataset.sc; busyL = false; render(el); });
+    const sj = el.querySelector('#scJoin'); if (sj) sj.onclick = async () => { const was = S.school; S.school = scPick; scPick = null; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); };
+    const sk = el.querySelector('#scKeep'); if (sk) sk.onclick = () => { sfx.boop(); scPick = null; picking = false; busyL = false; render(el); };
     const ch = el.querySelector('#scChange'); if (ch) ch.onclick = () => { sfx.boop(); picking = true; busyL = false; render(el); };
     const qz = el.querySelector('#scQuiz'); if (qz) qz.onclick = () => { sfx.boop(); sortQuiz(async () => { picking = false; lgCache = null; busyL = false; await postScore(); render(el); }); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
