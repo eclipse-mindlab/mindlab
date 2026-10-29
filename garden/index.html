@@ -175,6 +175,31 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .lg li.me{background:#fff1c2;box-shadow:0 0 0 3px var(--gold) inset}
 .lg li:nth-child(1) span{color:#c58a00}
 .lgme{font-size:12px}.lnk{appearance:none;border:0;background:none;padding:0;font:inherit;color:#7b5cff;text-decoration:underline;cursor:pointer}
+.scs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.sc{appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:2.5px solid #000;border-radius:16px;background:#fff;padding:10px 6px 9px;box-shadow:0 3px 0 #000;font:inherit;color:var(--ink);cursor:pointer}
+.sc b{font-family:var(--hand);font-weight:400;font-size:17px}.sc span{font-size:12px;line-height:1.35;color:#5d5478;word-break:keep-all;text-align:center}
+.sc.on{background:#fff1c2}
+.scr{display:grid;grid-template-columns:38px 70px 1fr 34px;align-items:center;gap:8px;margin-top:6px}
+.scr b{font-family:var(--hand);font-weight:400;font-size:15px}.scr em{font-style:normal;font-family:var(--hand);font-size:16px;text-align:right}
+.scr .face{width:34px;height:34px;background-size:68px 90px;background-position:-17px -20px}
+.scr.me .rbar i{background:var(--gold)}.scr.me b{color:#8a5a33}
+.ccard.quiz{gap:10px}.qk{height:110px;width:auto}
+.qopts{display:flex;flex-direction:column;gap:8px;width:100%}.qopts .opt{width:100%;font-size:16px;line-height:1.35;padding:10px 12px;word-break:keep-all}
+.csub{white-space:pre-line}
+.tq{display:flex;gap:10px;align-items:flex-start}.tq .face{flex:none}.tq p{margin:0;font-family:var(--hand);font-size:18px;line-height:1.4;word-break:keep-all}
+.tin{display:flex;flex-direction:column;gap:6px}.tin textarea{font:inherit;font-size:15px;border:2.5px solid #000;border-radius:12px;padding:10px 12px;min-height:64px;resize:none;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.tin small{align-self:flex-end;color:#8b82a8}
+.ta{border:2px solid #000;border-radius:14px;background:#fff;padding:9px 12px;display:flex;flex-direction:column;gap:4px}
+.ta.mine{background:#fff1c2}
+.ta.phil{background:#f6f1ff;margin-top:8px}
+.ta .who{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#7a6fa0}
+.ta .who b{font-family:var(--hand);font-weight:400;font-size:14px;color:var(--ink)}
+.hb{font-family:var(--hand);font-size:12px;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#efe9fb}
+.hb.soc{background:#dbe9ff}.hb.epi{background:#ffe1ec}.hb.dio{background:#e4f3dc}.hb.nie{background:#ffe9c9}
+.ta p{margin:0;font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
+.like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
+.like.on{background:#ffcf5a}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 
@@ -346,6 +371,41 @@ const dkey=d=>`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 const nowD=()=>new Date(Date.now()+S.off*864e5);
 function weekDays(back){const d=nowD();const wd=(d.getDay()+6)%7;const out=[];for(let i=0;i<7;i++){const x=new Date(d);x.setDate(d.getDate()-wd-back*7+i);out.push(dkey(x));}return out;}
 const weekSum=back=>weekDays(back).reduce((n,k)=>n+(S.log[k]||0),0);
+// league points reward showing up: a day with a mission is 1, a day with an answer is 1
+const weekKey=()=>weekDays(0)[0];
+const weekPts=back=>weekDays(back).reduce((n,k)=>n+(S.log[k]?1:0)+(S.qlog&&S.qlog[k]?1:0),0);
+// each philosopher's school, for the weekly school match
+// four big answers to "how should I live?"; every philosopher who comes later joins one of them
+const SCHOOL={soc:{nm:'이성파',line:'따져 보면 답이 있다',mem:'소크라테스, 플라톤, 아리스토텔레스, 칸트'},
+  epi:{nm:'쾌락파',line:'즐거운 게 곧 좋은 거다',mem:'에피쿠로스, 벤담, 밀'},
+  dio:{nm:'평정파',line:'덜 가지면 덜 흔들린다',mem:'디오게네스, 에픽테토스, 세네카, 마르쿠스 아우렐리우스'},
+  nie:{nm:'실존파',line:'의미는 내가 만든다',mem:'니체, 키르케고르, 사르트르, 카뮈'}};
+const SCHOOL_ORDER=['soc','epi','dio','nie'];
+// four questions sort you into a school (each answer leans one way)
+const SORT=[{q:'큰 결정을 앞두고 너는?',o:[['soc','장단점을 하나하나 따져 본다'],['epi','어느 쪽이 더 즐거울지 본다'],['dio','최악을 떠올려 보고 담담해진다'],['nie','남이 뭐라든 내가 원하는 쪽으로 간다']]},
+  {q:'힘들 때 너를 버티게 하는 건?',o:[['dio','어차피 지나간다는 생각'],['soc','왜 이렇게 됐는지 이해하는 것'],['nie','이걸 넘으면 더 강해진다는 믿음'],['epi','맛있는 밥과 좋은 사람들']]},
+  {q:'갑자기 돈이 아주 많아지면?',o:[['epi','친구들이랑 맛있는 것부터 먹으러 간다'],['nie','평생 미뤄 둔 꿈에 다 건다'],['soc','제대로 쓰는 법부터 공부한다'],['dio','지금처럼 산다. 없어도 괜찮았으니까']]},
+  {q:'죽음을 생각하면?',o:[['nie','끝이 있으니까 지금 선택이 의미 있다'],['dio','자주 생각할수록 덜 무섭다'],['epi','죽으면 끝. 그러니 지금을 즐긴다'],['soc','죽음이 대체 뭔지부터 알고 싶다']]}];
+// the square: one question a day for everyone, answered in one line
+const TQ=[['soc','지금 확실히 안다고 믿는 것 하나만 말해 봐.'],['nie','오늘 하루를 똑같이 무한히 반복해도 괜찮아?'],['dio','없어도 사는 데 아무 지장 없는 물건 하나는?'],['epi','요즘 가장 소소하게 행복했던 순간은?'],
+  ['soc','착하게 사는 건 손해일까?'],['nie','남들이 다 하니까 하고 있는 일, 하나만 꼽아 봐.'],['dio','남 눈치를 하나도 안 봐도 된다면, 오늘 뭘 하겠어?'],['epi','가지면 행복할 줄 알았는데 아니었던 건?'],
+  ['soc','친구와 그냥 아는 사람은 뭐가 다를까?'],['nie','너를 무너뜨리지 못하고 오히려 강하게 만든 일은?'],['dio','제일 쓸데없이 돈 쓴 건 뭐야?'],['epi','같이 밥 먹고 싶은 사람 한 명만 꼽으면?'],
+  ['soc','돈이 많으면 잘 사는 걸까?'],['nie','진짜 너답게 산 날은 언제였어?'],['dio','부자와 자유로운 사람, 하나만 될 수 있다면?'],['epi','오늘 걱정 중에 실제로 일어날 것 같은 건 몇 개야?'],
+  ['soc','다들 맞다는데 너만 아니라고 생각하는 거 있어?'],['nie','지금 너를 제일 붙잡고 있는 건 뭐야?'],['dio','안 해도 아무도 모를 일, 그래도 하는 거 있어?'],['epi','죽는 게 무서운 이유는 뭘까?'],
+  ['soc','후회 없는 선택이란 게 있을까?'],['nie','10년 뒤의 네가 지금의 너에게 할 말은?'],['dio','요즘 너를 제일 귀찮게 하는 건?'],['epi','돈 안 들고 기분 좋아지는 방법 하나만.'],
+  ['soc','용기 있는 사람은 겁이 없는 사람일까?'],['nie','남한테 들은 말 중에 아직도 남아 있는 한마디는?'],['dio','버리고 싶은 습관 하나는?'],['epi','요즘 제일 맛있게 먹은 건?']];
+// the asking philosopher's own answer, pinned on top so the square is never empty
+const TA=['나는 내가 모른다는 것 하나는 알아.','아니라면 내일 하나를 바꿔. 내가 이 질문을 던지는 이유야.','컵. 손으로 떠 마시면 되더라.','친구가 보내 준 치즈 한 단지. 그걸로 충분했어.',
+  '나쁜 일을 당하는 것보다 저지르는 게 더 큰 손해야.','무리 속에 있으면 편하지. 대신 네 목소리는 안 들려.','나는 원래 안 봐. 대낮에 등불 들고 광장을 걸었지.','헛된 욕심은 채워도 끝이 없어. 빵과 물이면 충분할 때가 많아.',
+  '내가 틀렸을 때 틀렸다고 말해 주는 사람이 친구야.','나를 죽이지 못하는 것은 나를 더 강하게 만들어. 나는 평생 아팠거든.','나는 통에 살아서 쓸 데가 없었어. 너는 영수증을 보면 알 거야.','무엇을 먹느냐보다 누구와 먹느냐가 먼저야.',
+  '돈을 어떻게 쓸지 모르면, 많을수록 더 망가질걸.','너는 너 자신이 되어야 해. 남이 정해 준 너 말고.','알렉산드로스한테도 비키라고 했던 나야. 답은 정해져 있지.','대부분은 오지도 않을 일이야. 마음이 고요한 게 진짜 쾌락이고.',
+  '아테네 사람 대부분이 나한테 사형을 줬어. 그래도 생각은 안 바꿨지.','왜 사는지 아는 사람은 거의 어떤 어려움도 견뎌.','정직한 사람은 보는 사람이 없어도 똑같이 살아.','죽음은 우리에게 아무것도 아니야. 우리가 있을 땐 죽음이 없고, 죽음이 오면 우리가 없어.',
+  '충분히 따져 보고 골랐다면, 결과가 나빠도 부끄럽진 않아.','아마 이럴걸. 그때 좀 더 과감했어야 했다고.','햇빛 가리는 사람. 좀 비켜 줄래?','좋았던 대화를 떠올려 봐. 나는 많이 아플 때도 그걸로 버텼어.',
+  '겁이 없는 건 무모한 거야. 무서운데도 옳은 걸 하는 게 용기지.','남의 말이 오래 남는다면, 이제 그 말을 넘어설 때가 된 거야.','필요 없는 걸 원하는 습관. 그게 제일 무거워.','배고플 때 먹은 빵. 소박한 음식이 제일 맛있어.'];
+const philAnswer=()=>{const i=(talkIdx()+TQ.length)%TQ.length,k=TQ[i][0];return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${TA[i]}</p></div>`;};
+const TQ_EPOCH=Date.UTC(2026,9,26);
+const talkIdx=()=>{const d=nowD();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5)%TQ.length;};
+const talkQ=()=>TQ[(talkIdx()+TQ.length)%TQ.length];
 function sameDaySum(){const d=nowD(),wd=(d.getDay()+6)%7;return weekDays(1).slice(0,wd+1).reduce((n,k)=>n+(S.log[k]||0),0);}
 function streak(){const d=nowD();let n=0;if(!S.log[dkey(d)])d.setDate(d.getDate()-1);while(S.log[dkey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 const stageOf=g=>{let s=0;STAGE.forEach((n,i)=>{if(g>=n)s=i;});return s;};
@@ -505,9 +565,10 @@ function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;
   if(left(k)<=0){const m=S.mis[k],M=misOf(k);
     if(m&&m.st==='new'){say(k,'게시판에 오늘 미션 붙여 놨어.',null,()=>wiggleBoard());return;}
     if(m&&m.st==='doing'){say(k,`"${M.t}" 하고 있지?`);return;}
+    if(window.GL&&!S.talkSeen){S.talkSeen=1;save();say(k,'오늘 내 질문은 끝. 대신 광장에 가 봐. 다른 사람들 대답이 재밌어.',['광장 가기','나중에'],n=>{if(n===0){openBoard();bt='talk';drawBoard();}});return;}
     const I=PH[k].idle;say(k,I[(Date.now()/1000|0)%I.length]);return;}
   const qi=nextQ(k),Q=PH[k].Q[qi];
-  say(k,Q.q,Q.o.map(o=>o[0]),n=>{S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;save();
+  say(k,Q.q,Q.o.map(o=>o[0]),n=>{S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;S.qlog=S.qlog||{};S.qlog[today()]=1;save();
     setTimeout(()=>say(k,Q.o[n][1],null,()=>{giveDrop(k);
       const rest=()=>{if(left(k)<=0){if(newMis(k)){refreshNote(k);setTimeout(()=>{if(!pend&&!clrOn())say(k,'질문은 오늘 여기까지. 대신 게시판에 미션 하나 붙여 놨어.',null,()=>wiggleBoard());},1300);}else setTimeout(()=>sleepIfDone(k),900);}};
       if(!levelUp(k,rest))rest();}),180);});}
@@ -552,6 +613,9 @@ let boardTick=null;
 function openBoard(){if(S.intro<2)return;closeBub();ac();sfx.boop();postMissions();bt='mis';$('board').hidden=false;drawBoard();clearInterval(boardTick);boardTick=setInterval(()=>{if(!$('board').hidden&&KIDS.some(k=>S.mis[k]&&S.mis[k].st==='doing'&&S.mis[k].start))drawBoard();},1000);}
 function closeBoard(){$('board').hidden=true;clearInterval(boardTick);sfx.boop();paintBoard();present().forEach(refreshNote);}
 let bt='mis';
+function drawSchool(){const k=S.school;
+  if(!k)return `<div class="mis"><p class="mt">내 학파</p><p class="mw">이성파, 쾌락파, 평정파, 실존파. 질문 네 개면 내가 어디인지 알 수 있어요.</p><div class="mb"><button class="opt" type="button" id="sqz">학파 찾기</button></div></div>`;
+  return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${SCHOOL[k].nm}</b></div><p class="mt">"${SCHOOL[k].line}"</p><p class="mw">같은 학파: ${SCHOOL[k].mem}</p></div>`;}
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
   return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
     return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
@@ -565,10 +629,11 @@ function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max
     <p class="mw">${st}</p><p class="mw">최고 기록 · 한 주 ${S.best.week}개 · 연속 ${S.best.streak}일</p></div>`;}
 function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&MIS[k]);
   $('bStats').innerHTML=`<div class="bst"><b>${streak()}일</b><span>연속</span></div><div class="bst"><b>${weekSum(0)}개</b><span>이번 주 미션</span></div><div class="bst"><b>${S.trees}그루</b><span>키운 나무</span></div>`;
-  $('bTabs').innerHTML=[['mis','미션'],['story','친구 단계'],['race','지난주의 나']].concat(window.GL?[['league','리그']]:[]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
+  $('bTabs').innerHTML=[['mis','미션'],['talk','광장']].concat(window.GL?[['league','리그']]:[]).concat([['story','기록']]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
-  if(bt!=='mis'){$('bList').innerHTML=bt==='story'?drawStory():drawRace();$('bMsg').textContent=msg||'';return;}
+  if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
   const done=KIDS.reduce((n,k)=>n+(S.misDone[k]||0),0);
   $('bSub').textContent=done?`지금까지 해낸 미션 ${done}개`:'철학자들이 매일 아침 하나씩 붙여요';
   $('bList').innerHTML=ks.length?ks.map(k=>{const m=S.mis[k],M=MIS[k][m.i];let btn='';
@@ -631,7 +696,7 @@ function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBu
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();setTimeout(()=>askSave('clear'),2600);}});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k))askSave('clear');},1500);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -680,12 +745,38 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
   if(!S.met.nie&&actors.nie&&actors.nie.mode==='shadow'&&S.pd<DAY_AT.nie)hint='근데 아까부터 문밖에 누가 서 있어. 콧수염이 보이던데.';
   else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
   else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
-  const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn())askBeta();else askSave('day');};
-  say(who,line,null,()=>{if(hint)setTimeout(()=>say('soc',hint,null,next),300);else next();});}
+  const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn()){askTalk();}else askSave('day');};
+  const chain=[[who,line]];
+  const go=()=>{if(hint)chain.push(['soc',hint]);(function step(i){if(i>=chain.length)return next();const [k,t]=chain[i];say(actors[k]?k:'soc',t,null,()=>setTimeout(()=>step(i+1),300));})(0);};
+  // on a new week, tell how last week's school match went
+  const G=window.GL;
+  if(G&&G.lastWeek&&S.school&&S.weekSeen!==weekKey()){S.weekSeen=weekKey();save();
+    Promise.race([G.lastWeek(),new Promise(r=>setTimeout(()=>r(null),3000))]).then(r=>{if(r&&r.win){const me=S.school,sp=S.met[me]&&actors[me]?me:'soc';
+      if(r.win===me){S.fruit+=5;save();hud();bump('fruitChip');chain.push([sp,`지난주 학파 대항전, 우리 ${SCHOOL[me].nm}가 이겼어! 학파 몫으로 열매 5개야.`]);}
+      else chain.push([sp,`지난주 대항전은 ${SCHOOL[r.win].nm}가 가져갔어. 이번 주엔 우리 ${SCHOOL[me].nm}가 이겨 보자.`]);}go();});}
+  else go();}
+// wait until nobody is talking and no sheet is open
+function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||!$('board').hidden||!$('ward').hidden)return setTimeout(go,1200);f();},ms||0);}
+// reaching a new level, a philosopher may ask you into their school
+function invite(k){if(S.school||(S.invited||{}).quiz||!actors.soc)return false;S.invited=S.invited||{};S.invited.quiz=1;save();
+  say('soc','너는 어느 학파일까? 질문 네 개면 알 수 있어.',['해 볼래','나중에'],n=>{if(n===0)sortQuiz(()=>askSave('clear'));else askSave('clear');});return true;}
+// a little sheet with four questions, then your school as a clear card
+function sortQuiz(done){closeBub();const tally={};let i=0;
+  const el=document.createElement('div');el.className='clr';el.setAttribute('role','dialog');el.setAttribute('aria-label','학파 찾기');$('app').appendChild(el);clrEl=el;
+  const draw=()=>{const Q=SORT[i];el.innerHTML=`<div class="ccard quiz"><span class="ctag">학파 찾기 ${i+1}/${SORT.length}</span><img class="qk" src="${A('soc_talk')}" alt=""><b class="ctit">${Q.q}</b><div class="qopts">${Q.o.map(([k,t],j)=>`<button class="opt alt" type="button" data-j="${j}">${t}</button>`).join('')}</div></div>`;
+    el.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);const k=Q.o[+b.dataset.j][0];tally[k]=(tally[k]||0)+1;i++;
+      if(i<SORT.length)return draw();
+      const best=SCHOOL_ORDER.reduce((a,b2)=>(tally[b2]||0)>(tally[a]||0)?b2:a,Q.o[+b.dataset.j][0]);
+      S.school=best;S.schoolLock=weekKey();save();el.remove();clrEl=null;
+      showClear({k:best,tag:'학파 찾기',title:`${SCHOOL[best].nm}예요`,sub:`"${SCHOOL[best].line}"\n같은 학파: ${SCHOOL[best].mem}`,gift:3},()=>{done&&done();});});};
+  draw();}
+window.sortQuiz=sortQuiz;
 function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()||(S.saveAsk||0)>=2||S.saveAskDay===today())return;
   setTimeout(()=>{if(pend||clrOn()||G.isIn())return;S.saveAsk=(S.saveAsk||0)+1;S.saveAskDay=today();save();
     say('soc',reason==='clear'?'이 정원, 날아가면 아깝잖아. 저장해 둘까? 폰을 바꿔도 그대로 남아.':'어제 정원 그대로 있지? 폰을 바꿔도 남게 저장해 둘래?',['구글로 저장','나중에'],async n=>{
       if(n!==0)return;const ok=await G.login();if(!ok)return;toast('정원을 저장했어요');setTimeout(askBeta,1200);});},400);}
+function askTalk(){const [k,q]=talkQ();if(S.talkDay===today())return askBeta();S.talkDay=today();save();
+  say(actors[k]?k:'soc',`오늘 광장 질문은 이거야.\n${q}`,['답하러 가기','나중에'],n=>{if(n===0){openBoard();bt='talk';drawBoard();}else askBeta();});}
 function askBeta(){const G=window.GL;if(!G||!G.wantsBeta||!G.wantsBeta()||S.betaAsk)return;S.betaAsk=1;save();
   say('soc','안드로이드 폰이면 앱으로도 먼저 받아 볼 수 있어. 아침마다 알림도 오고.',['신청할래','괜찮아'],async n=>{if(n===0&&await G.beta())toast('앱 베타 신청했어요. 등록되면 메일로 알려 드려요');});}
 
@@ -723,7 +814,8 @@ function boot(){rollDay();paintPlant(false);hud();intro();if(S.intro>=2)postMiss
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
   paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);
     // newcomers wait until nobody is talking
-    const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
+    const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
+    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
@@ -752,7 +844,7 @@ const V = '10.8.0', BASE = `https://www.gstatic.com/firebasejs/${V}/`;
 const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const progress = s => !s ? -1 : (s.trees||0)*100 + (s.given||0) + Object.values(s.xp||{}).reduce((a,b)=>a+b,0) + Object.values(s.misDone||{}).reduce((a,b)=>a+b,0)*3;
 
-let F = null, auth = null, db = null, me = null, ready = false, failed = false;
+let F = null, auth = null, db = null, me = null, ready = false, failed = false, authKnown = false;
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
 
 async function load() {
@@ -762,7 +854,7 @@ async function load() {
     const a = app.initializeApp(CFG);
     auth = NATIVE ? au.initializeAuth(a, {persistence: au.indexedDBLocalPersistence}) : au.getAuth(a);
     db = fs.getFirestore(a);
-    au.onAuthStateChanged(auth, u => { me = u && !u.isAnonymous ? u : null; if (me) pull(); repaint(); });
+    au.onAuthStateChanged(auth, u => { authKnown = true; me = u && !u.isAnonymous ? u : null; if (me) pull(); repaint(); });
     if (!NATIVE) au.getRedirectResult(auth).catch(() => {});
     ready = true;
   } catch (e) { failed = true; }
@@ -820,10 +912,28 @@ async function nickFromDilem() {
   return (me.displayName || '').split(' ')[0].slice(0, 10);
 }
 let posted = '', lgCache = null;
+// your school stays until you change it (once a week); the match compares average points, so a small school can win
+let picking = false;
+function schoolCard(mine) {
+  const face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  if (!S.school || picking) {
+    return `<div class="mis"><p class="mt">학파를 골라 주세요</p><p class="mw">학파 대항전에서 같은 편이 돼요. 학파 점수는 그 학파 사람들 점수의 평균이에요.</p>
+      <div class="mb"><button class="opt" type="button" id="scQuiz">질문 네 개로 내 학파 찾기</button></div>
+      <div class="scs">${SCHOOL_ORDER.map(k => { const v = SCHOOL[k]; return `<button class="sc${S.school === k ? ' on' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`; }).join('')}</div></div>`;
+  }
+  const sch = (lgCache && lgCache.sch) || {};
+  const rows = Object.keys(SCHOOL).map(k => { const x = sch[k] || {c: 0, t: 0}; const t = x.t + (k === S.school ? mine - (lgCache.mineAt || 0) : 0);
+    return {k, avg: x.c ? t / x.c : 0}; }).sort((a, b) => b.avg - a.avg);
+  const mx = Math.max(...rows.map(r => r.avg), 1), my = rows.findIndex(r => r.k === S.school) + 1;
+  return `<div class="mis"><div class="mh"><b>학파 대항전</b><span class="lv">우리 학파 ${my}위</span></div>
+    ${rows.map(r => `<div class="scr${r.k === S.school ? ' me' : ''}">${face(r.k)}<b>${SCHOOL[r.k].nm}</b><div class="rbar"><i style="width:${r.avg / mx * 100}%"></i></div><em>${r.avg.toFixed(1)}</em></div>`).join('')}
+    <p class="mw">${SCHOOL[S.school].nm}: ${SCHOOL[S.school].line}${S.schoolLock === weekId() ? '' : ' · <button class="lnk" type="button" id="scChange">학파 바꾸기</button>'}</p></div>`;
+}
 async function postScore() {
   if (!me || !S.lname) return;
-  const key = weekId() + '|' + S.lname + '|' + weekSum(0); if (key === posted) return;
-  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); posted = key; } catch (e) {}
+  const sc = S.school || '';
+  const key = weekId() + '|' + S.lname + '|' + weekPts(0) + '|' + sc; if (key === posted) return;
+  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekPts(0), sc, upd: F.serverTimestamp()}); posted = key; } catch (e) {}
 }
 let box = null, busyL = false, renaming = false;
 const LEGAL = '<p class="mw lgme"><a class="lnk" href="privacy.html">개인정보처리방침</a> · <a class="lnk" href="privacy.html#delete">기록 삭제 요청</a></p>';
@@ -843,7 +953,7 @@ async function render(el) {
     const n = renaming ? S.lname : await nickFromDilem();
     el.innerHTML = `<div class="mis"><p class="mt">리그에서 쓸 이름</p><p class="mw">순위표에 보이는 이름이에요. 열 글자까지 돼요.</p><input class="lname" id="lgName" maxlength="10" value="${esc(n)}" autocomplete="off"><div class="mb"><button class="opt" type="button" id="lgJoin">${renaming ? '이름 바꾸기' : '리그 들어가기'}</button></div></div>`;
     el.querySelector('#lgJoin').onclick = async () => { const v = el.querySelector('#lgName').value.trim().slice(0, 10); if (!v) return;
-      if (RESERVED.test(v.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '이 이름은 쓸 수 없어요'; return; }
+      if (RESERVED.test(v.replace(/\s/g, '')) || BAD.test(v.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '이 이름은 쓸 수 없어요'; return; }
       $('bMsg').textContent = ''; S.lname = v; renaming = false; save(); sfx.buy(); await postScore(); push(); render(el); };
     return;
   }
@@ -852,11 +962,16 @@ async function render(el) {
   try {
     await postScore();
     const col = F.collection(db, 'gardenLeague', weekId(), 'p');
-    const mine = weekSum(0), wk = weekId();
+    const mine = weekPts(0), wk = weekId();
     if (!lgCache || lgCache.wk !== wk || Date.now() - lgCache.t > 300000) {
       const top = await F.getDocs(F.query(col, F.orderBy('n', 'desc'), F.limit(30)));
       const got = []; top.forEach(d => { const x = d.data(); got.push({id: d.id, name: x.name, n: x.n}); });
-      lgCache = {wk, t: Date.now(), rows: got, above: {}};
+      // the school match: members and average points per school, four small aggregate reads
+      const sch = {};
+      for (const k of Object.keys(SCHOOL)) {
+        try { const a = await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')}); const d = a.data(); sch[k] = {c: d.c || 0, t: d.t || 0}; } catch (e) { sch[k] = {c: 0, t: 0}; }
+      }
+      lgCache = {wk, t: Date.now(), rows: got, above: {}, sch, mineAt: mine};
     }
     // my own row is always current, even from a cached table
     const rows = lgCache.rows.filter(r => r.id !== me.uid);
@@ -869,14 +984,17 @@ async function render(el) {
     if (i >= 0) rank = rows.filter(r => r.n > mine).length + 1;
     else { if (lgCache.above[mine] == null) { const c = await F.getCountFromServer(F.query(col, F.where('n', '>', mine))); lgCache.above[mine] = c.data().count; } rank = lgCache.above[mine] + 1; }
     const d = nowD(), left = 7 - (d.getDay() + 6) % 7;
-    el.innerHTML = `<div class="mis"><div class="mh"><b>이번 주 리그</b><span class="lv">${rank}등</span></div>
-      <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
+    el.innerHTML = `${schoolCard(mine)}<div class="mis"><div class="mh"><b>이번 주 리그</b><span class="lv">${rank}등</span></div>
+      <p class="mw">하루에 미션 1점, 대답 1점. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
       <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p>${LEGAL}</div>${betaCard()}`;
     const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
+    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => { const was = S.school; S.school = b.dataset.sc; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); });
+    const ch = el.querySelector('#scChange'); if (ch) ch.onclick = () => { sfx.boop(); picking = true; busyL = false; render(el); };
+    const qz = el.querySelector('#scQuiz'); if (qz) qz.onclick = () => { sfx.boop(); sortQuiz(async () => { picking = false; lgCache = null; busyL = false; await postScore(); render(el); }); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
   busyL = false;
 }
@@ -895,6 +1013,56 @@ async function betaJoin(el) {
   try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; save(); sfx.buy(); if (el) render(el); return true; }
   catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
+
+// ---- the square: one question a day, one-line answers, hearts, reports ----
+const BAD = /(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www\.|\.com|\.kr|카톡|오픈채팅)/i;
+let talkCache = null, talkBusy = false;
+async function renderTalk(el) {
+  const [ak, q] = talkQ(), day = today(), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  const head = `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer()}`;
+  if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; return; }
+  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p></div>'; return; }
+  if (talkBusy) return; talkBusy = true;
+  try {
+    // reading needs any sign-in: people who haven't logged in read as a guest
+    if (!auth.currentUser) { try { await F.signInAnonymously(auth); } catch (e) {} }
+    const col = F.collection(db, 'gardenTalk', day, 'a'), uid = me ? me.uid : '';
+    if (!talkCache || talkCache.day !== day || talkCache.uid !== uid || Date.now() - talkCache.t > 120000) {
+      const got = []; (await F.getDocs(F.query(col, F.orderBy('likes', 'desc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
+      let mine = uid ? got.find(x => x.id === uid) || null : null;
+      if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
+      talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3), mine};
+    }
+    const liked = (S.liked && S.liked[day]) || [];
+    const row = (x, isMine) => `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
+      <div class="act">${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div></div>`;
+    const m = talkCache.mine, n = talkCache.list.length + (m ? 1 : 0);
+    const box = !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고 공감할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
+      : m ? '<p class="mw">오늘 답을 남겼어요. 내일 새 질문이 와요.</p>'
+      : `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
+    el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : '<p class="mempty">아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.</p>');
+    const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
+    const tx = el.querySelector('#tTx');
+    if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
+      el.querySelector('#tGo').onclick = async () => { const t = tx.value.replace(/\s+/g, ' ').trim().slice(0, 60);
+        if (t.length < 2) return; if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return; }
+        if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
+        try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
+          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]); $('bMsg').textContent = '';
+          talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
+        catch (e) { toast('남기지 못했어요. 잠시 뒤에 다시 해 주세요'); } }; }
+    el.querySelectorAll('[data-like]').forEach(b => b.onclick = async () => { const id = b.dataset.like; S.liked = S.liked || {}; const L = S.liked[day] = S.liked[day] || []; if (L.includes(id)) return;
+      L.push(id); Object.keys(S.liked).forEach(k => { if (k !== day) delete S.liked[k]; }); save(); sfx.boop(); buzz(8);
+      const x = talkCache.list.find(r => r.id === id); if (x) x.likes = (x.likes || 0) + 1; b.classList.add('on'); b.textContent = `공감 ${x ? x.likes : ''}`;
+      try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {likes: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-rep]').forEach(b => b.onclick = async () => { const id = b.dataset.rep; if (!confirmRep(id)) return;
+      talkCache.list = talkCache.list.filter(r => r.id !== id); talkBusy = false; renderTalk(el); toast('신고했어요. 이 답은 숨겼어요');
+      try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {rep: F.increment(1)}); } catch (e) {} });
+  } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; }
+  talkBusy = false;
+}
+let repArm = '';
+function confirmRep(id) { if (repArm === id) return true; repArm = id; toast('한 번 더 누르면 신고돼요'); return false; }
 
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
 const LN = () => NATIVE ? plug('LocalNotifications') : null;
@@ -937,11 +1105,16 @@ window.gardenShare = async (dataUrl, name) => {
   return true;
 };
 
-window.GL = {render, ask, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {render, renderTalk, ask, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
-  beta: () => betaJoin(null), wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
-load();
+  beta: () => betaJoin(null),
+  // who won last week's school match (highest average points)
+  lastWeek: async () => { await loading; for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150)); if (!me) return null;
+    const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
+    for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
+    return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
+const loading = load();
 reminders();
 </script>
 
