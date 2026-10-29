@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f6f5fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f0d14" media="(prefers-color-scheme: dark)">
+  <title>방어기제 시뮬레이터 - 이클립스의 딜렘</title>
+  <meta name="description" content="투사, 합리화, 반동 형성부터 승화와 유머까지. 다섯 장면으로 내가 자주 쓰는 방어기제를 찾고, 어떻게 다룰지 알아본다.">
+  <meta property="og:title" content="방어기제 시뮬레이터 - 이클립스의 딜렘">
+  <meta property="og:description" content="괴로울 때 나는 무엇으로 나를 지킬까?">
+  <meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/og-image.png?v=3">
+  <meta property="og:url" content="https://eclipse-mindlab.github.io/mindlab/sim-defense.html">
+  <link rel="stylesheet" href="sim-template.css">
+  <script src="save-image.js"></script>
+</head>
+<body>
+  <div class="sim-container">
+    <div class="sim-header"><a href="index.html" class="sim-back-btn">←</a><div class="sim-header-title">방어기제 시뮬레이터</div></div>
+    <div id="gameScreen">
+      <div class="sim-progress"><div class="sim-progress-label"><span id="stageLabel">STAGE 1</span><span id="stageCount">1/5</span></div><div class="sim-progress-bar"><div class="sim-progress-fill" id="progressFill" style="width:20%"></div></div></div>
+      <div class="sim-stage-badge" id="stageBadge">STAGE 1</div>
+      <div class="sim-situation"><div class="sim-situation-title" id="situationTitle"></div><div class="sim-situation-desc" id="situationDesc"></div><div class="sim-situation-highlight hidden" id="situationHighlight"></div><div class="sim-situation-quote hidden" id="situationQuote"></div></div>
+      <div class="sim-choices" id="choices"></div>
+    </div>
+    <div id="explanationScreen" class="hidden">
+      <div class="sim-explanation-card"><div class="sim-explanation-label">당신의 선택</div><div class="sim-explanation-title" id="yourChoice"></div></div>
+      <div class="sim-explanation-card" id="meaningCard"><div class="sim-explanation-label">그다음 벌어지는 일</div><div class="sim-explanation-desc" id="choiceMeaning"></div></div>
+      <div class="sim-principle-card hidden" id="principleCard"><div class="sim-principle-header"><span class="sim-principle-icon"></span><span>발견한 원칙</span></div><div class="sim-principle-name" id="principleName"></div><div class="sim-principle-desc" id="principleDesc"></div></div>
+      <div class="sim-quote-card hidden" id="quoteCard"><span class="sim-quote-icon"></span><span class="sim-quote-text" id="quoteText"></span></div>
+      <button class="sim-next-btn" id="nextBtn">다음으로</button>
+    </div>
+    <div id="resultScreen" class="hidden">
+      <div class="sim-result-card"><div class="sim-result-icon" id="resultIcon"></div><div class="sim-result-label" id="resultLabel">당신은</div><div class="sim-result-title" id="resultTitle"></div><div class="sim-result-desc" id="resultDesc"></div><div class="sim-result-stats hidden" id="resultStats"></div></div>
+      <div class="sim-principles-list hidden" id="principlesList"></div>
+      <div class="sim-actions"><button class="sim-action-btn primary" id="saveImageBtn">이미지로 저장하기</button><button class="sim-action-btn secondary" id="shareBtn">친구한테 시켜보기</button><a href="index.html" class="sim-action-btn secondary">탐험 지도로 돌아가기</a></div>
+      <canvas id="shareCanvas" style="display:none;"></canvas>
+      <div class="sim-promo">
+        <p class="sn-hook">가장 감당하기 힘든 사실 앞에서 사람은 가장 많은 방어기제를 꺼낸다. 『죽음 리허설』은 그 사실을 피하지 않고 끝까지 들여다본 25명의 사유를 담았다.</p>
+        <a href="https://product.kyobobook.co.kr/detail/S000221636755" target="_blank" rel="noopener" class="sn-book">
+          <img src="img/book-death.webp" alt="죽음 리허설">
+          <div class="sn-book-title">죽음 리허설</div>
+          <div class="sn-book-sub">살기 위해, 한 번 죽어 보기</div>
+        </a>
+        <a href="https://product.kyobobook.co.kr/detail/S000221636755" target="_blank" rel="noopener" class="sim-action-btn primary sn-buy">교보문고에서 보기</a>
+      </div>
+    </div>
+  </div>
+  <style>
+    #choiceMeaning { white-space: pre-line; }
+    #resultStats { grid-template-columns: repeat(4, 1fr); }
+    #resultStats .sim-result-stat { padding-left: 10px; }
+    #resultStats .sim-result-stat:first-child { padding-left: 0; }
+    #resultStats .sim-result-stat-value { font-size: 24px; }
+    .sn-hook { font-size: 15px; line-height: 1.8; color: var(--mist); text-align: center; padding: 20px 8px 8px; }
+    .sn-book { display: block; margin: 16px 0 24px; padding: 24px 20px; text-align: center; border-radius: 14px; background: var(--night-2); box-shadow: inset 0 0 0 1px var(--line); }
+    .sn-book img { width: 170px; height: auto; margin: 0 auto 14px; }
+    .sn-book-no { font-size: 12px; color: var(--dim); }
+    .sn-book-title { font-family: var(--serif); font-size: 30px; color: var(--moon); margin: 4px 0 6px; font-weight: 700;}
+    .sn-book-sub { font-size: 13px; color: var(--mist); }
+    .sn-buy { margin: -8px 0 8px; }
+  </style>
+  <script src="sim-template.js"></script>
+  <script>
+const SIDE={"displace1": "E", "fantasy1": "I", "intellect1": "H", "suppress1": "M", "passive2": "E", "somatic2": "I", "undo2": "H", "humor2": "M", "split3": "E", "ration3": "I", "reaction3": "H", "sublim3": "M", "project4": "E", "deny4": "I", "repress4": "H", "antici4": "M", "identify5": "E", "regress5": "I", "altru5": "M"};
+const NAME={"displace1": "전위", "fantasy1": "공상", "intellect1": "지성화", "suppress1": "억제", "passive2": "수동 공격", "somatic2": "신체화", "undo2": "취소", "humor2": "유머", "split3": "분열", "ration3": "합리화", "reaction3": "반동 형성", "sublim3": "승화", "project4": "투사", "deny4": "부정", "repress4": "억압", "antici4": "예견", "identify5": "공격자와의 동일시", "regress5": "퇴행", "altru5": "이타주의"};
+const RES={"E": {"title": "화살을 밖으로 돌리는 사람", "level": "베일런트의 단계로 보면 대부분 미숙한 방어기제입니다.", "body": "괴로운 순간, 그 감정을 남에게 보내는 쪽입니다. 화는 만만한 사람에게, 내 결점은 남의 결점으로, 싫다는 마음은 돌려 말하는 행동으로 나갑니다. 당장은 내가 덜 아프지만, 그 화살은 대개 가장 가까운 사람에게 꽂힙니다.", "how": ["화가 나면 먼저 묻기. 이건 누구에게 난 화인가.", "진짜 상대에게 짧게, 직접 말하기. \"그 말은 서운했어.\"", "남의 단점이 유난히 거슬리는 날엔, 나에게도 그 면이 있는지 살펴보기."]}, "I": {"title": "못 본 척하는 사람", "level": "베일런트의 단계로 보면 대부분 미숙한 방어기제입니다.", "body": "감당하기 힘든 일을 마주하면 그 일을 보지 않는 쪽입니다. 별일 아니라고 믿거나, 그럴듯한 이유를 대거나, 상상 속으로 피하거나, 몸이 먼저 아파집니다. 충격은 줄지만, 보지 않는 동안 문제는 그대로 자랍니다.", "how": ["피하고 싶은 사실을 한 문장으로 적기. \"나는 승진하고 싶었고, 못 했다.\"", "확인하면 끝나는 일부터 확인하기. 재검사 예약, 카드값 조회처럼.", "이유가 너무 쉽게 떠오르면 한 번 의심하기. 정말 그래서였는지."]}, "H": {"title": "감정을 감추는 사람", "level": "베일런트의 단계로 보면 미숙과 성숙 사이, 신경증적 방어기제입니다.", "body": "괴로운 감정이 올라오면 그 감정을 다른 모양으로 바꾸는 쪽입니다. 분석으로, 정반대의 친절로, 선물로, 망각으로. 겉으로는 가장 멀쩡해 보이지만, 감정은 처리되지 않은 채 남아 있습니다.", "how": ["감정에 이름 붙이기. \"지금 나는 질투가 난다.\" 이름을 붙이기만 해도 감정이 누그러진다는 연구가 있습니다.", "친절이나 미움이 유난히 크다 싶을 때, 반대 감정이 숨어 있는지 묻기.", "하루에 한 번, 생각 말고 그날 느낀 감정만 적어 보기."]}, "M": {"title": "고통을 다루는 사람", "level": "베일런트의 단계로 보면 성숙한 방어기제입니다. 그가 수십 년 추적한 사람들 중 이런 방어기제를 쓴 이들은 노년을 잘 보낼 가능성이 세 배 높았습니다.", "body": "괴로움을 모른 척하지도, 남에게 돌리지도 않고 쓸 데로 돌리는 쪽입니다. 때를 골라 감정을 꺼내고, 웃음으로 거리를 두고, 분함을 연료로 쓰고, 다가올 일을 준비합니다.", "how": ["미뤄 둔 감정에는 기한 정하기. 언제 꺼낼지 정하지 않으면 쌓이기만 합니다.", "농담으로 넘긴 일 중 사실 아팠던 것은, 한 사람에게라도 말하기.", "남을 돕느라 내 슬픔을 건너뛰지 않았는지 살피기."]}};
+const CONFIG={id:'defense',title:'방어기제 시뮬레이터',shareIcon:'',shareUrl:'https://eclipse-mindlab.github.io/mindlab/sim-defense.html',version:5,
+stages:[{"badge": "지적", "title": "회의실에서", "desc": "팀 회의에서 내 기획안이 모두 앞에서 조목조목 깨졌다. 틀린 말이 아니라서 더 분하다.", "highlight": "그날 나는?", "choices": [{"id": "displace1", "text": "퇴근하고 집에 와서, 별것 아닌 일로 가족에게 짜증을 낸다.", "meaning": "상사에게 대들 수는 없으니, 만만한 곳에서 화가 터진다. 가족은 영문도 모른 채 하루 치 분노를 받아 낸다.\n\n화를 낸 순간은 잠깐 시원하다. 다만 진짜 화가 난 상대는 그대로고, 집에는 상처가 하나 늘었다.", "principle": {"name": "전위", "desc": "진짜 화가 난 상대에게 감정을 드러내기 어려울 때, 그 감정을 더 만만한 상대에게 쏟는 것이다. 상사에게 혼나고 집에 와서 가족에게 소리 지르는 게 대표적이다.", "icon": ""}}, {"id": "fantasy1", "text": "샤워하면서 그 상사를 말로 꺾는 장면을 몇 번이고 돌려 본다.", "meaning": "머릿속에서는 완벽한 반박이 나오고, 상사는 할 말을 잃는다. 몇 번을 돌려 봐도 통쾌하다.\n\n다만 다음 회의에서도 현실의 나는 아무 말도 못 한다. 상상 속 승리가 마음을 달래 주는 동안, 현실은 그대로 남는다.", "principle": {"name": "공상", "desc": "현실에서 이루지 못한 일을 머릿속에서 대신 이루는 것이다. 잠깐 마음을 달래 주지만, 현실을 바꾸지는 못한다.", "icon": ""}}, {"id": "intellect1", "text": "기분은 접어 두고, 지적받은 항목을 표로 깔끔하게 정리한다.", "meaning": "다음 날 수정안은 흠잡을 데가 없다. 다들 일 처리가 깔끔하다고 한다.\n\n그런데 그날의 창피함과 분함은 표 어디에도 없다. 감정을 처리하지 않고 빼놓았을 뿐이라, 비슷한 순간이 오면 그 감정이 다시 고개를 든다.", "principle": {"name": "지성화", "desc": "감당하기 힘든 감정을 생각과 분석의 문제로 바꿔 머리로 다루는 것이다. 안나 프로이트는 사춘기 아이들이 사랑과 성에 대한 충동을 사랑이란 무엇인가 하는 토론으로 바꾸는 모습에서 이것을 발견했다. 큰 병을 진단받고 밤새 통계와 논문만 읽는 것도 지성화일 수 있다.", "icon": ""}}, {"id": "suppress1", "text": "회의 중엔 담담하게 듣고, 퇴근길에 친구한테 실컷 털어놓는다.", "meaning": "회의실에서는 무너지지 않았고, 퇴근길 통화에서 친구가 같이 욕해 준다. 집에 도착할 즈음엔 꽤 가벼워진다.\n\n괴로운 감정을 알면서, 꺼낼 때와 장소를 고른 것이다. 다만 털어놓을 곳이 없는 날이 이어지면 미뤄 둔 감정은 쌓이기만 한다.", "principle": {"name": "억제", "desc": "괴로운 감정을 알면서도, 해야 할 일을 마칠 때까지 일부러 미뤄 두는 것이다. 장례식장의 상주가 울 새도 없이 손님을 맞다가 집에 와서야 우는 것처럼. 억압은 자기도 모르게 밀어내지만, 억제는 다 알면서 때를 고른다. 정신과 의사 조지 베일런트는 이를 성숙한 방어기제로 꼽았다.", "icon": ""}}]}, {"badge": "부탁", "title": "하기 싫은 부탁", "desc": "친한 친구가 주말에 이사를 도와 달라고 한다. 그 주말만큼은 정말 쉬고 싶었다.", "highlight": "어떻게 되는가?", "choices": [{"id": "passive2", "text": "알겠다고 해 놓고, 당일 늦게 가서 대충 돕다 온다.", "meaning": "약속은 지켰으니 할 말은 없다. 그런데 친구는 어딘가 서운하고, 나는 하루 종일 불편한 얼굴이었다.\n\n싫다는 마음을 말 대신 행동으로 보낸 것이다. 다만 이 방식은 상대가 왜 서운한지도 모르게 한 채, 관계에 금만 남긴다.", "principle": {"name": "수동 공격", "desc": "싫다거나 화가 났다는 마음을 직접 말하지 못하고, 미루기나 깜빡하기, 대충 하기 같은 행동으로 돌려서 드러내는 것이다. 겉으로는 시키는 대로 했으니 누구도 대놓고 탓하기 어렵다.", "icon": ""}}, {"id": "somatic2", "text": "그날 아침, 정말로 머리가 지끈거리고 몸살 기운이 돈다.", "meaning": "꾀병이 아니다. 실제로 아프다. 그리고 아프니까 못 간다고 말할 이유가 생긴다.\n\n다만 몸이 대신 거절해 주는 방식은 오래가지 않는다. 하기 싫은 일 앞에서마다 몸이 먼저 아프다면, 몸보다 마음을 먼저 들여다볼 때다.", "principle": {"name": "신체화", "desc": "마음의 괴로움이 두통이나 복통, 몸살 같은 몸의 증상으로 나타나는 것이다. 시험 날 아침마다 배가 아픈 것처럼. 꾀병과 달리 실제로 아프고, 몸이 아프면 쉬어도 될 이유가 생긴다.", "icon": ""}}, {"id": "undo2", "text": "결국 거절한다. 그리고 미안한 마음에 다음 날 비싼 커피 기프티콘을 보낸다.", "meaning": "거절한 건 잘한 일이다. 그런데 마음이 편치 않고, 기프티콘을 보내고서야 숨이 쉬어진다.\n\n거절을 선물로 지우려는 것이다. 다만 친구가 바란 건 커피가 아니었고, 나는 앞으로도 거절할 때마다 값을 치르게 된다.", "principle": {"name": "취소", "desc": "이미 한 행동이나 생각을 반대 행동으로 지워 버리려는 것이다. 프로이트의 한 환자는 연인이 탈 마차를 위해 길 위의 돌을 치웠다가, 몇 분 뒤 다시 제자리에 갖다 놓았다. 아이에게 화를 낸 뒤 괜히 선물을 사 주는 것도 같은 원리다.", "icon": ""}}, {"id": "humor2", "text": "\"대신 짜장면은 네가 쏜다\" 하고 웃으며 간다.", "meaning": "쉬고 싶던 주말은 날아갔지만, 투덜거림을 농담으로 바꾸니 친구도 나도 웃으며 짐을 나른다.\n\n아쉬운 마음을 숨기지 않고 웃음으로 꺼낸 것이다. 다만 늘 농담으로 넘기면, 정말 힘든 날에도 아무도 내가 힘든 줄 모른다.", "principle": {"name": "유머", "desc": "괴로운 현실을 인정하면서도, 웃음으로 거기서 한 발 떨어지는 것이다. 프로이트는 월요일에 교수대로 끌려가며 \"이번 주는 시작이 좋군\" 하고 말한 사형수를 유머의 본보기로 들었다. 정신과 의사 조지 베일런트는 이를 성숙한 방어기제로 꼽았다.", "icon": ""}}]}, {"badge": "질투", "title": "먼저 승진한 동기", "desc": "같이 입사해 같이 고생한 동기가 먼저 승진했다. 축하할 일인 건 안다. 그런데 속이 쓰리다.", "highlight": "그 뒤로 나는?", "choices": [{"id": "split3", "text": "알고 보니 처음부터 윗사람 비위만 맞추던 사람처럼 보인다.", "meaning": "어제까지 같이 상사 욕을 하던 동기가, 오늘은 정치만 하던 사람으로 보인다. 지난 기억까지 그쪽으로 다시 쓰인다.\n\n좋은 동기이면서 나를 앞질러 간 사람이라는 두 사실을 함께 품기 힘드니, 한쪽으로 정해 버린 것이다. 다만 그렇게 정하는 순간 좋은 동료 하나를 잃는다.", "principle": {"name": "분열", "desc": "사람을 완전히 좋은 사람과 완전히 나쁜 사람으로 나눠 보는 것이다. 좋은 사람에게도 나쁜 면이 있다는 걸 함께 품기가 힘드니, 둘 중 하나로 정해 버린다. 처음엔 완벽해 보이던 사람이 한 번 실망하자 최악의 사람이 되는 것도 그래서다.", "icon": ""}}, {"id": "ration3", "text": "\"승진하면 일만 많아지지. 난 오히려 다행이다.\"", "meaning": "그렇게 생각하니 속이 좀 편하다. 실제로 승진한 동기는 야근이 늘었다.\n\n다만 정말 다행이었다면 처음부터 속이 쓰리지 않았을 것이다. 원하던 걸 못 얻었다고 인정하지 않는 동안에는, 왜 못 얻었는지도 따져 볼 수 없다.", "principle": {"name": "합리화", "desc": "원하던 걸 얻지 못했을 때 그럴듯한 이유를 붙여 마음을 편하게 만드는 것이다. 이솝 우화의 여우는 포도를 따지 못하자 어차피 시어서 못 먹는다고 말했다. 거짓말과 다른 점은, 본인도 그 이유를 진심으로 믿는다는 것이다.", "icon": ""}}, {"id": "reaction3", "text": "누구보다 크게 축하하고, 축하 회식까지 먼저 챙긴다.", "meaning": "동기는 고마워하고, 주변에서는 역시 쿨하다고 한다.\n\n다만 축하가 유난히 컸던 건, 그만큼 덮어야 할 감정이 컸다는 뜻일 수 있다. 회식이 끝나고 혼자 남으면 쓰린 속은 그대로다.", "principle": {"name": "반동 형성", "desc": "받아들이기 힘든 감정을 정반대 감정으로 막아 내는 것이다. 좋아하는 여자아이를 괴롭히는 남자아이가 대표적이다. 반대 감정을 크게 부풀려야 원래 감정이 드러나지 않으니, 대개 지나친 모습으로 나타난다.", "icon": ""}}, {"id": "sublim3", "text": "그 분함을 연료 삼아, 미뤄 둔 자격증 공부를 시작한다.", "meaning": "속 쓰린 밤마다 책을 편다. 몇 달 뒤엔 내 이력에도 한 줄이 생긴다.\n\n질투를 없애려 하지 않고 쓸 데로 돌린 것이다. 다만 이 연료는 누군가를 이기고 싶은 마음에서 나왔다. 목표가 내가 원하는 것인지, 그 동기를 이기는 것인지는 가끔 확인해 볼 만하다.", "principle": {"name": "승화", "desc": "그대로 드러내면 문제가 될 충동이나 좌절을, 사회가 반기는 일로 바꾸는 것이다. 프로이트는 레오나르도 다빈치를 예로 들며 \"그는 사랑하는 대신 탐구했다\"고 썼다. 정신과 의사 조지 베일런트는 이를 성숙한 방어기제로 꼽았다.", "icon": ""}}]}, {"badge": "건강", "title": "재검사 통보", "desc": "건강검진 결과가 나왔다. 한 항목에 '재검사 필요'라고 적혀 있다.", "highlight": "그다음 나는?", "choices": [{"id": "project4", "text": "괜히 가족에게 \"다들 건강 좀 챙기라\"고 잔소리를 한다.", "meaning": "밤늦게 라면 먹는 동생, 담배 못 끊는 아버지가 유난히 눈에 걸린다. 잔소리가 길어진다.\n\n다만 정작 건강을 챙기지 않은 건 나였다. 내 결점은 외면하려 할수록 남에게서 더 잘 보인다.", "principle": {"name": "투사", "desc": "내 안의 받아들이기 싫은 면을 남에게서 찾아내는 것이다. 한 실험에서 자기 결점 하나를 생각하지 않으려 애쓴 사람들은, 낯선 사람에게서 바로 그 결점을 더 많이 찾아냈다. 외면하려 애쓸수록 그 생각이 더 자주 떠오르기 때문이다.", "icon": ""}}, {"id": "deny4", "text": "\"별일 아니겠지.\" 재검사 날짜를 자꾸 미룬다.", "meaning": "예전에도 비슷한 수치가 나왔지만 괜찮았다. 바쁜 일이 끝나면 가겠다고 생각한다. 그렇게 석 달이 지난다.\n\n충격을 줄이는 데는 효과가 있다. 다만 인정하지 않는 동안에는 대처도 시작할 수 없다. 별일이 아니었다면 확인하는 데 하루면 끝났을 일이다.", "principle": {"name": "부정", "desc": "감당할 수 없는 사실을 없는 일로 만드는 것이다. 정신과 의사 엘리자베스 퀴블러로스가 만난 불치병 환자 대부분이 가장 먼저 꺼낸 말은 \"아니야, 나일 리 없어\"였다. 부정은 충격을 줄여 주지만, 현실은 바꾸지 못한다.", "icon": ""}}, {"id": "repress4", "text": "결과지를 서랍에 넣는다. 그리고 정말로 까맣게 잊는다.", "meaning": "애써 피한 것도 아닌데 이상하게 생각이 나지 않는다. 몇 달 뒤 서랍을 정리하다 결과지를 다시 보고 깜짝 놀란다.\n\n다만 잊은 동안에도 불안은 사라지지 않았다. 이유 모를 뒤척임이나 괜한 예민함으로 새어 나왔을 수 있다.", "principle": {"name": "억압", "desc": "떠올리면 너무 괴로운 기억이나 생각을 자기도 모르게 의식 밖으로 밀어내는 것이다. 본인은 밀어냈다는 사실조차 모른다. 프로이트는 억압된 것이 사라지지 않고 이유 모를 불안이나 꿈, 말실수로 새어 나온다고 봤고, 억압을 정신분석의 주춧돌이라고 불렀다.", "icon": ""}}, {"id": "antici4", "text": "바로 재검사를 예약하고, 나쁜 결과가 나오면 무엇을 할지도 미리 알아 둔다.", "meaning": "검사 전날 밤에도 불안하긴 하다. 그래도 최악의 경우 어떤 치료를 받는지, 회사에는 어떻게 말할지 알아 두니 머릿속이 덜 시끄럽다.\n\n걱정을 준비로 바꾼 것이다. 다만 대비가 지나치면, 아직 오지 않은 일을 미리 겪느라 오늘을 놓친다.", "principle": {"name": "예견", "desc": "앞으로 닥칠 괴로움을 현실적으로 내다보고 미리 대비하는 것이다. 큰 수술을 앞두고 수술 뒤에 얼마나 아플지 알아보고 마음의 준비를 하는 게 대표적이다. 걱정에 빠져 있기만 하면 불안만 커지지만, 예견은 준비로 이어진다. 정신과 의사 조지 베일런트는 이를 성숙한 방어기제로 꼽았다.", "icon": ""}}]}, {"badge": "가족", "title": "그 말투", "desc": "명절, 본가. 아버지가 또 그 말투로 잔소리를 시작한다. 어릴 때 그렇게 듣기 싫던 바로 그 말투다.", "highlight": "그날 나는?", "choices": [{"id": "identify5", "text": "그 자리에선 참는다. 그런데 저녁에 깐족대는 조카에게, 아버지와 똑같은 말투로 한소리 한다.", "meaning": "말을 뱉고 나서야 깨닫는다. 방금 그 말투, 어디서 많이 들었다.\n\n당하는 쪽에 있으면 무력하지만, 그 말투를 내가 쓰면 힘을 쥔 쪽에 서게 된다. 다만 그렇게 대물림된 말투는 다음 사람에게 같은 상처를 남긴다.", "principle": {"name": "공격자와의 동일시", "desc": "나를 괴롭힌 사람의 태도를 닮아 가는 것이다. 혹독한 시집살이를 겪은 며느리가 시어머니가 되어 똑같이 하고, 괴롭힘당하던 후임이 선임이 되어 똑같이 괴롭힌다. 안나 프로이트는 두려움을 당하는 쪽에서 쥐는 쪽으로 옮겨 가는 이 방식을 공격자와의 동일시라고 불렀다.", "icon": ""}}, {"id": "regress5", "text": "말없이 방에 들어가 문을 닫고 휴대폰만 본다. 열다섯 살 때처럼.", "meaning": "회사에서는 팀을 이끄는 사람인데, 이 집에만 오면 사춘기로 돌아간다. 어머니가 밥 먹으라고 부를 때까지 나오지 않는다.\n\n익숙한 방식으로 버티는 것이다. 다만 문을 닫는 동안, 아버지와 나 사이의 대화도 열다섯 살에 멈춰 있다.", "principle": {"name": "퇴행", "desc": "힘든 일이 닥쳤을 때 어린 시절의 행동으로 돌아가는 것이다. 동생이 태어나면 대소변을 가리던 첫째가 다시 이불에 실수를 하거나 젖병을 찾는 일이 흔하다. 어른도 힘들 때면 어릴 적 방식으로 버티곤 한다.", "icon": ""}}, {"id": "altru5", "text": "아버지 말은 흘려듣고, 조카에게는 내가 그 나이에 듣고 싶었던 말을 해 준다.", "meaning": "\"넌 지금 그대로도 괜찮아.\" 조카는 별 반응이 없지만, 그 말을 하고 나니 이상하게 내 속이 풀린다.\n\n받지 못한 걸 남에게 주면서 내 상처도 조금 아문다. 다만 아버지와의 일은 여전히 그 자리에 남아 있다.", "principle": {"name": "이타주의", "desc": "내가 겪은 고통을 남을 돕는 일로 바꾸는 것이다. 캔디 라이트너는 음주 운전 사고로 열세 살 딸을 잃은 해에 음주 운전에 반대하는 어머니들의 모임을 만들었고, 몇 년 뒤 미국의 모든 주가 음주 운전 법을 강화했다. 정신과 의사 조지 베일런트는 이를 성숙한 방어기제로 꼽았다.", "icon": ""}}]}],
+calculateResult(choices,principles){
+  const c={E:0,I:0,H:0,M:0};choices.forEach(x=>{const k=SIDE[x.choiceId];if(k)c[k]++;});
+  const m=Math.max(c.E,c.I,c.H,c.M);const k=['E','I','H','M'].find(t=>c[t]===m);const r=RES[k];
+  const used=choices.filter(x=>SIDE[x.choiceId]===k).map(x=>NAME[x.choiceId]);
+  const desc='자주 쓴 방어기제: '+used.join(', ')+'\n\n'+r.body+'\n\n'+r.level+'\n\n이렇게 해 보세요\n· '+r.how.join('\n· ');
+  return {icon:'',label:'당신은',title:r.title,desc:desc,stats:[{value:c.E+'번',label:'밖으로'},{value:c.I+'번',label:'외면'},{value:c.H+'번',label:'감춤'},{value:c.M+'번',label:'다룸'}]};
+},
+getShareText(t){return '방어기제 시뮬레이터\n\n나는 '+t+'\n\n괴로울 때 나는 무엇으로 나를 지킬까?\n\nhttps://eclipse-mindlab.github.io/mindlab/sim-defense.html';}
+};
+SimTemplate.init(CONFIG);
+document.getElementById('saveImageBtn').addEventListener('click',()=>{const c=document.getElementById('shareCanvas'),x=c.getContext('2d');c.width=800;c.height=420;x.fillStyle='#140a20';x.fillRect(0,0,800,420);x.textAlign='center';x.font='16px sans-serif';x.fillStyle='#b4a5c8';x.fillText('방어기제 시뮬레이터',400,130);x.font='bold 52px serif';x.fillStyle='#f6eef4';x.fillText(document.getElementById('resultTitle').textContent,400,210);x.font='14px sans-serif';x.fillStyle='#7c6b93';x.fillText('eclipse-mindlab.github.io/mindlab',400,380);EclipseSaveImage(c,'방어기제_결과.png');});
+  </script>
+</body>
+</html>
