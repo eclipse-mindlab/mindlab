@@ -175,6 +175,14 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .lg li.me{background:#fff1c2;box-shadow:0 0 0 3px var(--gold) inset}
 .lg li:nth-child(1) span{color:#c58a00}
 .lgme{font-size:12px}.lnk{appearance:none;border:0;background:none;padding:0;font:inherit;color:#7b5cff;text-decoration:underline;cursor:pointer}
+.scs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.sc{appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:2.5px solid #000;border-radius:16px;background:#fff;padding:10px 6px 9px;box-shadow:0 3px 0 #000;font:inherit;color:var(--ink);cursor:pointer}
+.sc b{font-family:var(--hand);font-weight:400;font-size:17px}.sc span{font-size:12px;line-height:1.35;color:#5d5478;word-break:keep-all;text-align:center}
+.sc.on{background:#fff1c2}
+.scr{display:grid;grid-template-columns:38px 70px 1fr 34px;align-items:center;gap:8px;margin-top:6px}
+.scr b{font-family:var(--hand);font-weight:400;font-size:15px}.scr em{font-style:normal;font-family:var(--hand);font-size:16px;text-align:right}
+.scr .face{width:34px;height:34px;background-size:68px 90px;background-position:-17px -20px}
+.scr.me .rbar i{background:var(--gold)}.scr.me b{color:#8a5a33}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 
@@ -346,6 +354,11 @@ const dkey=d=>`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 const nowD=()=>new Date(Date.now()+S.off*864e5);
 function weekDays(back){const d=nowD();const wd=(d.getDay()+6)%7;const out=[];for(let i=0;i<7;i++){const x=new Date(d);x.setDate(d.getDate()-wd-back*7+i);out.push(dkey(x));}return out;}
 const weekSum=back=>weekDays(back).reduce((n,k)=>n+(S.log[k]||0),0);
+// league points reward showing up: a day with a mission is 1, a day with an answer is 1
+const weekKey=()=>weekDays(0)[0];
+const weekPts=back=>weekDays(back).reduce((n,k)=>n+(S.log[k]?1:0)+(S.qlog&&S.qlog[k]?1:0),0);
+// each philosopher's school, for the weekly school match
+const SCHOOL={soc:{nm:'문답파',line:'모르는 건 끝까지 묻는다',inv:'우리 문답파에 들어올래? 모르는 건 끝까지 묻는 애들 모임이야.'},nie:{nm:'망치파',line:'낡은 생각은 망치로 두드려 본다',inv:'망치파에 들어와. 낡은 생각을 망치로 두드려 보는 데야.'},dio:{nm:'견유학파',line:'개처럼 거리낌 없이 산다',inv:'견유학파 할래? 개처럼 거리낌 없이 사는 거야. 통은 각자 구해.'},epi:{nm:'정원파',line:'친구와 소박하게, 마음 편하게',inv:'우리 정원파에 올래? 친구랑 소박하게, 마음 편하게 사는 곳이야.'}};
 function sameDaySum(){const d=nowD(),wd=(d.getDay()+6)%7;return weekDays(1).slice(0,wd+1).reduce((n,k)=>n+(S.log[k]||0),0);}
 function streak(){const d=nowD();let n=0;if(!S.log[dkey(d)])d.setDate(d.getDate()-1);while(S.log[dkey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 const stageOf=g=>{let s=0;STAGE.forEach((n,i)=>{if(g>=n)s=i;});return s;};
@@ -507,7 +520,7 @@ function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;
     if(m&&m.st==='doing'){say(k,`"${M.t}" 하고 있지?`);return;}
     const I=PH[k].idle;say(k,I[(Date.now()/1000|0)%I.length]);return;}
   const qi=nextQ(k),Q=PH[k].Q[qi];
-  say(k,Q.q,Q.o.map(o=>o[0]),n=>{S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;save();
+  say(k,Q.q,Q.o.map(o=>o[0]),n=>{S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;S.qlog=S.qlog||{};S.qlog[today()]=1;save();
     setTimeout(()=>say(k,Q.o[n][1],null,()=>{giveDrop(k);
       const rest=()=>{if(left(k)<=0){if(newMis(k)){refreshNote(k);setTimeout(()=>{if(!pend&&!clrOn())say(k,'질문은 오늘 여기까지. 대신 게시판에 미션 하나 붙여 놨어.',null,()=>wiggleBoard());},1300);}else setTimeout(()=>sleepIfDone(k),900);}};
       if(!levelUp(k,rest))rest();}),180);});}
@@ -565,7 +578,7 @@ function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max
     <p class="mw">${st}</p><p class="mw">최고 기록 · 한 주 ${S.best.week}개 · 연속 ${S.best.streak}일</p></div>`;}
 function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&MIS[k]);
   $('bStats').innerHTML=`<div class="bst"><b>${streak()}일</b><span>연속</span></div><div class="bst"><b>${weekSum(0)}개</b><span>이번 주 미션</span></div><div class="bst"><b>${S.trees}그루</b><span>키운 나무</span></div>`;
-  $('bTabs').innerHTML=[['mis','미션'],['story','친구 단계'],['race','지난주의 나']].concat(window.GL?[['league','리그']]:[]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
+  $('bTabs').innerHTML=[['mis','미션'],['story','친구'],['race','지난주의 나']].concat(window.GL?[['league','리그']]:[]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
   if(bt!=='mis'){$('bList').innerHTML=bt==='story'?drawStory():drawRace();$('bMsg').textContent=msg||'';return;}
@@ -631,7 +644,7 @@ function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBu
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();setTimeout(()=>askSave('clear'),2600);}});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k))askSave('clear');},1500);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -681,7 +694,21 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
   else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
   else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
   const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn())askBeta();else askSave('day');};
-  say(who,line,null,()=>{if(hint)setTimeout(()=>say('soc',hint,null,next),300);else next();});}
+  const chain=[[who,line]];
+  const go=()=>{if(hint)chain.push(['soc',hint]);(function step(i){if(i>=chain.length)return next();const [k,t]=chain[i];say(actors[k]?k:'soc',t,null,()=>setTimeout(()=>step(i+1),300));})(0);};
+  // on a new week, tell how last week's school match went
+  const G=window.GL;
+  if(G&&G.lastWeek&&S.school&&S.weekSeen!==weekKey()){S.weekSeen=weekKey();save();
+    Promise.race([G.lastWeek(),new Promise(r=>setTimeout(()=>r(null),3000))]).then(r=>{if(r&&r.win){const me=S.school,sp=S.met[me]&&actors[me]?me:'soc';
+      if(r.win===me){S.fruit+=5;save();hud();bump('fruitChip');chain.push([sp,`지난주 학파 대항전, 우리 ${SCHOOL[me].nm}가 이겼어! 학파 몫으로 열매 5개야.`]);}
+      else chain.push([sp,`지난주 대항전은 ${SCHOOL[r.win].nm}가 가져갔어. 이번 주엔 우리 ${SCHOOL[me].nm}가 이겨 보자.`]);}go();});}
+  else go();}
+// wait until nobody is talking and no sheet is open
+function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||!$('board').hidden||!$('ward').hidden)return setTimeout(go,1200);f();},ms||0);}
+// reaching a new level, a philosopher may ask you into their school
+function invite(k){if(S.school||!SCHOOL[k]||(S.invited||{})[k]||!actors[k])return false;S.invited=S.invited||{};S.invited[k]=1;save();
+  say(k,SCHOOL[k].inv,['들어갈래','다음에'],n=>{if(n!==0)return;S.school=k;S.schoolLock=weekKey();save();sfx.buy();buzz([10,30,10,30,60]);burstAt(actors[k]);
+    setTimeout(()=>say(k,`좋아, 이제 ${SCHOOL[k].nm}야. 이번 주 학파 대항전, 같이 이겨 보자. 게시판 리그 탭에서 볼 수 있어.`,null,()=>askSave('clear')),400);});return true;}
 function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()||(S.saveAsk||0)>=2||S.saveAskDay===today())return;
   setTimeout(()=>{if(pend||clrOn()||G.isIn())return;S.saveAsk=(S.saveAsk||0)+1;S.saveAskDay=today();save();
     say('soc',reason==='clear'?'이 정원, 날아가면 아깝잖아. 저장해 둘까? 폰을 바꿔도 그대로 남아.':'어제 정원 그대로 있지? 폰을 바꿔도 남게 저장해 둘래?',['구글로 저장','나중에'],async n=>{
@@ -752,7 +779,7 @@ const V = '10.8.0', BASE = `https://www.gstatic.com/firebasejs/${V}/`;
 const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const progress = s => !s ? -1 : (s.trees||0)*100 + (s.given||0) + Object.values(s.xp||{}).reduce((a,b)=>a+b,0) + Object.values(s.misDone||{}).reduce((a,b)=>a+b,0)*3;
 
-let F = null, auth = null, db = null, me = null, ready = false, failed = false;
+let F = null, auth = null, db = null, me = null, ready = false, failed = false, authKnown = false;
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
 
 async function load() {
@@ -762,7 +789,7 @@ async function load() {
     const a = app.initializeApp(CFG);
     auth = NATIVE ? au.initializeAuth(a, {persistence: au.indexedDBLocalPersistence}) : au.getAuth(a);
     db = fs.getFirestore(a);
-    au.onAuthStateChanged(auth, u => { me = u && !u.isAnonymous ? u : null; if (me) pull(); repaint(); });
+    au.onAuthStateChanged(auth, u => { authKnown = true; me = u && !u.isAnonymous ? u : null; if (me) pull(); repaint(); });
     if (!NATIVE) au.getRedirectResult(auth).catch(() => {});
     ready = true;
   } catch (e) { failed = true; }
@@ -820,10 +847,27 @@ async function nickFromDilem() {
   return (me.displayName || '').split(' ')[0].slice(0, 10);
 }
 let posted = '', lgCache = null;
+// your school stays until you change it (once a week); the match compares average points, so a small school can win
+let picking = false;
+function schoolCard(mine) {
+  const face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  if (!S.school || picking) {
+    return `<div class="mis"><p class="mt">학파를 골라 주세요</p><p class="mw">학파 대항전에서 같은 편이 돼요. 학파 점수는 그 학파 사람들 점수의 평균이에요.</p>
+      <div class="scs">${Object.entries(SCHOOL).map(([k, v]) => `<button class="sc${S.school === k ? ' on' : ''}" type="button" data-sc="${k}">${face(k)}<b>${v.nm}</b><span>${v.line}</span></button>`).join('')}</div></div>`;
+  }
+  const sch = (lgCache && lgCache.sch) || {};
+  const rows = Object.keys(SCHOOL).map(k => { const x = sch[k] || {c: 0, t: 0}; const t = x.t + (k === S.school ? mine - (lgCache.mineAt || 0) : 0);
+    return {k, avg: x.c ? t / x.c : 0}; }).sort((a, b) => b.avg - a.avg);
+  const mx = Math.max(...rows.map(r => r.avg), 1), my = rows.findIndex(r => r.k === S.school) + 1;
+  return `<div class="mis"><div class="mh"><b>학파 대항전</b><span class="lv">우리 학파 ${my}위</span></div>
+    ${rows.map(r => `<div class="scr${r.k === S.school ? ' me' : ''}">${face(r.k)}<b>${SCHOOL[r.k].nm}</b><div class="rbar"><i style="width:${r.avg / mx * 100}%"></i></div><em>${r.avg.toFixed(1)}</em></div>`).join('')}
+    <p class="mw">${SCHOOL[S.school].nm}: ${SCHOOL[S.school].line}${S.schoolLock === weekId() ? '' : ' · <button class="lnk" type="button" id="scChange">학파 바꾸기</button>'}</p></div>`;
+}
 async function postScore() {
   if (!me || !S.lname) return;
-  const key = weekId() + '|' + S.lname + '|' + weekSum(0); if (key === posted) return;
-  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekSum(0), upd: F.serverTimestamp()}); posted = key; } catch (e) {}
+  const sc = S.school || '';
+  const key = weekId() + '|' + S.lname + '|' + weekPts(0) + '|' + sc; if (key === posted) return;
+  try { await F.setDoc(F.doc(db, 'gardenLeague', weekId(), 'p', me.uid), {name: S.lname, n: weekPts(0), sc, upd: F.serverTimestamp()}); posted = key; } catch (e) {}
 }
 let box = null, busyL = false, renaming = false;
 const LEGAL = '<p class="mw lgme"><a class="lnk" href="privacy.html">개인정보처리방침</a> · <a class="lnk" href="privacy.html#delete">기록 삭제 요청</a></p>';
@@ -852,11 +896,16 @@ async function render(el) {
   try {
     await postScore();
     const col = F.collection(db, 'gardenLeague', weekId(), 'p');
-    const mine = weekSum(0), wk = weekId();
+    const mine = weekPts(0), wk = weekId();
     if (!lgCache || lgCache.wk !== wk || Date.now() - lgCache.t > 300000) {
       const top = await F.getDocs(F.query(col, F.orderBy('n', 'desc'), F.limit(30)));
       const got = []; top.forEach(d => { const x = d.data(); got.push({id: d.id, name: x.name, n: x.n}); });
-      lgCache = {wk, t: Date.now(), rows: got, above: {}};
+      // the school match: members and average points per school, four small aggregate reads
+      const sch = {};
+      for (const k of Object.keys(SCHOOL)) {
+        try { const a = await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')}); const d = a.data(); sch[k] = {c: d.c || 0, t: d.t || 0}; } catch (e) { sch[k] = {c: 0, t: 0}; }
+      }
+      lgCache = {wk, t: Date.now(), rows: got, above: {}, sch, mineAt: mine};
     }
     // my own row is always current, even from a cached table
     const rows = lgCache.rows.filter(r => r.id !== me.uid);
@@ -869,14 +918,16 @@ async function render(el) {
     if (i >= 0) rank = rows.filter(r => r.n > mine).length + 1;
     else { if (lgCache.above[mine] == null) { const c = await F.getCountFromServer(F.query(col, F.where('n', '>', mine))); lgCache.above[mine] = c.data().count; } rank = lgCache.above[mine] + 1; }
     const d = nowD(), left = 7 - (d.getDay() + 6) % 7;
-    el.innerHTML = `<div class="mis"><div class="mh"><b>이번 주 리그</b><span class="lv">${rank}등</span></div>
-      <p class="mw">이번 주 해낸 미션 수로 겨뤄요. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
+    el.innerHTML = `${schoolCard(mine)}<div class="mis"><div class="mh"><b>이번 주 리그</b><span class="lv">${rank}등</span></div>
+      <p class="mw">하루에 미션 1점, 대답 1점. ${left === 1 ? '오늘 밤 지나면' : `${left}일 뒤`} 새로 시작해요.</p>
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
       <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p>${LEGAL}</div>${betaCard()}`;
     const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { bb.disabled = true; betaJoin(el); };
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
+    el.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => { const was = S.school; S.school = b.dataset.sc; picking = false; if (was !== S.school) S.schoolLock = weekId(); save(); sfx.buy(); buzz([10, 30, 10]); lgCache = null; busyL = false; await postScore(); render(el); });
+    const ch = el.querySelector('#scChange'); if (ch) ch.onclick = () => { sfx.boop(); picking = true; busyL = false; render(el); };
   } catch (e) { el.innerHTML = '<div class="mis"><p class="mt">순위를 불러오지 못했어요</p><p class="mw">잠시 뒤에 다시 열어 주세요.</p></div>'; }
   busyL = false;
 }
@@ -940,8 +991,13 @@ window.gardenShare = async (dataUrl, name) => {
 window.GL = {render, ask, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
-  beta: () => betaJoin(null), wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
-load();
+  beta: () => betaJoin(null),
+  // who won last week's school match (highest average points)
+  lastWeek: async () => { await loading; for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150)); if (!me) return null;
+    const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
+    for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
+    return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
+const loading = load();
 reminders();
 </script>
 
