@@ -631,7 +631,7 @@ function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBu
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then))then&&then();});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();setTimeout(()=>askSave('clear'),2600);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -667,6 +667,28 @@ async function shareCard(k){let cv;try{cv=await makeCard(k);}catch(e){toast('그
   try{const dl=window.claude&&window.claude.use&&await window.claude.use('downloads');if(dl){const blob=await new Promise(ok=>cv.toBlob(ok,'image/png'));await dl.save({filename:name,data:blob});return;}}catch(e){return;}
   const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast('그림을 저장했어요');}
 
+// ---------- coming back: a hello each new day, and asking to keep the garden ----------
+const yesterKey=()=>{const d=nowD();d.setDate(d.getDate()-1);return dkey(d);};
+function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;S.greetDay=today();save();
+  const doing=KIDS.find(k=>S.met[k]&&actors[k]&&S.mis[k]&&S.mis[k].st==='doing'),st=streak();
+  const who=doing||'soc';
+  const line=doing?`어제 붙인 미션, 해 봤어?\n${misOf(doing).t}\n했으면 게시판에서 도장 찍어 줘.`
+    :S.log[yesterKey()]?(st>=2?`왔네. 어제 미션 해냈지? 벌써 ${st===2?'이틀':st+'일'} 연속이야.`:'왔네. 어제 미션 해냈지? 오늘도 하면 이틀 연속이야.')
+    :'왔네. 오늘 미션 게시판에 붙여 놨어.';
+  // a hint at what's coming, only on the day before something new
+  let hint=null;
+  if(!S.met.nie&&actors.nie&&actors.nie.mode==='shadow'&&S.pd<DAY_AT.nie)hint='근데 아까부터 문밖에 누가 서 있어. 콧수염이 보이던데.';
+  else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
+  else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
+  const next=()=>{const G=window.GL;if(G&&G.isIn&&G.isIn())askBeta();else askSave('day');};
+  say(who,line,null,()=>{if(hint)setTimeout(()=>say('soc',hint,null,next),300);else next();});}
+function askSave(reason){const G=window.GL;if(!G||!G.ready||!G.ready()||G.isIn()||(S.saveAsk||0)>=2||S.saveAskDay===today())return;
+  setTimeout(()=>{if(pend||clrOn()||G.isIn())return;S.saveAsk=(S.saveAsk||0)+1;S.saveAskDay=today();save();
+    say('soc',reason==='clear'?'이 정원, 날아가면 아깝잖아. 저장해 둘까? 폰을 바꿔도 그대로 남아.':'어제 정원 그대로 있지? 폰을 바꿔도 남게 저장해 둘래?',['구글로 저장','나중에'],async n=>{
+      if(n!==0)return;const ok=await G.login();if(!ok)return;toast('정원을 저장했어요');setTimeout(askBeta,1200);});},400);}
+function askBeta(){const G=window.GL;if(!G||!G.wantsBeta||!G.wantsBeta()||S.betaAsk)return;S.betaAsk=1;save();
+  say('soc','안드로이드 폰이면 앱으로도 먼저 받아 볼 수 있어. 아침마다 알림도 오고.',['신청할래','괜찮아'],async n=>{if(n===0&&await G.beta())toast('앱 베타 신청했어요. 등록되면 메일로 알려 드려요');});}
+
 // ---------- wardrobe ----------
 let wk='soc';
 function openWard(){if(S.intro<2)return;closeBub();ac();sfx.boop();S.wardSeen=1;save();hud();const ks=present();if(!ks.includes(wk))wk=ks[0]||'soc';$('ward').hidden=false;drawWard();}
@@ -699,12 +721,14 @@ function boot(){rollDay();paintPlant(false);hud();intro();if(S.intro>=2)postMiss
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
-  paintSky();if(S.intro>=2){setTimeout(checkVisitors,1200);if(freeToday())setTimeout(checkDio,1800);}
+  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);
+    // newcomers wait until nobody is talking
+    const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
   $('wardBtn').onclick=openWard;$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
-  $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();checkVisitors();if(freeToday())setTimeout(checkDio,1500);};
+  $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
   setInterval(paintSky,60000);
@@ -867,8 +891,9 @@ function betaCard() {
   return `<div class="mis"><p class="mt">앱으로 먼저 받아 보기</p><p class="mw">앱에서는 아침 미션 알림과 연속 기록 알림이 와요. 신청하면 로그인한 구글 이메일을 테스터 명단에만 써요.</p><div class="mb"><button class="opt" type="button" id="lgBeta">${OS === 'ios' ? '아이폰 앱 나오면 알림 받기' : '앱 베타 신청'}</button></div></div>`;
 }
 async function betaJoin(el) {
-  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; save(); sfx.buy(); render(el); }
-  catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+  if (!me) return false;
+  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; save(); sfx.buy(); if (el) render(el); return true; }
+  catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
 
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
@@ -912,7 +937,10 @@ window.gardenShare = async (dataUrl, name) => {
   return true;
 };
 
-window.GL = {render, ask, timer, onMission: () => { postScore(); push(); reminders(); }};
+window.GL = {render, ask, timer, onMission: () => { postScore(); push(); reminders(); },
+  ready: () => ready, isIn: () => !!me, native: NATIVE,
+  login: async () => { await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
+  beta: () => betaJoin(null), wantsBeta: () => !NATIVE && OS === 'android' && !S.beta};
 load();
 reminders();
 </script>
