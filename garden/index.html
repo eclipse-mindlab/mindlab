@@ -142,6 +142,17 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .nth{font-family:var(--read);font-size:12px;color:#8a5a33;background:#fff1c2;border:1.5px solid #000;border-radius:999px;padding:0 7px;margin-left:6px;vertical-align:2px}
 .mb .share{flex:0 0 auto}
 .mok{margin:0;font-family:var(--hand);font-size:15px;color:#3f7d4a}
+.bhi{width:26px;height:26px;align-self:center;margin-right:-2px}
+.heart{position:absolute;z-index:8;width:18px;height:16px;margin:-8px 0 0 -9px;pointer-events:none;animation:heart .9s ease-out forwards;background:radial-gradient(circle at 30% 35%,#ff7a90 0 38%,transparent 40%),radial-gradient(circle at 70% 35%,#ff7a90 0 38%,transparent 40%),conic-gradient(from 225deg at 50% 92%,#ff7a90 0 90deg,transparent 0);}
+@keyframes heart{from{transform:translateY(0) scale(.6);opacity:1}to{transform:translateY(-34px) scale(1.1);opacity:0}}
+.bh{margin:8px 2px 0;font-family:var(--hand);font-weight:400;font-size:18px;display:flex;align-items:baseline;gap:8px}.bh small{font-family:var(--read);font-size:12.5px;color:#7a6fa0}
+.mis.rid .mb .opt[disabled]{opacity:.55}
+.moons{display:flex;gap:6px;flex-wrap:wrap}.moon{appearance:none;border:2px solid #000;border-radius:12px;background:#fff;padding:4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--hand);font-size:13px;color:var(--ink);cursor:pointer;flex:1 1 0;min-width:62px}
+.mis.book{gap:8px}.bkh{appearance:none;border:0;background:none;padding:0;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;color:var(--ink)}.bkh img{width:38px;height:54px;object-fit:cover;border:1.5px solid #000;border-radius:4px}.bkh span{flex:1;display:flex;flex-direction:column}.bkh b{font-family:var(--hand);font-weight:400;font-size:16.5px}.bkh small{font-size:12.5px;color:#7a6fa0}.bkh i{font-style:normal;font-family:var(--hand);font-size:14px;color:#5b3fd0}
+.mis.book .mis{box-shadow:none;border-width:2px}.bkl{text-align:right}
+.mis.pet.lock{opacity:.6}.mis.pet.lock .face{filter:grayscale(1) brightness(.5)}
+.shake{animation:shake .35s}@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.dwn{position:absolute;inset:0;z-index:30;background:#0e0b1f;color:var(--paper);display:grid;place-items:center;text-align:center}.dwn b{font-family:var(--hand);font-weight:400;font-size:64px;display:block}.dwn p{margin:6px 0 22px;font-size:16px;color:#c9c2e8}
 .mstamp{position:absolute;right:10px;bottom:8px;width:52px;height:52px;transform:rotate(-10deg);animation:stampin .45s cubic-bezier(.3,1.6,.5,1) both}
 .mempty{text-align:center;color:#7a6fa0;margin:10px 0}
 #boardInner{transform-box:fill-box;transform-origin:50% 100%}
@@ -800,10 +811,10 @@ const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.cl
 // an actor is someone in the scene with its own x and mode
 function place(k,mode,x,y){let a=actors[k];const sp=spotOf(k,mode);
   if(!a){const g=document.createElementNS(NS,'g');g.dataset.k=k;g.style.cursor='pointer';$(sp.back?'castBack':'cast').appendChild(g);a=actors[k]={g,x,y,mode:null,s:sp.s};g.addEventListener('click',()=>tapKid(k));}
-  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);return a;}
+  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
 function walk(k,toX,ms,done,idle,toY,toS){const a=actors[k];const x0=a.x,y0=a.y,s0=a.s,t0=performance.now();a.walking=true;a.idle=!!idle;a.cancel=0;if(toY==null)toY=y0;if(toS==null)toS=s0;
   const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
-    a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);done&&done();}};
+    a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);setTimeout(paintPets,0);done&&done();}};
   requestAnimationFrame(step);}
 const restMode=k=>left(k)<=0?'sleep':'awake';
 const misOf=k=>S.mis[k]&&MIS[k]?MIS[k][S.mis[k].i]:null;
@@ -927,7 +938,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
   if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
   const done=KIDS.reduce((n,k)=>n+(S.misDone[k]||0),0);
   $('bSub').textContent=done?`지금까지 해낸 미션 ${done}개`:'철학자들이 매일 아침 하나씩 붙여요';
   $('bList').innerHTML=ks.length?ks.map(k=>{const m=S.mis[k],M=MIS[k][m.i];let btn='';
@@ -938,13 +949,159 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
     else btn=`<p class="mok">"${M.ok}"</p><button class="opt alt share" type="button" data-share="${k}">자랑하기</button>`;
     return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${MIS_FRUIT}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
       <p class="mt">${M.t}</p><p class="mw">${M.why}</p><div class="mb">${btn}</div>${m.st==='done'?`<img class="mstamp" src="${A('stamp')}" alt="해냄">`:''}</div>`;}).join(''):'<p class="mempty">아직 붙은 미션이 없어요. 철학자를 만나면 생겨요.</p>';
+  $('bList').insertAdjacentHTML('beforeend',drawRiddles());
   $('bMsg').textContent=msg||'';
   const on=(sel,f)=>document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{ac();f(b.dataset[Object.keys(b.dataset)[0]],b);});
   on('[data-acc]',k=>{S.mis[k].st='doing';save();sfx.boop();buzz(10);drawBoard();window.GL&&GL.ask();});
   on('[data-skip]',k=>{S.mis[k].st='skip';S.mis[k].day=today();save();sfx.boop();drawBoard('내일 다른 미션이 붙어요');});
   on('[data-start]',k=>{S.mis[k].start=Date.now();save();window.GL&&GL.timer(MIS[k][S.mis[k].i],S.mis[k].start);sfx.boop();buzz(10);drawBoard('시작했어요. 다녀와서 다시 열어 주세요');});
   on('[data-share]',k=>{sfx.boop();shareCard(k);});
-  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{if(!levelUp(k))whenFree(askApp,2500);checkRecords();},1500);window.GL&&GL.onMission();});}
+  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{if(!levelUp(k))whenFree(askApp,2500);checkRecords();},1500);window.GL&&GL.onMission();});
+  wireRiddles();}
+
+// ---------- riddles: things you can only answer by looking at the real world, or inside a book ----------
+// world riddles open one a day from the second day; the answer is checked, or the phone checks the deed
+const RID=[
+  {id:'w1',k:'dio',kind:'ans',q:'지갑 좀 열어 봐. 천 원짜리 앞면에 있는 사람은 누구게?',a:['이황','퇴계','퇴계이황','이퇴계'],ok:'퇴계 이황. 조선의 철학자야. 너는 매일 철학자를 들고 다닌 거야.'},
+  {id:'w2',k:'epi',kind:'sunset',q:'오늘은 해 지는 하늘을 보고 와. 해가 지고 나서 30분 안에 여기서 "봤어"를 눌러 줘.',ok:'잘했어. 하늘 한 번 보는 데는 돈이 안 들어. 그런데 그게 하루에서 제일 좋은 장면일 때가 많아.'},
+  {id:'w3',k:'nie',kind:'ans',q:'100원짜리 동전에 있는 장군은 누구게?',a:['이순신','충무공','충무공이순신','이순신장군'],ok:'이순신. 배 열두 척으로 싸우기 전날 밤, "죽고자 하면 살고, 살고자 하면 죽는다"고 했어.'},
+  {id:'w4',k:'dio',kind:'down',q:'폰을 엎어 두고 5분만 통 속에 들어가 있어 봐. 화면은 켜 둔 채로. 엎어져 있는 동안만 시간이 가.',ok:'나와 봐. 5분 동안 아무것도 안 봤는데 세상은 그대로지? 통 속이 생각보다 넓어.'},
+  {id:'w5',k:'soc',kind:'ans',q:'오천 원짜리 앞면에 있는 사람은?',a:['이이','율곡','율곡이이','이율곡'],ok:'율곡 이이. 과거 시험에서 아홉 번이나 1등을 했대. 그래도 평생 공부했어.'},
+  {id:'w6',k:'epi',kind:'moon',q:'창밖 하늘 좀 봐. 오늘 달은 어떤 모양이야?',ok:'맞아. 오늘 달을 본 사람, 생각보다 많지 않을걸.'},
+  {id:'w7',k:'epi',kind:'ans',q:'오만 원짜리 속 사람은 오천 원짜리 속 사람과 무슨 사이일까?',a:['엄마','어머니','모자','모자지간'],inc:['엄마','어머니','모자'],ok:'신사임당은 율곡의 어머니야. 네 지갑 속에 엄마랑 아들이 같이 살고 있었어.'},
+  {id:'w8',k:'nie',kind:'walk',q:'산책 가자. 여기서 "출발"을 누르고 300m 넘게 걸어간 다음, 거기서 "도착"을 눌러. 위치는 이 폰에만 남아.',ok:'봐, 걸으니까 머리가 달라졌지? 나는 걸으면서 떠오른 생각만 믿었어.'},
+  {id:'w9',k:'dio',kind:'ans',q:'500원짜리 동전에 있는 새는?',a:['학','두루미','학두루미'],ok:'학. 플라톤이 사람을 "깃털 없이 두 발로 걷는 동물"이라고 하길래, 나는 털 뽑은 닭을 들고 가서 "여기 사람 있다" 했어.'},
+  {id:'w10',k:'soc',kind:'sunrise',q:'내일 해 뜨는 걸 보러 갈래? 해가 뜨고 한 시간 안에 여기서 "봤어"를 눌러 줘.',ok:'아침 공기 좋지? 나는 마지막 말로 수탉 이야기를 했어. 아침을 알리는 그 새 말이야.'},
+  {id:'w11',k:'soc',kind:'ans',q:'만 원짜리 뒷면 가운데, 고리 여러 개가 겹친 둥근 천문 기구 이름은?',a:['혼천의','혼의','선기옥형'],ok:'혼천의. 하늘이 어떻게 도는지 알고 싶어서 만든 기구야. 묻는 걸 멈추지 않은 사람들이 만들었지.'},
+  {id:'w12',k:'epi',kind:'ans',q:'오천 원짜리 뒷면에 그려진 과일은?',a:['수박'],ok:'수박. 신사임당이 그린 그림이야. 엄마 그림이 아들 지폐 뒤에 들어가 있는 거지.'},
+  {id:'w13',k:'soc',kind:'clock',h:15,m:30,q:'칸트는 매일 같은 시각에 산책해서, 동네 사람들이 그걸 보고 시계를 맞췄대. 오늘 오후 3시 30분에 여기 와서 "왔어"를 눌러 줘. 앞뒤 5분까지 봐줄게.',ok:'딱 맞췄네. 같은 시각에 같은 일을 하면, 그게 너를 붙잡아 주는 기둥이 돼.'},
+  {id:'w14',k:'dio',kind:'ans',q:'오만 원짜리 뒷면, 달 아래 핀 꽃나무는?',a:['매화','매화나무','매화꽃'],ok:'매화. 추위가 끝나기도 전에 먼저 피는 꽃이야. 남들 다 필 때 기다리지 않는 거지.'},
+  {id:'w15',k:'nie',kind:'walk',dist:1000,q:'아리스토텔레스는 걸으면서 가르쳐서 그 학파 이름이 "소요학파"래. 오늘은 1km. "출발"을 누르고 1km 넘게 간 곳에서 "도착"을 눌러.',ok:'1km! 걷는 동안 무슨 생각 했어? 그게 오늘 너한테 제일 중요한 생각일 거야.'},
+  {id:'w16',k:'epi',kind:'ans',q:'50원짜리 동전에 있는 곡식은?',a:['벼','쌀','벼이삭','이삭'],ok:'벼. 밥 한 그릇이면 행복의 반은 채운 거야.'},
+  {id:'w17',k:'dio',kind:'down',min:15,q:'폰도 책도 없는 빈방에 15분 앉아 있느니, 차라리 전기 충격 버튼을 누른 사람들이 있었대. 너는 버틸 수 있어? 폰을 엎어 두고 15분.',ok:'15분 버텼네. 버튼 누른 사람들보다 네가 세다.'},
+  {id:'w18',k:'soc',kind:'ans',q:'만 원짜리 앞면, 세종대왕 뒤 그림에는 해와 달 말고 산봉우리가 몇 개 있을까?',a:['5','다섯','5개','다섯개','오'],ok:'다섯. 일월오봉도라는 그림이야. 해, 달, 다섯 봉우리. 왕이 앉는 자리 뒤에 늘 있던 그림이지.'}];
+// book riddles: 『죽음 리허설』. Page numbers are the printed ones
+const BOOK={id:'death',nm:'죽음 리허설',img:'https://eclipse-mindlab.github.io/mindlab/img/book-death.webp',url:'https://product.kyobobook.co.kr/detail/S000221636755'};
+// only someone holding the book can answer: each one is the heading at the top of a printed page
+const RIDB=[
+  {id:'b1',k:'epi',p:49,q:'49쪽 맨 위 제목은 "백만 대군 앞에서 ○ 왕"이야. 빈칸 한 글자는?',a:['운','울었다','울다','울었어','울음'],ok:'운 왕. 세상에서 제일 큰 군대를 내려다보며 행복하다던 왕이 갑자기 울었대. 왜 울었는지가 이 장의 시작이야.'},
+  {id:'b2',k:'nie',p:61,q:'61쪽 맨 위 제목: "빈 ○○○"',a:['유모차'],ok:'빈 유모차. 내가 태어나기 전 세상을 찍은 영상을 보고 떨었던 청년 이야기야. 너는 태어나기 전이 무서워?'},
+  {id:'b3',k:'dio',p:93,q:'93쪽 맨 위 제목: "○○○ 한 줌"',a:['겨자씨','겨자'],ok:'겨자씨. 아이를 잃은 엄마에게 붓다가 겨자씨를 구해 오라고 했대. 그런데 조건이 하나 붙어 있었어.'},
+  {id:'b4',k:'soc',p:110,q:'110쪽 맨 위 제목: "일곱 ○○의 아내"',a:['남편'],ok:'남편. 부활한 뒤에 이 여자는 누구의 아내일까. 예수에게 던져진 짓궂은 질문이었어.'},
+  {id:'b5',k:'epi',p:153,q:'153쪽 맨 위 제목: "○○○을 태운 가수"',a:['제조법'],ok:'제조법. 300년 넘게 산 가수가 늙지 않는 약의 제조법을 스스로 태웠대. 영원히 사는 게 왜 싫었을까.'},
+  {id:'b6',k:'soc',p:163,q:'163쪽 맨 위 제목: "○○을 넘긴 남자"',a:['밧줄'],ok:'밧줄. 얼음 강물 속에서 구조 밧줄을 몇 번이나 남에게 넘긴 사람이 있었어. 그 사람은 어떻게 됐을까.'},
+  {id:'b7',k:'epi',p:256,q:'256쪽 맨 위 제목: "○○ 한 말을 함께 먹은 사이"',a:['소금'],ok:'소금. 아리스토텔레스는 소금 한 말을 같이 먹어야 친구가 된다고 했대. 그만큼 많은 끼니를 함께해야 한다는 거야.'},
+  {id:'b8',k:'nie',p:277,q:'277쪽 맨 위 제목: "○막으로 끝난 연극"',a:['3','세','삼','3막','세막','삼막'],ok:'3막. 5막짜리 연극에서 3막에 내려가라는 말을 들은 배우에게, 황제가 해 준 말이 있어.'}];
+// pets and garden pieces. Pets come with the riddles you solve; art arrives later (PET_ART)
+const PET_ART=true;               // flip with the pet art: pets already earned show up then, and the book riddles open
+const PETS=[
+  {id:'rooster',k:'soc',nm:'수탉',at:2,story:'소크라테스가 독배를 마신 뒤 남긴 마지막 말이 "크리톤, 아스클레피오스에게 닭 한 마리를 빚졌네. 꼭 갚아 주게"였어요.'},
+  {id:'dog',k:'dio',nm:'개',at:4,story:'사람들은 디오게네스를 "개"라고 불렀어요. 견유학파의 "견"이 바로 개라는 뜻이에요.'},
+  {id:'piglet',k:'epi',nm:'아기 돼지',at:6,story:'로마 시인 호라티우스는 자기를 "에피쿠로스 무리의 돼지"라고 농담했어요.'},
+  {id:'horse',k:'nie',nm:'말',at:8,story:'니체가 토리노 거리에서 채찍질당하는 말을 끌어안았다는 이야기가 전해져요.'},
+  {id:'cat',k:'soc',nm:'몽테뉴의 고양이',book:8,story:'몽테뉴는 "고양이와 놀 때, 내가 고양이를 데리고 노는 건지 고양이가 나를 데리고 노는 건지 누가 알까"라고 썼어요.'}];
+const DECO=[{id:'cabbage',nm:'몽테뉴의 양배추 밭',book:4,story:'몽테뉴는 죽음이 찾아올 때 양배추를 심고 있기를 바랐어요. 하던 일을 하던 대로 하다가 떠나고 싶었던 거예요.'}];
+const rnorm=t=>String(t||'').toLowerCase().replace(/[\s.,!?'"“”‘’·~\-『』「」()]/g,'').replace(/(이요|예요|에요|이야|요|야|입니다|이다|다)$/,'');
+const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&(R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);})||(R.inc||[]).some(w=>v.includes(w)&&v.length<=12));};
+const ridDone=id=>S.rid&&S.rid[id];
+const worldOpen=()=>S.intro>=2?RID.slice(0,Math.max(0,S.pd-1)):[];
+const worldSolved=()=>RID.filter(R=>S.rid&&S.rid[R.id]&&S.rid[R.id]!=='skip').length;
+const bookSolved=()=>RIDB.filter(R=>ridDone(R.id)).length;
+// the sky over Korea: sunrise and sunset (Seoul), and how old the moon is
+const NOW=()=>Date.now()+S.off*864e5;
+function sunTimes(ms){const r=Math.PI/180,lat=37.5665,lw=-126.978,J=ms/864e5+2440587.5,n=Math.round(J-2451545.0009-lw/360),Js=2451545.0009+lw/360+n;
+  const M=(357.5291+0.98560028*(Js-2451545))%360,C=1.9148*Math.sin(M*r)+0.02*Math.sin(2*M*r)+0.0003*Math.sin(3*M*r),L=(M+C+180+102.9372)%360;
+  const Jt=Js+0.0053*Math.sin(M*r)-0.0069*Math.sin(2*L*r),d=Math.asin(Math.sin(L*r)*Math.sin(23.44*r));
+  const w=Math.acos((Math.sin(-0.833*r)-Math.sin(lat*r)*Math.sin(d))/(Math.cos(lat*r)*Math.cos(d)))/r;
+  const ms_=j=>(j-2440587.5)*864e5;return {rise:ms_(Jt-w/360),set:ms_(Jt+w/360)};}
+function sunToday(){const d=new Date(NOW());d.setHours(12,0,0,0);return sunTimes(d.getTime());}
+const hm=ms=>{const d=new Date(ms);return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;};
+const moonAge=()=>{const SYN=29.530588853,ref=Date.UTC(2000,0,6,18,14);return (((NOW()-ref)/864e5)%SYN+SYN)%SYN;};
+const MOON=[{nm:'초승달',f:.22,lo:2.5,hi:6.4},{nm:'반달',f:.5,lo:6.4,hi:9},{nm:'볼록한 달',f:.8,lo:9,hi:13.3},{nm:'보름달',f:1,lo:13.3,hi:16.6}];
+function moonSVG(f){const r=13,rx=Math.abs(1-2*f)*r;return `<svg viewBox="-16 -16 32 32" width="34" height="34" aria-hidden="true"><circle r="${r}" fill="#2b2550"/>${f>=.99?`<circle r="${r}" fill="#ffe9a6"/>`:`<path d="M0,-${r} A${r},${r} 0 0 1 0,${r} A${rx},${r} 0 0 ${f>.5?1:0} 0,-${r}Z" fill="#ffe9a6"/>`}<circle r="${r}" fill="none" stroke="#000" stroke-width="1.5"/></svg>`;}
+function moonState(){const a=moonAge(),h=new Date(NOW()).getHours(),dark=NOW()>sunToday().set-10*60000;
+  if(a<2.5||a>16.6){const wait=a<2.5?2.5-a:29.53-a+2.5;return {can:false,msg:`요즘은 달이 밤늦게 떠요. ${Math.ceil(wait)}일쯤 뒤 저녁에 다시 와 줘.`};}
+  if(!dark||h<5)return {can:false,msg:`오늘 해 지는 시각은 ${hm(sunToday().set)}이에요. 해가 지고 나서 하늘을 봐 줘.`};
+  return {can:true,i:MOON.findIndex(m=>a>=m.lo&&a<m.hi),a};}
+function moonPick(j){const s=moonState();if(!s.can)return false;if(j===s.i)return true;const m=MOON[j];return Math.abs(s.a-m.lo)<1||Math.abs(s.a-m.hi)<1;}
+function clockState(R){const d=new Date(NOW()),t=new Date(d);t.setHours(R.h,R.m,0,0);const now=d.getTime(),a=t.getTime()-5*60000,b=t.getTime()+5*60000,lbl=`${R.h>12?'오후 '+(R.h-12):'오전 '+R.h}시 ${R.m}분`;
+  return now<a?{can:false,msg:`${lbl}에 다시 와 줘. 지금은 ${hm(now)}이에요.`}:now>b?{can:false,msg:`오늘은 지났어요. 내일 ${lbl}에 봐요.`}:{can:true,msg:`지금 ${hm(now)}. 딱 좋아요.`};}
+function sunState(kind){const t=sunToday(),now=NOW();
+  if(kind==='sunset'){const a=t.set-20*60000,b=t.set+40*60000;return now<a?{can:false,msg:`오늘 해 지는 시각은 ${hm(t.set)}이에요. 그때 하늘을 보고 와 줘.`}:now>b?{can:false,msg:`오늘은 해가 졌어요. 내일 ${hm(sunTimes(t.set+864e5).set)}쯤 다시 봐요.`}:{can:true,msg:`해 지는 시각 ${hm(t.set)}`};}
+  const a=t.rise-20*60000,b=t.rise+60*60000,tm=sunTimes(t.rise+864e5).rise;return now<a?{can:false,msg:`오늘 해 뜨는 시각은 ${hm(t.rise)}이에요.`}:now>b?{can:false,msg:`내일 해 뜨는 시각은 ${hm(tm)}이에요. 그때 봐요.`}:{can:true,msg:`해 뜨는 시각 ${hm(t.rise)}`};}
+// a walk: the starting point stays on this phone only (never in the saved garden)
+const WALK_KEY='eclipse_kid_walk';
+const walkGet=()=>{try{return JSON.parse(localStorage.getItem(WALK_KEY)||'null');}catch(e){return null;}};
+const walkSet=v=>{try{v?localStorage.setItem(WALK_KEY,JSON.stringify(v)):localStorage.removeItem(WALK_KEY);}catch(e){}};
+const geoDist=(a,b)=>{const r=Math.PI/180,R=6371000,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+const geoNow=()=>new Promise((ok,no)=>{if(!navigator.geolocation)return no(new Error('none'));navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),no,{enableHighAccuracy:true,timeout:15000,maximumAge:0});});
+let ridOpenBook=false;
+function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
+  let body='';
+  if(st)body=`<p class="mok">"${R.ok}"</p>`;
+  else if(R.kind==='moon'){const s=moonState();body=s.can?`<div class="moons">${MOON.map((m,j)=>`<button type="button" class="moon" data-moon="${R.id}|${j}">${moonSVG(m.f)}<span>${m.nm}</span></button>`).join('')}</div><button class="lnk" type="button" data-cloud="${R.id}">구름에 가려서 안 보여</button>`:`<p class="mw">${s.msg}</p>`;}
+  else if(R.kind==='sunset'||R.kind==='sunrise'){const s=sunState(R.kind);body=`<p class="mw">${s.msg}</p><div class="mb"><button class="opt" type="button" data-sun="${R.id}"${s.can?'':' disabled'}>봤어</button></div>`;}
+  else if(R.kind==='clock'){const s=clockState(R);body=`<p class="mw">${s.msg}</p><div class="mb"><button class="opt" type="button" data-clock="${R.id}"${s.can?'':' disabled'}>왔어</button></div>`;}
+  else if(R.kind==='walk'){const w=walkGet();body=w?`<p class="mw">${hm(w.t)}에 출발했어요. ${(R.dist||300)>=1000?(R.dist/1000)+'km':(R.dist||300)+'m'} 넘게 걸은 곳에서 눌러 주세요.</p><div class="mb"><button class="opt" type="button" data-arrive="${R.id}">도착</button><button class="opt alt" type="button" data-wreset="${R.id}">다시 출발</button></div>`
+      :`<div class="mb"><button class="opt" type="button" data-depart="${R.id}">출발</button></div>`;}
+  else if(R.kind==='down')body=`<div class="mb"><button class="opt" type="button" data-down="${R.id}">통에 들어가기</button></div>`;
+  else body=`<div class="rin"><input type="text" maxlength="20" placeholder="정답" data-rtx="${R.id}"><button class="opt" type="button" data-rgo="${R.id}">확인</button></div>`;
+  return `<div class="mis rid${st?' done':''}" data-rcard="${R.id}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}</b><span class="rw"><img src="${A('fruit')}" alt="">${book?5:3}</span></div><p class="mt">${R.q}</p>${body}</div>`;}
+function drawRiddles(){if(S.intro<2||S.pd<2)return '';
+  const now=R=>R.kind==='moon'?moonState().can:R.kind==='sunset'||R.kind==='sunrise'?sunState(R.kind).can:R.kind==='clock'?clockState(R).can:true;
+  const rank=R=>((S.ridNo||{})[R.id]?2:0)+(now(R)?0:1);
+  const open=worldOpen(),todo=open.filter(R=>!ridDone(R.id)).sort((a,b)=>rank(a)-rank(b)),shown=todo.slice(0,2),left=RID.length-open.length;
+  let h=`<h3 class="bh"><img class="bhi" src="${A('ui_riddle')}" alt="">수수께끼<small>${worldSolved()}개 풀었어요</small></h3>`;
+  h+=shown.length?shown.map(R=>ridCard(R)).join(''):`<p class="mempty">${left?'오늘 수수께끼는 다 풀었어요. 내일 또 하나 와요.':'지금 있는 수수께끼는 다 풀었어요.'}</p>`;
+  if(todo.length>2)h+=`<p class="mw">풀지 않은 수수께끼가 ${todo.length-2}개 더 있어요.</p>`;
+  const bs=bookSolved();
+  if(!PET_ART)return h;
+  h+=`<div class="mis book"><button type="button" class="bkh" data-bkt="1"><img src="${BOOK.img}" alt="" onerror="this.style.display='none'"><span><b>책 속 암호</b><small>『${BOOK.nm}』 ${bs}/${RIDB.length}</small></span><i>${ridOpenBook?'접기':'열기'}</i></button>
+    ${ridOpenBook?`<p class="mw">책을 펴서 그 쪽을 찾아보세요. 4개를 풀면 몽테뉴의 양배추 밭이, 다 풀면 몽테뉴의 고양이가 와요.</p>${RIDB.map(R=>ridCard(R,true)).join('')}<p class="mw bkl"><a class="lnk" href="${BOOK.url}" target="_blank" rel="noopener">이 책이 궁금하다면</a></p>`:''}</div>`;
+  return h;}
+function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
+  const n=worldSolved(),bs=bookSolved(),gifts=[];
+  PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
+  DECO.forEach(D=>{if((S.deco||{})[D.id])return;if(D.book&&bs>=D.book){S.deco=S.deco||{};S.deco[D.id]=today();gifts.push(D);}});
+  save();drawBoard(`열매 ${g}개를 받았어요`);
+  if(!PET_ART)return;S.petSeen=S.petSeen||{};gifts.forEach(P=>{S.petSeen[P.id]=1;});save();setTimeout(paintPets,400);
+  gifts.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원으로 와요`:`${P.nm}${jo(P.nm,'이','가')} 생겨요`,sub:P.story,gift:0}));}
+const jo=(w,a,b)=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<=11171&&c%28?a:b;};
+const petName=P=>P.id==='cat'?P.nm:`${short(P.k)}의 ${P.nm}`;
+function ridWrong(el,msg){sfx.no&&sfx.no();buzz([40,40,40]);el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');$('bMsg').textContent=msg||'아니야. 다시 봐.';}
+function wireRiddles(){const L=$('bList'),find=id=>RID.find(R=>R.id===id)||RIDB.find(R=>R.id===id),isB=id=>id[0]==='b';
+  L.querySelectorAll('[data-bkt]').forEach(b=>b.onclick=()=>{sfx.boop();ridOpenBook=!ridOpenBook;drawBoard();});
+  L.querySelectorAll('[data-rgo]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.rgo),inp=L.querySelector(`[data-rtx="${R.id}"]`);if(!inp.value.trim())return;
+    if(ridOk(R,inp.value))ridSolve(R,isB(R.id));else ridWrong(L.querySelector(`[data-rcard="${R.id}"]`),isB(R.id)?`${R.p}쪽을 다시 봐.`:'아니야. 다시 봐.');});
+  L.querySelectorAll('[data-rtx]').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')L.querySelector(`[data-rgo="${i.dataset.rtx}"]`).click();});
+  L.querySelectorAll('[data-moon]').forEach(b=>b.onclick=()=>{const [id,j]=b.dataset.moon.split('|'),R=find(id);if(moonPick(+j))ridSolve(R);else ridWrong(L.querySelector(`[data-rcard="${id}"]`),'정말? 한 번 더 올려다봐.');});
+  L.querySelectorAll('[data-cloud]').forEach(b=>b.onclick=()=>{sfx.boop();$('bMsg').textContent='구름 낀 날도 있지. 다른 저녁에 다시 보자.';});
+  L.querySelectorAll('[data-clock]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.clock);if(clockState(R).can)ridSolve(R);});
+  L.querySelectorAll('[data-sun]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.sun);if(sunState(R.kind).can)ridSolve(R);});
+  L.querySelectorAll('[data-depart]').forEach(b=>b.onclick=async()=>{b.disabled=true;$('bMsg').textContent='위치를 읽는 중이에요';
+    try{const p=await geoNow();walkSet({lat:p.lat,lng:p.lng,t:Date.now()});sfx.boop();drawBoard('출발! 300m 넘게 걸어가 보세요');}
+    catch(e){if(e&&e.message==='none'){S.ridNo=S.ridNo||{};S.ridNo[b.dataset.depart]=1;save();}drawBoard();$('bMsg').textContent='위치를 못 읽었어요. 위치 권한을 켜고 다시 눌러 주세요.';}});
+  L.querySelectorAll('[data-wreset]').forEach(b=>b.onclick=()=>{walkSet(null);sfx.boop();drawBoard();});
+  L.querySelectorAll('[data-arrive]').forEach(b=>b.onclick=async()=>{const R=find(b.dataset.arrive),w=walkGet();if(!w)return;b.disabled=true;$('bMsg').textContent='위치를 읽는 중이에요';
+    try{const p=await geoNow(),d=geoDist(w,p);const need=R.dist||300;if(d>=need&&Date.now()-w.t>=need*400){walkSet(null);ridSolve(R);}else{b.disabled=false;$('bMsg').textContent=d<need?`아직 ${Math.round(d)}m 왔어요. 조금 더 걸어 봐요.`:'너무 빨라요. 천천히 걸어도 돼요.';}}
+    catch(e){b.disabled=false;$('bMsg').textContent='위치를 못 읽었어요. 잠시 뒤에 다시 눌러 주세요.';}});
+  L.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>barrelTime(find(b.dataset.down)));}
+// five minutes face down: only time with the phone face down and the page open counts
+function barrelTime(R){const NEED=(R.min||5)*60000;let got=0,last=null,down=false,seen=false,lock=null,iv=null;
+  // iPhone asks for the tilt sensor; elsewhere events just start. No events in 2.5s means this phone can't tell
+  try{if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});}catch(e){}
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>{lock=l;}).catch(()=>{});}catch(e){}
+  const el=document.createElement('div');el.className='dwn';el.innerHTML='<div><b id="dwT">'+(R.min||5)+':00</b><p id="dwM">폰을 엎어 두세요</p><button class="opt alt" type="button" id="dwX">그만하기</button></div>';$('app').appendChild(el);
+  const onOr=e=>{seen=true;down=e.beta!=null&&Math.abs(e.beta)>150&&Math.abs(e.gamma||0)<35;};
+  window.addEventListener('deviceorientation',onOr);
+  const end=ok=>{clearInterval(iv);window.removeEventListener('deviceorientation',onOr);try{lock&&lock.release();}catch(e){}el.remove();if(ok)ridSolve(R);else drawBoard();};
+  el.querySelector('#dwX').onclick=()=>{sfx.boop();end(false);};
+  setTimeout(()=>{if(!seen){S.ridNo=S.ridNo||{};S.ridNo[R.id]=1;save();end(false);$('bMsg').textContent='이 폰에서는 엎어 둔 걸 알 수가 없어요. 다른 수수께끼를 먼저 풀어요.';}},2500);
+  iv=setInterval(()=>{const now=Date.now(),vis=document.visibilityState==='visible';if(down&&vis&&last)got+=now-last;last=now;
+    const left=Math.max(0,NEED-got);el.querySelector('#dwT').textContent=mmss(left);el.querySelector('#dwM').textContent=down?'통 속이에요. 그대로 두세요':'폰을 엎어 두세요';
+    if(left<=0){buzz([60,60,120]);end(true);}},500);}
+function drawPets(){if(!PET_ART)return '';const pk=PETS.concat(DECO);return `<h3 class="bh">펫과 정원<small>${pk.filter(P=>(S.pets||{})[P.id]||(S.deco||{})[P.id]).length}/${pk.length}</small></h3>`+pk.map(P=>{const got=(S.pets||{})[P.id]||(S.deco||{})[P.id];
+  return `<div class="mis pet${got?'':' lock'}"><div class="mh"><i class="face" style="${faceCSS(P.k||'soc')}"></i><b>${P.k?petName(P):P.nm}</b><span class="lv">${got?'왔어요':P.book?`책 속 암호 ${P.book}개`:`수수께끼 ${P.at}개`}</span></div><p class="mw">${got?P.story:'아직 비밀이에요.'}</p></div>`;}).join('');}
 
 // ---------- easter eggs ----------
 // Nietzsche: a shadow at the gate one stage early. Epicurus: comes once the garden bears fruit (his school was called the Garden).
@@ -1041,8 +1198,11 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
   else if(!S.met.dio&&S.pd===DAY_AT.lantern&&!S.own.includes('lantern'))hint='옷장에 등불이 들어왔대. 저 통 속 녀석, 대낮에 등불 들고 다니던 애야.';
   else if(S.met.nie&&!S.met.epi&&S.pd===DAY_AT.epi-1)hint='정원에 열매가 주렁주렁하면, 정원 좋아하는 애가 올지도 몰라.';
   const next=()=>{const G=window.GL;if(!(G&&G.isIn&&G.isIn()))return askSave('day');
-    if(!G.newReplies)return askTalk();
-    Promise.race([G.newReplies(),new Promise(r=>setTimeout(()=>r(0),2500))]).then(n=>{if(!n)return askTalk();const k=S.met.epi&&actors.epi?'epi':'soc';
+    // signed up for the beta and the app is open: tell them once or twice, until they go
+    const appOpen=()=>new Promise(ok=>{if(!G.tester||S.appGot||(S.appAsk2||0)>=2)return ok(false);Promise.race([G.tester(),new Promise(r=>setTimeout(()=>r(false),2500))]).then(t=>{if(!t)return ok(false);S.appAsk2=(S.appAsk2||0)+1;save();
+      say('soc','신청했던 앱이 열렸어! 지금 받으면 아침마다 내가 먼저 미션을 알려 줄게. 같은 구글 계정으로 들어오면 이 정원 그대로야.',['받으러 가기','나중에'],c=>{if(c===0)G.openStore();ok(true);});});});
+    if(!G.newReplies)return appOpen().then(()=>askTalk());
+    appOpen().then(asked=>Promise.race([G.newReplies(),new Promise(r=>setTimeout(()=>r(0),2500))])).then(n=>{if(!n)return askTalk();const k=S.met.epi&&actors.epi?'epi':'soc';
       say(k,`어제 네가 광장에 남긴 답에 답글이 ${n}개 달렸어. 보러 갈래?`,['보러 가기','나중에'],c=>{if(c===0){openBoard();bt='talk';G.talkView(1);drawBoard();}else askTalk();});});};
   const chain=[[who,line]];
   const go=()=>{if(hint)chain.push(['soc',hint]);(function step(i){if(i>=chain.length)return next();const [k,t]=chain[i];say(actors[k]?k:'soc',t,null,()=>setTimeout(()=>step(i+1),300));})(0);};
@@ -1115,7 +1275,47 @@ function intro(){if(S.intro>=2){S.met.soc=1;place('soc',restMode('soc'),SPOTS.so
   setTimeout(()=>{sfx.gate();openGate();walk('soc',SPOTS.soc.x,2400,()=>{S.intro=1;save();introAsk();});},900);}
 
 function appGift(){if(window.GL&&GL.native&&S.intro>=2&&!S.appGift)whenFree(()=>{if(S.appGift)return;S.appGift=1;S.fruit+=5;save();hud();bump('fruitChip');sfx.fruit();toast('앱으로 와 줘서 고마워요. 열매 5개 선물이에요');},0);}
-function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(appGift,4000);if(S.intro>=2)postMissions();
+// ---------- pets in the garden: each sits beside its philosopher; the cat and the cabbages keep their own corner ----------
+// art is 400x400 with the feet at (200,396), drawn at the same pixel scale as the kids (U)
+// spots are picked so no pet's tap area touches a kid, the tree or the board (kids also sit above pets in the layer)
+const PET_AT={rooster:{k:'soc',x:122,y:716,s:1.6},dog:{k:'dio',x:356,y:772,s:1.4},piglet:{k:'epi',x:110,y:579,s:1.5,back:1},horse:{k:'nie',x:252,y:764,s:1.6,flip:1},cat:{x:194,y:762,s:1.5}};
+const DECO_AT={cabbage:{x:98,y:776,s:1.25}};
+const PET_SAY={rooster:['soc','이 녀석이 내 수탉이야. 아스클레피오스한테 갚아야 하는데, 정이 들어 버렸어.'],dog:['dio','얘도 나처럼 눈치를 안 봐. 그래서 우리가 친해.'],
+  piglet:['epi','배부르면 그걸로 행복한 애야. 나랑 똑같지?'],horse:['nie','토리노에서 만난 친구야. 이번엔 아무도 채찍질 못 하게 내가 지킬 거야.'],cat:['soc','몽테뉴네 고양이래. 내가 얘랑 노는 건지, 얘가 나랑 놀아 주는 건지 모르겠어.']};
+const pets={};
+const petImg=(id,f)=>`<image class="spr" href="${A(`pet_${id}_${f}`)}" x="${-200*U}" y="${-396*U}" width="${400*U}" height="${400*U}"/>`;
+function petSpot(id){const P=PET_AT[id];return {x:P.x,y:P.y,s:P.s,back:P.back};}
+function petShown(id){if(!PET_ART||!(S.pets||{})[id]||S.intro<2)return false;const P=PET_AT[id];if(!P.k)return true;const a=actors[P.k];return !!(S.met[P.k]&&a&&a.mode!=='barrel'&&a.mode!=='shadow'&&!a.walking);}
+function petFrame(id){const P=PET_AT[id],a=P.k&&actors[P.k];return (a&&a.mode==='sleep')||(!P.k&&timeOfDay()==='night')?'sleep':'basic';}
+function paintPets(){if(!PET_ART)return;
+  Object.keys(DECO_AT).forEach(id=>{const on=!!(S.deco||{})[id]&&S.intro>=2;let g=$('deco_'+id);
+    if(on&&!g){const D=DECO_AT[id];g=document.createElementNS(NS,'g');g.id='deco_'+id;g.setAttribute('transform',`translate(${D.x} ${D.y}) scale(${D.s})`);
+      g.innerHTML=`<image href="${A('deco_'+id)}" x="${-200*U}" y="${-296*U}" width="${400*U}" height="${300*U}"/>`;$('cast').insertBefore(g,$('cast').firstChild);}
+    else if(!on&&g)g.remove();});
+  PETS.forEach(P=>{const id=P.id,show=petShown(id);let p=pets[id];
+    if(!show){if(p){p.g.remove();delete pets[id];}return;}
+    const sp=petSpot(id),f=petFrame(id);
+    if(!p){const g=document.createElementNS(NS,'g');g.style.cursor='pointer';g.dataset.pet=id;
+      // pets sit under the kids in the layer so a kid's own tap area always wins where they touch
+      const L=$(sp.back?'castBack':'cast');L.insertBefore(g,L.firstChild);p=pets[id]={g,f:null};g.addEventListener('click',e=>{e.stopPropagation();tapPet(id);});}
+    if(p.f!==f){p.f=f;p.g.innerHTML=`<rect class="hit" x="${-17}" y="${f==='sleep'?-26:-40}" width="34" height="${f==='sleep'?28:42}" fill="transparent"/><g class="body"><g class="breathe">${petImg(id,f)}</g></g>`;}
+    p.g.setAttribute('transform',`translate(${sp.x} ${sp.y}) scale(${PET_AT[id].flip?-sp.s:sp.s} ${sp.s})`);});}
+function petFace(id,f){const p=pets[id];if(!p||p.f==='sleep')return;const img=p.g.querySelector('.spr');if(img)img.setAttribute('href',A(`pet_${id}_${f}`));}
+function tapPet(id){const p=pets[id];if(!p||busy)return;ac();buzz(12);
+  if(pend){if(pend.opts)return;pend.advance();}
+  const b=p.g.querySelector('.body');b.classList.remove('hop');void b.getBoundingClientRect();b.classList.add('hop');
+  if(p.f==='sleep'){sfx.boop();return;}
+  sfx.fruit();petFace(id,'happy');clearTimeout(p.t);p.t=setTimeout(()=>petFace(id,'basic'),900);
+  const r=p.g.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
+  S.petDay=S.petDay||{};if(S.petDay[id]===today())return;S.petDay[id]=today();Object.keys(S.petDay).forEach(k=>{if(S.petDay[k]!==today())delete S.petDay[k];});
+  fly(r,'fruitChip',()=>{S.fruit++;save();hud();bump('fruitChip');});save();
+  const [k,t]=PET_SAY[id];if(actors[k]&&!talking&&!clrOn())setTimeout(()=>{if(!pend)say(k,t);},500);}
+function heartAt(x,y){const app=$('app').getBoundingClientRect(),el=document.createElement('div');el.className='heart';el.style.left=(x-app.left)+'px';el.style.top=(y-app.top)+'px';$('app').appendChild(el);setTimeout(()=>el.remove(),900);}
+setInterval(()=>{for(const id in pets){const p=pets[id];if(p.f!=='basic'||Math.random()>.08)continue;petFace(id,'blink');setTimeout(()=>{if(pets[id]&&pets[id].f==='basic')petFace(id,'basic');},160);}},500);
+
+function petArrivals(){if(!PET_ART||S.intro<2)return;S.petSeen=S.petSeen||{};const L=PETS.concat(DECO).filter(P=>((S.pets||{})[P.id]||(S.deco||{})[P.id])&&!S.petSeen[P.id]);if(!L.length)return;L.forEach(P=>{S.petSeen[P.id]=1;});save();
+  paintPets();whenFree(()=>L.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원에 왔어요`:`${P.nm}${jo(P.nm,'이','가')} 생겼어요`,sub:P.story,gift:0})),3000);}
+function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals,2000);setTimeout(appGift,4000);if(S.intro>=2)postMissions();
   // the barrel is there from the first day; who's inside is a secret
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
@@ -1299,7 +1499,7 @@ async function render(el) {
       <ol class="lg">${rows.map((r, j) => `<li class="${r.id === me.uid ? 'me' : ''}"><span>${rows.filter(x => x.n > r.n).length + 1}</span><b>${esc(r.name)}</b><i>${r.n}</i></li>`).join('')}</ol>
       ${i < 0 ? `<ol class="lg"><li class="me"><span>${rank}</span><b>${esc(S.lname)}</b><i>${mine}</i></li></ol>` : ''}
       <p class="mw lgme">${esc(me.email || '')} 로 저장 중 · <button class="lnk" type="button" id="lgRe">이름 바꾸기</button> · <button class="lnk" type="button" id="lgOut">로그아웃</button></p>${LEGAL}</div>${betaCard()}`;
-    const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = () => { sfx.boop(); appSheet(); };
+    const bb = el.querySelector('#lgBeta'); if (bb) bb.onclick = openStore;
     el.querySelector('#lgOut').onclick = () => { if (confirmOut()) signOut(); };
     el.querySelector('#lgRe').onclick = () => { sfx.boop(); renaming = true; busyL = false; render(el); };
     el.querySelectorAll('[data-sc]').forEach(b => b.onclick = () => { sfx.boop(); buzz(8); scPick = scPick === b.dataset.sc ? null : b.dataset.sc; busyL = false; render(el); });
@@ -1321,7 +1521,7 @@ const UA = navigator.userAgent, KAKAO = /KAKAOTALK/i.test(UA);
 const INAPP = !NATIVE && (KAKAO || /Instagram|FBAN|FBAV|FB_IAB|NAVER\(inapp|Line\/|DaumApps|everytimeApp|Threads|; wv\)/i.test(UA));
 const GROUP = 'https://groups.google.com/g/little-philosopher-beta';
 const OPTIN = 'https://play.google.com/apps/testing/io.github.eclipse_mindlab.garden';
-const STORE_OPEN = false;   // true once the closed test passes Google's review
+const STORE_OPEN = true;    // the closed test passed review on 2026-10-30
 const SHORT = 'bit.ly/little-philosopher';
 const HOME = 'https://eclipse-mindlab.github.io/mindlab/garden/';
 function carryUrl(extra) {
@@ -1376,8 +1576,17 @@ function paintApp() {
   if (q('apIos')) q('apIos').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('아이폰 앱이 나오면 메일로 알려 드려요'); paintApp(); } };
   if (q('apCopy')) q('apCopy').onclick = async () => { try { await navigator.clipboard.writeText('https://' + SHORT); toast('주소를 복사했어요'); } catch (e) { toast(SHORT); } };
 }
+// people who signed up for the beta: the Play test is open, so hand them the install link (Android, web only)
+let testerP = null;
+function isTester() {
+  if (NATIVE || !me || OS !== 'android') return Promise.resolve(false);
+  if (!testerP) testerP = F.getDoc(F.doc(db, 'gardenBeta', me.uid)).then(d => d.exists()).catch(() => false);
+  return testerP;
+}
+function openStore() { sfx.boop(); S.appGot = 1; save(); if (INAPP) { if (!openOut(OPTIN)) toast('메뉴에서 "다른 브라우저로 열기"를 눌러 주세요'); } else window.open(OPTIN, '_blank', 'noopener'); }
 function betaCard() {
-  return '';
+  if (NATIVE || !S.betaTester) return '';
+  return `<div class="mis"><p class="mt">신청한 앱이 열렸어요</p><p class="mw">신청한 구글 계정으로 들어가서 "테스터 되기"를 누른 뒤 플레이 스토어에서 설치하면 돼요. 앱에서 같은 계정으로 로그인하면 이 정원이 그대로 이어져요.</p><div class="mb"><button class="opt" type="button" id="lgBeta">앱 받으러 가기</button></div></div>`;
   return `<div class="mis"><p class="mt">앱으로 받기</p><p class="mw">${OS === 'android' ? '앱에서는 아침 미션 알림과 연속 기록 알림이 와요.' : OS === 'ios' ? '아이폰 앱이 나오면 메일로 알려 드려요.' : '안드로이드 폰에서 받을 수 있어요.'}</p><div class="mb"><button class="opt" type="button" id="lgBeta">앱 받기</button></div></div>`;
 }
 async function betaJoin(el) {
@@ -1541,7 +1750,7 @@ window.GL = {render, renderTalk, ask, timer, onMission: () => { postScore(); pus
     const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
     for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
     return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta,
-  appSheet, offerApp: false, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => false};
+  appSheet, offerApp: false, openStore, tester: async () => { const t = await isTester(); if (t && !S.betaTester) { S.betaTester = 1; save(); } return t; }, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => false};
 const loading = load();
 if (/[#&]app\b/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} setTimeout(() => { if (S.intro >= 2) appSheet(); }, 1800); }
 if (window.hud) hud();
