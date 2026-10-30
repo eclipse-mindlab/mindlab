@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#1d1838">
-<meta name="description" content="꼬마 철학자들이 놀러 오는 정원. 질문에 답하고, 미션을 하고, 나무를 키워요.">
+<meta name="description" content="소크라텃밭: 꼬마 소크라테스와 철학자들이 찾아오는 정원. 질문에 답하고, 미션을 하고, 나무를 키워요.">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>꼬마 철학자의 정원</title>
+<title>소크라텃밭</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* one living scene, full screen. the garden is the interface; words only live in speech bubbles. */
@@ -228,7 +228,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 </style>
 
 <div id="app">
-  <svg id="scene" viewBox="0 0 390 780" preserveAspectRatio="xMidYMax slice" aria-label="꼬마 철학자의 정원">
+  <svg id="scene" viewBox="0 0 390 780" preserveAspectRatio="xMidYMax slice" aria-label="소크라텃밭">
     <defs>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop id="s0" offset="0"/><stop id="s1" offset=".62"/><stop id="s2" offset="1"/></linearGradient>
       <radialGradient id="glow"><stop offset="0" stop-color="#fff3c4" stop-opacity=".9"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>
@@ -1017,13 +1017,13 @@ async function makeCard(k){const m=S.mis[k],M=MIS[k][m.i],W=1080,H=1350;const cv
   c.font='64px Jua, sans-serif';const ls=wrapLines(c,M.t,W-260).slice(0,3);ls.forEach((l,i)=>c.fillText(l,W/2,960+i*82));
   const st=streak(),n=S.misN[k+m.i]||1;c.font='40px Jua, sans-serif';c.fillStyle='#8a5a33';
   c.fillText([st>1?`연속 ${st}일`:'',n>1?`이 미션 ${n}번째`:''].filter(Boolean).join(' · ')||'오늘의 미션',W/2,960+ls.length*82+40);
-  c.fillStyle='#7a6fa0';c.font='36px Jua, sans-serif';c.fillText('꼬마 철학자의 정원',W/2,H-130);
+  c.fillStyle='#7a6fa0';c.font='36px Jua, sans-serif';c.fillText('소크라텃밭',W/2,H-130);
   return cv;}
 async function shareCard(k){let cv;try{cv=await makeCard(k);}catch(e){toast('그림을 만들지 못했어요');return;}
   const url=cv.toDataURL('image/png'),name='garden-mission.png';
   if(window.gardenShare&&await window.gardenShare(url,name))return;
   try{const blob=await new Promise(ok=>cv.toBlob(ok,'image/png'));const f=new File([blob],name,{type:'image/png'});
-    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:'꼬마 철학자의 정원'});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:'소크라텃밭'});return;}}catch(e){if(e&&e.name==='AbortError')return;}
   try{const dl=window.claude&&window.claude.use&&await window.claude.use('downloads');if(dl){const blob=await new Promise(ok=>cv.toBlob(ok,'image/png'));await dl.save({filename:name,data:blob});return;}}catch(e){return;}
   const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast('그림을 저장했어요');}
 
@@ -1497,7 +1497,7 @@ let asked = false;
 async function ask() { const L = LN(); if (!L || asked) return; asked = true; try { await L.requestPermissions(); reminders(); } catch (e) {} }
 async function timer(M, start) {
   const L = LN(); if (!L || !M.min) return;
-  try { await L.schedule({notifications: [{id: 7, title: '꼬마 철학자의 정원', body: `"${M.t}" 시간이 다 됐어요.`, schedule: {at: new Date(start + M.min * 60000)}}]}); } catch (e) {}
+  try { await L.schedule({notifications: [{id: 7, title: '소크라텃밭', body: `"${M.t}" 시간이 다 됐어요.`, schedule: {at: new Date(start + M.min * 60000)}}]}); } catch (e) {}
 }
 let remT = null;
 function reminders() { clearTimeout(remT); remT = setTimeout(schedule, 1500); }
@@ -1506,10 +1506,10 @@ async function schedule() {
   try {
     const p = await L.checkPermissions(); if (p.display !== 'granted') return;
     await L.cancel({notifications: [{id: 1}, {id: 2}]});
-    const n = [{id: 1, title: '꼬마 철학자의 정원', body: '오늘 미션이 게시판에 붙었어요.', schedule: {on: {hour: 8, minute: 40}, allowWhileIdle: true}}];
+    const n = [{id: 1, title: '소크라텃밭', body: '오늘 미션이 게시판에 붙었어요.', schedule: {on: {hour: 8, minute: 40}, allowWhileIdle: true}}];
     const d = nowD(), st = streak(), doneToday = !!S.log[dkey(d)];
     const at = new Date(); at.setHours(21, 10, 0, 0);
-    if (st > 0 && !doneToday && at > new Date()) n.push({id: 2, title: '꼬마 철학자의 정원', body: `연속 ${st}일이 오늘 끊겨요. 미션 하나만 해 볼까요?`, schedule: {at}});
+    if (st > 0 && !doneToday && at > new Date()) n.push({id: 2, title: '소크라텃밭', body: `연속 ${st}일이 오늘 끊겨요. 미션 하나만 해 볼까요?`, schedule: {at}});
     await L.schedule({notifications: n});
   } catch (e) {}
 }
