@@ -142,6 +142,14 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .nth{font-family:var(--read);font-size:12px;color:#8a5a33;background:#fff1c2;border:1.5px solid #000;border-radius:999px;padding:0 7px;margin-left:6px;vertical-align:2px}
 .mb .share{flex:0 0 auto}
 .mok{margin:0;font-family:var(--hand);font-size:15px;color:#3f7d4a}
+.bh{margin:8px 2px 0;font-family:var(--hand);font-weight:400;font-size:18px;display:flex;align-items:baseline;gap:8px}.bh small{font-family:var(--read);font-size:12.5px;color:#7a6fa0}
+.mis.rid .mb .opt[disabled]{opacity:.55}
+.moons{display:flex;gap:6px;flex-wrap:wrap}.moon{appearance:none;border:2px solid #000;border-radius:12px;background:#fff;padding:4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--hand);font-size:13px;color:var(--ink);cursor:pointer;flex:1 1 0;min-width:62px}
+.mis.book{gap:8px}.bkh{appearance:none;border:0;background:none;padding:0;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;color:var(--ink)}.bkh img{width:38px;height:54px;object-fit:cover;border:1.5px solid #000;border-radius:4px}.bkh span{flex:1;display:flex;flex-direction:column}.bkh b{font-family:var(--hand);font-weight:400;font-size:16.5px}.bkh small{font-size:12.5px;color:#7a6fa0}.bkh i{font-style:normal;font-family:var(--hand);font-size:14px;color:#5b3fd0}
+.mis.book .mis{box-shadow:none;border-width:2px}.bkl{text-align:right}
+.mis.pet.lock{opacity:.6}.mis.pet.lock .face{filter:grayscale(1) brightness(.5)}
+.shake{animation:shake .35s}@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.dwn{position:absolute;inset:0;z-index:30;background:#0e0b1f;color:var(--paper);display:grid;place-items:center;text-align:center}.dwn b{font-family:var(--hand);font-weight:400;font-size:64px;display:block}.dwn p{margin:6px 0 22px;font-size:16px;color:#c9c2e8}
 .mstamp{position:absolute;right:10px;bottom:8px;width:52px;height:52px;transform:rotate(-10deg);animation:stampin .45s cubic-bezier(.3,1.6,.5,1) both}
 .mempty{text-align:center;color:#7a6fa0;margin:10px 0}
 #boardInner{transform-box:fill-box;transform-origin:50% 100%}
@@ -927,7 +935,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
   if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
   const done=KIDS.reduce((n,k)=>n+(S.misDone[k]||0),0);
   $('bSub').textContent=done?`지금까지 해낸 미션 ${done}개`:'철학자들이 매일 아침 하나씩 붙여요';
   $('bList').innerHTML=ks.length?ks.map(k=>{const m=S.mis[k],M=MIS[k][m.i];let btn='';
@@ -938,13 +946,143 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
     else btn=`<p class="mok">"${M.ok}"</p><button class="opt alt share" type="button" data-share="${k}">자랑하기</button>`;
     return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${MIS_FRUIT}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
       <p class="mt">${M.t}</p><p class="mw">${M.why}</p><div class="mb">${btn}</div>${m.st==='done'?`<img class="mstamp" src="${A('stamp')}" alt="해냄">`:''}</div>`;}).join(''):'<p class="mempty">아직 붙은 미션이 없어요. 철학자를 만나면 생겨요.</p>';
+  $('bList').insertAdjacentHTML('beforeend',drawRiddles());
   $('bMsg').textContent=msg||'';
   const on=(sel,f)=>document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{ac();f(b.dataset[Object.keys(b.dataset)[0]],b);});
   on('[data-acc]',k=>{S.mis[k].st='doing';save();sfx.boop();buzz(10);drawBoard();window.GL&&GL.ask();});
   on('[data-skip]',k=>{S.mis[k].st='skip';S.mis[k].day=today();save();sfx.boop();drawBoard('내일 다른 미션이 붙어요');});
   on('[data-start]',k=>{S.mis[k].start=Date.now();save();window.GL&&GL.timer(MIS[k][S.mis[k].i],S.mis[k].start);sfx.boop();buzz(10);drawBoard('시작했어요. 다녀와서 다시 열어 주세요');});
   on('[data-share]',k=>{sfx.boop();shareCard(k);});
-  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{if(!levelUp(k))whenFree(askApp,2500);checkRecords();},1500);window.GL&&GL.onMission();});}
+  on('[data-fin]',(k,b)=>{const r=b.getBoundingClientRect();S.mis[k].st='done';S.mis[k].day=today();S.misDone[k]=(S.misDone[k]||0)+1;const mk=k+S.mis[k].i;S.misN[mk]=(S.misN[mk]||0)+1;S.xp[k]+=3;const d=today();S.log[d]=(S.log[d]||0)+1;save();drawBoard();reward(k,r);hop(k);setTimeout(()=>{if(!levelUp(k))whenFree(askApp,2500);checkRecords();},1500);window.GL&&GL.onMission();});
+  wireRiddles();}
+
+// ---------- riddles: things you can only answer by looking at the real world, or inside a book ----------
+// world riddles open one a day from the second day; the answer is checked, or the phone checks the deed
+const RID=[
+  {id:'w1',k:'dio',kind:'ans',q:'지갑 좀 열어 봐. 천 원짜리 앞면에 있는 사람은 누구게?',a:['이황','퇴계','퇴계이황','이퇴계'],ok:'퇴계 이황. 조선의 철학자야. 너는 매일 철학자를 들고 다닌 거야.'},
+  {id:'w2',k:'epi',kind:'sunset',q:'오늘은 해 지는 하늘을 보고 와. 해가 지고 나서 30분 안에 여기서 "봤어"를 눌러 줘.',ok:'잘했어. 하늘 한 번 보는 데는 돈이 안 들어. 그런데 그게 하루에서 제일 좋은 장면일 때가 많아.'},
+  {id:'w3',k:'nie',kind:'ans',q:'100원짜리 동전에 있는 장군은 누구게?',a:['이순신','충무공','충무공이순신','이순신장군'],ok:'이순신. 배 열두 척으로 싸우기 전날 밤, "죽고자 하면 살고, 살고자 하면 죽는다"고 했어.'},
+  {id:'w4',k:'dio',kind:'down',q:'폰을 엎어 두고 5분만 통 속에 들어가 있어 봐. 화면은 켜 둔 채로. 엎어져 있는 동안만 시간이 가.',ok:'나와 봐. 5분 동안 아무것도 안 봤는데 세상은 그대로지? 통 속이 생각보다 넓어.'},
+  {id:'w5',k:'soc',kind:'ans',q:'오천 원짜리 앞면에 있는 사람은?',a:['이이','율곡','율곡이이','이율곡'],ok:'율곡 이이. 과거 시험에서 아홉 번이나 1등을 했대. 그래도 평생 공부했어.'},
+  {id:'w6',k:'epi',kind:'moon',q:'창밖 하늘 좀 봐. 오늘 달은 어떤 모양이야?',ok:'맞아. 오늘 달을 본 사람, 생각보다 많지 않을걸.'},
+  {id:'w7',k:'epi',kind:'ans',q:'오만 원짜리 속 사람은 오천 원짜리 속 사람과 무슨 사이일까?',a:['엄마','어머니','모자','모자지간','엄마와아들','어머니와아들','엄마아들'],ok:'신사임당은 율곡의 어머니야. 네 지갑 속에 엄마랑 아들이 같이 살고 있었어.'},
+  {id:'w8',k:'nie',kind:'walk',q:'산책 가자. 여기서 "출발"을 누르고 300m 넘게 걸어간 다음, 거기서 "도착"을 눌러. 위치는 이 폰에만 남아.',ok:'봐, 걸으니까 머리가 달라졌지? 나는 걸으면서 떠오른 생각만 믿었어.'},
+  {id:'w9',k:'dio',kind:'ans',q:'500원짜리 동전에 있는 새는?',a:['학','두루미','학두루미'],ok:'학. 플라톤이 사람을 "깃털 없이 두 발로 걷는 동물"이라고 하길래, 나는 털 뽑은 닭을 들고 가서 "여기 사람 있다" 했어.'},
+  {id:'w10',k:'soc',kind:'sunrise',q:'내일 해 뜨는 걸 보러 갈래? 해가 뜨고 한 시간 안에 여기서 "봤어"를 눌러 줘.',ok:'아침 공기 좋지? 나는 마지막 말로 수탉 이야기를 했어. 아침을 알리는 그 새 말이야.'},
+  {id:'w11',k:'soc',kind:'ans',q:'만 원짜리 뒷면 가운데, 고리 여러 개가 겹친 둥근 천문 기구 이름은?',a:['혼천의','혼의','선기옥형'],ok:'혼천의. 하늘이 어떻게 도는지 알고 싶어서 만든 기구야. 묻는 걸 멈추지 않은 사람들이 만들었지.'}];
+// book riddles: 『죽음 리허설』. Page numbers are the printed ones
+const BOOK={id:'death',nm:'죽음 리허설',img:'https://eclipse-mindlab.github.io/mindlab/img/book-death.webp',url:'https://product.kyobobook.co.kr/detail/S000221636755'};
+const RIDB=[
+  {id:'b1',k:'epi',p:53,q:'53쪽. 내가 친구한테 편지로 보내 달라고 한 건 뭐였어?',a:['치즈','치즈한단지','치즈단지'],ok:'맞아. 그 한 단지면 잔치였어.'},
+  {id:'b2',k:'soc',p:77,q:'77쪽. 몽테뉴는 죽음이 찾아올 때 밭에서 뭘 심고 있기를 바랐을까?',a:['양배추'],ok:'양배추. 대단한 마지막 말 대신 하던 일을 하던 대로. 텃밭이 이렇게 철학적이야.'},
+  {id:'b3',k:'soc',p:111,q:'111쪽. 플라톤이 내 마지막 날을 적어 둔 책 이름은?',a:['파이돈','파이돈편'],ok:'『파이돈』. 그날도 나는 친구들이랑 이야기했어.'},
+  {id:'b4',k:'nie',p:82,q:'82쪽. 모차르트의 레퀴엠 "라크리모사"는 몇 번째 마디에서 멈춰 있을까?',a:['8','여덟','8번째','여덟번째','8마디','여덟마디','여덟번째마디','8번째마디'],ok:'여덟 번째. 그 뒤를 아무도 몰라. 그래서 더 오래 들려.'},
+  {id:'b5',k:'dio',p:274,q:'274쪽. 촌스러운 티셔츠를 입고 들어간 학생, 실제로 알아챈 사람은 몇 분의 몇도 안 됐을까?',a:['4분의1','사분의일','1/4','4분의일','4분의1도안됐다'],ok:'4분의 1. 봐, 다들 네 생각 별로 안 해.'},
+  {id:'b6',k:'epi',p:128,q:'128쪽. 심장이 멈춘 환자 귀에 되풀이해 들려준 세 단어는 "사과, 배, 그리고?"',a:['바나나'],ok:'바나나. 죽음 너머를 확인하려던 실험이야.'},
+  {id:'b7',k:'nie',p:66,q:'66쪽. 루크레티우스는 삶을 다 누린 사람이 무엇처럼 물러나야 한다고 했을까? "배불리 누린 ○○"',a:['손님','배불리누린손님'],ok:'손님. 잔치가 끝나면 상을 붙잡지 말고 웃으며 일어나는 거야.'},
+  {id:'b8',k:'soc',p:180,q:'180쪽. 가우디가 43년을 바쳤지만 끝을 못 본 성당 이름은?',a:['사그라다파밀리아','사그라다파밀리아성당','사그라다'],ok:'사그라다 파밀리아. 끝을 못 볼 일을 하는 사람은, 이미 자기가 없는 세상을 믿고 사는 거야.'}];
+// pets and garden pieces. Pets come with the riddles you solve; art arrives later (PET_ART)
+const PET_ART=false;
+const PETS=[
+  {id:'rooster',k:'soc',nm:'수탉',at:2,story:'소크라테스가 독배를 마신 뒤 남긴 마지막 말이 "크리톤, 아스클레피오스에게 닭 한 마리를 빚졌네. 꼭 갚아 주게"였어요.'},
+  {id:'dog',k:'dio',nm:'개',at:4,story:'사람들은 디오게네스를 "개"라고 불렀어요. 견유학파의 "견"이 바로 개라는 뜻이에요.'},
+  {id:'piglet',k:'epi',nm:'아기 돼지',at:6,story:'로마 시인 호라티우스는 자기를 "에피쿠로스 무리의 돼지"라고 농담했어요.'},
+  {id:'horse',k:'nie',nm:'말',at:8,story:'니체가 토리노 거리에서 채찍질당하는 말을 끌어안았다는 이야기가 전해져요.'},
+  {id:'cat',k:'soc',nm:'몽테뉴의 고양이',book:8,story:'몽테뉴는 "고양이와 놀 때, 내가 고양이를 데리고 노는 건지 고양이가 나를 데리고 노는 건지 누가 알까"라고 썼어요.'}];
+const DECO=[{id:'cabbage',nm:'몽테뉴의 양배추 밭',book:4,story:'몽테뉴는 죽음이 찾아올 때 양배추를 심고 있기를 바랐어요. 하던 일을 하던 대로 하다가 떠나고 싶었던 거예요.'}];
+const rnorm=t=>String(t||'').toLowerCase().replace(/[\s.,!?'"“”‘’·~\-『』「」()]/g,'').replace(/(이요|예요|에요|이야|요|야|입니다|이다|다)$/,'');
+const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);});};
+const ridDone=id=>S.rid&&S.rid[id];
+const worldOpen=()=>S.intro>=2?RID.slice(0,Math.max(0,S.pd-1)):[];
+const worldSolved=()=>RID.filter(R=>S.rid&&S.rid[R.id]&&S.rid[R.id]!=='skip').length;
+const bookSolved=()=>RIDB.filter(R=>ridDone(R.id)).length;
+// the sky over Korea: sunrise and sunset (Seoul), and how old the moon is
+const NOW=()=>Date.now()+S.off*864e5;
+function sunTimes(ms){const r=Math.PI/180,lat=37.5665,lw=-126.978,J=ms/864e5+2440587.5,n=Math.round(J-2451545.0009-lw/360),Js=2451545.0009+lw/360+n;
+  const M=(357.5291+0.98560028*(Js-2451545))%360,C=1.9148*Math.sin(M*r)+0.02*Math.sin(2*M*r)+0.0003*Math.sin(3*M*r),L=(M+C+180+102.9372)%360;
+  const Jt=Js+0.0053*Math.sin(M*r)-0.0069*Math.sin(2*L*r),d=Math.asin(Math.sin(L*r)*Math.sin(23.44*r));
+  const w=Math.acos((Math.sin(-0.833*r)-Math.sin(lat*r)*Math.sin(d))/(Math.cos(lat*r)*Math.cos(d)))/r;
+  const ms_=j=>(j-2440587.5)*864e5;return {rise:ms_(Jt-w/360),set:ms_(Jt+w/360)};}
+function sunToday(){const d=new Date(NOW());d.setHours(12,0,0,0);return sunTimes(d.getTime());}
+const hm=ms=>{const d=new Date(ms);return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;};
+const moonAge=()=>{const SYN=29.530588853,ref=Date.UTC(2000,0,6,18,14);return (((NOW()-ref)/864e5)%SYN+SYN)%SYN;};
+const MOON=[{nm:'초승달',f:.22,lo:2.5,hi:6.4},{nm:'반달',f:.5,lo:6.4,hi:9},{nm:'볼록한 달',f:.8,lo:9,hi:13.3},{nm:'보름달',f:1,lo:13.3,hi:16.6}];
+function moonSVG(f){const r=13,rx=Math.abs(1-2*f)*r;return `<svg viewBox="-16 -16 32 32" width="34" height="34" aria-hidden="true"><circle r="${r}" fill="#2b2550"/>${f>=.99?`<circle r="${r}" fill="#ffe9a6"/>`:`<path d="M0,-${r} A${r},${r} 0 0 1 0,${r} A${rx},${r} 0 0 ${f>.5?1:0} 0,-${r}Z" fill="#ffe9a6"/>`}<circle r="${r}" fill="none" stroke="#000" stroke-width="1.5"/></svg>`;}
+function moonState(){const a=moonAge(),h=new Date(NOW()).getHours(),dark=NOW()>sunToday().set-10*60000;
+  if(a<2.5||a>16.6){const wait=a<2.5?2.5-a:29.53-a+2.5;return {can:false,msg:`요즘은 달이 밤늦게 떠요. ${Math.ceil(wait)}일쯤 뒤 저녁에 다시 와 줘.`};}
+  if(!dark||h<5)return {can:false,msg:`오늘 해 지는 시각은 ${hm(sunToday().set)}이에요. 해가 지고 나서 하늘을 봐 줘.`};
+  return {can:true,i:MOON.findIndex(m=>a>=m.lo&&a<m.hi),a};}
+function moonPick(j){const s=moonState();if(!s.can)return false;if(j===s.i)return true;const m=MOON[j];return Math.abs(s.a-m.lo)<1||Math.abs(s.a-m.hi)<1;}
+function sunState(kind){const t=sunToday(),now=NOW();
+  if(kind==='sunset'){const a=t.set-20*60000,b=t.set+40*60000;return now<a?{can:false,msg:`오늘 해 지는 시각은 ${hm(t.set)}이에요. 그때 하늘을 보고 와 줘.`}:now>b?{can:false,msg:`오늘은 해가 졌어요. 내일 ${hm(sunTimes(t.set+864e5).set)}쯤 다시 봐요.`}:{can:true,msg:`해 지는 시각 ${hm(t.set)}`};}
+  const a=t.rise-20*60000,b=t.rise+60*60000,tm=sunTimes(t.rise+864e5).rise;return now<a?{can:false,msg:`오늘 해 뜨는 시각은 ${hm(t.rise)}이에요.`}:now>b?{can:false,msg:`내일 해 뜨는 시각은 ${hm(tm)}이에요. 그때 봐요.`}:{can:true,msg:`해 뜨는 시각 ${hm(t.rise)}`};}
+// a walk: the starting point stays on this phone only (never in the saved garden)
+const WALK_KEY='eclipse_kid_walk';
+const walkGet=()=>{try{return JSON.parse(localStorage.getItem(WALK_KEY)||'null');}catch(e){return null;}};
+const walkSet=v=>{try{v?localStorage.setItem(WALK_KEY,JSON.stringify(v)):localStorage.removeItem(WALK_KEY);}catch(e){}};
+const geoDist=(a,b)=>{const r=Math.PI/180,R=6371000,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+const geoNow=()=>new Promise((ok,no)=>{if(!navigator.geolocation)return no(new Error('none'));navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),no,{enableHighAccuracy:true,timeout:15000,maximumAge:0});});
+let ridOpenBook=false;
+function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
+  let body='';
+  if(st)body=`<p class="mok">"${R.ok}"</p>`;
+  else if(R.kind==='moon'){const s=moonState();body=s.can?`<div class="moons">${MOON.map((m,j)=>`<button type="button" class="moon" data-moon="${R.id}|${j}">${moonSVG(m.f)}<span>${m.nm}</span></button>`).join('')}</div><button class="lnk" type="button" data-cloud="${R.id}">구름에 가려서 안 보여</button>`:`<p class="mw">${s.msg}</p>`;}
+  else if(R.kind==='sunset'||R.kind==='sunrise'){const s=sunState(R.kind);body=`<p class="mw">${s.msg}</p><div class="mb"><button class="opt" type="button" data-sun="${R.id}"${s.can?'':' disabled'}>봤어</button></div>`;}
+  else if(R.kind==='walk'){const w=walkGet();body=w?`<p class="mw">${hm(w.t)}에 출발했어요. 300m 넘게 걸은 곳에서 눌러 주세요.</p><div class="mb"><button class="opt" type="button" data-arrive="${R.id}">도착</button><button class="opt alt" type="button" data-wreset="${R.id}">다시 출발</button></div>`
+      :`<div class="mb"><button class="opt" type="button" data-depart="${R.id}">출발</button></div>`;}
+  else if(R.kind==='down')body=`<div class="mb"><button class="opt" type="button" data-down="${R.id}">통에 들어가기</button></div>`;
+  else body=`<div class="rin"><input type="text" maxlength="20" placeholder="정답" data-rtx="${R.id}"><button class="opt" type="button" data-rgo="${R.id}">확인</button></div>`;
+  return `<div class="mis rid${st?' done':''}" data-rcard="${R.id}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}</b><span class="rw"><img src="${A('fruit')}" alt="">${book?5:3}</span></div><p class="mt">${R.q}</p>${body}</div>`;}
+function drawRiddles(){if(S.intro<2||S.pd<2)return '';
+  const open=worldOpen(),todo=open.filter(R=>!ridDone(R.id)),shown=todo.slice(0,2),left=RID.length-open.length;
+  let h=`<h3 class="bh">수수께끼<small>${worldSolved()}개 풀었어요</small></h3>`;
+  h+=shown.length?shown.map(R=>ridCard(R)).join(''):`<p class="mempty">${left?'오늘 수수께끼는 다 풀었어요. 내일 또 하나 와요.':'지금 있는 수수께끼는 다 풀었어요.'}</p>`;
+  if(todo.length>2)h+=`<p class="mw">풀지 않은 수수께끼가 ${todo.length-2}개 더 있어요.</p>`;
+  const bs=bookSolved();
+  h+=`<div class="mis book"><button type="button" class="bkh" data-bkt="1"><img src="${BOOK.img}" alt="" onerror="this.style.display='none'"><span><b>책 속 암호</b><small>『${BOOK.nm}』 ${bs}/${RIDB.length}</small></span><i>${ridOpenBook?'접기':'열기'}</i></button>
+    ${ridOpenBook?`<p class="mw">책을 펴서 그 쪽을 찾아보세요. 4개를 풀면 몽테뉴의 양배추 밭이, 다 풀면 몽테뉴의 고양이가 와요.</p>${RIDB.map(R=>ridCard(R,true)).join('')}<p class="mw bkl"><a class="lnk" href="${BOOK.url}" target="_blank" rel="noopener">이 책이 궁금하다면</a></p>`:''}</div>`;
+  return h;}
+function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
+  const n=worldSolved(),bs=bookSolved(),gifts=[];
+  PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
+  DECO.forEach(D=>{if((S.deco||{})[D.id])return;if(D.book&&bs>=D.book){S.deco=S.deco||{};S.deco[D.id]=today();gifts.push(D);}});
+  save();drawBoard(`열매 ${g}개를 받았어요`);
+  gifts.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원으로 와요`:`${P.nm}${jo(P.nm,'이','가')} 생겨요`,sub:`${P.story}\n${PET_ART?'':P.k?'지금 정원으로 오는 중이에요. 곧 도착해요.':'곧 텃밭 한쪽에 심을게요.'}`,gift:0}));}
+const jo=(w,a,b)=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<=11171&&c%28?a:b;};
+const petName=P=>P.id==='cat'?P.nm:`${short(P.k)}의 ${P.nm}`;
+function ridWrong(el,msg){sfx.no&&sfx.no();buzz([40,40,40]);el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');$('bMsg').textContent=msg||'아니야. 다시 봐.';}
+function wireRiddles(){const L=$('bList'),find=id=>RID.find(R=>R.id===id)||RIDB.find(R=>R.id===id),isB=id=>id[0]==='b';
+  L.querySelectorAll('[data-bkt]').forEach(b=>b.onclick=()=>{sfx.boop();ridOpenBook=!ridOpenBook;drawBoard();});
+  L.querySelectorAll('[data-rgo]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.rgo),inp=L.querySelector(`[data-rtx="${R.id}"]`);if(!inp.value.trim())return;
+    if(ridOk(R,inp.value))ridSolve(R,isB(R.id));else ridWrong(L.querySelector(`[data-rcard="${R.id}"]`),isB(R.id)?`${R.p}쪽을 다시 봐.`:'아니야. 다시 봐.');});
+  L.querySelectorAll('[data-rtx]').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')L.querySelector(`[data-rgo="${i.dataset.rtx}"]`).click();});
+  L.querySelectorAll('[data-moon]').forEach(b=>b.onclick=()=>{const [id,j]=b.dataset.moon.split('|'),R=find(id);if(moonPick(+j))ridSolve(R);else ridWrong(L.querySelector(`[data-rcard="${id}"]`),'정말? 한 번 더 올려다봐.');});
+  L.querySelectorAll('[data-cloud]').forEach(b=>b.onclick=()=>{sfx.boop();$('bMsg').textContent='구름 낀 날도 있지. 다른 저녁에 다시 보자.';});
+  L.querySelectorAll('[data-sun]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.sun);if(sunState(R.kind).can)ridSolve(R);});
+  L.querySelectorAll('[data-depart]').forEach(b=>b.onclick=async()=>{b.disabled=true;$('bMsg').textContent='위치를 읽는 중이에요';
+    try{const p=await geoNow();walkSet({lat:p.lat,lng:p.lng,t:Date.now()});sfx.boop();drawBoard('출발! 300m 넘게 걸어가 보세요');}
+    catch(e){drawBoard();$('bMsg').textContent='위치를 못 읽었어요. 위치 권한을 켜고 다시 눌러 주세요.';}});
+  L.querySelectorAll('[data-wreset]').forEach(b=>b.onclick=()=>{walkSet(null);sfx.boop();drawBoard();});
+  L.querySelectorAll('[data-arrive]').forEach(b=>b.onclick=async()=>{const R=find(b.dataset.arrive),w=walkGet();if(!w)return;b.disabled=true;$('bMsg').textContent='위치를 읽는 중이에요';
+    try{const p=await geoNow(),d=geoDist(w,p);if(d>=300&&Date.now()-w.t>=120000){walkSet(null);ridSolve(R);}else{b.disabled=false;$('bMsg').textContent=d<300?`아직 ${Math.round(d)}m 왔어요. 조금 더 걸어 봐요.`:'너무 빨라요. 천천히 걸어도 돼요.';}}
+    catch(e){b.disabled=false;$('bMsg').textContent='위치를 못 읽었어요. 잠시 뒤에 다시 눌러 주세요.';}});
+  L.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>barrelTime(find(b.dataset.down)));}
+// five minutes face down: only time with the phone face down and the page open counts
+function barrelTime(R){const NEED=300000;let got=0,last=null,down=false,seen=false,lock=null,iv=null;
+  // iPhone asks for the tilt sensor; elsewhere events just start. No events in 2.5s means this phone can't tell
+  try{if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});}catch(e){}
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>{lock=l;}).catch(()=>{});}catch(e){}
+  const el=document.createElement('div');el.className='dwn';el.innerHTML='<div><b id="dwT">5:00</b><p id="dwM">폰을 엎어 두세요</p><button class="opt alt" type="button" id="dwX">그만하기</button></div>';$('app').appendChild(el);
+  const onOr=e=>{seen=true;down=e.beta!=null&&Math.abs(e.beta)>150&&Math.abs(e.gamma||0)<35;};
+  window.addEventListener('deviceorientation',onOr);
+  const end=ok=>{clearInterval(iv);window.removeEventListener('deviceorientation',onOr);try{lock&&lock.release();}catch(e){}el.remove();if(ok)ridSolve(R);else drawBoard();};
+  el.querySelector('#dwX').onclick=()=>{sfx.boop();end(false);};
+  setTimeout(()=>{if(!seen){end(false);$('bMsg').textContent='이 폰에서는 엎어 둔 걸 알 수가 없어요. 다른 수수께끼를 먼저 풀어요.';}},2500);
+  iv=setInterval(()=>{const now=Date.now(),vis=document.visibilityState==='visible';if(down&&vis&&last)got+=now-last;last=now;
+    const left=Math.max(0,NEED-got);el.querySelector('#dwT').textContent=mmss(left);el.querySelector('#dwM').textContent=down?'통 속이에요. 그대로 두세요':'폰을 엎어 두세요';
+    if(left<=0){buzz([60,60,120]);end(true);}},500);}
+function drawPets(){const pk=PETS.concat(DECO);return `<h3 class="bh">펫과 정원<small>${pk.filter(P=>(S.pets||{})[P.id]||(S.deco||{})[P.id]).length}/${pk.length}</small></h3>`+pk.map(P=>{const got=(S.pets||{})[P.id]||(S.deco||{})[P.id];
+  return `<div class="mis pet${got?'':' lock'}"><div class="mh"><i class="face" style="${faceCSS(P.k||'soc')}"></i><b>${P.k?petName(P):P.nm}</b><span class="lv">${got?'왔어요':P.book?`책 속 암호 ${P.book}개`:`수수께끼 ${P.at}개`}</span></div><p class="mw">${got?P.story:'아직 비밀이에요.'}</p></div>`;}).join('');}
 
 // ---------- easter eggs ----------
 // Nietzsche: a shadow at the gate one stage early. Epicurus: comes once the garden bears fruit (his school was called the Garden).
