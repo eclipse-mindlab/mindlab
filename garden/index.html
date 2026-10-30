@@ -965,24 +965,25 @@ const RID=[
   {id:'w4',k:'dio',kind:'down',q:'폰을 엎어 두고 5분만 통 속에 들어가 있어 봐. 화면은 켜 둔 채로. 엎어져 있는 동안만 시간이 가.',ok:'나와 봐. 5분 동안 아무것도 안 봤는데 세상은 그대로지? 통 속이 생각보다 넓어.'},
   {id:'w5',k:'soc',kind:'ans',q:'오천 원짜리 앞면에 있는 사람은?',a:['이이','율곡','율곡이이','이율곡'],ok:'율곡 이이. 과거 시험에서 아홉 번이나 1등을 했대. 그래도 평생 공부했어.'},
   {id:'w6',k:'epi',kind:'moon',q:'창밖 하늘 좀 봐. 오늘 달은 어떤 모양이야?',ok:'맞아. 오늘 달을 본 사람, 생각보다 많지 않을걸.'},
-  {id:'w7',k:'epi',kind:'ans',q:'오만 원짜리 속 사람은 오천 원짜리 속 사람과 무슨 사이일까?',a:['엄마','어머니','모자','모자지간','엄마와아들','어머니와아들','엄마아들'],ok:'신사임당은 율곡의 어머니야. 네 지갑 속에 엄마랑 아들이 같이 살고 있었어.'},
+  {id:'w7',k:'epi',kind:'ans',q:'오만 원짜리 속 사람은 오천 원짜리 속 사람과 무슨 사이일까?',a:['엄마','어머니','모자','모자지간'],inc:['엄마','어머니','모자'],ok:'신사임당은 율곡의 어머니야. 네 지갑 속에 엄마랑 아들이 같이 살고 있었어.'},
   {id:'w8',k:'nie',kind:'walk',q:'산책 가자. 여기서 "출발"을 누르고 300m 넘게 걸어간 다음, 거기서 "도착"을 눌러. 위치는 이 폰에만 남아.',ok:'봐, 걸으니까 머리가 달라졌지? 나는 걸으면서 떠오른 생각만 믿었어.'},
   {id:'w9',k:'dio',kind:'ans',q:'500원짜리 동전에 있는 새는?',a:['학','두루미','학두루미'],ok:'학. 플라톤이 사람을 "깃털 없이 두 발로 걷는 동물"이라고 하길래, 나는 털 뽑은 닭을 들고 가서 "여기 사람 있다" 했어.'},
   {id:'w10',k:'soc',kind:'sunrise',q:'내일 해 뜨는 걸 보러 갈래? 해가 뜨고 한 시간 안에 여기서 "봤어"를 눌러 줘.',ok:'아침 공기 좋지? 나는 마지막 말로 수탉 이야기를 했어. 아침을 알리는 그 새 말이야.'},
   {id:'w11',k:'soc',kind:'ans',q:'만 원짜리 뒷면 가운데, 고리 여러 개가 겹친 둥근 천문 기구 이름은?',a:['혼천의','혼의','선기옥형'],ok:'혼천의. 하늘이 어떻게 도는지 알고 싶어서 만든 기구야. 묻는 걸 멈추지 않은 사람들이 만들었지.'}];
 // book riddles: 『죽음 리허설』. Page numbers are the printed ones
 const BOOK={id:'death',nm:'죽음 리허설',img:'https://eclipse-mindlab.github.io/mindlab/img/book-death.webp',url:'https://product.kyobobook.co.kr/detail/S000221636755'};
+// only someone holding the book can answer: each one is the heading at the top of a printed page
 const RIDB=[
-  {id:'b1',k:'epi',p:53,q:'53쪽. 내가 친구한테 편지로 보내 달라고 한 건 뭐였어?',a:['치즈','치즈한단지','치즈단지'],ok:'맞아. 그 한 단지면 잔치였어.'},
-  {id:'b2',k:'soc',p:77,q:'77쪽. 몽테뉴는 죽음이 찾아올 때 밭에서 뭘 심고 있기를 바랐을까?',a:['양배추'],ok:'양배추. 대단한 마지막 말 대신 하던 일을 하던 대로. 텃밭이 이렇게 철학적이야.'},
-  {id:'b3',k:'soc',p:111,q:'111쪽. 플라톤이 내 마지막 날을 적어 둔 책 이름은?',a:['파이돈','파이돈편'],ok:'『파이돈』. 그날도 나는 친구들이랑 이야기했어.'},
-  {id:'b4',k:'nie',p:82,q:'82쪽. 모차르트의 레퀴엠 "라크리모사"는 몇 번째 마디에서 멈춰 있을까?',a:['8','여덟','8번째','여덟번째','8마디','여덟마디','여덟번째마디','8번째마디'],ok:'여덟 번째. 그 뒤를 아무도 몰라. 그래서 더 오래 들려.'},
-  {id:'b5',k:'dio',p:274,q:'274쪽. 촌스러운 티셔츠를 입고 들어간 학생, 실제로 알아챈 사람은 몇 분의 몇도 안 됐을까?',a:['4분의1','사분의일','1/4','4분의일','4분의1도안됐다'],ok:'4분의 1. 봐, 다들 네 생각 별로 안 해.'},
-  {id:'b6',k:'epi',p:128,q:'128쪽. 심장이 멈춘 환자 귀에 되풀이해 들려준 세 단어는 "사과, 배, 그리고?"',a:['바나나'],ok:'바나나. 죽음 너머를 확인하려던 실험이야.'},
-  {id:'b7',k:'nie',p:66,q:'66쪽. 루크레티우스는 삶을 다 누린 사람이 무엇처럼 물러나야 한다고 했을까? "배불리 누린 ○○"',a:['손님','배불리누린손님'],ok:'손님. 잔치가 끝나면 상을 붙잡지 말고 웃으며 일어나는 거야.'},
-  {id:'b8',k:'soc',p:180,q:'180쪽. 가우디가 43년을 바쳤지만 끝을 못 본 성당 이름은?',a:['사그라다파밀리아','사그라다파밀리아성당','사그라다'],ok:'사그라다 파밀리아. 끝을 못 볼 일을 하는 사람은, 이미 자기가 없는 세상을 믿고 사는 거야.'}];
+  {id:'b1',k:'epi',p:49,q:'49쪽 맨 위 제목은 "백만 대군 앞에서 ○ 왕"이야. 빈칸 한 글자는?',a:['운','울었다','울다','울었어','울음'],ok:'운 왕. 세상에서 제일 큰 군대를 내려다보며 행복하다던 왕이 갑자기 울었대. 왜 울었는지가 이 장의 시작이야.'},
+  {id:'b2',k:'nie',p:61,q:'61쪽 맨 위 제목: "빈 ○○○"',a:['유모차'],ok:'빈 유모차. 내가 태어나기 전 세상을 찍은 영상을 보고 떨었던 청년 이야기야. 너는 태어나기 전이 무서워?'},
+  {id:'b3',k:'dio',p:93,q:'93쪽 맨 위 제목: "○○○ 한 줌"',a:['겨자씨','겨자'],ok:'겨자씨. 아이를 잃은 엄마에게 붓다가 겨자씨를 구해 오라고 했대. 그런데 조건이 하나 붙어 있었어.'},
+  {id:'b4',k:'soc',p:110,q:'110쪽 맨 위 제목: "일곱 ○○의 아내"',a:['남편'],ok:'남편. 부활한 뒤에 이 여자는 누구의 아내일까. 예수에게 던져진 짓궂은 질문이었어.'},
+  {id:'b5',k:'epi',p:153,q:'153쪽 맨 위 제목: "○○○을 태운 가수"',a:['제조법'],ok:'제조법. 300년 넘게 산 가수가 늙지 않는 약의 제조법을 스스로 태웠대. 영원히 사는 게 왜 싫었을까.'},
+  {id:'b6',k:'soc',p:163,q:'163쪽 맨 위 제목: "○○을 넘긴 남자"',a:['밧줄'],ok:'밧줄. 얼음 강물 속에서 구조 밧줄을 몇 번이나 남에게 넘긴 사람이 있었어. 그 사람은 어떻게 됐을까.'},
+  {id:'b7',k:'epi',p:256,q:'256쪽 맨 위 제목: "○○ 한 말을 함께 먹은 사이"',a:['소금'],ok:'소금. 아리스토텔레스는 소금 한 말을 같이 먹어야 친구가 된다고 했대. 그만큼 많은 끼니를 함께해야 한다는 거야.'},
+  {id:'b8',k:'nie',p:277,q:'277쪽 맨 위 제목: "○막으로 끝난 연극"',a:['3','세','삼','3막','세막','삼막'],ok:'3막. 5막짜리 연극에서 3막에 내려가라는 말을 들은 배우에게, 황제가 해 준 말이 있어.'}];
 // pets and garden pieces. Pets come with the riddles you solve; art arrives later (PET_ART)
-const PET_ART=false;
+const PET_ART=false;               // flip with the pet art: pets already earned show up then, and the book riddles open
 const PETS=[
   {id:'rooster',k:'soc',nm:'수탉',at:2,story:'소크라테스가 독배를 마신 뒤 남긴 마지막 말이 "크리톤, 아스클레피오스에게 닭 한 마리를 빚졌네. 꼭 갚아 주게"였어요.'},
   {id:'dog',k:'dio',nm:'개',at:4,story:'사람들은 디오게네스를 "개"라고 불렀어요. 견유학파의 "견"이 바로 개라는 뜻이에요.'},
@@ -991,7 +992,7 @@ const PETS=[
   {id:'cat',k:'soc',nm:'몽테뉴의 고양이',book:8,story:'몽테뉴는 "고양이와 놀 때, 내가 고양이를 데리고 노는 건지 고양이가 나를 데리고 노는 건지 누가 알까"라고 썼어요.'}];
 const DECO=[{id:'cabbage',nm:'몽테뉴의 양배추 밭',book:4,story:'몽테뉴는 죽음이 찾아올 때 양배추를 심고 있기를 바랐어요. 하던 일을 하던 대로 하다가 떠나고 싶었던 거예요.'}];
 const rnorm=t=>String(t||'').toLowerCase().replace(/[\s.,!?'"“”‘’·~\-『』「」()]/g,'').replace(/(이요|예요|에요|이야|요|야|입니다|이다|다)$/,'');
-const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);});};
+const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&(R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);})||(R.inc||[]).some(w=>v.includes(w)&&v.length<=12));};
 const ridDone=id=>S.rid&&S.rid[id];
 const worldOpen=()=>S.intro>=2?RID.slice(0,Math.max(0,S.pd-1)):[];
 const worldSolved=()=>RID.filter(R=>S.rid&&S.rid[R.id]&&S.rid[R.id]!=='skip').length;
@@ -1039,6 +1040,7 @@ function drawRiddles(){if(S.intro<2||S.pd<2)return '';
   h+=shown.length?shown.map(R=>ridCard(R)).join(''):`<p class="mempty">${left?'오늘 수수께끼는 다 풀었어요. 내일 또 하나 와요.':'지금 있는 수수께끼는 다 풀었어요.'}</p>`;
   if(todo.length>2)h+=`<p class="mw">풀지 않은 수수께끼가 ${todo.length-2}개 더 있어요.</p>`;
   const bs=bookSolved();
+  if(!PET_ART)return h;
   h+=`<div class="mis book"><button type="button" class="bkh" data-bkt="1"><img src="${BOOK.img}" alt="" onerror="this.style.display='none'"><span><b>책 속 암호</b><small>『${BOOK.nm}』 ${bs}/${RIDB.length}</small></span><i>${ridOpenBook?'접기':'열기'}</i></button>
     ${ridOpenBook?`<p class="mw">책을 펴서 그 쪽을 찾아보세요. 4개를 풀면 몽테뉴의 양배추 밭이, 다 풀면 몽테뉴의 고양이가 와요.</p>${RIDB.map(R=>ridCard(R,true)).join('')}<p class="mw bkl"><a class="lnk" href="${BOOK.url}" target="_blank" rel="noopener">이 책이 궁금하다면</a></p>`:''}</div>`;
   return h;}
@@ -1047,7 +1049,8 @@ function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();const g=book?5:3;S
   PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
   DECO.forEach(D=>{if((S.deco||{})[D.id])return;if(D.book&&bs>=D.book){S.deco=S.deco||{};S.deco[D.id]=today();gifts.push(D);}});
   save();drawBoard(`열매 ${g}개를 받았어요`);
-  gifts.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원으로 와요`:`${P.nm}${jo(P.nm,'이','가')} 생겨요`,sub:`${P.story}\n${PET_ART?'':P.k?'지금 정원으로 오는 중이에요. 곧 도착해요.':'곧 텃밭 한쪽에 심을게요.'}`,gift:0}));}
+  if(!PET_ART)return;S.petSeen=S.petSeen||{};gifts.forEach(P=>{S.petSeen[P.id]=1;});save();
+  gifts.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원으로 와요`:`${P.nm}${jo(P.nm,'이','가')} 생겨요`,sub:P.story,gift:0}));}
 const jo=(w,a,b)=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<=11171&&c%28?a:b;};
 const petName=P=>P.id==='cat'?P.nm:`${short(P.k)}의 ${P.nm}`;
 function ridWrong(el,msg){sfx.no&&sfx.no();buzz([40,40,40]);el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');$('bMsg').textContent=msg||'아니야. 다시 봐.';}
@@ -1081,7 +1084,7 @@ function barrelTime(R){const NEED=300000;let got=0,last=null,down=false,seen=fal
   iv=setInterval(()=>{const now=Date.now(),vis=document.visibilityState==='visible';if(down&&vis&&last)got+=now-last;last=now;
     const left=Math.max(0,NEED-got);el.querySelector('#dwT').textContent=mmss(left);el.querySelector('#dwM').textContent=down?'통 속이에요. 그대로 두세요':'폰을 엎어 두세요';
     if(left<=0){buzz([60,60,120]);end(true);}},500);}
-function drawPets(){const pk=PETS.concat(DECO);return `<h3 class="bh">펫과 정원<small>${pk.filter(P=>(S.pets||{})[P.id]||(S.deco||{})[P.id]).length}/${pk.length}</small></h3>`+pk.map(P=>{const got=(S.pets||{})[P.id]||(S.deco||{})[P.id];
+function drawPets(){if(!PET_ART)return '';const pk=PETS.concat(DECO);return `<h3 class="bh">펫과 정원<small>${pk.filter(P=>(S.pets||{})[P.id]||(S.deco||{})[P.id]).length}/${pk.length}</small></h3>`+pk.map(P=>{const got=(S.pets||{})[P.id]||(S.deco||{})[P.id];
   return `<div class="mis pet${got?'':' lock'}"><div class="mh"><i class="face" style="${faceCSS(P.k||'soc')}"></i><b>${P.k?petName(P):P.nm}</b><span class="lv">${got?'왔어요':P.book?`책 속 암호 ${P.book}개`:`수수께끼 ${P.at}개`}</span></div><p class="mw">${got?P.story:'아직 비밀이에요.'}</p></div>`;}).join('');}
 
 // ---------- easter eggs ----------
@@ -1253,7 +1256,9 @@ function intro(){if(S.intro>=2){S.met.soc=1;place('soc',restMode('soc'),SPOTS.so
   setTimeout(()=>{sfx.gate();openGate();walk('soc',SPOTS.soc.x,2400,()=>{S.intro=1;save();introAsk();});},900);}
 
 function appGift(){if(window.GL&&GL.native&&S.intro>=2&&!S.appGift)whenFree(()=>{if(S.appGift)return;S.appGift=1;S.fruit+=5;save();hud();bump('fruitChip');sfx.fruit();toast('앱으로 와 줘서 고마워요. 열매 5개 선물이에요');},0);}
-function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(appGift,4000);if(S.intro>=2)postMissions();
+function petArrivals(){if(!PET_ART||S.intro<2)return;S.petSeen=S.petSeen||{};const L=PETS.concat(DECO).filter(P=>((S.pets||{})[P.id]||(S.deco||{})[P.id])&&!S.petSeen[P.id]);if(!L.length)return;L.forEach(P=>{S.petSeen[P.id]=1;});save();
+  whenFree(()=>L.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원에 왔어요`:`${P.nm}${jo(P.nm,'이','가')} 생겼어요`,sub:P.story,gift:0})),3000);}
+function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals,2000);setTimeout(appGift,4000);if(S.intro>=2)postMissions();
   // the barrel is there from the first day; who's inside is a secret
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
