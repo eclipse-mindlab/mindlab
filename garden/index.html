@@ -1371,12 +1371,15 @@ function closeWard(){wsel=null;$('ward').hidden=true;sfx.boop();present().forEac
 function introAsk(){const G=window.GL,load=G&&G.ready&&G.ready()&&!G.isIn();
   say('soc',PH.soc.hi,['응, 앉아','누구야?'].concat(load?['전에 하던 정원 있어']:[]),async n=>{if(n===1){say('soc',PH.soc.who,null,introAsk);return;}
   if(n===2){if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',introAsk);say('soc','구글 계정으로 불러올게. 잠깐만.');const ok=await G.login();setTimeout(()=>{closeBub();say('soc',ok?'저장된 정원이 없네. 그럼 여기서 새로 시작하자.':'불러오지 못했어. 나중에 게시판의 리그에서 다시 해 볼 수 있어.',null,introAsk);},ok?3500:200);return;}
-  say('soc','이거 같이 심자. 물은 질문으로 줄게.',null,()=>{S.intro=2;S.met.soc=1;save();postMissions();setTimeout(appGift,8000);paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);});});}
+  say('soc','이거 같이 심자. 물은 질문으로 줄게.',null,()=>{S.intro=2;S.met.soc=1;save();postMissions();setTimeout(appGift,8000);setTimeout(askNotif,20000);paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);});});}
 function intro(){if(S.intro>=2){S.met.soc=1;place('soc',restMode('soc'),SPOTS.soc.x,SPOTS.soc.y);return;}
   if(S.intro===1){place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);setTimeout(introAsk,700);return;}
   place('soc','awake',-40,SPOTS.soc.y);
   setTimeout(()=>{sfx.gate();openGate();walk('soc',SPOTS.soc.x,2400,()=>{S.intro=1;save();introAsk();});},900);}
 
+function askNotif(){const G=window.GL;if(!G||!G.native||!G.notifState||S.notifAsk>=2||S.intro<2)return;
+  G.notifState().then(st=>{if(st!=='prompt'&&st!=='prompt-with-rationale')return;whenFree(()=>{if(pend||clrOn())return;S.notifAsk=(S.notifAsk||0)+1;save();
+    say('soc','아침마다 내가 먼저 알려 줘도 돼? 그날 광장 질문이랑, 등불이 다시 찼다는 소식.',['좋아','나중에'],n=>{if(n===0)G.ask();});},2500);});}
 function appGift(){if(window.GL&&GL.native&&S.intro>=2&&!S.appGift)whenFree(()=>{if(S.appGift)return;S.appGift=1;S.fruit+=5;save();hud();bump('fruitChip');sfx.fruit();toast('앱으로 와 줘서 고마워요. 열매 5개 선물이에요');},0);}
 // ---------- pets in the garden: each sits beside its philosopher; the cat and the cabbages keep their own corner ----------
 // art is 400x400 with the feet at (200,396), drawn at the same pixel scale as the kids (U)
@@ -1418,7 +1421,7 @@ setInterval(()=>{for(const id in pets){const p=pets[id];if(p.f!=='basic'||Math.r
 
 function petArrivals(){if(!PET_ART||S.intro<2)return;S.petSeen=S.petSeen||{};const L=PETS.concat(DECO).filter(P=>((S.pets||{})[P.id]||(S.deco||{})[P.id])&&!S.petSeen[P.id]);if(!L.length)return;L.forEach(P=>{S.petSeen[P.id]=1;});save();
   paintPets();whenFree(()=>L.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} 정원에 왔어요`:`${P.nm}${jo(P.nm,'이','가')} 생겼어요`,sub:P.story,gift:0})),3000);}
-function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals,2000);setTimeout(appGift,4000);if(S.intro>=2)postMissions();
+function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals,2000);setTimeout(askNotif,9000);setTimeout(appGift,4000);if(S.intro>=2)postMissions();
   // the barrel is there from the first day; who's inside is a secret
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
@@ -1806,6 +1809,7 @@ function confirmRep(id, msg) { if (repArm === id) return true; repArm = id; toas
 // ---- reminders on the phone: morning missions, a timer ending, a streak about to break ----
 const LN = () => NATIVE ? plug('LocalNotifications') : null;
 let asked = false;
+async function notifState() { const L = LN(); if (!L) return 'none'; try { return (await L.checkPermissions()).display; } catch (e) { return 'none'; } }
 async function ask() { const L = LN(); if (!L || asked) return; asked = true; try { await L.requestPermissions(); reminders(); } catch (e) {} }
 async function timer(M, start) {
   const L = LN(); if (!L || !M.min) return;
@@ -1817,8 +1821,15 @@ async function schedule() {
   const L = LN(); if (!L) return;
   try {
     const p = await L.checkPermissions(); if (p.display !== 'granted') return;
-    await L.cancel({notifications: [{id: 1}, {id: 2}]});
-    const n = [{id: 1, title: '소크라텃밭', body: '오늘 미션이 게시판에 붙었어요.', schedule: {on: {hour: 8, minute: 40}, allowWhileIdle: true}}];
+    await L.cancel({notifications: [1, 2, 101, 102, 103, 104, 105, 106, 107].map(id => ({id}))});
+    // the next seven mornings, each with that day's square question: a reason to open beyond the habit
+    const n = [];
+    for (let i = 1; i <= 7; i++) {
+      const at = new Date(); at.setDate(at.getDate() + (i - 1)); at.setHours(8, 40, 0, 0); if (at <= new Date()) continue;
+      const back = -Math.round((new Date(at).setHours(12, 0, 0, 0) - new Date().setHours(12, 0, 0, 0)) / 864e5);
+      let q = ''; try { q = talkQ(back)[1]; } catch (e) {}
+      n.push({id: 100 + i, title: '소크라텃밭 · 등불이 다시 찼어요', body: q ? `오늘의 질문: ${q}` : '오늘 미션과 수수께끼가 기다려요.', schedule: {at, allowWhileIdle: true}});
+    }
     const d = nowD(), st = streak(), doneToday = !!S.log[dkey(d)];
     const at = new Date(); at.setHours(21, 10, 0, 0);
     if (st > 0 && !doneToday && at > new Date()) n.push({id: 2, title: '소크라텃밭', body: `연속 ${st}일이 오늘 끊겨요. 미션 하나만 해 볼까요?`, schedule: {at}});
@@ -1844,7 +1855,7 @@ window.gardenShare = async (dataUrl, name) => {
   return true;
 };
 
-window.GL = {render, renderTalk, ask, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {render, renderTalk, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
