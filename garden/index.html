@@ -144,6 +144,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .mok{margin:0;font-family:var(--hand);font-size:15px;color:#3f7d4a}
 .pbtn img{width:30px;height:24px;object-fit:contain}
 .pscene{width:100%;height:auto;border:2.5px solid #000;border-radius:16px;display:block}
+.oil{display:flex;align-items:center;gap:8px;margin:2px 2px 0;font-size:12.5px;color:#5d5478}.oil i{display:flex;gap:3px}.oil b{width:12px;height:16px;border-radius:50% 50% 45% 45%/60% 60% 40% 40%;border:1.6px solid #000;background:#ffcf5a}.oil b.u{background:#e8e0cf}.oil b.x{display:none}.oil em{font-style:normal;font-family:var(--hand);font-size:15px;color:var(--ink)}
 .bsh{margin:6px 2px 0;font-family:var(--hand);font-size:15px;color:#5d5478}
 .rwait{border:2px dashed #b8ad95;border-radius:14px;padding:6px 10px;background:#fffaf0}.rwait summary{font-family:var(--hand);font-size:15px;cursor:pointer;color:#5d5478}.rwait[open]{display:flex;flex-direction:column;gap:8px}
 .bhi{width:26px;height:26px;align-self:center;margin-right:-2px}
@@ -809,7 +810,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
 function openGate(){const g=$('gateImg');if(!g)return;g.setAttribute('href',A('gate_open'));clearTimeout(openGate.t);openGate.t=setTimeout(()=>g.setAttribute('href',A('gate_closed')),2800);}
 function paintPlant(anim){const st=stageOf(S.given);
   $('plantG').innerHTML=`<rect class="hit" x="${POT.x-50}" y="${POT.y-185}" width="100" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
-function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const pb=$('patchBtn');if(pb){pb.hidden=!(PET_ART&&S.intro>=2&&S.pd>=2);pb.classList.toggle('pulse',!S.patchSeen);}}{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
+function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const pb=$('patchBtn');if(pb){pb.hidden=!(PET_ART&&S.intro>=2&&((S.deco||{}).cabbage||(S.pets||{}).cat||(typeof bookSolved==='function'&&bookSolved()>0)||S.patchSeen));pb.classList.toggle('pulse',!S.patchSeen);}}{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
   $('wardBtn').classList.toggle('pulse',S.fruit>0&&!S.wardSeen);}
 const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');};
 
@@ -1008,7 +1009,45 @@ const RID=[
   {id:'w39',k:'soc',kind:'ans',q:'만 원짜리 앞면, 세종대왕 옆에 적힌 노래 첫머리는 "뿌리 깊은 나무는…". 이 노래 이름은?',a:['용비어천가'],ok:'용비어천가. 뿌리 깊은 나무는 바람에 흔들리지 않는대. 사람도 그래.'},
   {id:'w40',k:'nie',kind:'ans',q:'스토아학파의 "스토아"는 원래 철학자들이 모여 이야기하던 곳 이름이야. 기둥이 줄지어 선 지붕 있는 복도. 이걸 뭐라고 부를까?',a:['주랑','회랑','복도','기둥복도','열주'],ok:'주랑. 에피쿠로스는 정원에서, 스토아는 주랑에서. 철학은 늘 사람들이 지나다니는 곳에서 했어.'},
   {id:'w41',k:'dio',kind:'ans',q:'아리스토텔레스한테 배운 제자 중에 나중에 세상의 절반을 정복한 왕이 있어. 나한테 햇빛 가리지 말라는 말을 들은 그 왕이야.',a:['알렉산드로스','알렉산더','알렉산드로스대왕','알렉산더대왕'],ok:'알렉산드로스. 그가 그랬대. "내가 알렉산드로스가 아니었다면 디오게네스가 되고 싶었을 것이다."'},
-  {id:'w42',k:'epi',kind:'ans',q:'서울에는 "다산로"라는 길도 있어. 다산은 조선의 어느 학자의 호일까?',a:['정약용','다산정약용'],ok:'정약용. 18년 귀양 가 있는 동안 책을 500권 넘게 썼어. 갇힌 곳에서 오히려 제일 넓게 생각했지.'}];
+  {id:'w42',k:'epi',kind:'ans',q:'서울에는 "다산로"라는 길도 있어. 다산은 조선의 어느 학자의 호일까?',a:['정약용','다산정약용'],ok:'정약용. 18년 귀양 가 있는 동안 책을 500권 넘게 썼어. 갇힌 곳에서 오히려 제일 넓게 생각했지.'},
+  {id:'w43',k:"soc",kind:'ans',q:"소크라테스의 아내 이름은? 화를 잘 내기로 유명해서 지금도 악처 하면 이 이름이 나와.",a:["크산티페", "크산티페스"],ok:"크산티페. 소크라테스는 \"좋은 아내를 얻으면 행복해지고, 나쁜 아내를 얻으면 철학자가 된다\"고 했대."},
+  {id:'w44',k:"nie",kind:'ans',q:"\"『○○○○○는 이렇게 말했다』\" 내가 초인 이야기를 하려고 산에서 내려보낸 예언자 이름이야.",a:["차라투스트라", "짜라투스트라", "자라투스트라"],ok:"차라투스트라. 10년 동안 산에 있다가, 남는 지혜를 나눠 주려고 내려왔어."},
+  {id:'w45',k:"dio",kind:'ans',q:"에픽테토스 형은 원래 어떤 신분이었을까? 다리를 절던 ○○.",a:["노예"],ok:"노예. 몸은 남의 것이었는데, 생각만은 누구에게도 안 넘겼어."},
+  {id:'w46',k:"epi",kind:'ans',q:"내가 아테네에 세운 학교 이름은? 거기서 친구들이랑 같이 살았어.",a:["정원", "케포스", "가든"],ok:"정원. 문 앞에 이렇게 써 붙였어. \"손님, 여기서 즐겁게 지내시오. 여기서 최고의 선은 쾌락이오.\""},
+  {id:'w47',k:"soc",kind:'ans',q:"내가 사형 선고를 받고 마신 독은 어떤 식물로 만들었을까?",a:["독당근", "독미나리", "헴록", "햄록"],ok:"독당근. 다리부터 차가워졌대. 마지막까지 친구들이랑 이야기했지."},
+  {id:'w48',k:"nie",kind:'ans',q:"사르트르는 \"인간은 ○○을 선고받았다\"고 했어. 피할 수 없는 그것.",a:["자유"],ok:"자유. 고르지 않는 것도 고른 거래. 핑계 댈 곳이 없다는 뜻이야."},
+  {id:'w49',k:"epi",kind:'ans',q:"카뮈가 \"행복하다고 상상해야 한다\"고 한, 영원히 바위를 밀어 올리는 신화 속 인물은?",a:["시시포스", "시지프", "시지프스", "시지포스"],ok:"시시포스. 바위는 또 굴러떨어져. 그래도 다시 내려가는 그 발걸음이 그의 것이래."},
+  {id:'w50',k:"soc",kind:'ans',q:"칸트가 평생 거의 떠나지 않은 고향 도시는? 지금은 러시아 땅이야.",a:["쾨니히스베르크", "칼리닌그라드"],ok:"쾨니히스베르크. 멀리 안 가도 생각은 끝까지 갈 수 있어."},
+  {id:'w51',k:"dio",kind:'ans',q:"\"내일 세상이 멸망해도 나는 오늘 한 그루의 ○○나무를 심겠다.\" 스피노자가 했다고 알려졌지만, 사실 출처가 불분명한 말이야.",a:["사과", "사과나무"],ok:"사과나무. 누가 했든 좋은 말이지. 그래도 출처는 따져 봐야 해. 그게 철학이야."},
+  {id:'w52',k:"nie",kind:'ans',q:"나는 작곡도 했어. 한때 아버지처럼 따르다가 등을 돌린 작곡가는?",a:["바그너", "리하르트바그너"],ok:"바그너. 존경하는 사람과 헤어지는 것도 내가 되는 과정이었어."},
+  {id:'w53',k:"epi",kind:'ans',q:"헤라클레이토스는 \"사람은 같은 ○에 두 번 들어갈 수 없다\"고 했어.",a:["강", "강물", "냇물"],ok:"강. 물도 바뀌고, 들어가는 너도 바뀌니까."},
+  {id:'w54',k:"soc",kind:'ans',q:"최초의 철학자 탈레스는 만물의 근원을 이걸로 봤어. 한 글자.",a:["물"],ok:"물. 틀렸지만, 신화 말고 세상 안에서 답을 찾으려 한 첫 사람이었어."},
+  {id:'w55',k:"dio",kind:'ans',q:"탈레스는 별을 보며 걷다가 어디에 빠졌대? 옆에 있던 하녀가 깔깔 웃었지.",a:["우물", "구덩이", "도랑", "웅덩이"],ok:"우물. 하늘을 아는 사람이 발밑을 모른다고 놀림받았어. 그래도 그는 나중에 올리브 풍년을 맞혀서 큰돈을 벌었어."},
+  {id:'w56',k:"nie",kind:'ans',q:"아우구스티누스가 말했어. \"시간이 무엇인지 아무도 묻지 않으면 나는 안다. 묻는 사람에게 설명하려 하면 나는 ○○○.\"",a:["모른다", "몰라", "모르겠다"],ok:"모른다. 제일 익숙한 게 제일 어려운 질문이야."},
+  {id:'w57',k:"epi",kind:'ans',q:"벤담은 죽은 뒤 자기 몸을 어떻게 해 달라고 했을까? 지금도 런던의 대학에 앉아 있어.",a:["박제", "미라", "전시", "보존", "유리관"],ok:"전시. 옷 입은 채로 유리 상자 안에 앉아 있어. 죽어서도 쓸모 있고 싶었대."},
+  {id:'w58',k:"soc",kind:'ans',q:"『군주론』의 마키아벨리는 \"군주는 사랑받기보다 ○○○의 대상이 되는 편이 안전하다\"고 했어.",a:["두려움", "공포", "무서움"],ok:"두려움. 사랑은 쉽게 변하지만 두려움은 오래간대. 맞는 말일까?"},
+  {id:'w59',k:"dio",kind:'ans',q:"홉스는 나라가 없는 삶을 이렇게 말했어. \"고독하고, 가난하고, 끔찍하고, 잔인하고, 그리고 ○○.\"",a:["짧다", "짧은", "짧고"],ok:"짧다. 그래서 사람들이 규칙을 만들고 나라를 세웠다는 거야."},
+  {id:'w60',k:"nie",kind:'ans',q:"키르케고르가 말한 \"죽음에 이르는 병\"은 뭘까?",a:["절망"],ok:"절망. 자기 자신이 되기를 포기하는 것. 그게 병이래."},
+  {id:'w61',k:"epi",kind:'ans',q:"밀은 \"배부른 돼지보다 배고픈 ○○○○가 낫다\"고 했어.",a:["소크라테스"],ok:"소크라테스. 돼지 얘기라 나도 좀 찔리네. 그래도 내 돼지는 배고픈 소크라테스랑 친해."},
+  {id:'w62',k:"soc",kind:'ans',q:"비트겐슈타인 책의 마지막 문장. \"말할 수 없는 것에 대해서는 ○○해야 한다.\"",a:["침묵"],ok:"침묵. 모르면 말을 줄이는 것. 나는 그래서 묻기만 했어."},
+  {id:'w63',k:"dio",kind:'ans',q:"로크는 갓 태어난 사람의 마음을 아무것도 쓰이지 않은 이것에 빗댔어. \"타불라 라사\"",a:["백지", "빈석판", "석판", "서판", "종이", "빈종이"],ok:"백지. 무엇을 채울지는 살면서 정하는 거야."},
+  {id:'w64',k:"nie",kind:'ans',q:"파스칼은 \"클레오파트라의 ○가 조금만 낮았더라면 세계의 역사가 바뀌었을 것\"이라고 했어.",a:["코"],ok:"코. 큰일은 생각보다 작은 데서 갈려."},
+  {id:'w65',k:"epi",kind:'ans',q:"교육에 관한 책 『에밀』을 쓴 루소는, 정작 자기 아이 다섯을 어디에 맡겼을까?",a:["고아원", "보육원", "보호소"],ok:"고아원. 말과 삶이 다를 수 있다는 걸, 철학자도 보여 줬어."},
+  {id:'w66',k:"soc",kind:'ans',q:"아리스토텔레스는 용기를 무모함과 비겁함 사이의 무엇이라고 했어? 두 글자.",a:["중용"],ok:"중용. 딱 가운데가 아니라 그 상황에 딱 맞는 자리래."},
+  {id:'w67',k:"dio",kind:'ans',q:"마르크스는 종교를 두고 \"인민의 ○○\"이라고 했어.",a:["아편"],ok:"아편. 아픔을 잊게는 해 주지만 아픔의 원인은 그대로라는 뜻이었어."},
+  {id:'w68',k:"nie",kind:'ans',q:"하이데거는 인간을 이렇게 불렀어. \"죽음을 향한 ○○\"",a:["존재", "존재자"],ok:"존재. 끝이 있다는 걸 알아서, 사람은 지금을 고를 수 있어."},
+  {id:'w69',k:"epi",kind:'ans',q:"세네카 형이 가르친 제자였는데, 나중에 세네카에게 스스로 목숨을 끊으라고 명령한 로마 황제는?",a:["네로"],ok:"네로. 제자를 잘못 만난 스승이지. 그래도 세네카는 마지막까지 평온했대."},
+  {id:'w70',k:"soc",kind:'ans',q:"조선의 사단칠정 논쟁. 퇴계 이황과 8년 동안 편지로 토론한 젊은 학자는?",a:["기대승", "고봉", "고봉기대승"],ok:"기대승. 스물여섯 살 많은 대학자에게 끝까지 따져 물었어. 퇴계도 그걸 반겼지."},
+  {id:'w71',k:"dio",kind:'ans',q:"원효는 밤에 목이 말라 어둠 속에서 물을 달게 마셨는데, 아침에 보니 그게 뭐였대?",a:["해골물", "해골", "해골바가지"],ok:"해골물. 물은 그대로인데 마음이 바뀌니 맛이 바뀐 거야. 일체유심조."},
+  {id:'w72',k:"nie",kind:'ans',q:"\"자연은 ○○을 싫어한다.\" 빈 공간은 없다는 뜻으로 오래 쓰인 말이야.",a:["진공", "빈공간", "공백"],ok:"진공. 지금은 진공도 있다는 걸 알아. 오래 믿은 말도 틀릴 수 있어."},
+  {id:'w73',k:"epi",kind:'ans',q:"나는 신 말고 이것이 세상을 이룬다고 봤어. 더 쪼갤 수 없는 작은 알갱이.",a:["원자"],ok:"원자. 2,000년 뒤에 과학이 확인해 줬지. 그러니 신이 벌줄까 무서워할 필요 없어."},
+  {id:'w74',k:"soc",kind:'ans',q:"프로이트는 꿈을 \"무의식으로 가는 ○○\"라고 했어.",a:["왕도", "지름길", "큰길"],ok:"왕도. 꿈은 마음이 낮에 못 한 말을 하는 곳이래."},
+  {id:'w75',k:"dio",kind:'ans',q:"애덤 스미스는 시장이 저절로 굴러가는 걸 \"보이지 않는 ○\"이라고 했어.",a:["손"],ok:"손. 정작 그는 『도덕감정론』부터 쓴 사람이야. 시장 전에 사람을 봤어."},
+  {id:'w76',k:"nie",kind:'ans',q:"내가 말을 끌어안았다는 이야기가 전해지는 도시는?",a:["토리노"],ok:"토리노. 그날 이후로 나는 더 글을 쓰지 못했어. 그래서 그 말이 지금 내 옆에 있는 거야."},
+  {id:'w77',k:"epi",kind:'ans',q:"몽테뉴가 쓴 책 『에세』의 우리말 제목은?",a:["수상록", "에세", "수필"],ok:"수상록. \"나는 무엇을 아는가?\" 그게 그의 질문이었어."},
+  {id:'w78',k:"soc",kind:'ans',q:"나치 전범 재판을 보고 \"악의 평범성\"이라는 말을 쓴 철학자는?",a:["아렌트", "한나아렌트"],ok:"한나 아렌트. 엄청난 악도 생각하지 않는 평범한 사람이 저지를 수 있대."},
+  {id:'w79',k:"dio",kind:'ans',q:"보부아르는 \"여자는 태어나는 것이 아니라 ○○○○ 것이다\"라고 썼어.",a:["만들어지는", "되는", "만들어진다", "만들어지는것"],ok:"만들어지는 것. 태어난 대로가 아니라 살아가며 되는 거래."},
+  {id:'w80',k:"nie",kind:'ans',q:"칸트가 계몽의 표어로 내건 라틴어 \"사페레 아우데\"의 뜻은 \"○○ 알려고 하라\".",a:["감히"],ok:"감히. 남이 대신 생각해 주길 기다리지 말라는 거야."}];
 // book riddles: 『죽음 리허설』. Page numbers are the printed ones
 const BOOK={id:'death',nm:'죽음 리허설',img:'https://eclipse-mindlab.github.io/mindlab/img/book-death.webp',url:'https://product.kyobobook.co.kr/detail/S000221636755'};
 // only someone holding the book can answer: each one is the heading at the top of a printed page
@@ -1068,6 +1107,9 @@ const walkSet=v=>{try{v?localStorage.setItem(WALK_KEY,JSON.stringify(v)):localSt
 const geoDist=(a,b)=>{const r=Math.PI/180,R=6371000,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,x=Math.sin(dl/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
 const geoNow=()=>new Promise((ok,no)=>{if(!navigator.geolocation)return no(new Error('none'));navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),no,{enableHighAccuracy:true,timeout:15000,maximumAge:0});});
 let ridOpenBook=false;
+const oilMax=()=>5+(S.log&&S.log[today()]?3:0)+(S.talkPost===today()?2:0);
+const oilUsed=()=>S.oil&&S.oil.d===today()?S.oil.n:0;
+const oilLeft=()=>Math.max(0,oilMax()-oilUsed());
 function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
   let body='';
   if(st)body=`<p class="mok">"${R.ok}"</p>`;
@@ -1085,14 +1127,21 @@ function drawRiddles(){if(S.intro<2||S.pd<2)return '';
   const rank=R=>((S.ridNo||{})[R.id]?2:0)+(now(R)?0:1);
   // answer riddles run on one after another; riddles you do with your body or the sky keep two of their own
   const open=worldOpen().filter(R=>!ridDone(R.id)),quick=open.filter(R=>R.kind==='ans').slice(0,3),acts=open.filter(R=>R.kind!=='ans').sort((a,b)=>rank(a)-rank(b)),actNow=acts.filter(R=>rank(R)===0).slice(0,2),wait=acts.filter(R=>rank(R)>0).slice(0,4);
-  let h=`<h3 class="bh"><img class="bhi" src="${A('ui_riddle')}" alt="">수수께끼<small>${worldSolved()}개 풀었어요</small></h3>`;
+  const om=oilMax(),ou=oilUsed(),ol=oilLeft();
+  let h=`<h3 class="bh"><img class="bhi" src="${A('ui_riddle')}" alt="">수수께끼<small>${worldSolved()}개 풀었어요</small></h3>
+    <div class="oil" aria-label="오늘 등불 ${ol}/${om}"><span>오늘 등불</span><i>${Array.from({length:10},(_,i)=>`<b class="${i<ou?'u':i<om?'f':'x'}"></b>`).join('')}</i><em>${ol}</em></div>`;
+  if(!ol){const more=!(S.log&&S.log[today()])?'오늘 미션을 하나 해내면 기름 3방울을 더 줄게.':S.talkPost!==today()&&window.GL?'광장에 오늘 질문 답을 남기면 2방울 더 줄게.':'내일 아침에 다시 가득 채워 줄게.';
+    h+=`<div class="mis"><div class="mh"><i class="face" style="${faceCSS(S.met.dio?'dio':'soc')}"></i><b>${S.met.dio?'디오게네스':'소크라테스'}</b></div><p class="mt">오늘 등불 기름이 다 떨어졌어.</p><p class="mw">${more} 수수께끼는 한꺼번에 풀면 금방 잊어. 하루에 조금씩이 오래 남아.</p></div>`;
+    return h+bookLine();}
   h+=quick.length?quick.map(R=>ridCard(R)).join(''):'';
   if(actNow.length)h+=`<p class="bsh">직접 해 보는 수수께끼</p>`+actNow.map(R=>ridCard(R)).join('');
   if(wait.length)h+=`<details class="rwait"><summary>때를 기다리는 수수께끼 ${wait.length}개</summary>${wait.map(R=>ridCard(R)).join('')}</details>`;
   if(!open.length)h+=`<p class="mempty">지금 있는 수수께끼를 다 풀었어요. 새 수수께끼가 곧 와요.</p>`;
+  h+=bookLine();
   const nx=PETS.find(P=>P.at&&!(S.pets||{})[P.id]);if(nx&&PET_ART)h+=`<p class="mw">${nx.at-worldSolved()}개 더 풀면 새 친구가 와요.</p>`;
   return h;}
-function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
+const bookLine=()=>PET_ART?`<p class="mw bkl"><button class="lnk" type="button" data-openpatch="1">『${BOOK.nm}』을 갖고 있다면, 책 속 암호</button></p>`:'';
+function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();if(!book)S.oil={d:today(),n:oilUsed()+1};const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
   const n=worldSolved(),bs=bookSolved(),gifts=[];
   PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
   DECO.forEach(D=>{if((S.deco||{})[D.id])return;if(D.book&&bs>=D.book){S.deco=S.deco||{};S.deco[D.id]=today();gifts.push(D);}});
@@ -1105,7 +1154,7 @@ const inPatch=()=>$('patch')&&!$('patch').hidden;
 const ridMsg=t=>{const m=$(inPatch()?'pMsg':'bMsg');if(m)m.textContent=t||'';};
 const ridRedraw=t=>{if(inPatch())drawPatch(t);else drawBoard(t);};
 function ridWrong(el,msg){sfx.no&&sfx.no();buzz([40,40,40]);if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}ridMsg(msg||'아니야. 다시 봐.');}
-function wireRiddles(L){L=L||$('bList');const find=id=>RID.find(R=>R.id===id)||RIDB.find(R=>R.id===id),isB=id=>id[0]==='b';
+function wireRiddles(L){L=L||$('bList');L.querySelectorAll('[data-openpatch]').forEach(b=>b.onclick=()=>{closeBoard();openPatch();});const find=id=>RID.find(R=>R.id===id)||RIDB.find(R=>R.id===id),isB=id=>id[0]==='b';
   L.querySelectorAll('[data-rgo]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.rgo),inp=L.querySelector(`[data-rtx="${R.id}"]`);if(!inp.value.trim())return;
     if(ridOk(R,inp.value))ridSolve(R,isB(R.id));else ridWrong(L.querySelector(`[data-rcard="${R.id}"]`),isB(R.id)?`${R.p}쪽을 다시 봐.`:'아니야. 다시 봐.');});
   L.querySelectorAll('[data-rtx]').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')L.querySelector(`[data-rgo="${i.dataset.rtx}"]`).click();});
@@ -1708,7 +1757,7 @@ async function renderTalk(el) {
     if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
       el.querySelector('#tGo').onclick = async () => { const t = await cleanText(tx.value); if (!t) return;
         try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
-          S.qlog = S.qlog || {}; S.qlog[day] = 1; save(); sfx.stamp(); buzz([20, 30, 40]);
+          S.qlog = S.qlog || {}; S.qlog[day] = 1; S.talkPost = day; save(); sfx.stamp(); buzz([20, 30, 40]);
           talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
         catch (e) { toast('남기지 못했어요. 잠시 뒤에 다시 해 주세요'); } }; }
     el.querySelectorAll('[data-th]').forEach(x => x.onclick = async () => { const id = x.dataset.th; sfx.boop();
