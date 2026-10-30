@@ -1786,7 +1786,7 @@ function paintApp() {
   if (q('apSave')) q('apSave').onclick = async () => { sfx.boop(); if (await GL.login()) { toast('정원을 저장했어요'); paintApp(); } };
   if (q('apGroup')) q('apGroup').onclick = () => { S.appStep = Math.max(st, 1); save(); setTimeout(paintApp, 400); };
   if (q('apStore')) q('apStore').onclick = () => { S.appStep = 2; openStore(); };
-  if (q('apJoin')) q('apJoin').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('베타 테스터 신청을 받았어요'); paintApp(); } };
+  if (q('apJoin')) q('apJoin').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast(S.betaTester ? '이미 베타 테스터로 등록돼 있어요' : '베타 테스터 신청을 받았어요'); paintApp(); } };
   if (q('apIos')) q('apIos').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('아이폰 앱이 나오면 메일로 알려 드려요'); paintApp(); } };
   if (q('apCopy')) q('apCopy').onclick = async () => { try { await navigator.clipboard.writeText('https://' + SHORT); toast('주소를 복사했어요'); } catch (e) { toast(SHORT); } };
 }
@@ -1805,7 +1805,9 @@ function betaCard() {
 }
 async function betaJoin(el) {
   if (!me) return false;
-  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; S.betaAt = Date.now(); testerP = null; save(); sfx.buy(); if (el) render(el); return true; }
+  // someone who already signed up keeps their original date, so they stay registered
+  try { const old = await F.getDoc(F.doc(db, 'gardenBeta', me.uid)).catch(() => null); if (old && old.exists()) { S.beta = 1; testerP = null; const t = await isTester(); if (t) { S.betaTester = 1; } save(); if (el) render(el); return true; }
+    await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; S.betaAt = Date.now(); testerP = null; save(); sfx.buy(); if (el) render(el); return true; }
   catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
 
