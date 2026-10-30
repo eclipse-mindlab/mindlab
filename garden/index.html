@@ -209,6 +209,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
+.ta .who .soon{margin-left:auto;font-size:11.5px;color:#8b82a8}
 .ta .act .sp{flex:1}
 .rbt{appearance:none;border:0;background:none;padding:2px 0;font-family:var(--hand);font-size:14px;color:#5b3fd0;cursor:pointer;display:flex;align-items:center;gap:6px}
 .rbt.on{color:var(--ink)}
@@ -693,7 +694,7 @@ const TA=[
   '많을 필요 없어. 대낮에 등불 들고 찾아도 한 명 찾기 힘들거든.',
   '나는 책 한 권 안 썼어. 질문만 남겼지. 그걸 플라톤이 받아 적었어.',
   '지금 괴롭지 않은지 봐. 괴롭지 않으면 이미 즐거운 거야.'];
-const philAnswer=(b=0)=>{const [k]=talkQ(b);return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}</div><p>${talkA(b)}</p></div>`;};
+const philAnswer=(b=0)=>{const [k]=talkQ(b);return `<div class="ta phil"><div class="who"><b>${short(k)}의 답</b>${SCHOOL[k]?`<span class="hb ${k}">${SCHOOL[k].nm}</span>`:''}${S.met[k]?'':'<span class="soon">곧 정원에 올 친구</span>'}</div><p>${talkA(b)}</p></div>`;};
 const TQ_EPOCH=Date.UTC(2026,9,31);
 const talkN=(b=0)=>{const d=nowD();d.setDate(d.getDate()-b);return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-TQ_EPOCH)/864e5);};
 const talkQ=(b=0)=>{const n=talkN(b);return n<0&&n>=-5?TQ_OLD[n+5]:TQ[((n%TQ.length)+TQ.length)%TQ.length];};
@@ -846,7 +847,7 @@ function fly(fromRect,chipId,then){const c=$(chipId).getBoundingClientRect(),d=d
 // ---------- the loop ----------
 function present(){return KIDS.filter(k=>S.met[k]&&actors[k]&&actors[k].mode!=='barrel');}
 function left(k){return PER_DAY-S.cnt[k];}
-function nextQ(k){const P=PH[k],done=S.asked[k];const pool=P.Q.map((q,i)=>i).filter(i=>!done.includes(i));if(!pool.length){S.asked[k]=[];return 0;}return pool[0];}
+function nextQ(k){const P=PH[k],done=S.asked[k];const pool=P.Q.map((q,i)=>i).filter(i=>!done.includes(i));if(!pool.length){S.asked[k]=[];S.round=S.round||{};S.round[k]=(S.round[k]||0)+1;save();return 0;}return pool[0];}
 function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;if(a.walking){if(!a.idle)return;a.cancel=1;}hop(k);sfx.boop();buzz(12);
   if(pend){if(pend.opts)return;const mine=talking===k,had=pend.hasCb;if(!pend.advance()||had||!mine)return;}
   if(k==='owl')return tapOwl();
@@ -859,8 +860,9 @@ function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;
     if(m&&m.st==='doing'){say(k,`"${M.t}" 하고 있지?`);return;}
     if(window.GL&&!S.talkSeen){S.talkSeen=1;save();say(k,'오늘 내 질문은 끝. 대신 광장에 가 봐. 다른 사람들 대답이 재밌어.',['광장 가기','나중에'],n=>{if(n===0){openBoard();bt='talk';drawBoard();}});return;}
     const I=PH[k].idle;say(k,I[(Date.now()/1000|0)%I.length]);return;}
-  const qi=nextQ(k),Q=PH[k].Q[qi];
-  say(k,Q.q,Q.o.map(o=>o[0]),n=>{S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;S.qlog=S.qlog||{};S.qlog[today()]=1;save();
+  const qi=nextQ(k),Q=PH[k].Q[qi],pk=(S.picks||{})[k+qi],again=(S.round||{})[k];
+  const lead=again?(pk!=null&&Q.o[pk]?`저번엔 "${Q.o[pk][0]}"라고 했어. 지금은?\n`:'전에도 물었던 건데, 지금은 어때?\n'):'';
+  say(k,lead+Q.q,Q.o.map(o=>o[0]),n=>{S.picks=S.picks||{};S.picks[k+qi]=n;S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;S.qlog=S.qlog||{};S.qlog[today()]=1;save();
     setTimeout(()=>say(k,Q.o[n][1],null,()=>{giveDrop(k);
       const rest=()=>{if(left(k)<=0){if(newMis(k)){refreshNote(k);setTimeout(()=>{if(!pend&&!clrOn())say(k,'질문은 오늘 여기까지. 대신 게시판에 미션 하나 붙여 놨어.',null,()=>wiggleBoard());},1300);}else setTimeout(()=>sleepIfDone(k),900);}};
       if(!levelUp(k,rest))rest();}),180);});}
