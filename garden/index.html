@@ -235,7 +235,8 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .sc b{font-family:var(--hand);font-weight:400;font-size:17px}.sc span{font-size:12px;line-height:1.35;color:#5d5478;word-break:keep-all;text-align:center}
 .sc.on{background:#fff1c2}
 .scr{display:grid;grid-template-columns:38px 70px 1fr 34px;align-items:center;gap:8px;margin-top:6px}
-.scr b{font-family:var(--hand);font-weight:400;font-size:15px}.scr em{font-style:normal;font-family:var(--hand);font-size:16px;text-align:right}
+.scr b{font-family:var(--hand);font-weight:400;font-size:15px}
+.scr b small{display:block;font-family:var(--body,inherit);font-size:11.5px;color:#8b84a6;line-height:1.1}.scr em{font-style:normal;font-family:var(--hand);font-size:16px;text-align:right}
 .scr .face{width:34px;height:34px;background-size:68px 90px;background-position:-17px -20px}
 .scr.me .rbar i{background:var(--gold)}.scr.me b{color:#8a5a33}
 .ccard.quiz{gap:10px}.qk{height:110px;width:auto}
@@ -1643,11 +1644,11 @@ function schoolCard(mine) {
   }
   const sch = (lgCache && lgCache.sch) || {};
   const rows = Object.keys(SCHOOL).map(k => { const x = sch[k] || {c: 0, t: 0}; const t = x.t + (k === S.school ? mine - (lgCache.mineAt || 0) : 0);
-    return {k, avg: x.c ? t / x.c : 0}; }).sort((a, b) => b.avg - a.avg);
+    return {k, c: x.c, avg: x.c ? t / x.c : 0}; }).sort((a, b) => b.avg - a.avg);
   const mx = Math.max(...rows.map(r => r.avg), 1), my = rows.findIndex(r => r.k === S.school) + 1;
   return `<div class="mis"><div class="mh"><b>학파 대항전</b><span class="lv">우리 학파 ${my}위</span></div>
-    ${rows.map(r => `<div class="scr${r.k === S.school ? ' me' : ''}">${face(r.k)}<b>${SCHOOL[r.k].nm}</b><div class="rbar"><i style="width:${r.avg / mx * 100}%"></i></div><em>${r.avg.toFixed(1)}</em></div>`).join('')}
-    <p class="mw">${SCHOOL[S.school].nm}: ${SCHOOL[S.school].line}${S.schoolLock === weekId() ? '' : ' · <button class="lnk" type="button" id="scChange">학파 바꾸기</button>'}</p></div>`;
+    ${rows.map(r => `<div class="scr${r.k === S.school ? ' me' : ''}">${face(r.k)}<b>${SCHOOL[r.k].nm}<small>${r.c}명</small></b><div class="rbar"><i style="width:${r.avg / mx * 100}%"></i></div><em>${r.avg.toFixed(1)}</em></div>`).join('')}
+    <p class="mw">${SCHOOL[S.school].nm}: ${SCHOOL[S.school].line}${S.schoolLock === weekId() ? '<br>학파는 다음 주 월요일부터 바꿀 수 있어요.' : ' · <button class="lnk" type="button" id="scChange">학파 바꾸기</button>'}<br>점수는 학파 사람들의 평균이라, 사람이 적은 학파도 이길 수 있어요.</p></div>`;
 }
 async function postScore() {
   if (!me || !S.lname) return;
@@ -1689,7 +1690,8 @@ async function render(el) {
       // the school match: members and average points per school, four small aggregate reads
       const sch = {};
       for (const k of Object.keys(SCHOOL)) {
-        try { const a = await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')}); const d = a.data(); sch[k] = {c: d.c || 0, t: d.t || 0}; } catch (e) { sch[k] = {c: 0, t: 0}; }
+        try { const a = await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')}); const d = a.data(); sch[k] = {c: d.c || 0, t: d.t || 0}; }
+        catch (e) { try { const a = await F.getCountFromServer(F.query(col, F.where('sc', '==', k))); sch[k] = {c: a.data().count || 0, t: 0}; } catch (e2) { sch[k] = {c: 0, t: 0}; } }
       }
       lgCache = {wk, t: Date.now(), rows: got, above: {}, sch, mineAt: mine};
     }
