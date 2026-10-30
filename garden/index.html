@@ -72,6 +72,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 
 .hl{display:flex;gap:8px;align-items:center}
 .appb{pointer-events:auto;appearance:none;position:relative;height:40px;padding:0 13px;border:2.5px solid #000;border-radius:999px;background:var(--gold);color:var(--ink);font-family:var(--hand);font-size:15.5px;white-space:nowrap;cursor:pointer;box-shadow:0 3px 0 #000}
+.appb.flt{position:absolute;z-index:6;right:max(12px,env(safe-area-inset-right,0px));top:calc(40% + 68px)}
 .appb:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
 .appb.new::after{content:'';position:absolute;top:-3px;right:-2px;width:11px;height:11px;border-radius:50%;background:#ff5d73;border:2px solid #000;animation:apdot 1.6s ease-in-out infinite}
 @keyframes apdot{50%{transform:scale(1.25)}}
@@ -295,12 +296,12 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
   <div class="hud">
     <div class="hl"><div class="chip" id="dropChip" aria-live="polite"><img src="a/drop.webp" alt="물방울"><span id="dropN">0</span></div>
     <div class="chip" id="fruitChip" aria-live="polite"><img src="a/fruit.webp" alt="열매"><span id="fruitN">0</span></div></div>
-    <div class="hl"><button class="appb" type="button" id="appBtn" hidden>앱 받기</button><button class="icon pbtn" type="button" id="patchBtn" aria-label="텃밭" hidden><img src="a/deco_cabbage.webp" alt=""></button><button class="icon" type="button" id="wardBtn" aria-label="옷장"><img src="a/ui_hanger.webp" alt=""></button><button class="icon" type="button" id="mute" aria-label="소리 끄기"><img id="muteImg" src="a/ui_sound_on.webp" alt=""></button></div>
+    <div class="hl"><button class="icon pbtn" type="button" id="patchBtn" aria-label="텃밭" hidden><img src="a/deco_cabbage.webp" alt=""></button><button class="icon" type="button" id="wardBtn" aria-label="옷장"><img src="a/ui_hanger.webp" alt=""></button><button class="icon" type="button" id="mute" aria-label="소리 끄기"><img id="muteImg" src="a/ui_sound_on.webp" alt=""></button></div>
   </div>
   <button class="doing" type="button" id="doingPill" hidden></button>
   <div class="devs"><button class="dev" type="button" id="dev2">시험용 · 해 질 녘</button><button class="dev" type="button" id="dev">시험용 · 하루 넘기기</button></div>
   <div class="ward" id="board" hidden><div class="wsheet" role="dialog" aria-label="미션 게시판"><div class="whead"><b>게시판</b><span class="bsub" id="bSub"></span><button class="icon wx" type="button" id="bClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="bstats" id="bStats"></div><div class="wtabs" id="bTabs"></div><p class="wmsg" id="bMsg"></p><div class="blist" id="bList"></div></div></div>
-  <button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
+  <button class="appb flt" type="button" id="appBtn" hidden>앱 받기</button><button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
   <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><p class="clkhint" id="clkHint"></p><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
   <div class="ward" id="patch" hidden><div class="wsheet" role="dialog" aria-label="텃밭"><div class="whead"><b>텃밭</b><span class="bsub">책에서 온 것들</span><button class="icon wx" type="button" id="pClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div id="pBody" class="blist"></div></div></div>
   <div class="ward" id="ward" hidden><div class="wsheet" role="dialog" aria-label="옷장"><div class="whead"><b>옷장</b><span class="wfruit" id="wFruit"></span><button class="icon wx" type="button" id="wClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="wtabs" id="wTabs"></div><div class="wstage"><svg id="wPrev" viewBox="-52 -126 104 132" aria-hidden="true"></svg></div><p class="wmsg" id="wMsg"></p><div class="wgrid" id="wGrid"></div></div></div>
@@ -1536,7 +1537,7 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
-  $('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(window.GL&&GL.appSheet){closeBub();ac();sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
+  $('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
   $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
@@ -1571,7 +1572,7 @@ async function load() {
     const a = app.initializeApp(CFG);
     auth = NATIVE ? au.initializeAuth(a, {persistence: au.indexedDBLocalPersistence}) : au.getAuth(a);
     db = fs.getFirestore(a);
-    au.onAuthStateChanged(auth, u => { authKnown = true; me = u && !u.isAnonymous ? u : null; if (me) pull(); repaint(); });
+    au.onAuthStateChanged(auth, u => { authKnown = true; me = u && !u.isAnonymous ? u : null; if (me) pull(); testerP = null; if (me && !NATIVE && OS === 'android' && !S.betaTester) isTester().then(t => { if (t) { S.betaTester = 1; save(); } }); repaint(); });
     if (!NATIVE) au.getRedirectResult(auth).catch(() => {});
     ready = true;
   } catch (e) { failed = true; }
@@ -1759,6 +1760,7 @@ function appSheet() {
   }
   if (!S.appSeen) { S.appSeen = 1; save(); hud(); }
   appEl.hidden = false; paintApp();
+  isTester().then(t => { if (t && !S.betaTester) { S.betaTester = 1; save(); } if (!appEl.hidden) paintApp(); });
 }
 function closeApp() { if (appEl && !appEl.hidden) { appEl.hidden = true; sfx.boop(); } }
 function paintApp() {
@@ -1766,11 +1768,13 @@ function paintApp() {
   let body;
   if (OS === 'android' && INAPP) body = `<p class="mw">이 창은 ${KAKAO ? '카카오톡' : '앱'} 안의 브라우저라서 구글 로그인과 플레이 스토어 가입이 막혀 있어요. 폰 브라우저로 옮기면 바로 받을 수 있어요. 지금 정원도 그대로 따라가요.</p>
     <div class="mb"><button class="opt" type="button" id="apOut">폰 브라우저에서 이어 하기</button></div>`;
-  else if (OS === 'android') body = `<p class="mw">앱에서는 아침마다 미션 알림이 오고, 연속 기록이 끊기기 전에 한 번 더 알려 줘요. 앱에서는 열매 5개도 선물로 드려요.</p>
-    ${step(1, '정원 챙기기', me ? '완료' : '', me ? `${esc(me.email || '')} 에 저장돼 있어요. 앱에서 같은 계정으로 불러오면 그대로 이어져요.` : '구글로 저장해 두면 앱에서 지금 정원을 그대로 불러올 수 있어요.', me ? '' : '<button class="opt alt" type="button" id="apSave">구글로 저장</button>')}
-    ${step(2, '테스터 모임 들어가기', st >= 1 ? '눌렀어요' : '', '구글 그룹 페이지가 열리면 "그룹 가입"을 눌러 주세요. 폰의 플레이 스토어와 같은 구글 계정이어야 해요.', `<a class="opt" id="apGroup" href="${GROUP}" target="_blank" rel="noopener">모임 들어가기</a>`)}
-    ${STORE_OPEN ? step(3, '플레이 스토어에서 받기', st >= 2 ? '눌렀어요' : '', '"테스터 되기"를 누르고, 그 아래 "Google Play에서 다운로드"를 누르면 설치돼요.', `<a class="opt" id="apStore" href="${OPTIN}" target="_blank" rel="noopener">받으러 가기</a>`)
-      : step(3, '플레이 스토어에서 받기', '', '지금 구글이 앱을 검토하고 있어요. 열리는 날 모임 메일로 설치 링크를 보내 드려요.', '<button class="opt" type="button" disabled>곧 열려요</button>')}`;
+  else if (OS === 'android') {
+    const reg = S.betaTester, mail = me && me.email ? `<p class="mw">${esc(me.email)}</p>` : '';
+    if (reg) body = `<div class="mis ok"><p class="mt">베타 테스터로 등록돼 있어요</p>${mail}<p class="mw">플레이 스토어에서 "테스터 되기"를 누르고, 그 아래 "Google Play에서 다운로드"를 누르면 설치돼요. 앱에서 같은 구글 계정으로 로그인하면 이 정원이 그대로 이어져요.</p><div class="mb"><button class="opt" type="button" id="apStore">설치하러 가기</button></div></div>`;
+    else if (S.beta) body = `<div class="mis"><p class="mt">베타 테스터로 등록하고 있어요</p>${mail}<p class="mw">보통 하루 안에 열려요. 열리면 이 버튼을 눌렀을 때 바로 설치 화면으로 가요.</p><div class="mb"><button class="opt alt" type="button" id="apStore">먼저 눌러 보기</button></div><p class="mw" style="font-size:13px">"사용할 수 없음"이 뜨면 아직 등록 전이에요. 조금 뒤에 다시 눌러 주세요.</p></div>`;
+    else body = `<p class="mw">앱에서는 아침마다 미션 알림이 오고, 연속 기록이 끊기기 전에 한 번 더 알려 줘요. 앱에서는 열매 5개도 선물로 드려요.</p>
+    <div class="mis"><p class="mt">지금은 베타 테스트 중이에요</p><p class="mw">구글 계정으로 베타 테스터가 되면, 그 계정으로 설치할 수 있게 등록해 드려요. 지금 정원도 같은 계정에 저장돼서 앱에서 그대로 이어져요.</p><div class="mb"><button class="opt" type="button" id="apJoin">베타 테스터 되기</button></div></div>`;
+  }
   else if (OS === 'ios') body = `<p class="mw">아이폰 앱은 아직 준비 중이에요. 나오면 메일로 알려 드릴게요. 그때까지는 사파리 아래쪽 공유 버튼에서 "홈 화면에 추가"를 누르면 앱처럼 열 수 있어요.</p>
     ${S.beta ? '<div class="mis ok"><p class="mt">알림 신청해 두었어요</p></div>' : `<div class="mb"><button class="opt" type="button" id="apIos">아이폰 앱 나오면 알려 주세요</button></div>`}`;
   else body = `<p class="mw">앱은 안드로이드 폰에서 받을 수 있어요. 폰에서 이 주소를 열고 "앱 받기"를 눌러 주세요. 컴퓨터에서 저장한 정원은 폰에서 같은 구글 계정으로 불러오면 이어져요.</p>
@@ -1781,7 +1785,8 @@ function paintApp() {
   if (q('apOut')) q('apOut').onclick = () => { if (!openOut(carryUrl('app'))) toast('메뉴에서 "다른 브라우저로 열기"를 눌러 주세요'); };
   if (q('apSave')) q('apSave').onclick = async () => { sfx.boop(); if (await GL.login()) { toast('정원을 저장했어요'); paintApp(); } };
   if (q('apGroup')) q('apGroup').onclick = () => { S.appStep = Math.max(st, 1); save(); setTimeout(paintApp, 400); };
-  if (q('apStore')) q('apStore').onclick = () => { S.appStep = 2; save(); setTimeout(paintApp, 400); };
+  if (q('apStore')) q('apStore').onclick = () => { S.appStep = 2; openStore(); };
+  if (q('apJoin')) q('apJoin').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('베타 테스터 신청을 받았어요'); paintApp(); } };
   if (q('apIos')) q('apIos').onclick = async () => { sfx.boop(); if (!me && !(await GL.login())) return; if (await betaJoin(null)) { toast('아이폰 앱이 나오면 메일로 알려 드려요'); paintApp(); } };
   if (q('apCopy')) q('apCopy').onclick = async () => { try { await navigator.clipboard.writeText('https://' + SHORT); toast('주소를 복사했어요'); } catch (e) { toast(SHORT); } };
 }
@@ -1789,7 +1794,7 @@ function paintApp() {
 let testerP = null;
 function isTester() {
   if (NATIVE || !me || OS !== 'android') return Promise.resolve(false);
-  if (!testerP) testerP = F.getDoc(F.doc(db, 'gardenBeta', me.uid)).then(d => d.exists()).catch(() => false);
+  if (!testerP) testerP = F.getDoc(F.doc(db, 'gardenBeta', me.uid)).then(d => { if (!d.exists()) return false; if (!S.beta) { S.beta = 1; save(); } const at = d.data().at, ms = at && at.toMillis ? at.toMillis() : typeof at === 'number' ? at : 0; return !ms || Date.now() - ms > 20 * 3600e3; }).catch(() => false);
   return testerP;
 }
 function openStore() { sfx.boop(); S.appGot = 1; save(); if (INAPP) { if (!openOut(OPTIN)) toast('메뉴에서 "다른 브라우저로 열기"를 눌러 주세요'); } else window.open(OPTIN, '_blank', 'noopener'); }
@@ -1800,7 +1805,7 @@ function betaCard() {
 }
 async function betaJoin(el) {
   if (!me) return false;
-  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; save(); sfx.buy(); if (el) render(el); return true; }
+  try { await F.setDoc(F.doc(db, 'gardenBeta', me.uid), {email: me.email || '', name: S.lname || '', os: OS, at: F.serverTimestamp()}); S.beta = 1; S.betaAt = Date.now(); testerP = null; save(); sfx.buy(); if (el) render(el); return true; }
   catch (e) { toast('신청하지 못했어요. 잠시 뒤에 다시 해 주세요'); return false; }
 }
 
@@ -1967,7 +1972,7 @@ window.GL = {render, renderTalk, ask, notifState, timer, onMission: () => { post
     const col = F.collection(db, 'gardenLeague', weekDays(1)[0], 'p'); let best = null;
     for (const k of Object.keys(SCHOOL)) { try { const a = (await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('n')})).data(); const avg = a.c ? a.t / a.c : 0; if (a.c && (!best || avg > best.avg)) best = {k, avg}; } catch (e) {} }
     return best ? {win: best.k} : null; }, wantsBeta: () => !NATIVE && OS === 'android' && !S.beta,
-  appSheet, offerApp: false, openStore, tester: async () => { const t = await isTester(); if (t && !S.betaTester) { S.betaTester = 1; save(); } return t; }, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => false};
+  appSheet, offerApp: !NATIVE && OS === 'android', openStore, tester: async () => { const t = await isTester(); if (t && !S.betaTester) { S.betaTester = 1; save(); } return t; }, newReplies, talkView: v => { tView = v; talkCache = null; }, inapp: INAPP, out: (why, cancel) => outToBrowser(why, '', cancel), wantsApp: () => !NATIVE && OS === 'android' && !S.beta && !S.appGot};
 const loading = load();
 if (/[#&]app\b/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} setTimeout(() => { if (S.intro >= 2) appSheet(); }, 1800); }
 if (window.hud) hud();
