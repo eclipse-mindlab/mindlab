@@ -1105,7 +1105,7 @@ const DECO=[{id:'cabbage',nm:'몽테뉴의 양배추 밭',book:4,story:'몽테�
 const rnorm=t=>String(t||'').toLowerCase().replace(/[\s.,!?'"“”‘’·~\-『』「」()]/g,'').replace(/(이요|예요|에요|이야|요|야|입니다|이다|다)$/,'');
 const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&(R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);})||(R.inc||[]).some(w=>v.includes(w)&&v.length<=12));};
 const ridDone=id=>S.rid&&S.rid[id];
-const worldOpen=()=>S.intro>=2&&S.pd>=2?RID:[];
+const worldOpen=()=>S.intro>=2?RID:[];
 const worldSolved=()=>RID.filter(R=>S.rid&&S.rid[R.id]&&S.rid[R.id]!=='skip').length;
 const bookSolved=()=>RIDB.filter(R=>ridDone(R.id)).length;
 // the sky over Korea: sunrise and sunset (Seoul), and how old the moon is
@@ -1155,7 +1155,7 @@ function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
   else if(R.kind==='down')body=`<div class="mb"><button class="opt" type="button" data-down="${R.id}">통에 들어가기</button></div>`;
   else body=`<div class="rin"><input type="text" maxlength="20" placeholder="정답" data-rtx="${R.id}"><button class="opt" type="button" data-rgo="${R.id}">확인</button></div>`;
   return `<div class="mis rid${st?' done':''}" data-rcard="${R.id}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}</b><span class="rw"><img src="${A('fruit')}" alt="">${book?5:3}</span></div><p class="mt">${R.q}</p>${body}</div>`;}
-function drawRiddles(){if(S.intro<2||S.pd<2)return '';
+function drawRiddles(){if(S.intro<2)return '';
   const now=R=>R.kind==='moon'?moonState().can:R.kind==='sunset'||R.kind==='sunrise'?sunState(R.kind).can:R.kind==='clock'?clockState(R).can:R.kind==='noon'?noonState().can:R.kind==='dusk2'?starState().can:R.kind==='early'?earlyState(R).can:true;
   const rank=R=>((S.ridNo||{})[R.id]?2:0)+(now(R)?0:1);
   // answer riddles run on one after another; riddles you do with your body or the sky keep two of their own
