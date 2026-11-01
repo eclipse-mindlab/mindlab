@@ -551,7 +551,7 @@ const CARD={
   soc:[['신탁','델포이 신전에서 "소크라테스보다 지혜로운 사람은 없다"는 신탁이 나왔어요. 믿기지 않았던 그는 지혜롭다는 사람들을 찾아다니며 물었어요. 알아낸 건 하나였어요. 다들 모르면서 안다고 믿는다는 것.'],
        ['책을 안 쓴 이유','소크라테스는 책을 한 권도 안 썼어요. 글은 물어봐도 늘 같은 말만 한다고 봤거든요. 우리가 아는 그의 말은 제자 플라톤이 남긴 거예요.'],
        ['맨발의 병사','전쟁터에 나가서도 맨발로 얼음 위를 걸었어요. 신발 신은 병사들보다 잘 걸었대요. 남들 눈에 어떻게 보이든 신경 쓰지 않았어요.'],
-       ['마지막 선택','일흔 살에 젊은이를 망치고 신을 믿지 않는다는 죄로 사형 선고를 받았어요. 친구가 탈옥을 준비했지만 거절했어요. 그냥 사는 게 아니라 잘 사는 게 중요하다면서요.']],
+       ['마지막 선택','일흔 살에 젊은이를 망치고 아테네의 신을 믿지 않는다는 죄로 사형 선고를 받았어요. 친구가 탈옥을 준비했지만 거절했어요. 그냥 사는 게 아니라 잘 사는 게 중요하다면서요.']],
   nie:[['스물네 살 교수','니체는 박사 학위도 없이 스물네 살에 대학 교수가 됐어요. 스승이 이런 학생은 처음 본다며 추천했거든요.'],
        ['걷는 철학자','몸이 아파 서른넷에 교수를 그만뒀어요. 그 뒤로 산골 마을을 옮겨 다니며 하루 몇 시간씩 걸었어요. "걸으면서 떠오른 생각만 가치가 있다"고 했죠.'],
        ['마흔 부','『차라투스트라는 이렇게 말했다』 마지막 권은 출판사를 못 구해서 자기 돈으로 마흔 부만 찍었어요. 알아본 사람은 거의 없었어요. 지금은 누구나 아는 책이 됐어요.'],
@@ -1029,7 +1029,7 @@ let bt='mis';
 function drawSchool(){const k=S.school;
   if(!k)return `<div class="mis"><p class="mt">내 학파</p><p class="mw">이성파, 쾌락파, 평정파, 실존파. 질문 네 개면 내가 어디인지 알 수 있어요.</p><div class="mb"><button class="opt" type="button" id="sqz">학파 찾기</button></div></div>`;
   return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${SCHOOL[k].nm}</b></div><p class="mt">"${SCHOOL[k].line}"</p><p class="mw">같은 학파: ${SCHOOL[k].mem}</p></div>`;}
-const GIFT_P=2,GIFT_N=3;const giftLeft=k=>GIFT_N-((S.gift&&S.gift.d===today()&&S.gift[k])||0);
+const GIFT_P=5,GIFT_N=3;const giftLeft=k=>GIFT_N-((S.gift&&S.gift.d===today()&&S.gift[k])||0);
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
   return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
     return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
