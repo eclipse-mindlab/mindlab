@@ -1691,7 +1691,11 @@ async function pull() {
     pulled = true;
     if (c && progress(c) > progress(S)) {
       try { localStorage.setItem('eclipse_kid_garden_backup', JSON.stringify(S)); } catch (e) {}
+      // the toy's counts live only in the toy: a fuller garden from another device must not wipe them
+      const kc = S.clk || {}, kt = S.tapW;
       Object.keys(S).forEach(k => delete S[k]); Object.assign(S, c);
+      S.clk = S.clk || {}; for (const k in kc) S.clk[k] = Math.max(S.clk[k] || 0, kc[k] || 0);
+      if (kt && (!S.tapW || S.tapW.wk !== kt.wk || S.tapW.n < kt.n) && (!S.tapW || kt.wk >= S.tapW.wk)) S.tapW = kt;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
       location.reload(); return;
     }
