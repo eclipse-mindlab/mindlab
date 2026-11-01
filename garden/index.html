@@ -154,6 +154,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .appb.flt{top:calc(40% + 86px)!important}
 .hint{position:absolute;z-index:5;width:0;height:0;pointer-events:none;border-left:13px solid transparent;border-right:13px solid transparent;border-top:18px solid var(--gold);filter:drop-shadow(0 2px 0 #000) drop-shadow(0 -1px 0 #000);transform:translate(-50%,-100%);animation:hintb 1s ease-in-out infinite}
 @keyframes hintb{50%{margin-top:-8px}}
+.gift img{width:16px;vertical-align:-3px;margin-right:3px}
 .rtz{appearance:none;display:flex;align-items:center;gap:12px;width:100%;margin:6px 0 4px;padding:10px 14px 10px 12px;border:2.5px solid #000;border-radius:16px;background:#fff7dd;color:var(--ink);text-align:left;cursor:pointer;box-shadow:0 3px 0 #000}.rtz img{width:34px;flex:none}.rtz span{flex:1}.rtz b{display:block;font-family:var(--hand);font-weight:400;font-size:16px}.rtz small{display:block;font-size:12.5px;color:#6e6590}.rtz em{font-style:normal;font-size:22px;color:#8a5a33}.clkbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
 .clkbtn.new::after{content:'';position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:#ff5d73;border:2px solid #000;animation:apdot 1.6s ease-in-out infinite}
 .clk{position:absolute;inset:0;z-index:20;background:radial-gradient(120% 80% at 50% 35%,#2a2350 0,#14112a 70%);color:var(--paper);display:flex;flex-direction:column;touch-action:manipulation;-webkit-user-select:none;user-select:none}
@@ -550,7 +551,7 @@ const CARD={
   soc:[['신탁','델포이 신전에서 "소크라테스보다 지혜로운 사람은 없다"는 신탁이 나왔어요. 믿기지 않았던 그는 지혜롭다는 사람들을 찾아다니며 물었어요. 알아낸 건 하나였어요. 다들 모르면서 안다고 믿는다는 것.'],
        ['책을 안 쓴 이유','소크라테스는 책을 한 권도 안 썼어요. 글은 물어봐도 늘 같은 말만 한다고 봤거든요. 우리가 아는 그의 말은 제자 플라톤이 남긴 거예요.'],
        ['맨발의 병사','전쟁터에 나가서도 맨발로 얼음 위를 걸었어요. 신발 신은 병사들보다 잘 걸었대요. 남들 눈에 어떻게 보이든 신경 쓰지 않았어요.'],
-       ['마지막 선택','일흔 살에 젊은이를 망치고 신을 믿지 않는다는 죄로 사형 선고를 받았어요. 친구가 탈옥을 준비했지만 거절했어요. 그냥 사는 게 아니라 잘 사는 게 중요하다면서요.']],
+       ['마지막 선택','일흔 살에 젊은이를 망치고 아테네의 신을 믿지 않는다는 죄로 사형 선고를 받았어요. 친구가 탈옥을 준비했지만 거절했어요. 그냥 사는 게 아니라 잘 사는 게 중요하다면서요.']],
   nie:[['스물네 살 교수','니체는 박사 학위도 없이 스물네 살에 대학 교수가 됐어요. 스승이 이런 학생은 처음 본다며 추천했거든요.'],
        ['걷는 철학자','몸이 아파 서른넷에 교수를 그만뒀어요. 그 뒤로 산골 마을을 옮겨 다니며 하루 몇 시간씩 걸었어요. "걸으면서 떠오른 생각만 가치가 있다"고 했죠.'],
        ['마흔 부','『차라투스트라는 이렇게 말했다』 마지막 권은 출판사를 못 구해서 자기 돈으로 마흔 부만 찍었어요. 알아본 사람은 거의 없었어요. 지금은 누구나 아는 책이 됐어요.'],
@@ -600,6 +601,7 @@ if(S.qv!==6){const prev=S.qv===5?((k,i)=>QV5[k][i]):S.qv===4?((k,i)=>QV4[k][i]):
   KIDS.forEach(k=>{if(Array.isArray(S.asked[k]))S.asked[k]=[...new Set(S.asked[k].map(i=>move(k,i)).filter(i=>i>=0))];});
   if(S.picks){const p={};for(const key in S.picks){const mm=key.match(/^([a-z]+)(\d+)$/);if(mm&&KIDS.includes(mm[1])){const n=move(mm[1],mm[2]);if(n>=0)p[mm[1]+n]=S.picks[key];}else p[key]=S.picks[key];}S.picks=p;}
   S.qv=6;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+if(!S.own2){S.own2={};KIDS.forEach(k=>S.own2[k]=[...(S.own||[])]);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 if(!S.leanInit){S.leanInit=1;const log=[];for(const key in (S.picks||{})){const m=key.match(/^([a-z]+)(\d+)$/);if(!m||!PH[m[1]]||!PH[m[1]].Q[+m[2]])continue;const tg=QTAG[m[1]+'|'+PH[m[1]].Q[+m[2]].q];if(!tg||!(tg[0]||tg[1]))continue;const n=S.picks[key];log.push((tg[n]||'')+'|'+tg.filter(Boolean).join(','));}
   if(log.length){S.leanLog=log.slice(-60);S.leanN=log.length;const hit=LEAN_AT.filter(x=>x<=log.length);S.leanSeen=hit.slice(0,-1);S.leanBack=hit.length?1:0;}try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}if(window.onGardenSave)window.onGardenSave();};
@@ -1027,10 +1029,11 @@ let bt='mis';
 function drawSchool(){const k=S.school;
   if(!k)return `<div class="mis"><p class="mt">내 학파</p><p class="mw">이성파, 쾌락파, 평정파, 실존파. 질문 네 개면 내가 어디인지 알 수 있어요.</p><div class="mb"><button class="opt" type="button" id="sqz">학파 찾기</button></div></div>`;
   return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${SCHOOL[k].nm}</b></div><p class="mt">"${SCHOOL[k].line}"</p><p class="mw">같은 학파: ${SCHOOL[k].mem}</p></div>`;}
+const GIFT_P=5,GIFT_N=3;const giftLeft=k=>GIFT_N-((S.gift&&S.gift.d===today()&&S.gift[k])||0);
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
   return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
     return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
-      <div class="xpbar"><i style="width:${pct}%"></i></div><p class="mw">${hi==null?'가장 높은 단계예요':`다음 단계까지 ${hi-x} · 대답하면 1, 미션은 3`}</p>
+      <div class="xpbar"><i style="width:${pct}%"></i></div><p class="mw">${hi==null?'가장 높은 단계예요':`다음 단계까지 ${hi-x} · 대답 1, 미션 3, 열매 선물 1`}</p>${hi==null?'':`<div class="mb"><button class="opt alt gift" type="button" data-gift="${k}"${giftLeft(k)>0?'':' disabled'}><img src="${A('fruit')}" alt="">${GIFT_P}개 선물하기${giftLeft(k)>0?` · 오늘 ${giftLeft(k)}번`:' · 내일 또'}</button></div>`}
       <div class="cards">${CARD[k].map((c,i)=>l>=i+2?`<details class="card"><summary>${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock">${i+2}단계에 열리는 이야기</div>`).join('')}</div></div>`;}).join('');}
 function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max(w,lw,1);
   const st=lw===0?'지난주 기록이 없어요. 이번 주의 내가 다음 주의 상대가 돼요.':w>lw?'지난주의 나를 넘었어요.':`같은 요일까지 지난주엔 ${sd}개 했어요. ${lw-w+1}개 더 하면 지난주를 넘어요.`;
@@ -1045,7 +1048,10 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
   if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
   if(bt==='rid'){$('bList').innerHTML=drawRiddles()||'<p class="mempty">수수께끼는 곧 열려요.</p>';$('bMsg').textContent=msg||'';wireRiddles();return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
+    $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
+      if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
+      if(lvOf(S.xp[k])>S.lv[k]){closeBoard();setTimeout(()=>levelUp(k,()=>{openBoard();bt='story';drawBoard();}),300);}else drawBoard(`${short(k)}${'가'} 좋아해요`);});return;}
   const done=KIDS.reduce((n,k)=>n+(S.misDone[k]||0),0);
   $('bSub').textContent=done?`지금까지 해낸 미션 ${done}개`:'철학자들이 매일 아침 하나씩 붙여요';
   $('bList').innerHTML=ks.length?ks.map(k=>{const m=S.mis[k],M=MIS[k][m.i];let btn='';
@@ -1410,6 +1416,7 @@ function eclLeave(){const a=actors.ecl;if(!a||talking==='ecl')return;place('ecl'
 function tapEcl(){const a=actors.ecl;clearTimeout(eclLeave.t);place('ecl','wave',a.x,a.y);say('ecl','좋은 정원이네. 다음에 또 들를게.',null,()=>{place('ecl','basic',a.x,a.y);setTimeout(eclLeave,600);});}
 
 // ---------- clears: levels, streaks, the week, a full tree ----------
+const owns=(k,id)=>((S.own2||{})[k]||[]).includes(id);
 const lockedItem=x=>x.id==='lantern'&&!S.own.includes('lantern')&&S.pd<DAY_AT.lantern;
 const short=k=>PH[k].nm.replace('꼬마 ','');
 const CQ=[];let clrEl=null;const clrOn=()=>!!clrEl;
@@ -1528,15 +1535,15 @@ function drawWard(msg){const ks=present();
   $('wPrev').innerHTML=kidSVG(wk,'awake',sel?{...W,[sel.slot]:sel.id}:W);
   if(sel){const can=S.fruit>=sel.p;
     $('wMsg').innerHTML=`<span class="wtry">${sel.nm} 입어 보는 중</span><span class="wbuy"><button class="opt" type="button" id="wBuy"${can?'':' disabled'}>${can?`열매 ${sel.p}개로 사기`:`열매 ${sel.p-S.fruit}개 더 필요해요`}</button><button class="opt alt" type="button" id="wNo">그만두기</button></span>`;}
-  else $('wMsg').textContent=msg||'';
-  $('wGrid').innerHTML=ITEMS.map(x=>{const own=S.own.includes(x.id),on=W[x.slot]===x.id,can=S.fruit>=x.p;
+  else $('wMsg').textContent=msg||`옷은 철학자마다 따로 사요. ${short(wk)} 옷 ${ITEMS.filter(x=>owns(wk,x.id)).length}/${ITEMS.length}`;
+  $('wGrid').innerHTML=ITEMS.map(x=>{const own=owns(wk,x.id),on=W[x.slot]===x.id,can=S.fruit>=x.p;
     const lock=lockedItem(x);return `<button class="wit${own?' own':''}${on?' on':''}${wsel===x.id?' sel':''}${!own&&(!can||lock)?' no':''}" type="button" data-it="${x.id}"><img class="ic" src="${A('i_'+IF[x.id])}" alt=""${lock?' style="filter:brightness(0) opacity(.35)"':''}><b>${lock?'???':x.nm}</b><span>${lock?'곧 들어와요':on?'입는 중':own?'입기':`<img src="${A('fruit')}" alt="">${x.p}`}</span></button>`;}).join('');
   document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{wk=b.dataset.wk;wsel=null;sfx.boop();drawWard();});
   document.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{const x=IT[b.dataset.it],W=S.wear[wk];
-    if(S.own.includes(x.id)){wsel=null;if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
+    if(owns(wk,x.id)){wsel=null;if(W[x.slot]===x.id)delete W[x.slot];else W[x.slot]=x.id;sfx.boop();buzz(8);save();drawWard();return;}
     if(lockedItem(x)){sfx.no();buzz([20,30,20]);wsel=null;drawWard('며칠 뒤에 들어와요');return;}
     sfx.boop();buzz(8);wsel=wsel===x.id?null:x.id;drawWard();});
-  const by=$('wBuy');if(by)by.onclick=()=>{const x=sel;if(!x||S.fruit<x.p)return;S.fruit-=x.p;S.own.push(x.id);S.wear[wk][x.slot]=x.id;wsel=null;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${x.nm}${eul(x.nm)} 샀어요`);};
+  const by=$('wBuy');if(by)by.onclick=()=>{const x=sel;if(!x||S.fruit<x.p)return;S.fruit-=x.p;S.own2=S.own2||{};(S.own2[wk]=S.own2[wk]||[]).push(x.id);if(!S.own.includes(x.id))S.own.push(x.id);S.wear[wk][x.slot]=x.id;wsel=null;save();hud();sfx.buy();buzz([10,30,10,30,60]);drawWard(`${short(wk)}${'의'} ${x.nm}${eul(x.nm)} 샀어요`);};
   const no=$('wNo');if(no)no.onclick=()=>{wsel=null;sfx.boop();drawWard();};}
 function closeWard(){wsel=null;$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
 
@@ -1678,7 +1685,10 @@ async function pull() {
     pulled = true;
     if (c && progress(c) > progress(S)) {
       try { localStorage.setItem('eclipse_kid_garden_backup', JSON.stringify(S)); } catch (e) {}
+      // the toy's counts live only in the toy: a fuller garden from another device must not wipe them
+      const kc = S.clk || {};
       Object.keys(S).forEach(k => delete S[k]); Object.assign(S, c);
+      S.clk = S.clk || {}; for (const k in kc) S.clk[k] = Math.max(S.clk[k] || 0, kc[k] || 0);
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
       location.reload(); return;
     }
