@@ -185,6 +185,11 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .moons{display:flex;gap:6px;flex-wrap:wrap}.moon{appearance:none;border:2px solid #000;border-radius:12px;background:#fff;padding:4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--hand);font-size:13px;color:var(--ink);cursor:pointer;flex:1 1 0;min-width:62px}
 .mis.book{gap:8px}.bkh{appearance:none;border:0;background:none;padding:0;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;color:var(--ink)}.bkh img{width:38px;height:54px;object-fit:cover;border:1.5px solid #000;border-radius:4px}.bkh span{flex:1;display:flex;flex-direction:column}.bkh b{font-family:var(--hand);font-weight:400;font-size:16.5px}.bkh small{font-size:12.5px;color:#7a6fa0}.bkh i{font-style:normal;font-family:var(--hand);font-size:14px;color:#5b3fd0}
 .mis.book .mis{box-shadow:none;border-width:2px}.bkl{text-align:right}
+.bkc{appearance:none;display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 4px;padding:10px 14px 10px 10px;border:2.5px solid #000;border-radius:16px;background:#efe4f6;color:var(--ink);text-align:left;cursor:pointer;box-shadow:0 3px 0 #000}
+.bkc:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.bkc img{width:40px;flex:none;border-radius:3px;border:1.5px solid #000}
+.bkc span{flex:1;min-width:0}.bkc b{display:block;font-family:var(--hand);font-weight:400;font-size:16px}.bkc b i{font-style:normal;font-size:13px;color:#7b5a91;margin-left:4px}
+.bkc small{display:block;font-size:12.5px;line-height:1.4;color:#5e5478;margin-top:2px;word-break:keep-all}.bkc em{font-style:normal;font-size:22px;color:#7b5a91}
 .mis.pet.lock{opacity:.6}.mis.pet.lock .face{filter:grayscale(1) brightness(.5)}
 .shake{animation:shake .35s}@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .dwn{position:absolute;inset:0;z-index:30;background:#0e0b1f;color:var(--paper);display:grid;place-items:center;text-align:center}.dwn b{font-family:var(--hand);font-weight:400;font-size:64px;display:block}.dwn p{margin:6px 0 22px;font-size:16px;color:#c9c2e8}
@@ -1165,7 +1170,7 @@ function drawRiddles(){if(S.intro<2)return '';
     <div class="oil" aria-label="오늘 등불 ${ol}/${om}"><span>오늘 등불</span><i>${Array.from({length:10},(_,i)=>`<b class="${i<ou?'u':i<om?'f':'x'}"></b>`).join('')}</i><em>${ol}</em></div>`;
   if(!ol){const more=!(S.log&&S.log[today()])?'오늘 미션을 하나 해내면 기름 3방울을 더 줄게.':S.talkPost!==today()&&window.GL?'광장에 오늘 질문 답을 남기면 2방울 더 줄게.':'내일 아침에 다시 가득 채워 줄게.';
     h+=`<div class="mis"><div class="mh"><i class="face" style="${faceCSS(S.met.dio?'dio':'soc')}"></i><b>${S.met.dio?'디오게네스':'소크라테스'}</b></div><p class="mt">오늘 등불 기름이 다 떨어졌어.</p><p class="mw">${more} 수수께끼는 한꺼번에 풀면 금방 잊어. 하루에 조금씩이 오래 남아.</p></div>`;
-    return h+bookLine();}
+    return h+bookLine(1);}
   h+=quick.length?quick.map(R=>ridCard(R)).join(''):'';
   if(actNow.length)h+=`<p class="bsh">직접 해 보는 수수께끼</p>`+actNow.map(R=>ridCard(R)).join('');
   if(wait.length)h+=`<details class="rwait"><summary>때를 기다리는 수수께끼 ${wait.length}개</summary>${wait.map(R=>ridCard(R)).join('')}</details>`;
@@ -1173,7 +1178,7 @@ function drawRiddles(){if(S.intro<2)return '';
   h+=bookLine();
   const nx=PETS.find(P=>P.at&&!(S.pets||{})[P.id]);if(nx&&PET_ART)h+=`<p class="mw">${nx.at-worldSolved()}개 더 풀면 새 친구가 와요.</p>`;
   return h;}
-const bookLine=()=>PET_ART?`<p class="mw bkl"><button class="lnk" type="button" data-openpatch="1">『${BOOK.nm}』을 갖고 있다면, 책 속 암호</button></p>`:'';
+const bookLine=noOil=>PET_ART?`<button class="bkc" type="button" data-openpatch="1"><img src="${BOOK.img}" alt=""><span><b>책 속 암호 <i>${bookSolved()}/${RIDB.length}</i></b><small>${noOil?'등불 없이도 풀 수 있어요. ':''}『${BOOK.nm}』 속 쪽 제목으로 푸는 수수께끼예요.</small></span><em>›</em></button>`:'';
 function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();if(!book)S.oil={d:today(),n:oilUsed()+1};const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
   const n=worldSolved(),bs=bookSolved(),gifts=[];
   PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
