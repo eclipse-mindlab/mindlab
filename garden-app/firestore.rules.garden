@@ -19,6 +19,18 @@
         && request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 70;
     }
 
+    // 학파 두드리기전: 로그인한 사람은 다 읽고, 자기 줄만 씀. 이번 주 횟수는 줄어들 수 없고 한 주 6만 번까지
+    match /gardenTap/{week}/p/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['sc', 't', 'name', 'upd'])
+        && request.resource.data.sc in ['soc', 'nie', 'dio', 'epi']
+        && request.resource.data.t is int && request.resource.data.t >= 0 && request.resource.data.t <= 60000
+        && (resource == null || request.resource.data.t >= resource.data.t)
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10;
+    }
+
     // 앱 베타 신청: 자기 신청서만 쓰고 읽음. 명단은 Firebase 콘솔에서 봄
     match /gardenBeta/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

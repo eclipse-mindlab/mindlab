@@ -161,6 +161,8 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .clkhead div{display:flex;flex-direction:column}.clkhead span{font-size:14px;color:#c9c2e8;letter-spacing:.02em}.clkhead b{font-family:var(--hand);font-weight:400;font-size:52px;line-height:1.05;color:#ffcf5a;font-variant-numeric:tabular-nums}
 .clkhead b.pop{animation:cnum .18s ease-out}@keyframes cnum{40%{transform:scale(1.12)}}
 .clkhint{margin:4px 16px 0;font-size:14px;color:#a79fd0}
+.clkwar{margin:8px 12px 0;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.07);font-size:12.5px;color:#d9d3f2}.clkwar p{margin:0}.clkwar .nw{white-space:nowrap}.clkwar b{color:#ffcf5a;font-weight:700}.clkwar .lnk{color:#ffcf5a}
+.wbars{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:6px}.wb2{display:grid;grid-template-columns:22px 1fr 40px;align-items:center;gap:6px}.wb2 .face{width:22px;height:22px;background-size:44px 58px;background-position:-11px -13px;border-width:1.5px}.wbar{height:9px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}.wbar i{display:block;height:100%;background:#a79fd0}.wb2.me .wbar i{background:#ffcf5a}.wb2 em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums}.wsm{font-size:11px!important;color:#9d95c4;margin-top:4px!important}
 .clkstage{position:relative;flex:1;overflow:hidden;cursor:pointer}
 .clktabs{display:flex;gap:8px;justify-content:center;padding:10px 12px calc(14px + env(safe-area-inset-bottom,0px))}
 .ct{appearance:none;border:2.5px solid #000;border-radius:16px;background:#fffaf0;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px 5px;min-width:68px;font-family:var(--hand);font-size:14px;cursor:pointer;box-shadow:0 3px 0 #000}
@@ -314,7 +316,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
   <div class="devs"><button class="dev" type="button" id="dev2">시험용 · 해 질 녘</button><button class="dev" type="button" id="dev">시험용 · 하루 넘기기</button></div>
   <div class="ward" id="board" hidden><div class="wsheet" role="dialog" aria-label="미션 게시판"><div class="whead"><b>게시판</b><span class="bsub" id="bSub"></span><button class="icon wx" type="button" id="bClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="bstats" id="bStats"></div><div class="wtabs" id="bTabs"></div><p class="wmsg" id="bMsg"></p><div class="blist" id="bList"></div></div></div>
   <div class="hint" id="hint" hidden aria-hidden="true"></div><button class="appb flt" type="button" id="appBtn" hidden>앱 받기</button><button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
-  <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><p class="clkhint" id="clkHint"></p><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
+  <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="clkwar" id="clkWar"></div><p class="clkhint" id="clkHint"></p><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
   <div class="ward" id="patch" hidden><div class="wsheet" role="dialog" aria-label="텃밭"><div class="whead"><b>텃밭</b><span class="bsub">책에서 온 것들</span><button class="icon wx" type="button" id="pClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div id="pBody" class="blist"></div></div></div>
   <div class="ward" id="ward" hidden><div class="wsheet" role="dialog" aria-label="옷장"><div class="whead"><b>옷장</b><span class="wfruit" id="wFruit"></span><button class="icon wx" type="button" id="wClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="wtabs" id="wTabs"></div><div class="wstage"><svg id="wPrev" viewBox="-52 -126 104 132" aria-hidden="true"></svg></div><p class="wmsg" id="wMsg"></p><div class="wgrid" id="wGrid"></div></div></div>
 </div>
@@ -1304,9 +1306,20 @@ function hit(level){const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugi
 function noise(d,v,f){const a=ac();if(!a)return;const n=a.createBuffer(1,a.sampleRate*d,a.sampleRate),c=n.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/c.length,2);
   const s=a.createBufferSource(),bq=a.createBiquadFilter(),g=a.createGain();s.buffer=n;bq.type='bandpass';bq.frequency.value=f||1800;bq.Q.value=.7;g.gain.value=v||.25;s.connect(bq).connect(g).connect(a.destination);s.start();}
 const clkN=k=>((S.clk||{})[k]||0);
-function clkCount(k,by){S.clk=S.clk||{};S.clk[k]=clkN(k)+(by||1);if(++clkSave>=15){clkSave=0;save();}}
-function openClk(){if(S.intro<2)return;closeBub();ac();sfx.boop();if(!S.met[clkK])clkK='soc';$('clk').hidden=false;S.clkSeen=1;hud();drawClk();}
-function closeClk(){$('clk').hidden=true;clearInterval(clkBub);$('clkStage').innerHTML='';clkSlab=null;save();sfx.boop();}
+function clkCount(k,by){S.clk=S.clk||{};S.clk[k]=clkN(k)+(by||1);const wk=weekKey();if(!S.tapW||S.tapW.wk!==wk)S.tapW={wk,n:0};S.tapW.n+=(by||1);clkWar();if(++clkSave>=15){clkSave=0;save();window.GL&&GL.tapPost&&GL.tapPost();}}
+// the strip at the top of the toy: this week's tapping war between the four schools
+let warV=null,warAt=0;
+function clkWar(fetch){const el=$('clkWar');if(!el)return;const G=window.GL,me=(S.tapW&&S.tapW.wk===weekKey())?S.tapW.n:0;
+  const draw=v=>{if(!v||v.state==='off'){el.innerHTML=`<p>이번 주 학파 두드리기전 · 나 <b>${me.toLocaleString('ko-KR')}</b>번</p>`;return;}
+    if(v.state==='out'){el.innerHTML=`<p>이번 주 나 <b>${me.toLocaleString('ko-KR')}</b>번 · 로그인하면 학파 두드리기전에 들어가요</p>`;return;}
+    if(v.state==='noschool'){el.innerHTML=`<p>이번 주 나 <b>${me.toLocaleString('ko-KR')}</b>번 · <button class="lnk" type="button" id="warSch">학파 정하고 두드리기전 들어가기</button></p>`;const b=$('warSch');if(b)b.onclick=()=>{closeClk();sortQuiz(()=>{});};return;}
+    const sch={...v.sch},my=sch[S.school]||{c:0,t:0};if(me>0)sch[S.school]={c:my.c+(v.inn?0:1),t:my.t-(v.inn?v.mine:0)+me};
+    const rows=SCHOOL_ORDER.map(k=>({k,avg:sch[k]&&sch[k].c?sch[k].t/sch[k].c:0,c:sch[k]?sch[k].c:0})).sort((a,b)=>b.avg-a.avg),mx=Math.max(rows[0].avg,1),pos=rows.findIndex(r=>r.k===S.school)+1;
+    el.innerHTML=`<p>이번 주 학파 두드리기전 · 우리 ${SCHOOL[S.school].nm} <b>${pos}위</b> · <span class="nw">나 <b>${me.toLocaleString('ko-KR')}</b>번</span>${v.rank?` · <span class="nw">학파 안 ${v.rank}등</span>`:''}</p><div class="wbars">${rows.map(r=>`<div class="wb2${r.k===S.school?' me':''}"><i class="face" style="${faceCSS(r.k)}"></i><div class="wbar"><i style="width:${r.avg/mx*100}%"></i></div><em>${Math.round(r.avg).toLocaleString('ko-KR')}</em></div>`).join('')}</div><p class="wsm">한 사람당 평균 · 월요일마다 새로 시작해요</p>`;};
+  draw(warV);
+  if(fetch&&G&&G.tapBoard&&Date.now()-warAt>15000){warAt=Date.now();G.tapBoard().then(v=>{warV=v;draw(v);});}}
+function openClk(){if(S.intro<2)return;closeBub();ac();sfx.boop();if(!S.met[clkK])clkK='soc';$('clk').hidden=false;S.clkSeen=1;hud();drawClk();clkWar(true);}
+function closeClk(){$('clk').hidden=true;window.GL&&GL.tapPost&&GL.tapPost(true);clearInterval(clkBub);$('clkStage').innerHTML='';clkSlab=null;save();sfx.boop();}
 function drawClk(){const C=CLK[clkK];
   $('clkTabs').innerHTML=CLK_ORDER.map(k=>{const on=S.met[k];return `<button type="button" class="ct${k===clkK?' on':''}${on?'':' lock'}" data-ck="${k}"${on?'':' disabled'}><i class="face" style="${faceCSS(k)}"></i><span>${on?CLK[k].tab:'곧 와요'}</span></button>`;}).join('');
   $('clkTabs').querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{if(b.disabled)return;clkK=b.dataset.ck;clkCombo=0;sfx.boop();hit('light');drawClk();});
@@ -2035,7 +2048,29 @@ window.gardenShare = async (dataUrl, name) => {
   return true;
 };
 
-window.GL = {render, renderTalk, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+// ---- the tapping war: each week, schools compete on how much their people tapped in the toy ----
+let tapSent = 0, tapT = null, tapCache = null;
+function tapPost(force) {
+  clearTimeout(tapT);
+  const go = async () => { const w = S.tapW; if (!me || !S.school || !w || w.wk !== weekId() || w.n <= tapSent) return;
+    try { await F.setDoc(F.doc(db, 'gardenTap', w.wk, 'p', me.uid), {sc: S.school, t: Math.min(w.n, 60000), name: S.lname || '', upd: F.serverTimestamp()}); tapSent = w.n; } catch (e) {} };
+  if (force) go(); else tapT = setTimeout(go, 6000);
+}
+async function tapBoard() {
+  if (!ready || !me) return {state: !ready ? 'off' : 'out'};
+  if (!S.school) return {state: 'noschool'};
+  const wk = weekId();
+  if (tapCache && tapCache.wk === wk && Date.now() - tapCache.t < 60000) return tapCache.v;
+  const col = F.collection(db, 'gardenTap', wk, 'p'), sch = {};
+  try {
+    for (const k of Object.keys(SCHOOL)) { const a = await F.getAggregateFromServer(F.query(col, F.where('sc', '==', k)), {c: F.count(), t: F.sum('t')}); const d = a.data(); sch[k] = {c: d.c || 0, t: d.t || 0}; }
+    const mine = (S.tapW && S.tapW.wk === wk) ? S.tapW.n : 0;
+    let mineIn = 0, inn = false; try { const md = await F.getDoc(F.doc(db, 'gardenTap', wk, 'p', me.uid)); if (md.exists()) { inn = true; mineIn = md.data().t || 0; } } catch (e) {}
+    let rank = 1; try { const c = await F.getCountFromServer(F.query(col, F.where('sc', '==', S.school), F.where('t', '>', mine))); rank = c.data().count + 1; } catch (e) {}
+    const v = {state: 'ok', sch, mine: mineIn, inn, rank}; tapCache = {wk, t: Date.now(), v}; return v;
+  } catch (e) { return {state: 'off'}; }
+}
+window.GL = {render, renderTalk, tapPost, tapBoard, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
