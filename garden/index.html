@@ -1469,6 +1469,10 @@ async function shareCard(k){let cv;try{cv=await makeCard(k);}catch(e){toast('그
 
 // ---------- coming back: a hello each new day, and asking to keep the garden ----------
 const yesterKey=()=>{const d=nowD();d.setDate(d.getDate()-1);return dkey(d);};
+// a newer app on Google Play: Socrates mentions it once a day, and the button runs the update right there
+function askUpdate(){const G=window.GL;if(!G||!G.updateInfo||!G.native||S.intro<2||S.updDay===today())return;
+  G.updateInfo().then(i=>{if(!i)return;whenFree(()=>{if(S.updDay===today())return;S.updDay=today();save();
+    say('soc','앱 새 버전이 나왔어. 업데이트하면 새 질문이랑 새 기능이 기다리고 있어. 정원은 그대로 이어져.',['지금 업데이트','나중에'],n=>{if(n===0)G.doUpdate();});},1500);});}
 function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;S.greetDay=today();save();
   const doing=KIDS.find(k=>S.met[k]&&actors[k]&&S.mis[k]&&S.mis[k].st==='doing'),st=streak();
   const who=doing||'soc';
@@ -1606,7 +1610,7 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
-  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);
+  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);
     // newcomers wait until nobody is talking
     const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
     if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(freeToday())later(checkDio,talk?3200:1800);}
@@ -2045,7 +2049,17 @@ window.gardenShare = async (dataUrl, name) => {
   return true;
 };
 
-window.GL = {render, renderTalk, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+// ---- app updates: ask Google Play whether a newer version is waiting for this phone ----
+async function updateInfo() {
+  const U = NATIVE && plug('AppUpdate'); if (!U) return null;
+  try { const i = await U.getAppUpdateInfo(); return i && i.updateAvailability === 2 ? i : null; } catch (e) { return null; }
+}
+async function doUpdate() {
+  const U = plug('AppUpdate'); if (!U) return;
+  try { const i = await U.getAppUpdateInfo(); if (i && i.immediateUpdateAllowed) { await U.performImmediateUpdate(); return; } } catch (e) {}
+  try { await U.openAppStore(); } catch (e) { try { window.open('https://play.google.com/store/apps/details?id=io.github.eclipse_mindlab.garden', '_blank'); } catch (e2) {} }
+}
+window.GL = {render, renderTalk, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
