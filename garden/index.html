@@ -255,7 +255,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .qopts{display:flex;flex-direction:column;gap:8px;width:100%}.qopts .opt{width:100%;font-size:16px;line-height:1.35;padding:10px 12px;word-break:keep-all}
 .csub{white-space:pre-line}
 .tq{display:flex;gap:10px;align-items:flex-start}.tq .face{flex:none}.tq p{margin:0;font-family:var(--hand);font-size:18px;line-height:1.4;word-break:keep-all}
-.tin{display:flex;flex-direction:column;gap:6px}.tin textarea{font:inherit;font-size:15px;border:2.5px solid #000;border-radius:12px;padding:10px 12px;min-height:64px;resize:none;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.tin{display:flex;flex-direction:column;gap:6px}.tin textarea{font:inherit;font-size:15px;border:2.5px solid #000;border-radius:12px;padding:10px 12px;min-height:96px;resize:none;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
 .tin small{align-self:flex-end;color:#8b82a8}
 .ta{border:2px solid #000;border-radius:14px;background:#fff;padding:9px 12px;display:flex;flex-direction:column;gap:4px}
 .ta.mine{background:#fff1c2}
@@ -1900,8 +1900,8 @@ const BAD = /(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져
 let talkCache = null, talkBusy = false, tView = 0;
 const thOpen = new Set(), thCache = {};
 const talkDay = b => b ? yesterKey() : today();
-async function cleanText(raw) {
-  const t = raw.replace(/\s+/g, ' ').trim().slice(0, 60);
+async function cleanText(raw, max) {
+  const t = raw.replace(/\s+/g, ' ').trim().slice(0, max || 150);
   if (t.length < 2) return null;
   if (BAD.test(t.replace(/\s/g, ''))) { sfx.no(); $('bMsg').textContent = '그 표현은 광장에 남길 수 없어요'; return null; }
   if (!S.lname) { let nm = await nickFromDilem(); if (!nm || RESERVED.test(nm.replace(/\s/g, '')) || BAD.test(nm)) nm = '정원사'; S.lname = nm; save(); }
@@ -1937,21 +1937,21 @@ async function renderTalk(el) {
       if (!L) return '<div class="th"><p class="mw">불러오는 중이에요</p></div>';
       const canDel = r => me && (r.uid === me.uid || x.id === me.uid);
       return `<div class="th">${L.map(r => `<div class="rp"><div class="who"><b>${esc(r.name || '')}</b>${r.sc && SCHOOL[r.sc] ? `<span class="hb ${r.sc}">${SCHOOL[r.sc].nm}</span>` : ''}${canDel(r) ? `<button class="lnk" type="button" data-rdel="${x.id}|${r.id}">지우기</button>` : me ? `<button class="lnk" type="button" data-rrep="${x.id}|${r.id}">신고</button>` : ''}</div><p>${esc(r.t)}</p></div>`).join('')}
-        ${me ? `<div class="rin"><input type="text" maxlength="60" placeholder="${esc(x.name || '')}에게 답글" data-rtx="${x.id}"><button class="opt" type="button" data-rgo="${x.id}">보내기</button></div>` : '<p class="mw">구글로 로그인하면 답글을 달 수 있어요.</p>'}</div>`;
+        ${me ? `<div class="rin"><input type="text" maxlength="100" placeholder="${esc(x.name || '')}에게 답글" data-rtx="${x.id}"><button class="opt" type="button" data-rgo="${x.id}">보내기</button></div>` : '<p class="mw">구글로 로그인하면 답글을 달 수 있어요.</p>'}</div>`;
     };
     const row = (x, isMine) => { const rc = Math.max(x.rc || 0, (thCache[day + '/' + x.id] || []).length), fresh = isMine && rc > seen;
       return `<div class="ta${isMine ? ' mine' : ''}"><div class="who"><b>${esc(x.name || '')}</b>${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p>${esc(x.t)}</p>
       <div class="act"><button class="rbt${thOpen.has(day + '/' + x.id) ? ' on' : ''}" type="button" data-th="${x.id}">답글 ${rc}${fresh ? `<i class="new">새 답글 ${rc - seen}</i>` : ''}</button><span class="sp"></span>${isMine ? `<span class="mw">공감 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-rep="${x.id}">신고</button><button class="like${liked.includes(x.id) ? ' on' : ''}" type="button" data-like="${x.id}">공감 ${x.likes || 0}</button>` : `<span class="mw">공감 ${x.likes || 0}</span>`}</div>${thread(x)}</div>`; };
     const m = talkCache.mine, n = talkCache.list.length + (m ? 1 : 0);
-    const box = b ? `<p class="mw">어제 질문이에요. 답은 하루에 한 줄이고, 답글은 계속 달 수 있어요.</p>`
-      : !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 한 줄로 답하고, 답글로 이야기할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
+    const box = b ? `<p class="mw">어제 질문이에요. 답은 하루에 하나씩이고, 답글은 계속 달 수 있어요.</p>`
+      : !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 답을 남기고, 답글로 이야기할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
       : m ? '<p class="mw">오늘 답을 남겼어요. 다른 사람 답에 답글로 이야기해 보세요.</p>'
-      : `<div class="tin"><textarea id="tTx" maxlength="60" placeholder="한 줄로 답해 주세요"></textarea><small id="tCt">0/60</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
+      : `<div class="tin"><textarea id="tTx" maxlength="150" placeholder="내 생각을 짧게 남겨 주세요"></textarea><small id="tCt">0/150</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
     el.innerHTML = head + box + '</div>' + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : (m ? '' : `<p class="mempty">${b ? '어제는 아무도 답하지 않았어요.' : '아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.'}</p>`));
     wire();
     const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
     const tx = el.querySelector('#tTx');
-    if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/60`; };
+    if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/150`; tx.style.height = 'auto'; tx.style.height = tx.scrollHeight + 4 + 'px'; };
       el.querySelector('#tGo').onclick = async () => { const t = await cleanText(tx.value); if (!t) return;
         try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
           S.qlog = S.qlog || {}; S.qlog[day] = 1; S.talkPost = day; save(); sfx.stamp(); buzz([20, 30, 40]);
@@ -1964,7 +1964,7 @@ async function renderTalk(el) {
       if (m && id === m.id) { S.rcSeen = {[day]: Math.max(m.rc || 0, thCache[day + '/' + id].length)}; save(); }
       talkBusy = false; renderTalk(el); });
     el.querySelectorAll('[data-rgo]').forEach(x => x.onclick = async () => { const aid = x.dataset.rgo, inp = el.querySelector(`[data-rtx="${aid}"]`);
-      const t = await cleanText(inp.value); if (!t) return; x.disabled = true;
+      const t = await cleanText(inp.value, 100); if (!t) return; x.disabled = true;
       const rid = me.uid + '_' + Date.now(), r = {t, sc: S.school || '', name: S.lname, uid: me.uid, rep: 0, at: F.serverTimestamp()};
       try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', aid, 'r', rid), r);
         try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', aid), {rc: F.increment(1)}); } catch (e) {}
