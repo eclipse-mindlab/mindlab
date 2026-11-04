@@ -278,6 +278,11 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .rp .who{display:flex;align-items:center;gap:6px;font-size:12px;color:#7a6fa0}.rp .who b{font-family:var(--hand);font-weight:400;font-size:13.5px;color:var(--ink)}.rp .who .lnk{margin-left:auto;font-size:12px}
 .rp p{margin:0;font-size:14.5px;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
 .rin{display:flex;gap:6px;align-items:center}.rin input{flex:1;min-width:0;font:inherit;font-size:14.5px;border:2px solid #000;border-radius:10px;padding:7px 10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}.rin .opt{flex:none;font-size:14.5px;padding:6px 12px}
+.mtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.mtop .lnk{font-family:var(--hand);font-size:15px}.mtop .tday{margin:0}
+.mks{display:flex;gap:6px;flex-wrap:wrap}.mk{appearance:none;display:flex;align-items:center;gap:5px;border:2px solid #000;border-radius:999px;background:#fff;padding:2px 10px 2px 3px;font-family:var(--hand);font-size:14px;color:var(--ink);cursor:pointer}.mk.on{background:#fff1c2}.mk small{color:#8b82a8;font-size:12px}
+.mk .face{width:26px;height:26px;background-size:52px 69px;background-position:-13px -15px}
+.ta.mq .qq{font-family:var(--hand);font-size:16px;line-height:1.4}.ta.mq .my{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}.ta.mq .my b{font-family:var(--hand);font-weight:400;font-size:12.5px;background:#fff1c2;border:1.5px solid #000;border-radius:999px;padding:0 7px}.ta.mq .my small{flex-basis:100%;font-size:12.5px;color:#8b82a8}
+.ta.mq .rr{font-size:14px;color:#5e5679;white-space:pre-line}.ta.mq .tq p{font-size:16px}.ta.mq .who span{font-size:12px}
 .tday{display:flex;gap:6px;margin-bottom:2px}.tday button{appearance:none;border:2px solid #000;border-radius:999px;background:#fff;padding:4px 12px;font-family:var(--hand);font-size:14px;color:var(--ink);cursor:pointer}.tday button.on{background:#f6f1ff;border-color:#5b3fd0;color:#5b3fd0}
 .wit.sel{background:#f3ecff;box-shadow:0 3px 0 #000,0 0 0 3px #7b5cff inset}
 .wmsg .wtry{display:block;margin-bottom:6px}.wbuy{display:flex;gap:6px;justify-content:center}.wbuy .opt{flex:0 1 auto;font-size:15px;padding:7px 12px}.wbuy .opt[disabled]{opacity:.6}
@@ -599,7 +604,8 @@ try{const m=location.hash.match(/carry=([A-Za-z0-9_-]+)/);if(m){history.replaceS
 if(S.qv!==6){const prev=S.qv===5?((k,i)=>QV5[k][i]):S.qv===4?((k,i)=>QV4[k][i]):S.qv===3?((k,i)=>QV3[k][i]):S.qv===2?((k,i)=>i%2===0&&i<60?QOLD[k][i/2]:null):((k,i)=>QOLD[k][i]),at={};KIDS.forEach(k=>{at[k]={};PH[k].Q.forEach((x,i)=>at[k][x.q]=i);});
   const move=(k,i)=>{let q=prev(k,+i);if(q==null)return -1;for(let n=0;n<4&&QREN[k+'|'+q];n++)q=QREN[k+'|'+q];return at[k][q]!=null?at[k][q]:-1;};
   KIDS.forEach(k=>{if(Array.isArray(S.asked[k]))S.asked[k]=[...new Set(S.asked[k].map(i=>move(k,i)).filter(i=>i>=0))];});
-  if(S.picks){const p={};for(const key in S.picks){const mm=key.match(/^([a-z]+)(\d+)$/);if(mm&&KIDS.includes(mm[1])){const n=move(mm[1],mm[2]);if(n>=0)p[mm[1]+n]=S.picks[key];}else p[key]=S.picks[key];}S.picks=p;}
+  const mvKeys=o=>{const p={};for(const key in o){const mm=key.match(/^([a-z]+)(\d+)$/);if(mm&&KIDS.includes(mm[1])){const n=move(mm[1],mm[2]);if(n>=0)p[mm[1]+n]=o[key];}else p[key]=o[key];}return p;};
+  ['picks','pkd','chg'].forEach(f=>{if(S[f])S[f]=mvKeys(S[f]);});
   S.qv=6;try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 if(!S.own2){S.own2={};KIDS.forEach(k=>S.own2[k]=[...(S.own||[])]);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 if(!S.leanInit){S.leanInit=1;const log=[];for(const key in (S.picks||{})){const m=key.match(/^([a-z]+)(\d+)$/);if(!m||!PH[m[1]]||!PH[m[1]].Q[+m[2]])continue;const tg=QTAG[m[1]+'|'+PH[m[1]].Q[+m[2]].q];if(!tg||!(tg[0]||tg[1]))continue;const n=S.picks[key];log.push((tg[n]||'')+'|'+tg.filter(Boolean).join(','));}
@@ -979,12 +985,32 @@ function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;
     if(m&&m.st==='doing'){say(k,`"${M.t}" 하고 있지?`);return;}
     if(window.GL&&!S.talkSeen){S.talkSeen=1;save();say(k,'오늘 내 질문은 끝. 대신 광장에 가 봐. 다른 사람들 대답이 재밌어.',['광장 가기','나중에'],n=>{if(n===0){openBoard();bt='talk';drawBoard();}});return;}
     const I=PH[k].idle;say(k,I[(Date.now()/1000|0)%I.length]);return;}
+  if(recall(k))return;
   const qi=nextQ(k),Q=PH[k].Q[qi],pk=(S.picks||{})[k+qi],again=(S.round||{})[k];
   const lead=again?(pk!=null&&Q.o[pk]?`저번엔 "${Q.o[pk][0]}"라고 했어. 지금은?\n`:'전에도 물었던 건데, 지금은 어때?\n'):'';
-  say(k,lead+Q.q,Q.o.map(o=>o[0]),n=>{S.picks=S.picks||{};S.picks[k+qi]=n;S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;const tg=QTAG[k+'|'+Q.q],lt=tg&&tg[n];if(tg&&(tg[0]||tg[1]))leanAdd(tg,n);if(lt){if(lt===k){S.xp[k]++;const r=actors[k]&&actors[k].g.getBoundingClientRect();if(r)setTimeout(()=>heartAt(r.left+r.width/2,r.top+8),250);}}S.qlog=S.qlog||{};S.qlog[today()]=1;save();
-    setTimeout(()=>say(k,Q.o[n][1],null,()=>{giveDrop(k);
-      const rest=()=>{if(left(k)<=0){if(newMis(k)){refreshNote(k);setTimeout(()=>{if(!pend&&!clrOn())say(k,'질문은 오늘 여기까지. 대신 게시판에 미션 하나 붙여 놨어.',null,()=>wiggleBoard());},1300);}else setTimeout(()=>sleepIfDone(k),900);}};
-      if(!levelUp(k,()=>{if(!leanMoment(rest))rest();})&&!leanMoment(rest))rest();}),180);});}
+  say(k,lead+Q.q,Q.o.map(o=>o[0]),n=>{S.picks=S.picks||{};S.picks[k+qi]=n;S.pkd=S.pkd||{};S.pkd[k+qi]=talkN(0);S.asked[k].push(qi);S.cnt[k]++;S.xp[k]++;const tg=QTAG[k+'|'+Q.q],lt=tg&&tg[n];if(tg&&(tg[0]||tg[1]))leanAdd(tg,n);if(lt){if(lt===k){S.xp[k]++;const r=actors[k]&&actors[k].g.getBoundingClientRect();if(r)setTimeout(()=>heartAt(r.left+r.width/2,r.top+8),250);}}S.qlog=S.qlog||{};S.qlog[today()]=1;save();
+    setTimeout(()=>say(k,Q.o[n][1],null,()=>afterAnswer(k)),180);});}
+function afterAnswer(k){giveDrop(k);
+  const rest=()=>{if(left(k)<=0){if(newMis(k)){refreshNote(k);setTimeout(()=>{if(!pend&&!clrOn())say(k,'질문은 오늘 여기까지. 대신 게시판에 미션 하나 붙여 놨어.',null,()=>wiggleBoard());},1300);}else setTimeout(()=>sleepIfDone(k),900);}};
+  if(!levelUp(k,()=>{if(!leanMoment(rest))rest();})&&!leanMoment(rest))rest();}
+// about once in ten days a philosopher brings back an answer you gave a while ago and asks if it still holds
+const RECALL={soc:['그럼 그건 이제 네 생각이라고 해도 되겠다.','좋아. 생각이 바뀐 걸 아는 게 공부의 시작이야.'],
+  nie:['흔들리지 않았네. 그럼 그건 네 거야.','허물을 벗었구나. 허물을 못 벗는 뱀은 죽어.'],
+  dio:['그래, 그 고집 마음에 들어.','바꿨어? 잘했어. 틀린 걸 붙들고 있는 게 제일 바보야.'],
+  epi:['그대로네. 그 생각이 마음 편하면 그걸로 됐어.','바뀌었구나. 마음이 더 편해지는 쪽이면 잘 바꾼 거야.']};
+const agoTxt=n=>n==null?'예전에':n<14?'일주일쯤 전에':n<30?`${Math.round(n/7)}주 전에`:n<365?`${['한','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두'][Math.max(1,Math.round(n/30))-1]} 달 전에`:'한참 전에';
+function recall(k){if(!RECALL[k]||S.cnt[k]!==0||(S.round||{})[k]||(S.pd||0)<5)return false;const d=talkN(0);if(S.cbAt!=null&&d-S.cbAt<10)return false;
+  const P=PH[k],pk=S.picks||{},pd=S.pkd||{},ch=S.chg||{},recent=S.asked[k].slice(-8),c=[];
+  for(const key in pk){const m=key.match(/^([a-z]+)(\d+)$/);if(!m||m[1]!==k)continue;const i=+m[2];if(!P.Q[i]||!P.Q[i].o[pk[key]]||recent.includes(i)||ch[key]!=null||(pd[key]!=null&&d-pd[key]<7))continue;c.push(i);}
+  if(c.length<6)return false;
+  const i=c[Math.floor(Math.random()*c.length)],Q=P.Q[i],key=k+i,old=pk[key];S.cbAt=d;save();
+  const done=line=>{S.cnt[k]++;S.xp[k]++;S.qlog=S.qlog||{};S.qlog[today()]=1;save();setTimeout(()=>say(k,line,null,()=>afterAnswer(k)),180);};
+  const change=m=>{S.chg=S.chg||{};S.chg[key]=old;S.picks[key]=m;S.pkd=S.pkd||{};S.pkd[key]=d;const tg=QTAG[k+'|'+Q.q];if(tg&&(tg[0]||tg[1]))leanAdd(tg,m);done(RECALL[k][1]);};
+  say(k,`${agoTxt(pd[key]!=null?d-pd[key]:null)} 내가 "${Q.q}" 하고 물었잖아. 너는 "${Q.o[old][0]}"라고 했어. 지금도 그래?`,['지금도 그래','지금은 달라'],n=>{
+    if(n===0)return done(RECALL[k][0]);
+    if(Q.o.length===2)return change(1-old);
+    setTimeout(()=>say(k,'그럼 지금은?',Q.o.map(o=>o[0]),m=>m===old?done('결국 같은 걸 골랐네. 그럼 그건 진짜 네 생각이야.'):change(m)),180);});
+  return true;}
 function giveDrop(k){sfx.drop();buzz([10,30,10]);fly(actors[k].g.getBoundingClientRect(),'dropChip',()=>{S.drops++;save();hud();bump('dropChip');paintPlant(false);
   if(S.drops===1&&S.given===0)setTimeout(()=>say('soc','그 물방울, 화분에 줘 봐.'),400);});}
 function sleepIfDone(k){const a=actors[k];if(left(k)<=0&&!talking)place(k,'sleep',a.x,a.y);}
@@ -1030,6 +1056,25 @@ function drawSchool(){const k=S.school;
   if(!k)return `<div class="mis"><p class="mt">내 학파</p><p class="mw">이성파, 쾌락파, 평정파, 실존파. 질문 네 개면 내가 어디인지 알 수 있어요.</p><div class="mb"><button class="opt" type="button" id="sqz">학파 찾기</button></div></div>`;
   return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${SCHOOL[k].nm}</b></div><p class="mt">"${SCHOOL[k].line}"</p><p class="mw">같은 학파: ${SCHOOL[k].mem}</p></div>`;}
 const GIFT_P=5,GIFT_N=3;const giftLeft=k=>GIFT_N-((S.gift&&S.gift.d===today()&&S.gift[k])||0);
+// my answers, gathered: what I picked for each philosopher, and what I wrote in the square
+let mineV='phil',mineK=null;
+const pickN=()=>Object.keys(S.picks||{}).filter(x=>/^[a-z]+\d+$/.test(x)).length;
+const dayTxt=d=>{const t=new Date(TQ_EPOCH+d*864e5);return `${t.getUTCMonth()+1}월 ${t.getUTCDate()}일`;};
+function drawMineCard(){const n=pickN();if(!n&&!S.talkPost)return '';
+  return `<div class="mis"><p class="mt">내 답 모아보기</p><p class="mw">철학자들 질문에 고른 답과 광장에 쓴 답을 다시 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-mine="phil">철학자 질문 ${n}개</button>${window.GL?'<button class="opt alt" type="button" data-mine="talk">광장에 쓴 답</button>':''}</div></div>`;}
+function drawMine(){const tabs=`<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button><div class="tday"><button type="button" class="${mineV==='phil'?'on':''}" data-mv="phil">철학자 질문</button>${window.GL?`<button type="button" class="${mineV==='talk'?'on':''}" data-mv="talk">광장에 쓴 답</button>`:''}</div></div>`;
+  return tabs+(mineV==='talk'&&window.GL?'<div id="mineTalk"></div>':drawMinePhil());}
+function drawMinePhil(){const all=[];
+  for(const key in (S.picks||{})){const m=key.match(/^([a-z]+)(\d+)$/);if(!m||!PH[m[1]])continue;const Q=PH[m[1]].Q[+m[2]];if(!Q||!Q.o[S.picks[key]])continue;all.push({k:m[1],i:+m[2],Q,n:S.picks[key],d:(S.pkd||{})[key],o:(S.chg||{})[key]});}
+  if(!all.length)return '<p class="mempty">아직 고른 답이 없어요. 철학자를 눌러 질문에 답해 보세요.</p>';
+  const ks=KIDS.filter(k=>all.some(x=>x.k===k));if(!ks.includes(mineK))mineK=ks[0];
+  const L=all.filter(x=>x.k===mineK).sort((a,b)=>((b.d==null?-1e9:b.d)-(a.d==null?-1e9:a.d))||b.i-a.i);
+  return `<div class="mks">${ks.map(k=>`<button type="button" class="mk${k===mineK?' on':''}" data-mk="${k}"><i class="face" style="${faceCSS(k)}"></i>${short(k)} <small>${all.filter(x=>x.k===k).length}</small></button>`).join('')}</div>`
+    +L.map(x=>`<div class="ta mq">${x.d!=null?`<div class="who"><span>${dayTxt(x.d)}</span></div>`:''}<p class="qq">${x.Q.q}</p><p class="my"><b>나</b>${x.Q.o[x.n][0]}${x.o!=null&&x.Q.o[x.o]?`<small>예전엔 "${x.Q.o[x.o][0]}"</small>`:''}</p><p class="rr">${x.Q.o[x.n][1]}</p></div>`).join('');}
+function wireMine(){const b=$('bList');b.querySelector('#mBack').onclick=()=>{sfx.boop();bt='story';drawBoard();};
+  b.querySelectorAll('[data-mv]').forEach(x=>x.onclick=()=>{if(mineV===x.dataset.mv)return;sfx.boop();mineV=x.dataset.mv;drawBoard();});
+  b.querySelectorAll('[data-mk]').forEach(x=>x.onclick=()=>{sfx.boop();mineK=x.dataset.mk;drawBoard();});
+  const t=b.querySelector('#mineTalk');if(t&&window.GL)GL.renderMine(t);}
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
   return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
     return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
@@ -1043,12 +1088,14 @@ function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max
     <p class="mw">${st}</p><p class="mw">최고 기록 · 한 주 ${S.best.week}개 · 연속 ${S.best.streak}일</p></div>`;}
 function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&MIS[k]);
   $('bStats').innerHTML=`<div class="bst"><b>${streak()}일</b><span>연속</span></div><div class="bst"><b>${weekSum(0)}개</b><span>이번 주 미션</span></div><div class="bst"><b>${S.trees}그루</b><span>키운 나무</span></div>`;
-  $('bTabs').innerHTML=[['mis','미션']].concat(S.intro>=2?[['rid','수수께끼']]:[]).concat([['talk','광장']]).concat(window.GL?[['league','리그']]:[]).concat([['story','나']]).map(([id,t])=>`<button class="wtab${bt===id?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
+  $('bTabs').innerHTML=[['mis','미션']].concat(S.intro>=2?[['rid','수수께끼']]:[]).concat([['talk','광장']]).concat(window.GL?[['league','리그']]:[]).concat([['story','나']]).map(([id,t])=>`<button class="wtab${bt===id||(bt==='mine'&&id==='story')?' on':''}" type="button" data-bt="${id}">${t}</button>`).join('');
   document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bt=b.dataset.bt;sfx.boop();drawBoard();});
   if(bt==='league'&&window.GL){$('bMsg').textContent=msg||'';GL.render($('bList'));return;}
   if(bt==='talk'){$('bMsg').textContent=msg||'';if(window.GL)GL.renderTalk($('bList'));else{const [k,q]=talkQ();$('bList').innerHTML=`<div class="mis"><div class="tq"><i class="face" style="${faceCSS(k)}"></i><p>${q}</p></div>${philAnswer()}<p class="mw">다른 사람들의 답은 정원 웹과 앱에서 보여요.</p></div>`;}return;}
   if(bt==='rid'){$('bList').innerHTML=drawRiddles()||'<p class="mempty">수수께끼는 곧 열려요.</p>';$('bMsg').textContent=msg||'';wireRiddles();return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
+  if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
+  if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawMineCard()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
+    $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
       if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
       if(lvOf(S.xp[k])>S.lv[k]){closeBoard();setTimeout(()=>levelUp(k,()=>{openBoard();bt='story';drawBoard();}),300);}else drawBoard(`${short(k)}${'가'} 좋아해요`);});return;}
@@ -2059,7 +2106,39 @@ async function doUpdate() {
   try { const i = await U.getAppUpdateInfo(); if (i && i.immediateUpdateAllowed) { await U.performImmediateUpdate(); return; } } catch (e) {}
   try { await U.openAppStore(); } catch (e) { try { window.open('https://play.google.com/store/apps/details?id=io.github.eclipse_mindlab.garden', '_blank'); } catch (e2) {} }
 }
-window.GL = {render, renderTalk, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+// ---- my answers in the square, gathered from every day I answered (kept on this device, recent days read again) ----
+const MINE_KEY = 'eclipse_kid_talk_mine_v1';
+const dayNo = key => { const [y, m, d] = key.split('-').map(Number); return Math.round((Date.UTC(y, m - 1, d) - TQ_EPOCH) / 864e5); };
+const mineOpen = new Set();
+async function renderMine(el) {
+  if (failed) { el.innerHTML = '<p class="mw">광장에 쓴 답은 인터넷이 될 때 보여요.</p>'; return; }
+  if (!ready) { el.innerHTML = '<p class="mw">불러오는 중이에요</p>'; setTimeout(() => { if (el.isConnected) renderMine(el); }, 800); return; }
+  for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150));
+  if (!me) { el.innerHTML = '<div class="mis"><p class="mw">광장에 쓴 답은 구글로 로그인하면 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" id="mIn">구글로 로그인</button></div></div>';
+    el.querySelector('#mIn').onclick = () => { sfx.boop(); signIn().then(() => setTimeout(() => { if (el.isConnected) renderMine(el); }, 700)); }; return; }
+  let C = {}; try { C = JSON.parse(localStorage.getItem(MINE_KEY) || '{}'); } catch (e) {}
+  if (!C || C.uid !== me.uid || !C.d) C = {uid: me.uid, d: {}};
+  const now = talkN(0), days = Object.keys(S.qlog || {}).filter(k => /^\d{4}-\d+-\d+$/.test(k) && dayNo(k) >= -5 && dayNo(k) <= now).sort((a, b) => dayNo(b) - dayNo(a));
+  const need = days.filter(k => !(k in C.d) || now - dayNo(k) <= 7);
+  if (need.length) {
+    if (!el.innerHTML) el.innerHTML = '<p class="mw">불러오는 중이에요</p>';
+    await Promise.all(need.map(async k => { try { const d = await F.getDoc(F.doc(db, 'gardenTalk', k, 'a', me.uid)); C.d[k] = d.exists() ? {t: d.data().t, likes: d.data().likes || 0, rc: d.data().rc || 0} : 0; } catch (e) {} }));
+    try { localStorage.setItem(MINE_KEY, JSON.stringify(C)); } catch (e) {}
+    if (!el.isConnected) return;
+  }
+  const rows = days.filter(k => C.d[k]);
+  if (!rows.length) { el.innerHTML = '<p class="mempty">아직 광장에 남긴 답이 없어요. 오늘 질문에 답해 보세요.</p>'; return; }
+  const face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
+  el.innerHTML = `<p class="mw">광장에 남긴 답 ${rows.length}개</p>` + rows.map(k => { const x = C.d[k], [ak, q] = talkQ(now - dayNo(k)), key = k + '/' + me.uid, L = thCache[key];
+    const th = !mineOpen.has(k) ? '' : !L ? '<div class="th"><p class="mw">불러오는 중이에요</p></div>'
+      : `<div class="th">${L.length ? L.map(r => `<div class="rp"><div class="who"><b>${esc(r.name || '')}</b>${r.sc && SCHOOL[r.sc] ? `<span class="hb ${r.sc}">${SCHOOL[r.sc].nm}</span>` : ''}</div><p>${esc(r.t)}</p></div>`).join('') : '<p class="mw">아직 답글이 없어요.</p>'}</div>`;
+    return `<div class="ta mq"><div class="who"><span>${dayTxt(dayNo(k))}</span></div><div class="tq">${face(ak)}<p>${esc(q)}</p></div><p class="my">${esc(x.t)}</p>
+      <div class="act">${x.rc ? `<button class="rbt${mineOpen.has(k) ? ' on' : ''}" type="button" data-mth="${k}">답글 ${x.rc}</button>` : ''}<span class="sp"></span><span class="mw">공감 ${x.likes}</span></div>${th}</div>`; }).join('');
+  el.querySelectorAll('[data-mth]').forEach(b => b.onclick = async () => { const k = b.dataset.mth; sfx.boop();
+    if (mineOpen.has(k)) { mineOpen.delete(k); return renderMine(el); }
+    mineOpen.add(k); renderMine(el); try { await loadThread(k, me.uid); } catch (e) { thCache[k + '/' + me.uid] = []; } if (el.isConnected) renderMine(el); });
+}
+window.GL = {render, renderTalk, renderMine, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
