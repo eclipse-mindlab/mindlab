@@ -74,3 +74,9 @@ npx cap open android  # 안드로이드 스튜디오
 ```
 
 처음 `cap add android` 뒤에는 `android/variables.gradle`의 `ext {` 안에 `rgcfaIncludeGoogle = true` 한 줄을 넣어야 구글 로그인이 들어가요. 워크플로는 이걸 자동으로 해요.
+
+## 화면 업데이트 (앱 업데이트 없이)
+- main에 `garden/`이 올라가면 GitHub가 화면을 묶어 릴리스 `garden-web`의 `garden-web.zip`으로 올려요.
+- 앱은 켤 때 `garden/build.json`을 보고, 자기 화면과 다르면 묶음을 받아 두었다가 앱을 잠깐 내렸을 때 바꿔요. 같은 앱 주소에서 돌아서 폰에 저장된 진행은 그대로예요.
+- 새 화면이 제대로 안 뜨면 플러그인이 앱에 들어 있던 화면으로 되돌려요. 스토어에서 앱을 새로 받으면 받아 둔 묶음은 지워지고 앱에 든 화면부터 써요.
+- 앱 업데이트가 필요한 건 폰 기능(알림, 로그인, 플러그인)을 바꿀 때뿐이에요.

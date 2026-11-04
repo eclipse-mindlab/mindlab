@@ -92,3 +92,19 @@ jobs:
             garden-app/android/app/build/outputs/apk/**/*.apk
             garden-app/android/app/build/outputs/bundle/**/*.aab
           if-no-files-found: error
+
+  # 앱이 받아 가는 최신 정원 화면. main에 올라간 garden/ 을 묶어서 릴리스 'garden-web'에 덮어씀
+  web-bundle:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: 웹 묶음 올리기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd garden && zip -qr ../garden-web.zip . && cd ..
+          gh release view garden-web >/dev/null 2>&1 || gh release create garden-web --title "정원 웹 묶음" --notes "앱이 받아 가는 최신 정원 화면이에요. 지우지 마세요." --latest=false
+          gh release upload garden-web garden-web.zip --clobber
