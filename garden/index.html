@@ -5,9 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#1d1838">
 <meta name="description" content="소크라텃밭: 꼬마 소크라테스와 철학자들이 찾아오는 정원. 질문에 답하고, 미션을 하고, 나무를 키워요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="소크라텃밭">
+<meta property="og:title" content="소크라텃밭">
+<meta property="og:description" content="꼬마 철학자들의 질문에 답하면 나무가 자라는 정원. 친구 정원에 놀러 가서 물도 주고 도장도 찍어요.">
+<meta property="og:image" content="https://eclipse-mindlab.github.io/mindlab/garden/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="꼬마 소크라테스, 에피쿠로스, 니체, 디오게네스가 꽃 핀 나무 곁에서 웃고 있는 정원">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="9115ea7977c0"</script>
+<script>window.GARDEN_BUILD="3e8405bb6289"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -308,6 +317,9 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vnext span{width:60px;height:60px;border-radius:50%;background:#ffcf5a;border:3px solid #000;box-shadow:0 4px 0 #000;display:grid;place-items:center}
 .vnext:active span{transform:translateY(3px);box-shadow:0 1px 0 #000}
 .vnext small{font-family:var(--hand);font-size:14px;color:var(--paper);text-shadow:0 1px 0 #000,0 -1px 0 #000,1px 0 0 #000,-1px 0 0 #000}
+.visit .vstart{appearance:none;position:absolute;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(30px + env(safe-area-inset-bottom,0px));z-index:3;font-family:var(--hand);font-size:17px;color:var(--ink);background:#ffcf5a;border:3px solid #000;border-radius:999px;padding:11px 18px;box-shadow:0 4px 0 #000;cursor:pointer}
+.vstart:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.vlink{width:100%;box-sizing:border-box;margin:6px 0 4px;font:inherit;font-size:14px;line-height:1.5;border:2px solid #000;border-radius:12px;padding:10px;resize:none;background:#fff;color:var(--ink)}
 .visit .vfx{animation:vfx 1.6s ease-out forwards}
 @keyframes vfx{0%{opacity:0;transform:translateY(-14px)}20%{opacity:1}100%{opacity:0;transform:translateY(16px)}}
 .vseal{position:absolute;left:50%;top:42%;width:150px;height:150px;margin:-75px 0 0 -75px;z-index:10;pointer-events:none;animation:vseal 1.1s cubic-bezier(.2,1.3,.4,1) forwards}
@@ -640,6 +652,8 @@ const per=v=>Object.fromEntries(KIDS.map(k=>[k,typeof v==='function'?v():v]));
 function fresh(){return {off:0,intro:0,drops:0,given:0,fruit:0,day:'',asked:per(()=>[]),cnt:per(0),met:per(0),own:[],wear:per(()=>({})),mis:{},misI:per(0),misDone:per(0),misN:{},owlDay:'',barrelN:0,wardSeen:0,muted:false,pd:1,arr:'',xp:per(0),lv:per(1),trees:0,log:{},best:{streak:0,week:0},weekWin:'',streakSeen:0};}
 try{S=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
 if(!S||typeof S!=='object')S=fresh();
+// a friend's invite link (?g=abcd1234), also carried through #g= when moving out of an in-app browser
+const VISIT_AT=(()=>{const m=(location.search+'&'+location.hash).match(/[?#&]g=([A-Za-z0-9]{6,40})/);return m?m[1]:'';})();
 // a garden handed over from an in-app browser: only taken when it is fresh (30 min) and has grown more than this one
 try{const m=location.hash.match(/carry=([A-Za-z0-9_-]+)/);if(m){history.replaceState(null,'',location.pathname+location.search+(/[#&]app\b/.test(location.hash)?'#app':''));
   const c=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));const g=x=>!x?-1:(x.trees||0)*100+(x.given||0)+Object.values(x.xp||{}).reduce((a,b)=>a+b,0)+Object.values(x.misDone||{}).reduce((a,b)=>a+b,0)*3;
@@ -1112,7 +1126,7 @@ const pickN=()=>Object.keys(S.picks||{}).filter(x=>/^[a-z]+\d+$/.test(x)).length
 const dayTxt=d=>{const t=new Date(TQ_EPOCH+d*864e5);return `${t.getUTCMonth()+1}월 ${t.getUTCDate()}일`;};
 // visiting: go see someone else's garden, choose what my sign shows, and whether guests may come
 function drawVisCard(){if(!window.GL||S.intro<2)return '';const n=(S.sign||[]).length,nb=(S.nb||[]).length,on=!S.pubOff;
-  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">남의 정원에서 철학자와 펫을 구경하고 물을 주고 와요. 내 정원에 온 손님은 내가 팻말에 건 답만 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt alt" type="button" data-vis="vsign">팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}</button></div>
+  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">남의 정원에서 철학자와 펫을 구경하고 물을 주고 와요. 내 정원에 온 손님은 내가 팻말에 건 답만 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt" type="button" data-vis="inv">친구 부르기</button></div><div class="mb"><button class="opt alt" type="button" data-vis="vsign">팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}</button></div>
     <div class="vsw"><span><b>내 정원에 손님 받기</b><small>끄면 아무도 놀러 올 수 없어요</small></span><button type="button" class="tgl${on?' on':''}" data-vis="pub" aria-pressed="${on}" aria-label="내 정원에 손님 받기"><i></i></button></div></div>`;}
 function drawMineCard(){const n=pickN();if(!n&&!S.talkPost)return '';
   return `<div class="mis"><p class="mt">내 답 모아보기</p><p class="mw">철학자들 질문에 고른 답과 광장에 쓴 답을 다시 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-mine="phil">철학자 질문 ${n}개</button>${window.GL?'<button class="opt alt" type="button" data-mine="talk">광장에 쓴 답</button>':''}</div></div>`;}
@@ -1151,7 +1165,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
   if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
-    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}
+    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
       if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
@@ -2315,10 +2329,11 @@ function vEl() {
     <div class="vtop"><button class="icon vhome" type="button" id="vHome" aria-label="내 정원으로"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></button>
       <div class="vname"><b id="vName"></b><span class="hb" id="vSc"></span></div><button class="vfol" type="button" id="vFol">이웃 +</button></div>
     <span class="vchip" id="vChip" hidden></span><span class="vhint" id="vHint" hidden>철학자, 펫, 나무, 팻말, 방명록을 눌러 보세요</span>
-    <button class="vnext" type="button" id="vNext"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><small>다음 정원</small></button>`;
+    <button class="vstart" type="button" id="vStart" hidden>나도 정원 시작하기</button><button class="vnext" type="button" id="vNext"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><small>다음 정원</small></button>`;
   $('app').appendChild(el);
   el.querySelector('#vHome').onclick = () => { sfx.boop(); closeVisit(); };
   el.querySelector('#vNext').onclick = () => { sfx.boop(); visitRandom(); };
+  el.querySelector('#vStart').onclick = () => { sfx.boop(); closeVisit(); };
   el.querySelector('#vFol').onclick = () => toggleFollow();
   el.querySelector('#vScene').addEventListener('click', e => { const t = e.target.closest('.vtap'); if (t) vTap(t); });
   return el;
@@ -2331,7 +2346,7 @@ function vScene(P) {
   const pet = id => { const sp = PET_AT[id]; return `<g class="vtap" data-v="p:${id}" transform="translate(${sp.x} ${sp.y}) scale(${sp.flip ? -sp.s : sp.s} ${sp.s})"><rect x="-17" y="-40" width="34" height="42" fill="transparent"/><g class="body" pointer-events="none">${petImg(id, 'basic')}</g></g>`; };
   const back = sp => sp && sp.back;
   const sign = (P.sign || []).slice(0, 3);
-  const mine = leadKid();
+  const mine = (S.intro || 0) >= 2 ? leadKid() : null;
   return `<image href="${A('bg_' + t)}" x="0" y="0" width="390" height="780" preserveAspectRatio="none"/>
     <image href="${A(t === 'day' ? 'sun' : 'moon')}" x="266" y="202" width="68" height="68"/>
     <image href="${A('fence')}" x="56" y="556" width="132" height="44"/><image href="${A('gate_open')}" x="-26" y="532" width="96" height="80"/>
@@ -2360,7 +2375,28 @@ function vNote(now) {
   const go = write.bind(null, VS.uid, VS.n, {...VS.note});
   clearTimeout(vNoteT); if (now) go(); else vNoteT = setTimeout(go, 1500);
 }
-const needLogin = () => { if (me) return false; toast('구글로 로그인하면 물 주기, 도장, 이웃이 돼요'); return true; };
+const VISIT_KEY = 'eclipse_kid_visit_next';
+const needLogin = () => {
+  if (me) return false;
+  const code = vCode();
+  if (INAPP) {
+    const w = vSheet('로그인하고 같이 놀기', `<p class="mw">${KAKAO ? '카카오톡' : '앱'} 안에서 열린 창이라 구글이 로그인을 막아 둬요. 폰 브라우저로 옮기면 이 정원이 그대로 다시 열려요.</p><div class="mb"><button class="opt" type="button" id="vOut">브라우저로 열기</button></div>`);
+    w.querySelector('#vOut').onclick = () => { sfx.boop(); w.remove(); if (!openOut(carryUrl('g=' + code))) toast('메뉴에서 "다른 브라우저로 열기"를 눌러 주세요'); };
+    return true;
+  }
+  const w = vSheet('로그인하고 같이 놀기', `<p class="mw">구글로 로그인하면 물 주기, 방명록 도장, 이웃 맺기를 할 수 있어요. 내 정원도 저장돼요.</p><div class="mb"><button class="opt" type="button" id="vIn">구글로 로그인</button></div>`);
+  w.querySelector('#vIn').onclick = async () => {
+    sfx.boop(); w.remove();
+    // if the cloud brings back a bigger garden the page reloads; this brings the visit back with it
+    try { sessionStorage.setItem(VISIT_KEY, JSON.stringify({c: code, t: Date.now()})); } catch (e) {}
+    await signIn();
+    for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150));
+    try { sessionStorage.removeItem(VISIT_KEY); } catch (e) {}
+    if (me && VS) { toast('로그인했어요'); vPaintTop(); vRestore(VS); }
+  };
+  return true;
+};
+const vCode = () => VS ? VS.uid.slice(0, 8) : '';
 function vTap(g) {
   if (!VS) return;
   const v = g.dataset.v, P = VS.P, nm = cut(P.name || '정원사', 10);
@@ -2449,14 +2485,18 @@ async function visit(uid, seen) {
   VS = {uid, P, n, fromBoard, note: {w: false, s: '', h: 0}, petted: {}, said: {}, fols: 0, seen: seen || new Set()};
   VS.seen.add(uid);
   const el = vEl(); el.querySelectorAll('.bub,.ward,.vseal').forEach(x => x.remove());
-  $('vScene').innerHTML = vScene(P); vPaintTop(); el.hidden = false;
+  $('vScene').innerHTML = vScene(P); vPaintTop(); el.hidden = false; $('vStart').hidden = (S.intro || 0) >= 2;
   if (typeof openGate === 'function') openGate();
   if (!S.visHint) { $('vHint').hidden = false; S.visHint = 1; save(); }
   const cur = VS;
-  if (me) { try { const d = await F.getDoc(F.doc(db, 'gardenPub', uid, 'v', n + '_' + me.uid)); if (d.exists() && VS === cur) { const x = d.data(); VS.note = {w: !!x.w, s: x.s || '', h: x.h || 0}; vStamp(); } } catch (e) {} }
+  vRestore(cur);
   try { const c = await F.getCountFromServer(F.collection(db, 'gardenPub', uid, 'f')); if (VS === cur) { VS.fols = c.data().count || 0; vPaintTop(); } } catch (e) {}
 }
 let pubList = null;
+async function vRestore(cur) {
+  if (!me || VS !== cur) return;
+  try { const d = await F.getDoc(F.doc(db, 'gardenPub', cur.uid, 'v', cur.n + '_' + me.uid)); if (d.exists() && VS === cur) { const x = d.data(); VS.note = {w: !!x.w, s: x.s || '', h: x.h || 0}; vStamp(); } } catch (e) {}
+}
 async function visitRandom() {
   if (failed || !ready) { toast('인터넷이 될 때 놀러 갈 수 있어요'); return; }
   try { if (!auth.currentUser) await F.signInAnonymously(auth); } catch (e) {}
@@ -2477,7 +2517,7 @@ async function visitRandom() {
 function renderVis(el, mode) {
   if (mode === 'vnb') {
     const L = S.nb || [];
-    el.innerHTML = `<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button></div>` + (L.length ? L.map(x => `<div class="ta vnbr"><div class="who"><b>${esc(x.name || '정원사')}</b></div><div class="act"><span class="sp"></span><button class="like" type="button" data-go="${esc(x.u)}">놀러 가기</button></div></div>`).join('') : '<p class="mempty">아직 이웃이 없어요. 놀러 간 정원에서 \'이웃 +\'를 누르면 여기 모여요.</p>');
+    el.innerHTML = `<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button></div>` + (L.length ? L.map(x => `<div class="ta vnbr"><div class="who"><b>${esc(x.name || '정원사')}</b></div><div class="act"><span class="sp"></span><button class="like" type="button" data-go="${esc(x.u)}">놀러 가기</button></div></div>`).join('') : '<p class="mempty">아직 이웃이 없어요. 놀러 간 정원에서 \'이웃 +\'를 누르면 여기 모여요.</p>') + '<div class="mb"><button class="opt" type="button" id="vInv">친구 부르기</button></div>';
   } else {
     const picks = [];
     for (const key in (S.picks || {})) { const m = key.match(/^([a-z]+)(\d+)$/); if (!m || !PH[m[1]]) continue; const Q = PH[m[1]].Q[+m[2]]; if (!Q || !Q.o[S.picks[key]]) continue; picks.push({q: Q.q, a: Q.o[S.picks[key]][0], k: m[1], d: (S.pkd || {})[key]}); }
@@ -2494,10 +2534,61 @@ function renderVis(el, mode) {
     });
   }
   el.querySelector('#mBack').onclick = () => { sfx.boop(); bt = 'story'; drawBoard(); };
+  const iv = el.querySelector('#vInv'); if (iv) iv.onclick = () => { sfx.boop(); invite(); };
   el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { sfx.boop(); visit(b.dataset.go); });
 }
 
-window.GL = {render, renderTalk, renderMine, renderVis, visit, visitRandom, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+// ---- inviting friends: a short link that opens my garden ----
+// the code is the first 8 letters of my id; the garden is found again by looking up ids that start with it
+const inviteUrl = () => HOME + '?g=' + me.uid.slice(0, 8);
+function invite() {
+  if (failed || !ready) { toast('인터넷이 될 때 보낼 수 있어요'); return; }
+  if (!me) { toast('친구가 내 정원에 들어오려면 먼저 로그인해야 해요'); signIn(); return; }
+  if (S.pubOff) { S.pubOff = 0; save(); toast('손님 받기를 켰어요'); }
+  publishGarden();
+  const url = inviteUrl(), text = `${cut(S.lname || '정원사', 10)}님의 소크라텃밭에 놀러 와. 나무에 물 한 방울만 주고 가 줘`;
+  S.invN = (S.invN || 0) + 1; save();
+  // the share sheet has to open straight from the tap, so nothing is awaited before it
+  const SH = NATIVE && plug('Share');
+  const done = e => { if (e && (e.name === 'AbortError' || /cancel/i.test(String(e.message || e)))) return; linkSheet(text, url); };
+  if (SH) { SH.share({title: '소크라텃밭', text, url, dialogTitle: '친구 부르기'}).catch(done); return; }
+  if (navigator.share && !(KAKAO && OS === 'android')) { navigator.share({title: '소크라텃밭', text, url}).catch(done); return; }
+  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text + '\n' + url).then(() => toast('링크를 복사했어요. 카톡에 붙여 넣어 보내 주세요'), () => linkSheet(text, url)); return; }
+  linkSheet(text, url);
+}
+// when no share sheet or clipboard works: the message in a box to copy by hand
+function linkSheet(text, url) {
+  const host = VS ? vEl() : $('app'); const w = document.createElement('div'); w.className = 'ward';
+  w.innerHTML = `<div class="wsheet" role="dialog" aria-label="친구 부르기"><div class="whead"><b>친구 부르기</b><button class="icon wx" type="button" aria-label="닫기"><img src="${A('ui_close')}" alt=""></button></div><p class="mw">아래 글을 길게 눌러 복사한 다음 카톡에 붙여 넣어 보내 주세요.</p><textarea class="vlink" readonly rows="4"></textarea><div class="mb"><button class="opt" type="button" id="lkCp">복사하기</button></div></div>`;
+  host.appendChild(w); const ta = w.querySelector('textarea'); ta.value = text + '\n' + url;
+  const close = () => w.remove(); w.querySelector('.wx').onclick = close; w.addEventListener('click', e => { if (e.target === w) close(); });
+  w.querySelector('#lkCp').onclick = () => { ta.focus(); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} toast(ok ? '복사했어요' : '글을 길게 눌러 복사해 주세요'); };
+}
+async function findGarden(code) {
+  if (code.length >= 20) return code;
+  try {
+    const r = await F.getDocs(F.query(F.collection(db, 'gardenPub'), F.where(F.documentId(), '>=', code), F.where(F.documentId(), '<', code + ''), F.limit(1)));
+    let id = ''; r.forEach(d => { if (d.id.startsWith(code)) id = d.id; }); return id;
+  } catch (e) { return ''; }
+}
+// arriving from a friend's link: open that garden as soon as the cloud is ready
+async function landVisit() {
+  let code = window.VISIT_AT || (typeof VISIT_AT === 'string' ? VISIT_AT : '');
+  try { const p = JSON.parse(sessionStorage.getItem(VISIT_KEY) || 'null'); sessionStorage.removeItem(VISIT_KEY); if (!code && p && Date.now() - p.t < 6e5) code = p.c; } catch (e) {}
+  if (!code) return;
+  try { const q = new URLSearchParams(location.search); q.delete('g'); const h = location.hash.slice(1).split('&').filter(x => x && !/^g=/.test(x)).join('&');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + (h ? '#' + h : '')); } catch (e) {}
+  await loading;
+  for (let i = 0; i < 20 && !authKnown; i++) await new Promise(r => setTimeout(r, 150));
+  if (failed || !ready) { toast('인터넷이 될 때 친구 정원이 열려요'); return; }
+  try { if (!auth.currentUser) await F.signInAnonymously(auth); } catch (e) {}
+  const uid = await findGarden(code);
+  if (!uid) { toast('지금은 손님을 받지 않는 정원이에요'); return; }
+  if (me && uid === me.uid) return;
+  visit(uid);
+}
+
+window.GL = {render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
@@ -2511,6 +2602,7 @@ const loading = load();
 if (/[#&]app\b/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} setTimeout(() => { if (S.intro >= 2) appSheet(); }, 1800); }
 if (window.hud) hud();
 reminders();
+landVisit();
 </script>
 
 </body>

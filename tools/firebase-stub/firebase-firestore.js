@@ -10,6 +10,7 @@ export function query(col, ...conds) { return { col, conds }; }
 export function where(field, op, value) { return { field, op, value }; }
 export function orderBy(field, dir) { return { order: field, dir: dir || 'asc' }; }
 export function limit(n) { return { limit: n }; }
+export function documentId() { return '__name__'; }
 export function serverTimestamp() { return Date.now(); }
 export function increment(n) { return { [INC]: n }; }
 export function arrayUnion(...items) { return { [UNION]: items }; }
@@ -31,7 +32,7 @@ export async function getDocs(q) {
   const prefix = q.col.path + '/';
   const conds = (q.conds || []).filter(c => c.field), ord = (q.conds || []).find(c => c.order), lim = (q.conds || []).find(c => c.limit);
   const ok = (v, c) => c.op === '>' ? v > c.value : c.op === '>=' ? v >= c.value : c.op === '<' ? v < c.value : c.op === '<=' ? v <= c.value : v === c.value;
-  let keys = [...store.keys()].filter(k => k.startsWith(prefix) && !k.slice(prefix.length).includes('/') && conds.every(c => ok(store.get(k)[c.field], c)));
+  let keys = [...store.keys()].filter(k => k.startsWith(prefix) && !k.slice(prefix.length).includes('/') && conds.every(c => ok(c.field === '__name__' ? k.slice(prefix.length) : store.get(k)[c.field], c)));
   if (ord) keys.sort((a, b) => { const x = store.get(a)[ord.order], y = store.get(b)[ord.order]; return (x > y ? 1 : x < y ? -1 : 0) * (ord.dir === 'desc' ? -1 : 1); });
   if (lim) keys = keys.slice(0, lim.limit);
   const docs = keys.map(snap);
