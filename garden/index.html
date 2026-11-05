@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="dfc6550b02fe"</script>
+<script>window.GARDEN_BUILD="f7636cc4eb99"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -350,6 +350,33 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .tgl{appearance:none;flex:none;width:54px;height:32px;border-radius:999px;border:2.5px solid #000;background:#d9cdb0;position:relative;cursor:pointer;padding:0}
 .tgl i{position:absolute;top:2px;left:2px;width:23px;height:23px;border-radius:50%;border:2px solid #000;background:#fffaf0;transition:left .18s}
 .tgl.on{background:#ffcf5a}.tgl.on i{left:24px}
+.vn{position:absolute;inset:0;z-index:7;overflow:hidden;background:#88966d;display:flex;flex-direction:column}
+.vn[hidden]{display:none!important}
+.vnstage{position:relative;flex:1;min-height:0;margin:calc(56px + env(safe-area-inset-top,0px)) 0 14px}
+.vnbg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%}
+.vnshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,14,36,.12) 0%,rgba(18,14,36,.32) 55%,rgba(18,14,36,.8) 100%)}
+.vngate{position:absolute;left:50%;bottom:0;width:min(310px,78%);max-height:100%;object-fit:contain;object-position:50% 100%;transform:translateX(-50%);animation:vnFade .8s ease-out both}
+.vnch{position:absolute;left:50%;bottom:0;height:min(100%,453px);max-width:86%;aspect-ratio:3/4;transform:translateX(-50%)}
+.vnch.in{animation:vnIn .55s cubic-bezier(.3,1.3,.5,1) both}
+.vnbob{position:absolute;inset:0;animation:vnBob 3.2s ease-in-out infinite}
+.vnbob img{position:absolute;inset:0;width:100%;height:100%}
+.vnpot{position:absolute;right:-4%;bottom:-1%;width:35%;display:none}
+.vn.pot .vnpot{display:block;animation:vnUp .5s ease-out both}
+.vnlow{position:relative;flex:none;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(26px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.vnbox{appearance:none;position:relative;width:100%;min-height:118px;box-sizing:border-box;text-align:left;background:var(--paper);border:3px solid #000;border-radius:22px;box-shadow:0 5px 0 #000;padding:26px 20px 18px;cursor:pointer;color:var(--ink);font:inherit}
+.vnbox p{margin:0;font-family:var(--hand);font-size:21px;line-height:1.45;word-break:keep-all;white-space:pre-line;min-height:58px}
+.vntag{position:absolute;left:14px;top:-20px;display:flex;align-items:center;gap:8px;background:var(--gold);border:2.5px solid #000;border-radius:999px;padding:3px 14px 3px 4px}
+.vntag b{font-family:var(--hand);font-weight:400;font-size:16px}
+.vnface{position:relative;width:30px;height:30px;border-radius:50%;border:2px solid #000;overflow:hidden;background:#fff6e0;flex:none;display:grid;place-items:center}
+.vnface img{position:absolute;width:76px;left:-23px;top:-12px}.vnface i{display:none;font-style:normal;font-family:var(--hand);font-size:17px}
+.vnface.q img{display:none}.vnface.q i{display:block}
+.vnopts{display:flex;flex-direction:column;gap:10px;min-height:118px}
+.vnopts .opt{width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
+.vnopts .opt.alt{background:var(--paper)}
+@keyframes vnIn{0%{opacity:0;transform:translate(-50%,40px) scale(.92)}60%{opacity:1;transform:translate(-50%,-6px) scale(1.02)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+@keyframes vnBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes vnFade{from{opacity:0}to{opacity:1}}
+@keyframes vnUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 
@@ -1048,7 +1075,7 @@ function tapKid(k){if(busy)return;ac();rollDay();const a=actors[k];if(!a)return;
   if(k==='ecl')return tapEcl();
   if(a.mode==='barrel')return tapBarrel();
   if(a.mode==='shadow'){say(k,['(그림자가 콧수염을 만지작거린다)','…나무가 조금만 더 자라면.'][(S.given)%2]);return;}
-  if(S.intro<2){if(k==='soc'&&S.intro===1)introAsk();return;}
+  if(S.intro<2){if(k==='soc'&&S.intro===1&&!vnOpen()&&!pend)vnShow('s1');return;}
   if(left(k)<=0){const m=S.mis[k],M=misOf(k);
     if(m&&m.st==='new'){say(k,'게시판에 오늘 미션 붙여 놨어.',null,()=>wiggleBoard());return;}
     if(m&&m.st==='doing'){say(k,`"${M.t}" 하고 있지?`);return;}
@@ -1625,7 +1652,7 @@ function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;
       else chain.push([sp,`지난주 대항전은 ${SCHOOL[r.win].nm}가 가져갔어. 이번 주엔 우리 ${SCHOOL[me].nm}가 이겨 보자.`]);}go();});}
   else go();}
 // wait until nobody is talking and no sheet is open
-function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||(window.GL&&GL.visitOpen&&GL.visitOpen())||!$('board').hidden||!$('ward').hidden||!$('patch').hidden||!$('clk').hidden||($('appSh')&&!$('appSh').hidden))return setTimeout(go,1200);f();},ms||0);}
+function whenFree(f,ms){setTimeout(function go(){if(pend||clrOn()||busy||vnOpen()||(window.GL&&GL.visitOpen&&GL.visitOpen())||!$('board').hidden||!$('ward').hidden||!$('patch').hidden||!$('clk').hidden||($('appSh')&&!$('appSh').hidden))return setTimeout(go,1200);f();},ms||0);}
 // reaching a new level, a philosopher may ask you into their school
 function invite(k){if(S.school||(S.invited||{}).quiz||!actors.soc)return false;S.invited=S.invited||{};S.invited.quiz=1;save();
   say('soc','너는 어느 학파일까? 질문 네 개면 알 수 있어.',['해 볼래','나중에'],n=>{if(n===0)sortQuiz(()=>askSave('clear'));else askSave('clear');});return true;}
@@ -1675,19 +1702,61 @@ function drawWard(msg){const ks=present();
   const no=$('wNo');if(no)no.onclick=()=>{wsel=null;sfx.boop();drawWard();};}
 function closeWard(){wsel=null;$('ward').hidden=true;sfx.boop();present().forEach(k=>{const a=actors[k];place(k,a.mode,a.x,a.y);});hop(wk);checkDio();}
 
-// first visit: an empty garden, then the gate creaks
-function introAsk(){const G=window.GL,load=G&&G.ready&&G.ready()&&!G.isIn();
-  say('soc',PH.soc.hi,['응, 앉아','누구야?'].concat(load?['전에 하던 정원 있어']:[]),async n=>{if(n===1){say('soc',PH.soc.who,null,introAsk);return;}
-  if(n===2){if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',introAsk);say('soc','구글 계정으로 불러올게. 잠깐만.');const ok=await G.login();setTimeout(()=>{closeBub();say('soc',ok?'저장된 정원이 없네. 그럼 여기서 새로 시작하자.':'불러오지 못했어. 나중에 게시판의 리그에서 다시 해 볼 수 있어.',null,introAsk);},ok?3500:200);return;}
-  say('soc','이거 같이 심자. 물은 질문으로 줄게.',null,()=>{S.intro=2;S.met.soc=1;save();postMissions();setTimeout(appGift,8000);setTimeout(askNotif,20000);paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);});});}
+// first visit: Socrates calls from beyond the gate, then the meeting fills the screen
+// the steps keep the old meaning of S.intro: 0 nobody yet, 1 he has come in, 2 the tree is planted
+const ROUTINE={am:{t:'아침에',h:8,m:10},noon:{t:'점심 먹고 나서',h:12,m:40},pm:{t:'자기 전에',h:21,m:40}};
+let vnT=null;
+function vnScenes(){const G=window.GL,load=G&&G.ready&&G.ready()&&!G.isIn(),R=ROUTINE[S.routine]||ROUTINE.am;
+  return {
+    s0:{voice:1,gate:1,t:'저기요…\n여기 정원 맞지?',o:[['누구세요?','s1'],['맞는데?','s1']]},
+    s1:{e:'happy',t:'와, 진짜 있었네!\n나 여기 좀 앉아도 돼?',o:[['응, 앉아','s3'],['근데 누구야?','s2']].concat(load?[['전에 하던 정원 있어','load']]:[])},
+    s2:{e:'basic',t:'나? 소크라테스. 아테네에서 왔어.\n사람들 붙잡고 질문하는 게 취미야.',o:[['그래서 여긴 왜 왔는데?','s2b']]},
+    s2b:{e:'happy',t:'거기선 다들 내 질문에 질려 버렸거든.\n너는 안 쫓아낼 거지?',o:[['일단 앉아','s4']]},
+    s3:{e:'happy',t:'고마워! 아테네에선 내가 하도 물어 대서\n다들 날 피해 다녔거든.',o:[['그 정도였어?','s3b']]},
+    s3b:{e:'basic',t:'응. 근데 물어봐야 알잖아.\n안 그래?',o:[['…그건 그렇지','s4']]},
+    s4:{e:'basic',pot:1,t:'어, 저 화분 비어 있네.\n우리 저기 뭐 하나 심을까?',o:[['물은 누가 주는데?','s5']]},
+    s5:{e:'happy',pot:1,t:'물은 질문으로 줄게.\n내가 묻고 네가 답하면 쑥쑥 자라.',o:[['답 틀리면?','s5b']]},
+    s5b:{e:'happy',pot:1,t:'틀려도 돼. 나도 맨날 틀려.\n대충 넘기지만 마.',o:[['알았어','s6']]},
+    s6:{e:'basic',t:'아, 그리고 질문은 언제 들고 올까?\n네가 편한 때로.',o:[['아침에','s7','am'],['점심 먹고','s7','noon'],['자기 전에','s7','pm']]},
+    s7:{e:'happy',t:`좋아, ${R.t} 올게.\n그럼 이제 심으러 가자!`,o:[['가자','end']]}};}
+function vnEl(){let el=$('vn');if(el)return el;el=document.createElement('div');el.id='vn';el.className='vn';el.hidden=true;
+  el.innerHTML=`<img class="vnbg" alt=""><div class="vnshade"></div><div class="vnstage"><img class="vngate" alt="" src="${A('gate_open')}"><div class="vnch" hidden><div class="vnbob">${['basic','talk','happy'].map(f=>`<img data-f="${f}" src="${A('vn_soc_'+f)}" alt="${f==='basic'?'꼬마 소크라테스':''}">`).join('')}</div><img class="vnpot" alt="" src="${A('pot')}"></div></div>
+    <div class="vnlow"><button class="vnbox" type="button" aria-label="대사 넘기기"><span class="vntag"><span class="vnface"><img src="${A('soc_happy')}" alt=""><i>?</i></span><b></b></span><p></p></button><div class="vnopts"></div></div>`;
+  $('app').appendChild(el);return el;}
+function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;
+  if(id!=='s0'&&(S.intro||0)<1){S.intro=1;save();}
+  el.hidden=false;el.querySelector('.vnbg').src=A('bg_'+timeOfDay());
+  el.classList.toggle('pot',!!s.pot);el.querySelector('.vngate').hidden=!s.gate;
+  const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
+  el.querySelector('.vntag b').textContent=s.voice?'대문 밖 누군가':PH.soc.nm;el.querySelector('.vnface').classList.toggle('q',!!s.voice);
+  const p=el.querySelector('p'),opts=el.querySelector('.vnopts'),face=f=>el.querySelectorAll('.vnbob img').forEach(m=>{m.style.opacity=m.dataset.f===f?1:0;});
+  opts.innerHTML='';p.textContent='';face('basic');let i=0;
+  const done=()=>{clearInterval(vnT);vnT=null;p.textContent=s.t;face(s.e||'basic');
+    opts.innerHTML=s.o.map((o,j)=>`<button type="button" class="opt${j?' alt':''}" data-j="${j}">${o[0]}</button>`).join('');
+    opts.querySelectorAll('button').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);vnPick(s.o[+b.dataset.j]);});};
+  // the line types out; while a friend's garden is open on top, it waits
+  vnT=setInterval(()=>{if(window.GL&&GL.visitOpen&&GL.visitOpen())return;i++;p.textContent=s.t.slice(0,i);
+    if(!s.voice){if(i%3===0)sfx.talk('soc');face(Math.floor(i/3)%2?'talk':'basic');}if(i>=s.t.length)done();},34);
+  el.querySelector('.vnbox').onclick=()=>{ac();if(vnT)done();};}
+function vnClose(){clearInterval(vnT);vnT=null;const el=$('vn');if(el)el.hidden=true;}
+const vnOpen=()=>{const el=$('vn');return !!(el&&!el.hidden);};
+function vnPick(o){const next=o[1];if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
+  if(next==='load'){vnClose();introLoad();return;}
+  if(next==='end'){vnClose();introDone();return;}
+  vnShow(next);}
+// bringing back a garden from Google: the old speech bubbles, then back into the meeting
+async function introLoad(){const G=window.GL;place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);
+  if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',()=>{closeBub();vnShow('s1');});
+  say('soc','구글 계정으로 불러올게. 잠깐만.');const ok=await G.login();
+  setTimeout(()=>{closeBub();say('soc',ok?'저장된 정원이 없네. 그럼 여기서 새로 시작하자.':'불러오지 못했어. 나중에 게시판의 리그에서 다시 해 볼 수 있어.',null,()=>vnShow(ok?'s4':'s1'));},ok?3500:200);}
+function introDone(){place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);
+  S.intro=2;S.met.soc=1;save();postMissions();setTimeout(appGift,8000);setTimeout(askNotif,20000);paintPlant(true);paintSky();sfx.stage();burst();setTimeout(()=>say('soc','자, 첫 질문. 나를 눌러 봐.'),700);}
 function intro(){if(S.intro>=2){S.met.soc=1;place('soc',restMode('soc'),SPOTS.soc.x,SPOTS.soc.y);return;}
-  if(S.intro===1){place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);setTimeout(introAsk,700);return;}
-  place('soc','awake',-40,SPOTS.soc.y);
-  setTimeout(()=>{sfx.gate();openGate();walk('soc',SPOTS.soc.x,2400,()=>{S.intro=1;save();introAsk();});},900);}
+  setTimeout(()=>{if(S.intro<1){sfx.gate();openGate();}vnShow(S.intro===1?'s1':'s0');},S.intro===1?300:800);}
 
 function askNotif(){const G=window.GL;if(!G||!G.native||!G.notifState||S.notifAsk>=2||S.intro<2)return;
   G.notifState().then(st=>{if(st!=='prompt'&&st!=='prompt-with-rationale')return;whenFree(()=>{if(pend||clrOn())return;S.notifAsk=(S.notifAsk||0)+1;save();
-    say('soc','아침마다 내가 먼저 알려 줘도 돼? 그날 광장 질문이랑, 등불이 다시 찼다는 소식.',['좋아','나중에'],n=>{if(n===0)G.ask();});},2500);});}
+    say('soc',`${(ROUTINE[S.routine]||{t:'아침마다'}).t} 내가 먼저 문 두드려도 돼? 그날 질문 들고 갈게.`,['좋아','나중에'],n=>{if(n===0)G.ask();});},2500);});}
 function appGift(){if(window.GL&&GL.native&&S.intro>=2&&!S.appGift)whenFree(()=>{if(S.appGift)return;S.appGift=1;S.fruit+=5;save();hud();bump('fruitChip');sfx.fruit();toast('앱으로 와 줘서 고마워요. 열매 5개 선물이에요');},0);}
 // ---------- pets in the garden: each sits beside its philosopher; the cat and the cabbages keep their own corner ----------
 // art is 400x400 with the feet at (200,396), drawn at the same pixel scale as the kids (U)
@@ -2143,16 +2212,17 @@ async function schedule() {
   try {
     const p = await L.checkPermissions(); if (p.display !== 'granted') return;
     await L.cancel({notifications: [1, 2, 101, 102, 103, 104, 105, 106, 107].map(id => ({id}))});
-    // the next seven mornings, each with that day's square question: a reason to open beyond the habit
+    // the next seven days at the time the player picked when they met Socrates (8:40 for gardens from before), each with that day's question
+    const RT = {am: [8, 10], noon: [12, 40], pm: [21, 40]}[S.routine] || [8, 40];
     const n = [];
     for (let i = 1; i <= 7; i++) {
-      const at = new Date(); at.setDate(at.getDate() + (i - 1)); at.setHours(8, 40, 0, 0); if (at <= new Date()) continue;
+      const at = new Date(); at.setDate(at.getDate() + (i - 1)); at.setHours(RT[0], RT[1], 0, 0); if (at <= new Date()) continue;
       const back = -Math.round((new Date(at).setHours(12, 0, 0, 0) - new Date().setHours(12, 0, 0, 0)) / 864e5);
       let q = ''; try { q = talkQ(back)[1]; } catch (e) {}
-      n.push({id: 100 + i, title: '소크라텃밭 · 등불이 다시 찼어요', body: q ? `오늘의 질문: ${q}` : '오늘 미션과 수수께끼가 기다려요.', schedule: {at, allowWhileIdle: true}});
+      n.push({id: 100 + i, title: '꼬마 소크라테스', body: q ? `(똑똑) 오늘 질문 들고 왔어. ${q}` : '(똑똑) 오늘 미션이랑 수수께끼 들고 왔어.', schedule: {at, allowWhileIdle: true}});
     }
     const d = nowD(), st = streak(), doneToday = !!S.log[dkey(d)];
-    const at = new Date(); at.setHours(21, 10, 0, 0);
+    const at = new Date(); if (S.routine === 'pm') at.setHours(20, 30, 0, 0); else at.setHours(21, 10, 0, 0);
     if (st > 0 && !doneToday && at > new Date()) n.push({id: 2, title: '소크라텃밭', body: `연속 ${st}일이 오늘 끊겨요. 미션 하나만 해 볼까요?`, schedule: {at}});
     await L.schedule({notifications: n});
   } catch (e) {}
@@ -2646,7 +2716,7 @@ async function landVisit() {
   visit(uid);
 }
 
-window.GL = {render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
