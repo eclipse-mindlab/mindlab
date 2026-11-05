@@ -1,6 +1,6 @@
 // Test-only stub of firebase-auth. Signs in an anonymous user immediately.
-const user = { uid: 'test-uid', isAnonymous: true, providerData: [] };
-const auth = { currentUser: null };
+const user = window.__AUTH_USER__ || { uid: 'test-uid', isAnonymous: true, providerData: [] };
+const auth = { currentUser: window.__AUTH_USER__ || null };
 const listeners = [];
 export function getAuth() { return auth; }
 export async function signInAnonymously(a) { a.currentUser = user; listeners.forEach(f => f(user)); return { user }; }
@@ -11,3 +11,5 @@ export async function linkWithPopup() { throw new Error('popup disabled in tests
 export async function signInWithRedirect() {}
 export async function getRedirectResult() { return null; }
 export async function signInWithCredential() { return { user }; }
+export function initializeAuth() { return auth; }
+export const indexedDBLocalPersistence = {};
