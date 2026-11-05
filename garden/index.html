@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="3e8405bb6289"</script>
+<script>window.GARDEN_BUILD="dfc6550b02fe"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -340,7 +340,12 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vpick.on{background:#fffaf0;box-shadow:0 3px 0 #000}
 .vpick.on .vdot{background:#ffcf5a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/15px no-repeat}
 .vnbr{margin-bottom:8px}
-.vsw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding-top:10px;border-top:1.5px dashed #cfc5e6}
+.vcode{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border:2px solid #000;border-radius:14px;background:#fff}
+.vcode span{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}.vcode small{font-size:12px;color:#7a6fa0}.vcode b{font-family:var(--hand);font-weight:400;font-size:24px;letter-spacing:.12em;color:var(--ink)}.vcode em{font-style:normal;font-size:13.5px;color:#7a6fa0}
+.vcode .lnk{font-family:var(--hand);font-size:15px}.vcode .opt{flex:none;padding-left:12px;padding-right:12px}
+.vcin{width:100%;box-sizing:border-box;margin:4px 0 0;font-family:var(--hand);font-size:30px;letter-spacing:.3em;text-align:center;text-transform:uppercase;border:2.5px solid #000;border-radius:14px;padding:10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.vcmsg{min-height:1.4em;text-align:center;color:#b0405a}
+.vsw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;padding-top:10px;border-top:1.5px dashed #cfc5e6}
 .vsw span{display:flex;flex-direction:column;gap:1px}.vsw b{font-family:var(--hand);font-weight:400;font-size:15px}.vsw small{font-size:12px;color:#7a6fa0}
 .tgl{appearance:none;flex:none;width:54px;height:32px;border-radius:999px;border:2.5px solid #000;background:#d9cdb0;position:relative;cursor:pointer;padding:0}
 .tgl i{position:absolute;top:2px;left:2px;width:23px;height:23px;border-radius:50%;border:2px solid #000;background:#fffaf0;transition:left .18s}
@@ -1125,9 +1130,10 @@ let mineV='phil',mineK=null;
 const pickN=()=>Object.keys(S.picks||{}).filter(x=>/^[a-z]+\d+$/.test(x)).length;
 const dayTxt=d=>{const t=new Date(TQ_EPOCH+d*864e5);return `${t.getUTCMonth()+1}월 ${t.getUTCDate()}일`;};
 // visiting: go see someone else's garden, choose what my sign shows, and whether guests may come
-function drawVisCard(){if(!window.GL||S.intro<2)return '';const n=(S.sign||[]).length,nb=(S.nb||[]).length,on=!S.pubOff;
-  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">남의 정원에서 철학자와 펫을 구경하고 물을 주고 와요. 내 정원에 온 손님은 내가 팻말에 건 답만 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt" type="button" data-vis="inv">친구 부르기</button></div><div class="mb"><button class="opt alt" type="button" data-vis="vsign">팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}</button></div>
-    <div class="vsw"><span><b>내 정원에 손님 받기</b><small>끄면 아무도 놀러 올 수 없어요</small></span><button type="button" class="tgl${on?' on':''}" data-vis="pub" aria-pressed="${on}" aria-label="내 정원에 손님 받기"><i></i></button></div></div>`;}
+function drawVisCard(){if(!window.GL||S.intro<2)return '';const n=(S.sign||[]).length,nb=(S.nb||[]).length,on=!S.pubOff,vc=GL.myCode?GL.myCode():'';
+  if(!vc&&GL.isIn&&GL.isIn()&&GL.ensureCode)GL.ensureCode().then(c=>{if(c&&!$('board').hidden&&bt==='story')drawBoard();});
+  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">다른 사람 정원을 구경하고 물을 주고 와요.${on?'':' 지금은 내 정원에 손님을 받지 않고 있어요.'}</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt" type="button" data-vis="inv">친구 부르기</button></div><div class="mb"><button class="opt alt" type="button" data-vis="vsign">내 팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}명</button></div>
+    <div class="vcode">${vc?`<span><small>내 정원 코드</small><b>${vc}</b></span><button class="lnk" type="button" data-vis="cp">복사</button>`:`<span><small>내 정원 코드</small><em>${GL.isIn&&GL.isIn()?'만드는 중이에요':'로그인하면 생겨요'}</em></span>`}<button class="opt alt" type="button" data-vis="code">코드로 놀러 가기</button></div></div>`;}
 function drawMineCard(){const n=pickN();if(!n&&!S.talkPost)return '';
   return `<div class="mis"><p class="mt">내 답 모아보기</p><p class="mw">철학자들 질문에 고른 답과 광장에 쓴 답을 다시 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-mine="phil">철학자 질문 ${n}개</button>${window.GL?'<button class="opt alt" type="button" data-mine="talk">광장에 쓴 답</button>':''}</div></div>`;}
 function drawMine(){const tabs=`<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button><div class="tday"><button type="button" class="${mineV==='phil'?'on':''}" data-mv="phil">철학자 질문</button>${window.GL?`<button type="button" class="${mineV==='talk'?'on':''}" data-mv="talk">광장에 쓴 답</button>`:''}</div></div>`;
@@ -1165,7 +1171,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
   if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
-    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}
+    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
       if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
@@ -2279,6 +2285,7 @@ async function publishGarden() {
   const snap = pubSnap(), h = me.uid + '|' + today() + '|' + JSON.stringify(snap);
   if (h === last) return;
   try { await F.setDoc(F.doc(db, 'gardenPub', me.uid), {...snap, at: F.serverTimestamp()}); localStorage.setItem(PUB_KEY, h); } catch (e) {}
+  ensureCode();
 }
 const pubSoon = () => { clearTimeout(pubT); pubT = setTimeout(publishGarden, 4000); };
 
@@ -2316,6 +2323,7 @@ function tellGuests() {
     if (Q.s && Q.h) msg += ` 방명록엔 도장이 ${Q.s}개, 펫들이 받은 하트는 ${Q.h}개야.`;
     else if (Q.s) msg += ` 방명록엔 도장이 ${Q.s}개 찍혔어.`;
     else if (Q.h) msg += ` 펫들은 하트를 ${Q.h}개 받았어.`;
+    if (!(S.sign || []).length && !S.signTold) { S.signTold = 1; msg += ' 팻말이 비어 있던데, 나 탭에서 답을 걸어 두면 손님들이 읽고 가.'; }
     S.visPend = null; save(); say(leadKid(), msg);
   }, 2000); }, 0);
   tellT = setTimeout(tell, 5000);
@@ -2526,27 +2534,76 @@ function renderVis(el, mode) {
     const all = talk.concat(picks).sort((a, b) => (b.d == null ? -1e9 : b.d) - (a.d == null ? -1e9 : a.d)).slice(0, 60);
     const on = x => (S.sign || []).some(y => y.q === x.q && y.a === x.a);
     el.innerHTML = `<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button></div><p class="mw">고른 답이 팻말에 걸려요. 놀러 온 사람은 이것만 볼 수 있어요. 세 개까지 걸 수 있어요.</p><p class="mw" id="sgN">팻말에 건 답 ${(S.sign || []).length} / 3</p>` +
+      `<div class="vsw"><span><b>내 정원에 손님 받기</b><small>끄면 아무도 놀러 올 수 없어요</small></span><button type="button" class="tgl${S.pubOff ? '' : ' on'}" id="vPub" aria-pressed="${!S.pubOff}" aria-label="내 정원에 손님 받기"><i></i></button></div>` +
       (all.length ? all.map((x, i) => `<button type="button" class="ta vpick${on(x) ? ' on' : ''}" data-pick="${i}"><span class="who">${esc(cut(x.q, 60))}</span><span class="vpa">${esc(cut(x.a, 150))}</span><i class="vdot" aria-hidden="true"></i></button>`).join('') : '<p class="mempty">아직 고른 답이 없어요. 철학자 질문이나 광장 질문에 먼저 답해 보세요.</p>');
     el.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
       const x = all[+b.dataset.pick]; S.sign = S.sign || []; const i = S.sign.findIndex(y => y.q === x.q && y.a === x.a);
       if (i >= 0) S.sign.splice(i, 1); else { if (S.sign.length >= 3) { sfx.no && sfx.no(); toast('팻말에는 세 개까지 걸 수 있어요'); return; } S.sign.push({q: cut(x.q, 60), a: cut(x.a, 150), k: x.k}); }
       sfx.boop(); save(); b.classList.toggle('on', i < 0); $('sgN').textContent = `팻말에 건 답 ${S.sign.length} / 3`; pubSoon();
     });
+    const pb = el.querySelector('#vPub'); pb.onclick = () => { sfx.boop(); S.pubOff = S.pubOff ? 0 : 1; save(); pubSoon(); pb.classList.toggle('on', !S.pubOff); pb.setAttribute('aria-pressed', String(!S.pubOff)); toast(S.pubOff ? '이제 아무도 놀러 올 수 없어요' : '이제 손님이 놀러 올 수 있어요'); };
   }
   el.querySelector('#mBack').onclick = () => { sfx.boop(); bt = 'story'; drawBoard(); };
   const iv = el.querySelector('#vInv'); if (iv) iv.onclick = () => { sfx.boop(); invite(); };
   el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { sfx.boop(); visit(b.dataset.go); });
 }
 
+// ---- garden codes: six letters a person can read out or type (no 0/O, no 1/I) ----
+// gardenCode/{code} = {u: uid}; a taken code can't be overwritten, so a clash just means trying another
+const CODE_ABC = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ', CODE_RE = /^[2-9A-HJ-NP-Z]{6}$/;
+const myCode = () => me && S.vcode && S.vcode.u === me.uid ? S.vcode.c : '';
+let codeP = null, codeFail = 0;
+function ensureCode() {
+  if (!ready || !me) return Promise.resolve('');
+  if (myCode()) return Promise.resolve(myCode());
+  if (codeP) return codeP;
+  if (Date.now() - codeFail < 6e4) return Promise.resolve('');
+  codeP = (async () => {
+    for (let i = 0; i < 6; i++) {
+      let c = ''; const r = crypto.getRandomValues(new Uint8Array(6)); r.forEach(x => { c += CODE_ABC[x & 31]; });
+      try { await F.setDoc(F.doc(db, 'gardenCode', c), {u: me.uid}); S.vcode = {c, u: me.uid}; save(); return c; } catch (e) {}
+    }
+    codeFail = Date.now(); return '';
+  })().finally(() => { codeP = null; });
+  return codeP;
+}
+function copyCode() {
+  const c = myCode(); if (!c) { toast('로그인하면 내 정원 코드가 생겨요'); return; }
+  const ok = () => toast(`코드 ${c}를 복사했어요`);
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(c).then(ok, () => toast(`내 정원 코드는 ${c}예요`)); else toast(`내 정원 코드는 ${c}예요`);
+}
+// type a friend's code to visit
+function codeVisit() {
+  const w = document.createElement('div'); w.className = 'ward';
+  w.innerHTML = `<div class="wsheet" role="dialog" aria-label="코드로 놀러 가기"><div class="whead"><b>코드로 놀러 가기</b><button class="icon wx" type="button" aria-label="닫기"><img src="${A('ui_close')}" alt=""></button></div><p class="mw">친구한테 받은 정원 코드 여섯 글자를 넣어 주세요.</p><input class="vcin" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="K7MQ2P" aria-label="정원 코드"><p class="mw vcmsg" aria-live="polite"></p><div class="mb"><button class="opt" type="button" id="vcGo">놀러 가기</button></div></div>`;
+  $('app').appendChild(w);
+  const inp = w.querySelector('input'), msg = w.querySelector('.vcmsg'), close = () => w.remove();
+  w.querySelector('.wx').onclick = () => { sfx.boop(); close(); }; w.addEventListener('click', e => { if (e.target === w) close(); });
+  inp.oninput = () => { const v = inp.value.toUpperCase().replace(/[^0-9A-Z]/g, ''); if (v !== inp.value) inp.value = v; msg.textContent = ''; };
+  const go = async () => {
+    const c = inp.value;
+    if (!CODE_RE.test(c)) { sfx.no && sfx.no(); msg.textContent = /[01OI]/.test(c) ? '코드에는 0, O, 1, I가 들어가지 않아요. 다시 확인해 주세요' : '코드는 여섯 글자예요'; return; }
+    sfx.boop(); msg.textContent = '찾는 중이에요';
+    if (failed || !ready) { msg.textContent = '인터넷이 될 때 찾을 수 있어요'; return; }
+    try { if (!auth.currentUser) await F.signInAnonymously(auth); } catch (e) {}
+    const uid = await findGarden(c);
+    if (!w.isConnected) return;
+    if (!uid) { sfx.no && sfx.no(); msg.textContent = '그런 정원이 없어요. 코드를 한 번 더 확인해 주세요'; return; }
+    if (me && uid === me.uid) { msg.textContent = '내 정원 코드예요'; return; }
+    close(); visit(uid);
+  };
+  w.querySelector('#vcGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+  setTimeout(() => inp.focus(), 60);
+}
 // ---- inviting friends: a short link that opens my garden ----
 // the code is the first 8 letters of my id; the garden is found again by looking up ids that start with it
-const inviteUrl = () => HOME + '?g=' + me.uid.slice(0, 8);
+const inviteUrl = () => HOME + '?g=' + (myCode() || me.uid.slice(0, 8));
 function invite() {
   if (failed || !ready) { toast('인터넷이 될 때 보낼 수 있어요'); return; }
   if (!me) { toast('친구가 내 정원에 들어오려면 먼저 로그인해야 해요'); signIn(); return; }
   if (S.pubOff) { S.pubOff = 0; save(); toast('손님 받기를 켰어요'); }
   publishGarden();
-  const url = inviteUrl(), text = `${cut(S.lname || '정원사', 10)}님의 소크라텃밭에 놀러 와. 나무에 물 한 방울만 주고 가 줘`;
+  const url = inviteUrl(), c = myCode(), text = `${cut(S.lname || '정원사', 10)}님의 소크라텃밭에 놀러 와. 나무에 물 한 방울만 주고 가 줘` + (c ? `\n정원 코드 ${c}` : '');
   S.invN = (S.invN || 0) + 1; save();
   // the share sheet has to open straight from the tap, so nothing is awaited before it
   const SH = NATIVE && plug('Share');
@@ -2565,6 +2622,7 @@ function linkSheet(text, url) {
   w.querySelector('#lkCp').onclick = () => { ta.focus(); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} toast(ok ? '복사했어요' : '글을 길게 눌러 복사해 주세요'); };
 }
 async function findGarden(code) {
+  if (CODE_RE.test(code)) { try { const d = await F.getDoc(F.doc(db, 'gardenCode', code)); return d.exists() ? d.data().u || '' : ''; } catch (e) { return ''; } }
   if (code.length >= 20) return code;
   try {
     const r = await F.getDocs(F.query(F.collection(db, 'gardenPub'), F.where(F.documentId(), '>=', code), F.where(F.documentId(), '<', code + ''), F.limit(1)));
@@ -2588,7 +2646,7 @@ async function landVisit() {
   visit(uid);
 }
 
-window.GL = {render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
