@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="f7636cc4eb99"</script>
+<script>window.GARDEN_BUILD="7d1fcc0eaefe"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -373,6 +373,11 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vnopts{display:flex;flex-direction:column;gap:10px;min-height:118px}
 .vnopts .opt{width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
 .vnopts .opt.alt{background:var(--paper)}
+.mustupd{position:absolute;inset:0;z-index:20;background:#1d1838;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:16px;padding:24px 16px calc(30px + env(safe-area-inset-bottom,0px))}
+.mustupd img{width:min(300px,70%);flex:1;min-height:0;object-fit:contain;object-position:50% 100%}
+.mubox{width:100%;box-sizing:border-box;background:var(--paper);color:var(--ink);border:3px solid #000;border-radius:22px;box-shadow:0 5px 0 #000;padding:16px 20px}
+.mubox b{display:block;font-family:var(--hand);font-weight:400;font-size:15px;color:#7a6fa0;margin-bottom:4px}.mubox p{margin:0;font-family:var(--hand);font-size:20px;line-height:1.45;white-space:pre-line;word-break:keep-all}
+.mustupd .opt{flex:none;width:100%;min-height:56px;font-size:20px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000}
 @keyframes vnIn{0%{opacity:0;transform:translate(-50%,40px) scale(.92)}60%{opacity:1;transform:translate(-50%,-6px) scale(1.02)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
 @keyframes vnBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes vnFade{from{opacity:0}to{opacity:1}}
@@ -1622,8 +1627,7 @@ async function shareCard(k){let cv;try{cv=await makeCard(k);}catch(e){toast('그
 const yesterKey=()=>{const d=nowD();d.setDate(d.getDate()-1);return dkey(d);};
 // a newer app on Google Play: Socrates mentions it once a day, and the button runs the update right there
 function askUpdate(){const G=window.GL;if(!G||!G.updateInfo||!G.native||S.intro<2||S.updDay===today())return;
-  G.updateInfo().then(i=>{if(!i)return;whenFree(()=>{if(S.updDay===today())return;S.updDay=today();save();
-    say('soc','앱 새 버전이 나왔어. 업데이트하면 새 질문이랑 새 기능이 기다리고 있어. 정원은 그대로 이어져.',['지금 업데이트','나중에'],n=>{if(n===0)G.doUpdate();});},1500);});}
+  G.updateInfo().then(i=>{if(!i)return;whenFree(()=>{if(S.updDay===today())return;S.updDay=today();save();vnShow('upd');},1200);});}
 function greet(){if(S.intro<2||S.pd<2||S.greetDay===today()||!actors.soc)return;S.greetDay=today();save();
   const doing=KIDS.find(k=>S.met[k]&&actors[k]&&S.mis[k]&&S.mis[k].st==='doing'),st=streak();
   const who=doing||'soc';
@@ -1718,13 +1722,14 @@ function vnScenes(){const G=window.GL,load=G&&G.ready&&G.ready()&&!G.isIn(),R=RO
     s5:{e:'happy',pot:1,t:'물은 질문으로 줄게.\n내가 묻고 네가 답하면 쑥쑥 자라.',o:[['답 틀리면?','s5b']]},
     s5b:{e:'happy',pot:1,t:'틀려도 돼. 나도 맨날 틀려.\n대충 넘기지만 마.',o:[['알았어','s6']]},
     s6:{e:'basic',t:'아, 그리고 질문은 언제 들고 올까?\n네가 편한 때로.',o:[['아침에','s7','am'],['점심 먹고','s7','noon'],['자기 전에','s7','pm']]},
-    s7:{e:'happy',t:`좋아, ${R.t} 올게.\n그럼 이제 심으러 가자!`,o:[['가자','end']]}};}
+    s7:{e:'happy',t:`좋아, ${R.t} 올게.\n그럼 이제 심으러 가자!`,o:[['가자','end']]},
+    upd:{e:'happy',t:'앱 새 버전이 나왔어!\n받으면 새 질문이랑 새 기능이 바로 와. 정원은 그대로야.',o:[['지금 받기','upd:go'],['오늘은 그냥 할래','upd:no']]}};}
 function vnEl(){let el=$('vn');if(el)return el;el=document.createElement('div');el.id='vn';el.className='vn';el.hidden=true;
   el.innerHTML=`<img class="vnbg" alt=""><div class="vnshade"></div><div class="vnstage"><img class="vngate" alt="" src="${A('gate_open')}"><div class="vnch" hidden><div class="vnbob">${['basic','talk','happy'].map(f=>`<img data-f="${f}" src="${A('vn_soc_'+f)}" alt="${f==='basic'?'꼬마 소크라테스':''}">`).join('')}</div><img class="vnpot" alt="" src="${A('pot')}"></div></div>
     <div class="vnlow"><button class="vnbox" type="button" aria-label="대사 넘기기"><span class="vntag"><span class="vnface"><img src="${A('soc_happy')}" alt=""><i>?</i></span><b></b></span><p></p></button><div class="vnopts"></div></div>`;
   $('app').appendChild(el);return el;}
 function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;
-  if(id!=='s0'&&(S.intro||0)<1){S.intro=1;save();}
+  if(id!=='s0'&&id!=='upd'&&(S.intro||0)<1){S.intro=1;save();}
   el.hidden=false;el.querySelector('.vnbg').src=A('bg_'+timeOfDay());
   el.classList.toggle('pot',!!s.pot);el.querySelector('.vngate').hidden=!s.gate;
   const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
@@ -1741,6 +1746,8 @@ function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(
 function vnClose(){clearInterval(vnT);vnT=null;const el=$('vn');if(el)el.hidden=true;}
 const vnOpen=()=>{const el=$('vn');return !!(el&&!el.hidden);};
 function vnPick(o){const next=o[1];if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
+  if(next==='upd:go'){vnClose();if(window.GL)GL.doUpdate();return;}
+  if(next==='upd:no'){vnClose();return;}
   if(next==='load'){vnClose();introLoad();return;}
   if(next==='end'){vnClose();introDone();return;}
   vnShow(next);}
@@ -2108,6 +2115,8 @@ async function loadThread(day, aid) {
   got.sort((a, b) => (a.at && a.at.seconds != null ? a.at.seconds : +a.at || 0) - (b.at && b.at.seconds != null ? b.at.seconds : +b.at || 0));
   thCache[day + '/' + aid] = got.filter(x => (x.rep || 0) < 3);
 }
+// from this question day on, an answer has to say which question it answers (qi); older app builds that ask a different question don't
+const QI_FROM = 6;
 async function renderTalk(el) {
   const b = tView, day = talkDay(b), [ak, q] = talkQ(b), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
   const tabs = `<div class="tday"><button type="button" class="${b ? '' : 'on'}" data-tv="0">오늘 질문</button><button type="button" class="${b ? 'on' : ''}" data-tv="1">어제 질문</button></div>`;
@@ -2124,7 +2133,8 @@ async function renderTalk(el) {
       const got = []; (await F.getDocs(F.query(col, F.orderBy('likes', 'desc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
       let mine = uid ? got.find(x => x.id === uid) || null : null;
       if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
-      talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3), mine};
+      const qn = talkN(b), sameQ = x => x.qi == null ? qn < QI_FROM : x.qi === qn;
+      talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3 && sameQ(x)), mine};
     }
     const liked = (S.liked && S.liked[day]) || [], seen = (S.rcSeen || {})[day] || 0;
     const thread = x => {
@@ -2149,7 +2159,9 @@ async function renderTalk(el) {
     const tx = el.querySelector('#tTx');
     if (tx) { tx.oninput = () => { el.querySelector('#tCt').textContent = `${tx.value.length}/150`; tx.style.height = 'auto'; tx.style.height = tx.scrollHeight + 4 + 'px'; };
       el.querySelector('#tGo').onclick = async () => { const t = await cleanText(tx.value); if (!t) return;
-        try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, at: F.serverTimestamp()});
+        const doc = {t, sc: S.school || '', name: S.lname, likes: 0, rep: 0, qi: talkN(b), at: F.serverTimestamp()};
+        // rules from before 'qi' refuse the extra field: post without it rather than not at all
+        try { try { await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), doc); } catch (e) { if (!/permission/i.test(String(e && (e.code || e.message)))) throw e; delete doc.qi; await F.setDoc(F.doc(db, 'gardenTalk', day, 'a', me.uid), doc); }
           S.qlog = S.qlog || {}; S.qlog[day] = 1; S.talkPost = day; save(); sfx.stamp(); buzz([20, 30, 40]);
           talkCache.mine = {id: me.uid, t, sc: S.school || '', name: S.lname, likes: 0}; talkBusy = false; renderTalk(el); postScore(); }
         catch (e) { toast('남기지 못했어요. 잠시 뒤에 다시 해 주세요'); } }; }
@@ -2301,6 +2313,7 @@ async function liveBundle() {
     const cur = await C.current().catch(() => null), curId = cur && cur.bundle && cur.bundle.id;
     const j = await (await fetch(BUNDLE_VER + '?t=' + Date.now(), {cache: 'no-store'})).json();
     const v = String((j && j.v) || ''), mine = window.GARDEN_BUILD;
+    if (j && j.min) needVersion(+j.min);
     const L = (((await C.list().catch(() => null)) || {}).bundles) || [];
     const fresh = v && v !== mine ? L.find(x => x.id !== curId && x.status === 'success' && String(x.version).startsWith(v + '-')) : null;
     // downloaded copies we no longer need only take space
@@ -2313,10 +2326,28 @@ async function liveBundle() {
       try { localStorage.setItem(T, JSON.stringify({v, at: Date.now()})); } catch (e) {}
       b = await C.download({url: BUNDLE_ZIP, version: v + '-' + Date.now()});
     }
-    if (b && b.id) { bundleNext = b.id; await C.next({id: b.id}); }
+    if (b && b.id) {
+      // right after opening, before anyone has touched anything: switch now, so today's questions are the new ones
+      if (!touched && performance.now() < 9000) { try { await C.set({id: b.id}); return; } catch (e) {} }
+      bundleNext = b.id; await C.next({id: b.id});
+    }
   } catch (e) {}
 }
+let touched = false, bundleAt = Date.now();
+addEventListener('pointerdown', () => { touched = true; }, {capture: true, once: true});
 liveBundle();
+// a phone that keeps the app open for days checks again when it comes back
+if (NATIVE && plug('App')) plug('App').addListener('appStateChange', s => { if (s && s.isActive && Date.now() - bundleAt > 18e5) { bundleAt = Date.now(); liveBundle(); } });
+// build.json can name the lowest app build that may still run (after a change only the store can deliver)
+async function needVersion(min) {
+  const P = plug('App'); if (!NATIVE || !P || !min) return;
+  let b = 0; try { b = +((await P.getInfo()) || {}).build || 0; } catch (e) { return; }
+  if (!b || b >= min || document.getElementById('mustUpd')) return;
+  const el = document.createElement('div'); el.id = 'mustUpd'; el.className = 'mustupd';
+  el.innerHTML = `<img src="${A('vn_soc_happy')}" alt="꼬마 소크라테스"><div class="mubox"><b>꼬마 소크라테스</b><p>정원이 새 버전으로 바뀌었어.\n앱만 업데이트하면 바로 이어서 할 수 있어. 정원은 그대로야.</p></div><button class="opt" type="button">업데이트하기</button>`;
+  el.querySelector('button').onclick = () => { sfx.boop(); doUpdate(); };
+  $('app').appendChild(el);
+}
 // switch while the app is in the background, so nobody loses a half-finished answer
 if (NATIVE && plug('App')) plug('App').addListener('appStateChange', s => { if (s && !s.isActive && bundleNext && plug('CapacitorUpdater')) { const id = bundleNext; bundleNext = null; plug('CapacitorUpdater').set({id}).catch(() => {}); } });
 
