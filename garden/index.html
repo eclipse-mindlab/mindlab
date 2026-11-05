@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="49b0085a832d"</script>
+<script>window.GARDEN_BUILD="dfc6550b02fe"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -345,7 +345,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vcode .lnk{font-family:var(--hand);font-size:15px}.vcode .opt{flex:none;padding-left:12px;padding-right:12px}
 .vcin{width:100%;box-sizing:border-box;margin:4px 0 0;font-family:var(--hand);font-size:30px;letter-spacing:.3em;text-align:center;text-transform:uppercase;border:2.5px solid #000;border-radius:14px;padding:10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
 .vcmsg{min-height:1.4em;text-align:center;color:#b0405a}
-.vsw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding-top:10px;border-top:1.5px dashed #cfc5e6}
+.vsw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;padding-top:10px;border-top:1.5px dashed #cfc5e6}
 .vsw span{display:flex;flex-direction:column;gap:1px}.vsw b{font-family:var(--hand);font-weight:400;font-size:15px}.vsw small{font-size:12px;color:#7a6fa0}
 .tgl{appearance:none;flex:none;width:54px;height:32px;border-radius:999px;border:2.5px solid #000;background:#d9cdb0;position:relative;cursor:pointer;padding:0}
 .tgl i{position:absolute;top:2px;left:2px;width:23px;height:23px;border-radius:50%;border:2px solid #000;background:#fffaf0;transition:left .18s}
@@ -1132,9 +1132,8 @@ const dayTxt=d=>{const t=new Date(TQ_EPOCH+d*864e5);return `${t.getUTCMonth()+1}
 // visiting: go see someone else's garden, choose what my sign shows, and whether guests may come
 function drawVisCard(){if(!window.GL||S.intro<2)return '';const n=(S.sign||[]).length,nb=(S.nb||[]).length,on=!S.pubOff,vc=GL.myCode?GL.myCode():'';
   if(!vc&&GL.isIn&&GL.isIn()&&GL.ensureCode)GL.ensureCode().then(c=>{if(c&&!$('board').hidden&&bt==='story')drawBoard();});
-  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">남의 정원에서 철학자와 펫을 구경하고 물을 주고 와요. 내 정원에 온 손님은 내가 팻말에 건 답만 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt" type="button" data-vis="inv">친구 부르기</button></div><div class="mb"><button class="opt alt" type="button" data-vis="vsign">팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}</button></div>
-    <div class="vcode">${vc?`<span><small>내 정원 코드</small><b>${vc}</b></span><button class="lnk" type="button" data-vis="cp">복사</button>`:`<span><small>내 정원 코드</small><em>${GL.isIn&&GL.isIn()?'만드는 중이에요':'로그인하면 생겨요'}</em></span>`}<button class="opt alt" type="button" data-vis="code">코드로 놀러 가기</button></div>
-    <div class="vsw"><span><b>내 정원에 손님 받기</b><small>끄면 아무도 놀러 올 수 없어요</small></span><button type="button" class="tgl${on?' on':''}" data-vis="pub" aria-pressed="${on}" aria-label="내 정원에 손님 받기"><i></i></button></div></div>`;}
+  return `<div class="mis"><p class="mt">정원 놀러 가기</p><p class="mw">다른 사람 정원을 구경하고 물을 주고 와요.${on?'':' 지금은 내 정원에 손님을 받지 않고 있어요.'}</p><div class="mb"><button class="opt" type="button" data-vis="go">놀러 가기</button><button class="opt" type="button" data-vis="inv">친구 부르기</button></div><div class="mb"><button class="opt alt" type="button" data-vis="vsign">내 팻말 ${n}/3</button><button class="opt alt" type="button" data-vis="vnb">이웃 ${nb}명</button></div>
+    <div class="vcode">${vc?`<span><small>내 정원 코드</small><b>${vc}</b></span><button class="lnk" type="button" data-vis="cp">복사</button>`:`<span><small>내 정원 코드</small><em>${GL.isIn&&GL.isIn()?'만드는 중이에요':'로그인하면 생겨요'}</em></span>`}<button class="opt alt" type="button" data-vis="code">코드로 놀러 가기</button></div></div>`;}
 function drawMineCard(){const n=pickN();if(!n&&!S.talkPost)return '';
   return `<div class="mis"><p class="mt">내 답 모아보기</p><p class="mw">철학자들 질문에 고른 답과 광장에 쓴 답을 다시 볼 수 있어요.</p><div class="mb"><button class="opt" type="button" data-mine="phil">철학자 질문 ${n}개</button>${window.GL?'<button class="opt alt" type="button" data-mine="talk">광장에 쓴 답</button>':''}</div></div>`;}
 function drawMine(){const tabs=`<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button><div class="tday"><button type="button" class="${mineV==='phil'?'on':''}" data-mv="phil">철학자 질문</button>${window.GL?`<button type="button" class="${mineV==='talk'?'on':''}" data-mv="talk">광장에 쓴 답</button>`:''}</div></div>`;
@@ -2324,6 +2323,7 @@ function tellGuests() {
     if (Q.s && Q.h) msg += ` 방명록엔 도장이 ${Q.s}개, 펫들이 받은 하트는 ${Q.h}개야.`;
     else if (Q.s) msg += ` 방명록엔 도장이 ${Q.s}개 찍혔어.`;
     else if (Q.h) msg += ` 펫들은 하트를 ${Q.h}개 받았어.`;
+    if (!(S.sign || []).length && !S.signTold) { S.signTold = 1; msg += ' 팻말이 비어 있던데, 나 탭에서 답을 걸어 두면 손님들이 읽고 가.'; }
     S.visPend = null; save(); say(leadKid(), msg);
   }, 2000); }, 0);
   tellT = setTimeout(tell, 5000);
@@ -2534,12 +2534,14 @@ function renderVis(el, mode) {
     const all = talk.concat(picks).sort((a, b) => (b.d == null ? -1e9 : b.d) - (a.d == null ? -1e9 : a.d)).slice(0, 60);
     const on = x => (S.sign || []).some(y => y.q === x.q && y.a === x.a);
     el.innerHTML = `<div class="mtop"><button class="lnk" type="button" id="mBack">‹ 나</button></div><p class="mw">고른 답이 팻말에 걸려요. 놀러 온 사람은 이것만 볼 수 있어요. 세 개까지 걸 수 있어요.</p><p class="mw" id="sgN">팻말에 건 답 ${(S.sign || []).length} / 3</p>` +
+      `<div class="vsw"><span><b>내 정원에 손님 받기</b><small>끄면 아무도 놀러 올 수 없어요</small></span><button type="button" class="tgl${S.pubOff ? '' : ' on'}" id="vPub" aria-pressed="${!S.pubOff}" aria-label="내 정원에 손님 받기"><i></i></button></div>` +
       (all.length ? all.map((x, i) => `<button type="button" class="ta vpick${on(x) ? ' on' : ''}" data-pick="${i}"><span class="who">${esc(cut(x.q, 60))}</span><span class="vpa">${esc(cut(x.a, 150))}</span><i class="vdot" aria-hidden="true"></i></button>`).join('') : '<p class="mempty">아직 고른 답이 없어요. 철학자 질문이나 광장 질문에 먼저 답해 보세요.</p>');
     el.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => {
       const x = all[+b.dataset.pick]; S.sign = S.sign || []; const i = S.sign.findIndex(y => y.q === x.q && y.a === x.a);
       if (i >= 0) S.sign.splice(i, 1); else { if (S.sign.length >= 3) { sfx.no && sfx.no(); toast('팻말에는 세 개까지 걸 수 있어요'); return; } S.sign.push({q: cut(x.q, 60), a: cut(x.a, 150), k: x.k}); }
       sfx.boop(); save(); b.classList.toggle('on', i < 0); $('sgN').textContent = `팻말에 건 답 ${S.sign.length} / 3`; pubSoon();
     });
+    const pb = el.querySelector('#vPub'); pb.onclick = () => { sfx.boop(); S.pubOff = S.pubOff ? 0 : 1; save(); pubSoon(); pb.classList.toggle('on', !S.pubOff); pb.setAttribute('aria-pressed', String(!S.pubOff)); toast(S.pubOff ? '이제 아무도 놀러 올 수 없어요' : '이제 손님이 놀러 올 수 있어요'); };
   }
   el.querySelector('#mBack').onclick = () => { sfx.boop(); bt = 'story'; drawBoard(); };
   const iv = el.querySelector('#vInv'); if (iv) iv.onclick = () => { sfx.boop(); invite(); };

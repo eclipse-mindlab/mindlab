@@ -1,0 +1,143 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 딜렘: 기존 users 규칙
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 딜렘: 도전장
+    match /challenges/{challengeId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+    }
+
+    // 정원: 내 정원 저장본 (나만 읽고 씀)
+    match /garden/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.s is string && request.resource.data.s.size() < 200000;
+    }
+
+    // 정원: 주간 리그와 학파 대항전
+    match /gardenLeague/{week}/p/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['name', 'n', 'upd', 'sc'])
+        && (!('sc' in request.resource.data) || request.resource.data.sc in ['', 'soc', 'nie', 'dio', 'epi'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 70;
+    }
+
+    // 정원: 앱 베타 신청
+    match /gardenBeta/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'name', 'os', 'at'])
+        && request.resource.data.email == request.auth.token.email;
+    }
+
+      // 광장: 오늘의 질문에 한 줄 답. 남의 답에는 공감·신고 1씩, 답글 수는 누구나 1씩 더할 수 있음
+    match /gardenTalk/{day}/a/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['t', 'sc', 'name', 'likes', 'rep', 'at'])
+        && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 200
+        && !request.resource.data.t.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.likes == 0 && request.resource.data.rep == 0;
+      allow update: if request.auth != null
+        && ((request.auth.uid != uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) && request.resource.data.likes == resource.data.likes + 1)
+         || (request.auth.uid != uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rep']) && request.resource.data.rep == resource.data.rep + 1)
+         || (request.auth.token.firebase.sign_in_provider == 'google.com' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rc']) && request.resource.data.rc == resource.data.get('rc', 0) + 1));
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 광장 답글: 쓴 사람과 그 답의 주인이 지울 수 있음
+    match /gardenTalk/{day}/a/{aid}/r/{rid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && rid.matches(request.auth.uid + '_[0-9]+')
+        && request.resource.data.keys().hasOnly(['t', 'sc', 'name', 'uid', 'rep', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 200
+        && !request.resource.data.t.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.rep == 0;
+      allow update: if request.auth != null && request.auth.uid != resource.data.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rep']) && request.resource.data.rep == resource.data.rep + 1;
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.uid || request.auth.uid == aid);
+    }
+
+    // 정원 놀러 가기: 주인이 공개한 모습(이름, 옷, 펫, 나무 단계, 팻말에 건 답 3개까지)만 올라감. 로그인한 사람은 누구나 구경
+    match /gardenPub/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['name', 'sc', 'st', 'kids', 'pets', 'sign', 'lean', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.sc in ['', 'soc', 'nie', 'dio', 'epi']
+        && request.resource.data.st is int && request.resource.data.st >= 0 && request.resource.data.st <= 5
+        && request.resource.data.kids is map && request.resource.data.kids.keys().hasOnly(['soc', 'nie', 'dio', 'epi'])
+        && request.resource.data.pets is list && request.resource.data.pets.size() <= 6
+        && request.resource.data.lean is string && request.resource.data.lean.size() <= 30
+        && request.resource.data.sign is list && request.resource.data.sign.size() <= 3
+        && (request.resource.data.sign.size() < 1 || (request.resource.data.sign[0].a is string && request.resource.data.sign[0].a.size() <= 150 && request.resource.data.sign[0].q.size() <= 60
+            && !request.resource.data.sign[0].a.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')))
+        && (request.resource.data.sign.size() < 2 || (request.resource.data.sign[1].a is string && request.resource.data.sign[1].a.size() <= 150 && request.resource.data.sign[1].q.size() <= 60
+            && !request.resource.data.sign[1].a.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')))
+        && (request.resource.data.sign.size() < 3 || (request.resource.data.sign[2].a is string && request.resource.data.sign[2].a.size() <= 150 && request.resource.data.sign[2].q.size() <= 60
+            && !request.resource.data.sign[2].a.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')))
+        && request.resource.data.at == request.time;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 손님 쪽지: 손님 한 명이 하루에 한 장(물 줬는지, 도장, 펫 하트 수). 글은 못 씀. 주인만 목록을 보고, 손님은 자기 쪽지만 봄
+    match /gardenPub/{owner}/v/{vid} {
+      allow get: if request.auth != null && (request.auth.uid == owner || vid.matches('-?[0-9]+_' + request.auth.uid));
+      allow list: if request.auth != null && request.auth.uid == owner;
+      allow create, update: if request.auth != null && request.auth.uid != owner
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && exists(/databases/$(database)/documents/gardenPub/$(owner))
+        && request.resource.data.keys().hasOnly(['n', 'by', 'name', 'k', 'w', 's', 'h', 'at'])
+        && request.resource.data.n is int
+        && math.abs(request.resource.data.n - math.floor((request.time.toMillis() - 1793404800000) / 86400000.0)) <= 1
+        && vid == string(request.resource.data.n) + '_' + request.auth.uid
+        && request.resource.data.by == request.auth.uid
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.k in ['soc', 'nie', 'dio', 'epi']
+        && request.resource.data.w is bool
+        && request.resource.data.s in ['', 'soc', 'nie', 'dio', 'epi']
+        && request.resource.data.h is int && request.resource.data.h >= 0 && request.resource.data.h <= 10
+        && request.resource.data.at == request.time;
+      allow delete: if request.auth != null && request.auth.uid == owner;
+    }
+
+    // 이웃: 누가 이 정원을 이웃으로 했는지. 숫자만 보여 줌. 자기 줄만 만들고 지움
+    match /gardenPub/{owner}/f/{fid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == fid && fid != owner
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['at']);
+      allow delete: if request.auth != null && request.auth.uid == fid;
+    }
+
+    // 정원 코드: 여섯 글자 → 정원 주인. 코드를 아는 사람만 찾을 수 있게 목록 조회는 막음. 한 번 정한 코드는 남이 덮어쓸 수 없음
+    match /gardenCode/{code} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && code.matches('^[2-9A-HJ-NP-Z]{6}$')
+        && request.resource.data.keys().hasOnly(['u'])
+        && request.resource.data.u == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.u == request.auth.uid;
+    }
+  }
+}
