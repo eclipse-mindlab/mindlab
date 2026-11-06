@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="1bb3916a44c1"</script>
+<script>window.GARDEN_BUILD="460ef693f3cb"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -355,6 +355,9 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vpick.on{background:#fffaf0;box-shadow:0 3px 0 #000}
 .vpick.on .vdot{background:#ffcf5a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/15px no-repeat}
 .vnbr{margin-bottom:8px}
+.vmh{margin:2px 0 4px}.vml{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:40vh;overflow:auto}
+.vmn{appearance:none;display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid #000;border-radius:14px;background:#fff;padding:9px 12px;cursor:pointer;color:var(--ink);font:inherit}.vmn b{font-family:var(--hand);font-weight:400;font-size:17px}.vmn span{font-size:13px;color:var(--mute)}
+.vmenu .mb{margin-top:8px}.vmc{text-align:center;margin-top:12px}.vmc b{font-family:var(--hand);font-weight:400;font-size:17px;letter-spacing:2px;color:var(--ink);margin-left:4px}
 .vcode{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border:2px solid #000;border-radius:14px;background:#fff}
 .vcode span{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}.vcode small{font-size:12px;color:#7a6fa0}.vcode b{font-family:var(--hand);font-weight:400;font-size:24px;letter-spacing:.12em;color:var(--ink)}.vcode em{font-style:normal;font-size:13.5px;color:#7a6fa0}
 .vcode .lnk{font-family:var(--hand);font-size:15px}.vcode .opt{flex:none;padding-left:12px;padding-right:12px}
@@ -1054,7 +1057,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
   let ff='';if(t==='night')for(let i=0;i<9;i++){ff+=`<image class="ff" href="${A('firefly')}" x="${22+i*40}" y="${512+(i%3)*40}" width="16" height="16" style="--t:${4+i%3}s;--dx:${(i%2?1:-1)*(16+i*3)}px;--dy:${-20-(i%4)*10}px;animation-delay:${i*.4}s"/>`;}
   $('ffs').innerHTML=ff;
   if(!$('gateImg'))$('fence').innerHTML=`<image href="${A('fence')}" x="56" y="556" width="132" height="44"/><image id="gateImg" href="${A('gate_closed')}" x="-26" y="532" width="96" height="80"/><g id="pins"></g>`;
-  {const gi=$('gateImg');if(gi&&!gi.dataset.w){gi.dataset.w=1;gi.style.cursor='pointer';gi.addEventListener('click',e=>{if(pend||busy||S.intro<2||!window.GL)return;e.stopPropagation();ac();sfx.gate();openGate();GL.visitRandom();});}}
+  {const gi=$('gateImg');if(gi&&!gi.dataset.w){gi.dataset.w=1;gi.style.cursor='pointer';gi.addEventListener('click',e=>{if(pend||busy||S.intro<2||!window.GL)return;e.stopPropagation();ac();sfx.boop();GL.visitMenu();});}}
   paintBoard();
   if(t==='dusk'&&S.intro>=2&&S.pd>=DAY_AT.owl){if(!actors.owl||actors.owl.gone)place('owl','owl',SPOTS.owl.x,SPOTS.owl.y);}
   else if(actors.owl&&!actors.owl.gone){actors.owl.g.remove();actors.owl.gone=1;delete actors.owl;}
@@ -1247,7 +1250,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
   if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
-    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
+    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitMenu();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{ac();sfx.boop();const k=b.dataset.rec;closeBoard();setTimeout(()=>recAsk(k),120);});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
@@ -1904,11 +1907,11 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);setTimeout(recHello,6000);
     // newcomers wait until nobody is talking
     const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
-    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 누르면 다른 사람 정원을 구경할 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
+    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 친구 정원 코드를 넣으면 친구 정원에 놀러 갈 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
-  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.gate();openGate();if(!S.visGone){S.visGone=1;save();hud();}GL.visitRandom();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
+  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.boop();if(!S.visGone){S.visGone=1;save();hud();}GL.visitMenu();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
   $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
@@ -2715,6 +2718,25 @@ async function visitRandom() {
   if (!pool.length) { toast('아직 놀러 갈 정원이 없어요'); return; }
   visit(pool[Math.floor(Math.random() * pool.length)], seen);
 }
+// the gate: friends first (neighbours, a code), then a stranger's garden
+function visitMenu() {
+  $('app').querySelectorAll('.ward.vmenu').forEach(x => x.remove());
+  const L = (S.nb || []).slice(0, 6), c = myCode();
+  const w = document.createElement('div'); w.className = 'ward vmenu';
+  w.innerHTML = `<div class="wsheet" role="dialog" aria-label="놀러 가기"><div class="whead"><b>놀러 가기</b><button class="icon wx" type="button" aria-label="닫기"><img src="${A('ui_close')}" alt=""></button></div>` +
+    (L.length ? `<p class="mt vmh">이웃 정원</p><div class="vml">${L.map(x => `<button type="button" class="vmn" data-go="${esc(x.u)}"><b>${esc(x.name || '정원사')}</b><span>놀러 가기 ›</span></button>`).join('')}</div>`
+      : `<p class="mw">친구한테 정원 코드를 받으면 바로 놀러 갈 수 있어요. 놀러 간 정원에서 '이웃 +'를 누르면 다음부터 여기 떠요.</p>`) +
+    `<div class="mb"><button class="opt" type="button" data-m="code">코드로 친구 정원 가기</button></div>` +
+    `<div class="mb"><button class="opt alt" type="button" data-m="inv">친구 부르기</button><button class="opt alt" type="button" data-m="rnd">아무 정원 구경</button></div>` +
+    (c ? `<p class="mw vmc">내 정원 코드 <b>${c}</b></p>` : '') + `</div>`;
+  $('app').appendChild(w);
+  const close = () => w.remove(), gate = () => { try { sfx.gate(); openGate(); } catch (e) {} };
+  w.querySelector('.wx').onclick = () => { sfx.boop(); close(); }; w.addEventListener('click', e => { if (e.target === w) close(); });
+  w.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { ac(); close(); gate(); visit(b.dataset.go); });
+  w.querySelector('[data-m="code"]').onclick = () => { sfx.boop(); close(); codeVisit(); };
+  w.querySelector('[data-m="inv"]').onclick = () => { sfx.boop(); close(); invite(); };
+  w.querySelector('[data-m="rnd"]').onclick = () => { ac(); close(); gate(); visitRandom(); };
+}
 // the 나 tab: my sign, and the gardens I follow
 function renderVis(el, mode) {
   if (mode === 'vnb') {
@@ -2840,7 +2862,7 @@ async function landVisit() {
   visit(uid);
 }
 
-window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, visitMenu, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
