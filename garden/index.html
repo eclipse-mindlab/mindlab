@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="7d1fcc0eaefe"</script>
+<script>window.GARDEN_BUILD="460ef693f3cb"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -241,6 +241,21 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .card summary{font-family:var(--hand);font-size:15px;cursor:pointer}
 .card p{margin:5px 0 2px;line-height:1.55;word-break:keep-all}
 .card.lock{background:#eee9f5;color:#8b82a8;border-style:dashed}
+.card.gold{background:#fff6d6;border-color:#8a5a12}.card.lock.gold{background:#fbf3dc;color:#a3864a;border-color:#c9a24c}
+.mis.gold{background:linear-gradient(180deg,#fffaf0,#fff3cf);box-shadow:0 3px 0 #000,0 0 0 2px #ffd66b inset}
+.rst{font-style:normal;font-family:var(--hand);font-weight:400;font-size:.86em;color:#b7790c;margin-left:4px;letter-spacing:.5px}
+.mh b .rst{font-size:14px}
+.opt.rec{background:linear-gradient(180deg,#ffe27e,#ffc93c)}.opt.rec img{width:16px;vertical-align:-3px;margin-right:4px}
+.recring{animation:recGlow 2.6s ease-in-out infinite}.recring .rsp{animation:recTw 1.8s ease-in-out infinite}
+@keyframes recGlow{0%,100%{opacity:.8}50%{opacity:1}}
+@keyframes recTw{0%,100%{opacity:.35}50%{opacity:1}}
+.vn.rec .vnshade{background:radial-gradient(ellipse 70% 45% at 50% 62%,rgba(255,214,107,.42),rgba(255,214,107,0) 70%),linear-gradient(180deg,rgba(18,14,36,.35) 0%,rgba(18,14,36,.55) 55%,rgba(18,14,36,.85) 100%)}
+.vn.rec .vnch::after{content:'';position:absolute;left:16%;right:16%;bottom:1%;height:8%;border-radius:50%;border:4px solid #ffd66b;box-shadow:0 0 22px 4px rgba(255,214,107,.75),inset 0 0 14px rgba(255,214,107,.6);opacity:.35;transition:opacity .4s}
+.vn.recdone .vnch::after{opacity:1;animation:vnRing .9s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes vnRing{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.vnstar{position:absolute;left:50%;top:58%;font-style:normal;font-size:22px;color:#ffd66b;text-shadow:0 0 8px rgba(255,214,107,.9),0 1px 0 #000;pointer-events:none;animation:vnStar 1.3s ease-out both}
+@keyframes vnStar{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.recring,.recring .rsp,.vnstar{animation:none}.vnstar{display:none}}
 .rrow{display:grid;grid-template-columns:52px 1fr 30px;align-items:center;gap:8px;font-size:13px}
 .rrow b{font-family:var(--hand);font-weight:400;font-size:17px;text-align:right}
 .lrow{display:grid;grid-template-columns:70px 1fr 26px;align-items:center;gap:8px;font-size:13px;margin-top:6px}.lrow b{font-family:var(--hand);font-weight:400;font-size:16px;text-align:right}.lrow.top span{font-weight:700;color:#8a5a33}.lrow.top .rbar i{background:var(--gold)}.lean .mt{font-family:var(--hand);font-size:21px;margin:6px 0 2px}.lsm{font-size:12px!important;margin-top:8px}
@@ -340,11 +355,17 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vpick.on{background:#fffaf0;box-shadow:0 3px 0 #000}
 .vpick.on .vdot{background:#ffcf5a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/15px no-repeat}
 .vnbr{margin-bottom:8px}
+.vmh{margin:2px 0 4px}.vml{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:40vh;overflow:auto}
+.vmn{appearance:none;display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid #000;border-radius:14px;background:#fff;padding:9px 12px;cursor:pointer;color:var(--ink);font:inherit}.vmn b{font-family:var(--hand);font-weight:400;font-size:17px}.vmn span{font-size:13px;color:var(--mute)}
+.vmenu .mb{margin-top:8px}.vmc{text-align:center;margin-top:12px}.vmc b{font-family:var(--hand);font-weight:400;font-size:17px;letter-spacing:2px;color:var(--ink);margin-left:4px}
 .vcode{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border:2px solid #000;border-radius:14px;background:#fff}
 .vcode span{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}.vcode small{font-size:12px;color:#7a6fa0}.vcode b{font-family:var(--hand);font-weight:400;font-size:24px;letter-spacing:.12em;color:var(--ink)}.vcode em{font-style:normal;font-size:13.5px;color:#7a6fa0}
 .vcode .lnk{font-family:var(--hand);font-size:15px}.vcode .opt{flex:none;padding-left:12px;padding-right:12px}
 .vcin{width:100%;box-sizing:border-box;margin:4px 0 0;font-family:var(--hand);font-size:30px;letter-spacing:.3em;text-align:center;text-transform:uppercase;border:2.5px solid #000;border-radius:14px;padding:10px;background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
 .vcmsg{min-height:1.4em;text-align:center;color:#b0405a}
+.rpick{display:flex;flex-direction:column;gap:8px;margin-top:8px}.rpick .opt{width:100%;text-align:left;justify-content:flex-start;padding:11px 14px;font-size:16px;line-height:1.35;white-space:normal;word-break:keep-all}
+.rhint{margin:6px 0 0;font-size:14px;color:#7a5a12;background:#fff3c4;border:1.5px dashed #c9a43a;border-radius:10px;padding:6px 10px;word-break:keep-all}
+.rhard{margin-left:6px;font-family:var(--hand);font-size:12px;color:#fff;background:#6b4fd0;border:1.5px solid #000;border-radius:999px;padding:0 8px}
 .vsw{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;padding-top:10px;border-top:1.5px dashed #cfc5e6}
 .vsw span{display:flex;flex-direction:column;gap:1px}.vsw b{font-family:var(--hand);font-weight:400;font-size:15px}.vsw small{font-size:12px;color:#7a6fa0}
 .tgl{appearance:none;flex:none;width:54px;height:32px;border-radius:999px;border:2.5px solid #000;background:#d9cdb0;position:relative;cursor:pointer;padding:0}
@@ -371,7 +392,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vnface img{position:absolute;width:76px;left:-23px;top:-12px}.vnface i{display:none;font-style:normal;font-family:var(--hand);font-size:17px}
 .vnface.q img{display:none}.vnface.q i{display:block}
 .vnopts{display:flex;flex-direction:column;gap:10px;min-height:118px}
-.vnopts .opt{width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
+.vnopts .opt{flex:none;width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
 .vnopts .opt.alt{background:var(--paper)}
 .mustupd{position:absolute;inset:0;z-index:20;background:#1d1838;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:16px;padding:24px 16px calc(30px + env(safe-area-inset-bottom,0px))}
 .mustupd img{width:min(300px,70%);flex:1;min-height:0;object-fit:contain;object-position:50% 100%}
@@ -635,6 +656,9 @@ const MIS={
        {t:'같이 밥 먹고 싶은 사람에게 약속 잡기',why:'에피쿠로스는 무엇을 먹을지보다 누구와 먹을지를 먼저 보라고 했어요. 친구 없이 먹는 건 사자나 늑대의 삶이라면서요.',ok:'약속 잡았어? 그날 밥은 분명 맛있을 거야.'},
        {t:'자기 전에 오늘 좋았던 순간 세 개 떠올리기',why:'에피쿠로스는 죽는 날 몹시 아팠는데도 친구와 나눈 대화를 떠올리며 기뻐했어요. 좋은 기억은 꺼내 쓸 수 있는 즐거움이에요.',ok:'세 개 다 찾았어? 그게 오늘의 열매야.'},
        {t:'꼭 안 가도 되는 약속 하나, 정중히 거절하기',why:'"숨어서 살아라." 에피쿠로스는 남의 눈에 들려고 애쓰기보다 조용한 마음을 지키라고 했어요.',ok:'저녁이 생겼지? 그게 진짜 쾌락이야.'}]};
+// more missions: things the philosophers really did, to try for a day (added 2026-11). New ones come after the first six, so nobody's place in the list moves
+const MIS_ADD={"soc":[{"t":"마트나 편의점 한 바퀴 돌면서, 없어도 사는 데 지장 없는 물건 세 개 찾기","why":"소크라테스는 시장에 쌓인 물건들을 보고 \"내게 필요 없는 게 이렇게나 많구나\" 했대요.","ok":"세 개 금방 찾았지? 필요한 건 생각보다 적어."},{"t":"친구나 가족에게 \"좋은 친구가 뭐라고 생각해?\" 묻고, 답이 나오면 \"왜?\"를 두 번 더 묻기","why":"소크라테스는 자기 일을 산파에 빗댔어요. 답을 대신 주는 게 아니라, 상대 안에 이미 있던 생각을 꺼내 준다고요.","ok":"처음 답이랑 마지막 답, 달라졌지? 그게 꺼낸 생각이야."},{"t":"대화나 뉴스에서 대충 알고 넘긴 단어 하나, 뜻 제대로 찾아보기","why":"소크라테스는 정치가, 시인, 장인을 찾아가 물었는데 다들 안다고 믿었지 설명은 못 했대요.","ok":"제대로 알고 나니 다르게 들리지?"},{"t":"다치지 않는 곳에서 5분 동안 맨발로 걸어 보기","why":"소크라테스는 한겨울 원정길에서도 맨발로 얼음 위를 걸었대요. 다른 병사들은 발을 싸매고도 떨었는데요.","ok":"발바닥이 깨어나지? 신발만 벗어도 세상이 달라져.","min":5},{"t":"5분 동안 한자리에 앉아서 질문 하나만 붙잡고 있기","why":"원정 중에 소크라테스는 새벽부터 다음 날 새벽까지 한자리에 서서 생각에 잠겼대요. 병사들이 신기해서 밤새 지켜봤고요.","ok":"5분도 길지? 하루를 버틴 사람이 있었다니까.","min":5},{"t":"오늘 하나는 메시지 대신 전화하거나 직접 만나서 말하기","why":"소크라테스는 책을 한 권도 안 썼어요. 글은 되물어도 대답을 못 하지만, 말은 주고받을 수 있다고 봤거든요.","ok":"목소리로 하니 금방 끝났지? 오해도 덜하고."},{"t":"미뤄 둔 작은 빚 하나 갚기 (빌린 물건 돌려주기, 못 한 답장, 고맙다는 말)","why":"독을 마신 소크라테스의 마지막 말은 \"아스클레피오스에게 닭 한 마리를 빚졌네, 꼭 갚아 주게\"였어요.","ok":"개운하지? 나도 마지막에 그걸 챙겼어."},{"t":"나를 잘 아는 사람에게 \"내가 모르는 내 버릇 하나만 알려 줘\" 물어보기","why":"소크라테스는 델포이 신전에 새겨진 \"너 자신을 알라\"를 평생 붙들었어요. 나를 아는 데는 남의 눈도 필요해요.","ok":"의외였어? 그게 거울에 안 보이는 쪽이야."},{"t":"생각이 다른 사람 말을 끝까지 듣고, \"그러니까 네 말은 ~라는 거지?\" 하고 정리해 주기","why":"소크라테스는 반박하기 전에 늘 상대 말을 먼저 정리해서 확인했어요. 엉뚱한 걸 두고 싸우지 않으려고요.","ok":"정리해 주니 상대가 좋아하지? 싸움이 대화가 돼."},{"t":"가까운 사람이 미뤄 둔 일, 기분 안 상하게 같이 하자고 꼬드기기 (운동, 병원, 공부)","why":"소크라테스는 자기를 굼뜬 말을 깨우는 등에라고 불렀어요. 귀찮게 굴어야 깨어난다고요.","ok":"귀찮아했어도 나중엔 고마워할 거야."},{"t":"자기 전에 오늘 하루를 질문 세 개로만 적어 보기 (답은 안 써도 돼)","why":"소크라테스는 사람들에게 돈이나 명성보다 영혼이 나아지는 데 마음을 쓰라고 했어요.","ok":"질문만 남겨도 내일이 달라."},{"t":"단골 가게 사장님이나 한 가지 일을 오래 한 사람에게 비결 하나 물어보기","why":"소크라테스가 찾아다닌 사람 중에 장인들은 적어도 자기 일만큼은 제대로 알았대요.","ok":"다들 하나씩은 깊게 알고 있지?"}],"nie":[{"t":"좋아하는 노래 한 곡 틀고, 끝날 때까지 혼자 춤추기","why":"\"한 번도 춤추지 않은 날은 잃어버린 날로 여겨야 한다.\"","ok":"어색했지? 그래도 오늘은 잃어버린 날이 아니야."},{"t":"평소 안 듣던 장르의 노래 한 곡, 끝까지 들어 보기","why":"\"음악이 없다면 삶은 하나의 오류일 것이다.\" 니체는 직접 작곡도 했어요.","ok":"취향이 하나 넓어졌네."},{"t":"오늘 짜증 났던 일 하나에서 \"덕분에\"를 하나 찾아보기","why":"니체는 운명을 견디는 데서 그치지 말고 사랑하라고 했어요. 그게 \"아모르 파티\"예요.","ok":"억지 같아도 하나는 나왔지? 그게 근육이 돼."},{"t":"동네에서 제일 높은 곳(언덕, 옥상, 전망대)에 올라가 내려다보기","why":"니체는 해발 1,800m 알프스 마을 실스마리아에서 여름을 보냈어요. 영원회귀라는 생각도 그곳 호숫가를 걷다가 떠올랐대요.","ok":"작아 보이지? 고민도 같이 작아졌으면 좋겠다."},{"t":"요즘 내 생각 하나를 딱 한 문장으로 적어 보기","why":"\"남들이 책 한 권으로 하는 말을 열 문장으로 하는 것, 그게 내 야심이다.\"","ok":"줄이니까 진짜 하고 싶은 말만 남지?"},{"t":"늘 먹던 메뉴 말고 처음 보는 메뉴 시켜 보기","why":"\"위험하게 살아라! 너희 도시를 베수비오 화산 기슭에 세워라!\"","ok":"맛있었어? 아니어도 이야깃거리는 생겼잖아."},{"t":"머릿속 복잡한 걸 5분 동안 종이 한 장에 전부 쏟아 적기","why":"\"춤추는 별을 낳으려면 자기 안에 혼돈을 품고 있어야 한다.\"","ok":"다 꺼내 놓으니 별 하나는 보이지?","min":5},{"t":"시끄러운 단톡방 하나, 오늘 하루 알림 꺼 두기","why":"차라투스트라는 시장의 파리 떼를 피해 자기 고독으로 달아나라고 했어요.","ok":"조용하지? 파리가 사라졌어."},{"t":"5분 동안 천천히 스트레칭하면서 몸이 어디가 뻐근한지 느껴 보기","why":"니체는 몸을 \"큰 이성\"이라고 불렀어요. 머리로 하는 생각은 그 안의 작은 이성이고요.","ok":"몸이 대답하지? 큰 이성이 깨어났어.","min":5},{"t":"오늘 하루, \"해야 해서\" 말고 \"하고 싶어서\" 한 일 하나 만들기","why":"니체는 정신이 낙타에서 사자로 바뀐다고 했어요. \"너는 해야 한다\"를 짊어진 낙타가, 사자가 되면 \"나는 하고자 한다\"고 말한대요.","ok":"오늘 너 사자였어."},{"t":"아침에 일어나서 폰 보기 전에 10분 동안 내 생각부터 하기","why":"니체는 아침 일찍 머리가 가장 맑을 때 남의 책부터 읽는 건 못된 짓이라고 했어요.","ok":"남의 글 말고 네 생각으로 시작한 하루야."},{"t":"어제보다 하나만 더 하기 (팔굽혀펴기 한 개, 책 한 쪽, 물 한 잔)","why":"\"인간은 극복되어야 할 무엇이다.\"","ok":"하나 더 했지? 그게 넘어서는 거야."}],"dio":[{"t":"가게에서 작은 부탁 하나 해 보기 (서비스, 덤, 자리 바꾸기). 거절당해도 성공","why":"디오게네스는 길가 동상에게 구걸했대요. 왜 그러냐고 묻자 \"거절당하는 연습\"이라고 했어요.","ok":"거절당했어? 그럼 성공이야. 들어줬으면 덤이고."},{"t":"오늘 한 번은 남들 몰리는 쪽 말고 반대로 가 보기 (점심 일찍 먹기, 안 붐비는 길)","why":"디오게네스는 공연이 끝나 사람들이 쏟아져 나올 때 혼자 극장으로 들어갔대요. 평생 이렇게 산다면서요.","ok":"한산하지? 남들 따라가면 줄만 서."},{"t":"씻을 때 마지막 30초는 찬물로 하기","why":"디오게네스는 여름엔 뜨거운 모래 위에서 통을 굴리고, 겨울엔 눈 덮인 동상을 끌어안았대요. 몸을 단련하려고요.","ok":"정신 번쩍 들지? 그게 단련이야."},{"t":"가방을 열어서 오늘 꼭 필요한 것만 남기고 다니기","why":"디오게네스의 살림은 두 겹으로 접은 망토 한 벌, 자루 하나, 지팡이 하나가 전부였어요.","ok":"가볍지? 들고 다니던 게 다 필요한 건 아니었어."},{"t":"안 좋은 일 하나를 디오게네스처럼 받아쳐서 다시 말해 보기","why":"고향 사람들이 그에게 추방을 선고했다는 말을 듣자 디오게네스가 답했대요. \"그럼 나는 그들에게 거기 눌러살라는 선고를 내리지.\"","ok":"웃으면 진 거 아니야."},{"t":"오늘 한 끼는 밖에서 먹기 (공원 벤치, 강가)","why":"디오게네스는 사람들 다 보는 광장에서 밥을 먹었어요. 왜 거기서 먹냐고 하자 \"배가 광장에서 고팠으니까\"라고 했대요.","ok":"남들 신경 쓰였어? 아무도 안 보더라."},{"t":"오늘 하루 돈 한 푼 안 쓰고 지내기","why":"디오게네스는 큰 항아리를 집 삼아 살았어요. 가진 게 없으니 뺏길 것도 없었죠.","ok":"하루 버텼어. 통 속 생활 체험 끝."},{"t":"빈말 칭찬 대신, 진짜 좋았던 점 하나를 구체적으로 말해 주기","why":"디오게네스는 길들인 짐승 중에 제일 위험한 게 아첨꾼이라고 했어요.","ok":"빈말보다 백 배는 기분 좋았을걸."},{"t":"방 바닥에 놓인 물건 다 치워서 바닥 보이게 만들기","why":"디오게네스는 통 하나에 살면서도 부족한 게 없다고 했어요.","ok":"통 안처럼 단출해졌네."},{"t":"10분 동안 햇볕 쬐면서 아무것도 안 하기","why":"알렉산드로스 대왕이 찾아왔을 때 디오게네스는 햇볕을 쬐며 누워 있었어요. 소원을 묻는 왕에게 \"햇빛이나 가리지 마\"라고 했죠.","ok":"왕이 와도 안 비켜 줄 만하지?","min":10},{"t":"지난주에 쓴 돈 중에 아까운 것 세 개 찾아보기","why":"디오게네스는 돈 욕심이 온갖 나쁜 것의 고향이라고 했어요.","ok":"다음엔 그 돈으로 뭐 할래?"},{"t":"평소와 다른 곳에서 잠깐 쉬어 보기 (도서관 구석, 공원 벤치)","why":"디오게네스는 쥐 한 마리를 보고 깨달았대요. 잠자리를 찾지도, 어둠을 무서워하지도 않고 어디서든 산다는 걸요.","ok":"어디서든 쉴 수 있지? 쥐도 알고 나도 알았어."}],"epi":[{"t":"만 원 이하로 오늘 나만의 작은 잔치 차리기","why":"에피쿠로스는 친구에게 \"치즈 한 단지만 보내 주게, 마음 내킬 때 잔치를 벌이게\"라고 편지를 썼어요.","ok":"비싸야 잔치인 거 아니지?"},{"t":"고마운 사람에게 손편지나 긴 메시지 쓰기","why":"에피쿠로스는 멀리 있는 친구들에게 편지를 자주 썼어요. 그가 남긴 글 중 가장 유명한 것도 편지예요.","ok":"받는 사람 하루가 달라질 거야."},{"t":"가까운 공원이나 화단에서 꽃 하나를 5분 동안 들여다보기","why":"에피쿠로스가 친구들과 세운 학교 이름이 \"정원\"이었어요. 실제로 정원에서 같이 살았고요.","ok":"오래 보니 다르지?","min":5},{"t":"친구에게 \"필요하면 언제든 말해\" 진심으로 한 번 말해 두기","why":"\"우리에게 필요한 건 친구의 도움 자체보다, 도와줄 거라는 믿음이다.\"","ok":"그 한마디가 친구한테는 든든한 보험이야."},{"t":"이미 가진 것 중에 \"이거면 충분해\" 싶은 것 다섯 개 적기","why":"\"충분한 것을 적다고 여기는 사람에게는 어떤 것도 충분하지 않다.\"","ok":"다섯 개 다 찼어? 생각보다 부자네."},{"t":"요즘 걱정 하나 적고, \"최악이면 어떻게 되지?\"를 끝까지 써 보기","why":"에피쿠로스는 무서운 일은 생각보다 견딜 만하다고 했어요. 제자들은 이걸 마음의 네 가지 약 중 하나로 외웠대요.","ok":"끝까지 가 보니 견딜 만하지?"},{"t":"부모님이나 어른께 \"살면서 제일 즐거웠던 때가 언제야?\" 물어보기","why":"에피쿠로스는 젊은이보다 잘 살아온 노인이 더 행복하다고 했어요. 좋은 기억을 쌓아 두었으니까요.","ok":"그 얘기 하실 때 표정 봤어?"},{"t":"오늘 20분은 아무 일정 없이 쉬기 (낮잠도 좋아)","why":"에피쿠로스가 말한 쾌락은 몸이 편하고 마음이 고요한 상태였어요. 흥청망청이 아니고요.","ok":"아무것도 안 했는데 좋지? 그게 내가 말한 쾌락이야.","min":20},{"t":"친구나 가족이랑 같이 장 보거나 요리하기","why":"에피쿠로스의 정원에서는 친구들이 함께 먹고 함께 살았어요.","ok":"같이 만드니까 더 맛있지?"},{"t":"제철 과일 하나 사서 천천히 먹기","why":"에피쿠로스는 소박한 음식이 비싼 잔칫상만큼 즐거움을 준다고 했어요.","ok":"제철 맛은 돈으로 더 살 수가 없어."},{"t":"평소 잘 안 어울리던 사람과 밥 한 끼 같이 먹기","why":"에피쿠로스의 정원에는 그 시대에 드물게 여자와 노예도 함께했어요.","ok":"새 친구 하나 생겼네."},{"t":"SNS 앱 하루 안 열기","why":"에피쿠로스는 몸에 필요한 건 적고 구하기 쉽지만, 남과 견주며 생기는 욕심은 끝이 없다고 했어요.","ok":"하루 안 봤는데 아무 일 없었지?"}]};
+KIDS.forEach(k=>{if(MIS[k]&&MIS_ADD[k])MIS[k].push(...MIS_ADD[k]);});
 const MIS_FRUIT=3,MIS_DROP=2;
 const PER_DAY=2;                       // questions each philosopher asks per day
 const STAGE=[0,2,5,9,14,20];           // drops needed for each plant stage
@@ -663,6 +687,28 @@ const CARD={
        ['치즈 한 단지','쾌락을 말한 철학자인데 정작 빵과 물로 살았어요. 친구에게 "치즈 한 단지만 보내 줘. 가끔 호사 좀 부리게"라고 편지를 썼대요.'],
        ['죽음','"죽음은 우리에게 아무것도 아니다. 우리가 있을 때 죽음은 없고, 죽음이 오면 우리는 없다." 두려움을 내려놓는 데서 행복이 시작된다고 봤어요.'],
        ['마지막 편지','죽는 날, 몹시 아팠는데도 친구에게 편지를 썼어요. 함께 나눈 대화를 떠올리면 그 기쁨이 아픔보다 크다고요.']]};
+// eternal return: at the top level you can live the friendship once more for fruit. nothing resets; each round is a gold star.
+// stars 1-3 open a hidden story and +1 mission fruit each; after that only the star and the gold under their feet grow.
+const REC={
+  soc:[['물벼락','아내 크산티페가 잔소리를 퍼붓다가 끝내 물을 끼얹었어요. 소크라테스는 태연하게 말했대요. "천둥이 치더니 결국 비가 오는군."'],
+       ['하지 말라는 목소리','소크라테스는 어릴 때부터 마음속에서 목소리가 들렸대요. 이 목소리는 뭘 하라고는 한 번도 안 하고, 하지 말라고만 했어요. 그가 정치에 나서지 않은 것도 이 목소리가 말려서였대요.'],
+       ['혼자 반대한 날','아테네가 해전에서 이기고도 폭풍 때문에 전사자를 거두지 못하자, 사람들은 장군 여럿을 한꺼번에 재판해 사형시키려 했어요. 그날 회의를 맡은 사람 중 하나였던 소크라테스는 법에 어긋난다며 홀로 반대했어요. 사람들이 위협해도 끝까지 물러서지 않았대요.']],
+  nie:[['공 모양 타자기','눈이 나빠져 펜으로 쓰기 힘들어지자, 니체는 공처럼 생긴 타자기를 샀어요. 친구에게 "우리가 쓰는 도구가 우리 생각에도 함께 작용한다"고 편지를 쳐서 보냈어요. 그런데 타자기는 여행길에 금방 망가졌어요. 니체는 시를 지었대요. "이 타자기는 나를 닮았다. 쇠로 만들었는데 여행만 가면 망가진다."'],
+       ['거절당한 청혼','서른일곱 살의 니체는 스물한 살 루 살로메에게 반해 청혼했다가 거절당했어요. 셋이서 함께 공부하며 살자던 계획도 깨졌어요. 몇 달 뒤 니체는 단 열흘 만에 『차라투스트라는 이렇게 말했다』 1부를 썼어요.'],
+       ['토리노의 말','1889년 토리노 광장에서 마부가 말을 채찍질하는 걸 본 니체가 달려가 말의 목을 끌어안고 울었다고 전해져요. 그날 쓰러진 뒤로 그는 다시는 책을 쓰지 못했어요. 이 장면은 지금도 영화와 그림으로 다시 그려져요.']],
+  dio:[['털 뽑은 닭','플라톤이 사람을 "깃털 없는 두 발 동물"이라고 정의하자, 디오게네스는 닭털을 모조리 뽑아 강의실에 들고 갔어요. "이게 플라톤이 말한 사람이야." 그 뒤로 플라톤은 정의에 "발톱이 넓적한"을 덧붙였대요.'],
+       ['개라는 별명','사람들은 그를 "개"라고 불렀어요. 디오게네스는 오히려 좋아했대요. "나는 뭘 주는 사람한텐 꼬리를 흔들고, 안 주는 사람한텐 짖고, 나쁜 놈은 물어." 그를 따르던 사람들을 부르는 \'견유학파\'라는 이름도 \'개 같은\'이라는 뜻이에요.'],
+       ['같은 날 떠난 두 사람','디오게네스는 아흔 살 가까이 살았어요. 한 기록에는 그가 죽은 날이 알렉산드로스 대왕이 바빌론에서 죽은 날과 같다고 적혀 있어요. 세상을 다 가진 왕과 통 하나뿐인 철학자가 같은 날 떠난 거예요.']],
+  epi:[['열네 살의 질문','열네 살 에피쿠로스는 선생님이 "태초에 혼돈이 있었다"는 시를 읽어 주자 물었어요. "그럼 그 혼돈은 어디서 왔어요?" 선생님이 답을 못 하자, 그는 스스로 철학을 시작했대요.'],
+       ['매달 20일의 잔치','에피쿠로스는 유언에, 매달 20일마다 친구들이 모여 함께 먹으며 자기를 기억해 달라고 남겼어요. 제자들은 그 뒤로 오랫동안 이 날을 지켰어요. 그래서 그들을 "20일의 사람들"이라고 부르기도 했대요.'],
+       ['정원 입구의 글귀','정원 입구에는 이런 글귀가 걸려 있었대요. "손님, 여기 머물러 가세요. 여기서 가장 좋은 건 즐거움이에요." 그런데 들어온 손님이 대접받는 건 보리죽과 물 한 잔이었어요. 에피쿠로스가 말한 즐거움은 그걸로 충분했던 거예요.']]};
+const REC_ASK={nie:'지금 이 삶을 똑같이, 한 번 더,\n끝없이 산다면?\n나는 기꺼이 그러겠어. 너는?',x:'니체가 묻더라. 지금 이 삶을 똑같이\n끝없이 다시 살아도 좋냐고.\n나는 좋아. 너랑 한 번 더 할래?'};
+const REC_AFTER={soc:'좋아. 또 같이 묻고, 또 같이 틀리자.\n이번엔 조금 더 깊게.',nie:'"이게 삶이었나? 좋다, 그럼 한 번 더!"\n내 책에 쓴 말이야. 오늘 진짜로 해 보네.',dio:'통도 그대로, 나도 그대로.\n그래도 한 번 더 살아 볼 만하지.',epi:'좋은 날은 다시 와도 좋은 날이야.\n한 번 더 잔치하자.'};
+const recN=k=>Math.max(0,Math.min(99,((S.rec||{})[k])|0));
+const recCost=n=>50+20*n+5*n*(n+1);   // 50, 80, 120, 170, 230 …
+const misFruit=k=>MIS_FRUIT+Math.min(3,recN(k));
+// gold under the feet: one ring, a second from star 2, sparkles from star 3
+function recRing(n){if(!(n>0))return '';return `<g class="recring">${n>=2?'<ellipse cx="0" cy="0" rx="33" ry="8.5" fill="none" stroke="#ffd66b" stroke-opacity=".7" stroke-width="1.8"/>':''}<ellipse cx="0" cy="0" rx="25" ry="6.4" fill="#ffd66b" fill-opacity=".38" stroke="#e8a92a" stroke-width="2.2"/>${n>=3?'<path class="rsp" d="M-30 -10 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z M31 -14 l1.3 2.8 2.8 1.3 -2.8 1.3 -1.3 2.8 -1.3 -2.8 -2.8 -1.3 2.8 -1.3z" fill="#fff3c4" stroke="#e8a92a" stroke-width=".8"/>':''}</g>`;}
 // wardrobe: everything is bought with fruit, one item per slot.
 // prices: the first two are bought on day one; the lantern (Diogenes' key) by day four; the whole set takes a few weeks.
 const ITEMS=[
@@ -1011,7 +1057,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
   let ff='';if(t==='night')for(let i=0;i<9;i++){ff+=`<image class="ff" href="${A('firefly')}" x="${22+i*40}" y="${512+(i%3)*40}" width="16" height="16" style="--t:${4+i%3}s;--dx:${(i%2?1:-1)*(16+i*3)}px;--dy:${-20-(i%4)*10}px;animation-delay:${i*.4}s"/>`;}
   $('ffs').innerHTML=ff;
   if(!$('gateImg'))$('fence').innerHTML=`<image href="${A('fence')}" x="56" y="556" width="132" height="44"/><image id="gateImg" href="${A('gate_closed')}" x="-26" y="532" width="96" height="80"/><g id="pins"></g>`;
-  {const gi=$('gateImg');if(gi&&!gi.dataset.w){gi.dataset.w=1;gi.style.cursor='pointer';gi.addEventListener('click',e=>{if(pend||busy||S.intro<2||!window.GL)return;e.stopPropagation();ac();sfx.gate();openGate();GL.visitRandom();});}}
+  {const gi=$('gateImg');if(gi&&!gi.dataset.w){gi.dataset.w=1;gi.style.cursor='pointer';gi.addEventListener('click',e=>{if(pend||busy||S.intro<2||!window.GL)return;e.stopPropagation();ac();sfx.boop();GL.visitMenu();});}}
   paintBoard();
   if(t==='dusk'&&S.intro>=2&&S.pd>=DAY_AT.owl){if(!actors.owl||actors.owl.gone)place('owl','owl',SPOTS.owl.x,SPOTS.owl.y);}
   else if(actors.owl&&!actors.owl.gone){actors.owl.g.remove();actors.owl.gone=1;delete actors.owl;}
@@ -1026,7 +1072,7 @@ const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.cl
 // an actor is someone in the scene with its own x and mode
 function place(k,mode,x,y){let a=actors[k];const sp=spotOf(k,mode);
   if(!a){const g=document.createElementNS(NS,'g');g.dataset.k=k;g.style.cursor='pointer';$(sp.back?'castBack':'cast').appendChild(g);a=actors[k]={g,x,y,mode:null,s:sp.s};g.addEventListener('click',()=>tapKid(k));}
-  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
+  const rn=KIDS.includes(k)&&mode!=='shadow'&&mode!=='barrel'?recN(k):0,key=mode+JSON.stringify(S.wear[k]||{})+rn;a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`${recRing(rn)}<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
 function walk(k,toX,ms,done,idle,toY,toS){const a=actors[k];const x0=a.x,y0=a.y,s0=a.s,t0=performance.now();a.walking=true;a.idle=!!idle;a.cancel=0;if(toY==null)toY=y0;if(toS==null)toS=s0;
   const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
     a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);setTimeout(paintPets,0);done&&done();}};
@@ -1047,7 +1093,7 @@ function wobble(k){const b=actors[k].g.querySelector('.body');b.classList.remove
 
 // ---------- the speech bubble ----------
 let talking=null,pend=null;
-function nameOf(k){const a=actors[k];return a&&a.mode==='shadow'?'???':a&&a.mode==='barrel'?'통 속의 누군가':PH[k].nm;}
+function nameOf(k){const a=actors[k];return a&&a.mode==='shadow'?'???':a&&a.mode==='barrel'?'통 속의 누군가':PH[k].nm+(KIDS.includes(k)&&recN(k)?` <i class="rst">★${recN(k)}</i>`:'');}
 function say(k,text,opts,cb){closeBub();const a=actors[k];talking=k;const el=document.createElement('div');el.className='bub';el.setAttribute('role','dialog');
   el.innerHTML=`<span class="who">${nameOf(k)}</span><p></p>${opts?`<div class="opts">${opts.map((o,i)=>`<button class="opt${i?' alt':''}" type="button" data-i="${i}">${o}</button>`).join('')}</div>`:'<i class="more" aria-hidden="true"></i>'}`;
   $('app').appendChild(el);
@@ -1130,7 +1176,7 @@ function water(){if(busy||S.intro<2)return;if(pend&&pend.opts)return;if(pend)clo
 function burst(){const fx=$('fx');let s='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2;s+=`<image class="spark" href="${A('fx_spark')}" x="${POT.x-7}" y="${POT.y-97}" width="14" height="14" style="--dx:${Math.cos(a)*60}px;--dy:${Math.sin(a)*60}px"/>`;}fx.innerHTML=s;setTimeout(()=>{fx.innerHTML='';},950);}
 
 function reward(k,fromRect){sfx.stamp();buzz([40,30,60]);
-  for(let i=0;i<MIS_FRUIT;i++)setTimeout(()=>fly(fromRect,'fruitChip',()=>{sfx.fruit();S.fruit++;save();hud();bump('fruitChip');}),300+i*170);
+  for(let i=0,n=misFruit(k);i<n;i++)setTimeout(()=>fly(fromRect,'fruitChip',()=>{sfx.fruit();S.fruit++;save();hud();bump('fruitChip');}),300+i*170);
   for(let i=0;i<MIS_DROP;i++)setTimeout(()=>fly(fromRect,'dropChip',()=>{S.drops++;save();hud();bump('dropChip');paintPlant(false);}),900+i*170);}
 function paintFence(){}
 // ---------- the mission board ----------
@@ -1182,10 +1228,11 @@ function wireMine(){const b=$('bList');b.querySelector('#mBack').onclick=()=>{sf
   b.querySelectorAll('[data-mk]').forEach(x=>x.onclick=()=>{sfx.boop();mineK=x.dataset.mk;drawBoard();});
   const t=b.querySelector('#mineTalk');if(t&&window.GL)GL.renderMine(t);}
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
-  return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
-    return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
-      <div class="xpbar"><i style="width:${pct}%"></i></div><p class="mw">${hi==null?'가장 높은 단계예요':`다음 단계까지 ${hi-x} · 대답 1, 미션 3, 열매 선물 1`}</p>${hi==null?'':`<div class="mb"><button class="opt alt gift" type="button" data-gift="${k}"${giftLeft(k)>0?'':' disabled'}><img src="${A('fruit')}" alt="">${GIFT_P}개 선물하기${giftLeft(k)>0?` · 오늘 ${giftLeft(k)}번`:' · 내일 또'}</button></div>`}
-      <div class="cards">${CARD[k].map((c,i)=>l>=i+2?`<details class="card"><summary>${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock">${i+2}단계에 열리는 이야기</div>`).join('')}</div></div>`;}).join('');}
+  return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100),rn=recN(k),top=hi==null;
+    const recRow=top?`<p class="mw">${rn?`영원회귀 ${rn}번 · 미션 열매 ${misFruit(k)}개`:'가장 친한 사이예요. 열매로 이 우정을 한 번 더 살면, 숨겨 둔 이야기가 열려요. 잃는 건 없어요.'}</p><div class="mb"><button class="opt rec" type="button" data-rec="${k}"><img src="${A('fruit')}" alt="">영원회귀 · ${recCost(rn)}개</button></div>`:'';
+    return `<div class="mis${top&&rn?' gold':''}" data-card="${k}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}${rn?`<small class="rst">★${rn}</small>`:''}</b><span class="lv">${l}단계</span></div>
+      <div class="xpbar"><i style="width:${pct}%"></i></div>${top?recRow:`<p class="mw">다음 단계까지 ${hi-x} · 대답 1, 미션 3, 열매 선물 1</p><div class="mb"><button class="opt alt gift" type="button" data-gift="${k}"${giftLeft(k)>0?'':' disabled'}><img src="${A('fruit')}" alt="">${GIFT_P}개 선물하기${giftLeft(k)>0?` · 오늘 ${giftLeft(k)}번`:' · 내일 또'}</button></div>`}
+      <div class="cards">${CARD[k].map((c,i)=>l>=i+2?`<details class="card"><summary>${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock">${i+2}단계에 열리는 이야기</div>`).join('')}${top?REC[k].map((c,i)=>rn>=i+1?`<details class="card gold"><summary>★${i+1} ${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock gold">영원회귀 ★${i+1}에 열리는 이야기</div>`).join(''):''}</div></div>`;}).join('');}
 function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max(w,lw,1);
   const st=lw===0?'지난주 기록이 없어요. 이번 주의 내가 다음 주의 상대가 돼요.':w>lw?'지난주의 나를 넘었어요.':`같은 요일까지 지난주엔 ${sd}개 했어요. ${lw-w+1}개 더 하면 지난주를 넘어요.`;
   return `<div class="mis"><p class="mt">지난주의 나와 겨루기</p>
@@ -1203,8 +1250,9 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
   if(bt!=='mis'){$('bList').innerHTML=drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawStory()+drawPets();$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
-    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
+    $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitMenu();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
+    $('bList').querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{ac();sfx.boop();const k=b.dataset.rec;closeBoard();setTimeout(()=>recAsk(k),120);});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
       if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
       if(lvOf(S.xp[k])>S.lv[k]){closeBoard();setTimeout(()=>levelUp(k,()=>{openBoard();bt='story';drawBoard();}),300);}else drawBoard(`${short(k)}${'가'} 좋아해요`);});return;}
@@ -1216,7 +1264,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
     else if(m.st==='doing'&&M.min&&m.start){const leftMs=M.min*60000-(Date.now()-m.start);btn=leftMs>0?`<button class="opt alt" type="button" disabled>${mmss(leftMs)} 남았어요</button>`:`<button class="opt" type="button" data-fin="${k}">다 했어요</button>`;}
     else if(m.st==='doing')btn=`<button class="opt" type="button" data-fin="${k}">했어요</button>`;
     else btn=`<p class="mok">"${M.ok}"</p><button class="opt alt share" type="button" data-share="${k}">자랑하기</button>`;
-    return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${MIS_FRUIT}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
+    return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${misFruit(k)}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
       <p class="mt">${M.t}</p><p class="mw">${M.why}</p><div class="mb">${btn}</div>${m.st==='done'?`<img class="mstamp" src="${A('stamp')}" alt="해냄">`:''}</div>`;}).join(''):'<p class="mempty">아직 붙은 미션이 없어요. 철학자를 만나면 생겨요.</p>';
   $('bList').insertAdjacentHTML('beforeend',ridTeaser());
   $('bMsg').textContent=msg||'';
@@ -1311,6 +1359,12 @@ const RID=[
   {id:'w78',k:"soc",kind:'ans',q:"나치 전범 재판을 보고 \"악의 평범성\"이라는 말을 쓴 철학자는?",a:["아렌트", "한나아렌트"],ok:"한나 아렌트. 엄청난 악도 생각하지 않는 평범한 사람이 저지를 수 있대."},
   {id:'w79',k:"dio",kind:'ans',q:"보부아르는 \"여자는 태어나는 것이 아니라 ○○○○ 것이다\"라고 썼어.",a:["만들어지는", "되는", "만들어진다", "만들어지는것"],ok:"만들어지는 것. 태어난 대로가 아니라 살아가며 되는 거래."},
   {id:'w80',k:"nie",kind:'ans',q:"칸트가 계몽의 표어로 내건 라틴어 \"사페레 아우데\"의 뜻은 \"○○ 알려고 하라\".",a:["감히"],ok:"감히. 남이 대신 생각해 주길 기다리지 말라는 거야."}];
+// puzzles with one right answer, picked from a few choices; the last six (hard) open after ten of the others
+const PICKS=[{"id":"p1","k":"dio","kind":"pick","q":"깜깜한 통 속. 서랍에 검은 양말, 흰 양말이 잔뜩 섞여 있어. 같은 색 한 켤레가 반드시 나오려면 최소 몇 짝 꺼내야 해?","o":["2짝","3짝","4짝","10짝"],"a":1,"ok":"색이 두 가지뿐이라 세 짝이면 적어도 두 짝은 같은 색이야.","hint":"색이 몇 가지인지만 생각해."},{"id":"p2","k":"dio","kind":"pick","q":"동전 9개 중 하나만 살짝 무거운 가짜야. 양팔 저울을 최소 몇 번 쓰면 반드시 찾아?","o":["1번","2번","3번","4번"],"a":1,"ok":"3개씩 나눠 두 무더기를 달면 어느 무더기인지 나와. 그 3개 중 2개를 달면 끝.","hint":"저울에 안 올린 것도 정보가 돼."},{"id":"p3","k":"dio","kind":"pick","q":"셋 중 한 명이 내 등불을 깼어. A는 \"B가 그랬어\", B와 C는 둘 다 \"나 아니야\". 딱 한 명만 참말을 했대. 범인은?","o":["A","B","C"],"a":2,"ok":"C가 범인이어야 참말이 B 하나뿐이야. A나 B가 범인이면 참말이 둘이 돼.","hint":"한 명씩 범인이라고 놓고 참말 수를 세 봐."},{"id":"p4","k":"dio","kind":"pick","q":"벽돌 하나가 1kg에 벽돌 반 개 무게를 더한 만큼 나가. 벽돌 하나는 몇 kg?","o":["1kg","1.5kg","2kg","3kg"],"a":2,"ok":"벽돌 반 개가 1kg이니까 하나는 2kg이야.","hint":"반 개 무게부터 구해 봐."},{"id":"p5","k":"dio","kind":"pick","q":"땔감 통나무를 다섯 토막으로 자를 거야. 한 번 자르는 데 1분이면 다 자르는 데 몇 분?","o":["4분","5분","6분","10분"],"a":0,"ok":"다섯 토막이 되려면 네 번만 자르면 돼.","hint":"한 번 자르면 몇 토막이 되지?"},{"id":"p6","k":"dio","kind":"pick","q":"감기약을 받아 왔어. 30분마다 한 알씩, 세 알을 다 먹으래. 다 먹는 데 몇 분 걸려?","o":["30분","60분","90분","120분"],"a":1,"ok":"지금 한 알, 30분 뒤 한 알, 60분 뒤 한 알. 처음 한 알은 기다릴 필요가 없어.","hint":"첫 알은 언제 먹지?"},{"id":"p7","k":"soc","kind":"pick","q":"방망이랑 공 합쳐서 11,000원. 방망이가 공보다 10,000원 비싸. 공은 얼마?","o":["1,000원","500원","1,500원","100원"],"a":1,"ok":"공 1,000원이면 방망이가 11,000원이라 합이 12,000원이 돼. 공 500원, 방망이 10,500원이야.","hint":"먼저 떠오른 답으로 합을 계산해 봐."},{"id":"p8","k":"soc","kind":"pick","q":"지구 적도를 밧줄로 꽉 감았어. 밧줄을 1m만 늘려서 고르게 띄우면 땅에서 얼마나 뜰까?","o":["머리카락 굵기","약 16cm","약 1m"],"a":1,"ok":"둘레가 1m 늘면 반지름은 1m를 2π로 나눈 만큼, 약 16cm 늘어. 지구가 크든 작든 똑같아.","hint":"둘레와 반지름은 2π 배 차이야."},{"id":"p9","k":"soc","kind":"pick","q":"참말만 하는 사람과 거짓말만 하는 사람이 사는 섬. A가 \"우리 둘 다 거짓말쟁이야\"라고 했어. A와 B는?","o":["둘 다 거짓말쟁이","A는 거짓말쟁이, B는 참말쟁이","A는 참말쟁이, B는 거짓말쟁이"],"a":1,"ok":"참말쟁이는 자기가 거짓말쟁이라고 못 해. 그러니 A는 거짓말쟁이고, 그 말이 거짓이니 B는 참말쟁이야.","hint":"A가 참말쟁이라고 놓아 봐."},{"id":"p10","k":"soc","kind":"pick","q":"길가에 나무 10그루가 5m 간격으로 한 줄로 서 있어. 첫 나무에서 끝 나무까지 몇 m?","o":["45m","50m","55m"],"a":0,"ok":"나무가 10그루면 사이는 9칸이야. 9 × 5 = 45m.","hint":"나무 수 말고 사이 수를 세 봐."},{"id":"p11","k":"soc","kind":"pick","q":"시장에서 옷값을 20% 올렸다가, 다음 날 20% 내렸어. 처음 값이랑 비교하면?","o":["같다","4% 싸다","4% 비싸다"],"a":1,"ok":"1만 원이 1만 2천 원이 됐다가, 거기서 20%인 2,400원이 빠져서 9,600원. 내릴 때는 오른 값에서 빼니까 더 많이 빠져.","hint":"1만 원으로 직접 계산해 봐."},{"id":"p12","k":"soc","kind":"pick","q":"엘리베이터가 1층에서 3층까지 6초 걸려. 1층에서 6층까지는?","o":["12초","15초","18초"],"a":1,"ok":"1층에서 3층은 두 층을 올라가니 한 층에 3초야. 6층까지는 다섯 층이라 15초.","hint":"몇 층을 \"올라가는지\" 세 봐."},{"id":"p13","k":"nie","kind":"pick","q":"산을 오를 땐 시속 2km, 같은 길로 내려올 땐 시속 6km. 왕복 평균 속도는?","o":["시속 3km","시속 4km","시속 5km"],"a":0,"ok":"6km 산길이면 오르는 데 3시간, 내려오는 데 1시간. 12km를 4시간에 갔으니 시속 3km야. 느리게 걷는 시간이 길어서 평균이 그쪽으로 끌려가.","hint":"길이를 하나 정해서 걸린 시간을 계산해 봐."},{"id":"p14","k":"nie","kind":"pick","q":"연잎이 하루에 두 배씩 늘어서 30일째에 연못을 다 덮었어. 반만 덮인 건 며칠째?","o":["15일째","20일째","29일째"],"a":2,"ok":"하루에 두 배니까, 다 덮이기 하루 전이 반이야.","hint":"마지막 날에서 하루만 거꾸로 가 봐."},{"id":"p15","k":"nie","kind":"pick","q":"10m 우물 바닥의 달팽이가 낮엔 3m 오르고 밤엔 2m 미끄러져. 며칠째에 빠져나올까?","o":["7일째","8일째","10일째"],"a":1,"ok":"7일째 밤이 끝나면 7m. 8일째 낮에 3m를 오르면 꼭대기라 미끄러지기 전에 나와.","hint":"마지막 날엔 밤이 안 와."},{"id":"p16","k":"nie","kind":"pick","q":"기계 5대가 물건 5개를 만드는 데 5분. 기계 100대가 물건 100개를 만들려면?","o":["100분","20분","5분"],"a":2,"ok":"기계 한 대가 물건 하나에 5분이야. 100대가 동시에 하나씩 만들면 5분.","hint":"기계 한 대는 물건 하나에 몇 분 걸려?"},{"id":"p17","k":"nie","kind":"pick","q":"1분마다 두 배로 느는 세균. 한 마리로 시작하면 1시간에 병이 꽉 차. 두 마리로 시작하면?","o":["30분","59분","60분"],"a":1,"ok":"두 마리로 시작하면, 한 마리로 시작했을 때보다 딱 1분 앞서 있는 거야.","hint":"한 마리가 두 마리 되는 데 얼마 걸려?"},{"id":"p18","k":"nie","kind":"pick","q":"문 세 개 중 하나 뒤에 상품이 있어. 네가 하나를 고르자, 답을 아는 진행자가 빈 문 하나를 열어 주고 바꿀래 물어. 어떻게 해?","o":["바꾼다","그대로 둔다","어느 쪽이든 똑같다"],"a":0,"ok":"처음 고른 문이 맞을 확률은 3분의 1. 나머지 3분의 2가 남은 문 하나에 몰려. 바꾸는 게 두 배 유리해.","hint":"처음 고를 때 맞을 확률부터 생각해 봐."},{"id":"p19","k":"epi","kind":"pick","q":"친구랑 치즈 한 덩이를 나눠. 저울도 없고 둘 다 손해 보기 싫어. 불만 없이 나누는 방법은?","o":["눈대중으로 반 자른다","가위바위보로 정한다","한 사람이 자르고, 다른 사람이 먼저 고른다"],"a":2,"ok":"자르는 사람은 어느 쪽이 남아도 괜찮게 최대한 똑같이 자르고, 고르는 사람은 원하는 쪽을 가져가. 둘 다 불만이 없어.","hint":"자르는 사람이 대충 자를 수 없게 만들어 봐."},{"id":"p20","k":"epi","kind":"pick","q":"배엔 나 말고 하나만 실려. 늑대는 염소를, 염소는 양배추를 먹어. 처음에 뭘 싣고 건널까?","o":["늑대","염소","양배추"],"a":1,"ok":"늑대와 양배추는 같이 둬도 괜찮아. 문제는 늘 염소라서 염소부터 데려가.","hint":"둘만 남겨도 괜찮은 짝을 찾아 봐."},{"id":"p21","k":"epi","kind":"pick","q":"잔치에 몇 명이 모이면 생일 같은 사람이 있을 확률이 절반을 넘을까?","o":["23명","100명","183명"],"a":0,"ok":"23명이면 두 명씩 짝짓는 경우가 253가지나 돼서 금방 절반을 넘어.","hint":"사람 수보다 짝의 수를 세 봐."},{"id":"p22","k":"epi","kind":"pick","q":"정원 물통을 채우는 데 수도꼭지 A로는 3시간, B로는 6시간. 둘 다 틀면?","o":["1.5시간","2시간","4.5시간"],"a":1,"ok":"한 시간에 A는 3분의 1, B는 6분의 1을 채워. 합치면 절반이니 2시간이야.","hint":"한 시간에 얼마나 채우는지 더해 봐."},{"id":"p23","k":"epi","kind":"pick","q":"동전을 다섯 번 던졌는데 다 앞면이었어. 여섯 번째에 앞면이 나올 확률은?","o":["앞면이 더 잘 나온다","이제 뒷면 차례다","여전히 반반이다"],"a":2,"ok":"동전은 지난 다섯 번을 기억 못 해. 매번 반반이야.","hint":"동전한테 기억이 있을까?"},{"id":"p24","k":"epi","kind":"pick","q":"놀러 온 집 여자아이는 남자 형제가 셋이고, 남자아이들은 저마다 여자 형제가 한 명이래. 아이는 모두 몇 명?","o":["4명","5명","7명"],"a":0,"ok":"여자아이 한 명, 남자아이 셋. 남자아이들한테 여자 형제는 그 한 명뿐이야.","hint":"여자아이가 몇 명인지부터 정해 봐."},{"id":"p25","k":"dio","kind":"pick","q":"밤에 네 명이 다리를 건너. 등불은 하나, 다리엔 두 명씩만. 건너는 데 1분, 2분, 5분, 10분 걸려. 둘이 가면 느린 사람 속도고, 등불은 누가 들고 돌아와야 해. 최소 몇 분?","o":["10분","17분","19분"],"a":1,"ok":"1·2분이 건너고(2) 1분이 돌아와(1). 5·10분이 같이 건너고(10) 2분이 돌아와(2). 1·2분이 다시 건너(2). 합쳐서 17분. 느린 둘을 한 번에 묶는 게 핵심이야.","hint":"느린 두 사람을 따로 보내면 손해야.","hard":1},{"id":"p26","k":"soc","kind":"pick","q":"문지기 둘 중 하나는 참말만, 하나는 거짓말만 해. 누가 누군지 모를 때, 한 번만 물어서 맞는 문을 찾으려면?","o":["\"이 문이 맞아?\" 묻는다","\"너 참말쟁이야?\" 묻는다","\"저 사람은 어느 문이라고 할까?\" 묻고 반대 문으로 간다"],"a":2,"ok":"누구에게 물어도 답은 참말과 거짓말을 한 번씩 거쳐서, 늘 틀린 문을 가리켜. 반대로 가면 돼.","hint":"두 사람 말을 한 번에 거치게 만들어 봐.","hard":1},{"id":"p27","k":"dio","kind":"pick","q":"셋이 만 원씩 3만 원을 냈어. 주인이 5천 원을 돌려주라고 했는데, 직원이 2천 원을 챙기고 천 원씩 돌려줬어. 각자 9천 원씩 2만 7천 원, 직원 2천 원, 합하면 2만 9천 원. 천 원은 어디 갔을까?","o":["주인이 가졌다","직원이 더 가졌다","사라진 돈은 없다, 셈이 틀렸다"],"a":2,"ok":"2만 7천 원 안에 직원이 챙긴 2천 원이 이미 들어 있어. 거기에 2천 원을 또 더한 게 틀린 셈이야.","hint":"2만 7천 원이 누구 주머니로 갔는지 나눠 봐.","hard":1},{"id":"p28","k":"soc","kind":"pick","q":"셋이 앞뒤로 섰어. 흰 모자 3개, 검은 모자 2개 중에 하나씩 썼고 자기 건 못 봐. 맨 뒤 사람은 앞의 둘을, 가운데는 맨 앞을 봐. 맨 뒤도 가운데도 \"모르겠어\"라고 했어. 맨 앞 모자는?","o":["흰색","검은색","알 수 없다"],"a":0,"ok":"맨 뒤가 모르니 앞의 둘이 다 검은색은 아니야. 맨 앞이 검은색이었다면 가운데는 자기가 흰색인 걸 알았을 거야. 그러니 흰색.","hint":"\"모르겠다\"도 답이 돼.","hard":1},{"id":"p29","k":"nie","kind":"pick","q":"낮 12시에 시침과 분침이 겹쳐. 그때부터 12시간 동안, 낮 12시를 포함해서 몇 번 겹칠까?","o":["11번","12번","24번"],"a":0,"ok":"매시 조금씩 늦게 겹치다가, 11시대엔 못 겹치고 바로 12시가 돼. 그래서 한 번이 빠져.","hint":"11시대에 겹칠 수 있는지 봐.","hard":1},{"id":"p30","k":"epi","kind":"pick","q":"카드 한쪽엔 철학자, 다른 쪽엔 과일. 규칙은 \"소크라테스 뒤엔 사과\". 보이는 건 소크라테스, 니체, 사과, 배. 규칙을 확인하려면 어떤 카드를 뒤집어야 해?","o":["소크라테스와 사과","소크라테스와 배","네 장 다"],"a":1,"ok":"배 뒤에 소크라테스가 있으면 규칙이 깨져. 사과 뒤엔 누가 있든 상관없어. 맞는 걸 찾는 것보다 틀린 걸 찾는 게 확인이야.","hint":"규칙을 깰 수 있는 카드만 골라.","hard":1}];
+const RID_ADD=[{"id":"w81","k":"dio","q":"통 속 45분. 지금까지 중에 제일 길어. 폰은 엎어 두고 책이나 창밖이랑만 지내 봐.","ok":"45분 버텼어. 이제 통 속이 좀 편하지?","kind":"down","min":45},{"id":"w82","k":"epi","q":"폰 엎어 두고 10분, 따뜻한 차나 물 한 잔을 천천히 마셔 봐.","ok":"같은 물인데 맛이 다르지?","kind":"down","min":10},{"id":"w83","k":"soc","q":"누구랑 마주 앉아 이야기하는 동안 폰을 엎어 둬. 20분. 질문은 네가 먼저 해.","ok":"20분 동안 뭘 알게 됐어?","kind":"down","min":20},{"id":"w84","k":"soc","q":"나는 시장을 돌면서 아무나 붙잡고 이야기했어. 오늘은 2km. 가다가 궁금한 가게 하나 들러 봐.","ok":"2km 동안 질문 몇 개 떠올랐어?","kind":"walk","dist":2000},{"id":"w85","k":"nie","q":"실스마리아에서 나는 호숫가를 몇 시간씩 걸었어. 오늘은 5km. 지금까지 중에 제일 멀어.","ok":"5km. 다리가 생각을 데려다줬지?","kind":"walk","dist":5000},{"id":"w86","k":"epi","q":"밥 먹고 동네 한 바퀴. 500m만 걸어도 소화가 달라.","ok":"배가 편하지? 그게 쾌락이야.","kind":"walk","dist":500},{"id":"w87","k":"nie","q":"내일 아침 6시 전에 정원을 열어 봐. 하루 중 머리가 제일 맑을 때야. 남의 글 말고 네 생각부터 해.","ok":"6시 전에 왔네. 오늘 하루는 네 거야.","kind":"early","h":6},{"id":"w88","k":"soc","q":"오늘 밤 9시에 여기 와서 \"왔어\"를 눌러 줘. 오늘 하루에 질문 하나만 던지고 자자.","ok":"질문 하나 생겼어? 그거 들고 자.","kind":"clock","h":21,"m":0},{"id":"w89","k":"dio","q":"해 지기 전에 밖에 나가서 햇빛을 마지막까지 쬐어 봐. 해가 지고 30분 안에 \"봤어\"를 눌러 줘.","ok":"오늘 햇빛은 끝까지 네 거였어.","kind":"sunset"},{"id":"w90","k":"nie","q":"오늘 밤 달을 찾아봐. 어떤 모양이야?","ok":"달은 매일 모양이 바뀌어도 늘 같은 달이야. 영원회귀처럼.","kind":"moon"}];
+RID.push(...PICKS,...RID_ADD);
+// banknote and coin questions: kept for those who solved them, no longer offered to anyone else
+['w1','w3','w5','w7','w9','w11','w12','w14','w16','w18','w22','w26','w29','w34','w39'].forEach(id=>{const r=RID.find(x=>x.id===id);if(r)r.money=1;});
 // book riddles: 『죽음 리허설』. Page numbers are the printed ones
 const BOOK={id:'death',nm:'죽음 리허설',img:'https://eclipse-mindlab.github.io/mindlab/img/book-death.webp',url:'https://product.kyobobook.co.kr/detail/S000221636755'};
 // only someone holding the book can answer: each one is the heading at the top of a printed page
@@ -1335,7 +1389,13 @@ const DECO=[{id:'cabbage',nm:'몽테뉴의 양배추 밭',book:4,story:'몽테�
 const rnorm=t=>String(t||'').toLowerCase().replace(/[\s.,!?'"“”‘’·~\-『』「」()]/g,'').replace(/(이요|예요|에요|이야|요|야|입니다|이다|다)$/,'');
 const ridOk=(R,t)=>{const v=rnorm(t);return v.length>0&&(R.a.some(x=>{const w=rnorm(x);return v===w||(v.startsWith(w)&&v.length<=w.length+2);})||(R.inc||[]).some(w=>v.includes(w)&&v.length<=12));};
 const ridDone=id=>S.rid&&S.rid[id];
-const worldOpen=()=>S.intro>=2?RID:[];
+// picked puzzles: one wrong pick closes that puzzle for the day (and burns a lamp), the next day it comes back with a hint
+const ridMissed=id=>(S.ridMiss||{})[id];
+const ridLocked=R=>ridMissed(R.id)===today();
+const pickSolved=()=>PICKS.filter(R=>!R.hard&&S.rid&&S.rid[R.id]).length;
+const hardOpen=()=>pickSolved()>=10;
+const ridGain=(R,book)=>book?5:R.kind==='pick'?(R.hard?(ridMissed(R.id)?4:6):(ridMissed(R.id)?3:4)):3;
+const worldOpen=()=>S.intro>=2?RID.filter(R=>!(R.money&&!(S.rid&&S.rid[R.id]))&&!(R.hard&&!hardOpen())):[];
 const worldSolved=()=>RID.filter(R=>S.rid&&S.rid[R.id]&&S.rid[R.id]!=='skip').length;
 const bookSolved=()=>RIDB.filter(R=>ridDone(R.id)).length;
 // the sky over Korea: sunrise and sunset (Seoul), and how old the moon is
@@ -1358,7 +1418,7 @@ function moonPick(j){const s=moonState();if(!s.can)return false;if(j===s.i)retur
 function earlyState(R){const d=new Date(NOW()),h=d.getHours();return h>=4&&h<R.h?{can:true,msg:`지금 ${hm(d.getTime())}. 이불을 이겼어요.`}:{can:false,msg:`내일 아침 ${R.h}시 전에 열어 주세요.`};}
 function noonState(){const t=sunTimes(new Date(new Date(NOW()).setHours(12,0,0,0)).getTime()),now=NOW(),a=t.noon-12*60000,b=t.noon+12*60000;return now<a?{can:false,msg:`오늘 해가 가장 높은 시각은 ${hm(t.noon)}이에요.`}:now>b?{can:false,msg:`오늘은 지났어요. 내일 ${hm(t.noon+864e5)}쯤 다시 와요.`}:{can:true,msg:`해가 가장 높은 시각 ${hm(t.noon)}`};}
 function starState(){const t=sunToday(),now=NOW(),a=t.set+25*60000,b=t.set+90*60000;return now<a?{can:false,msg:`오늘은 ${hm(a)}쯤부터 별이 보이기 시작해요.`}:now>b?{can:false,msg:`오늘은 늦었어요. 내일 ${hm(sunTimes(t.set+864e5).set+25*60000)}쯤 하늘을 봐 줘.`}:{can:true,msg:'지금 하늘을 올려다봐요.'};}
-function clockState(R){const d=new Date(NOW()),t=new Date(d);t.setHours(R.h,R.m,0,0);const now=d.getTime(),a=t.getTime()-5*60000,b=t.getTime()+5*60000,lbl=`${R.h>12?'오후 '+(R.h-12):'오전 '+R.h}시 ${R.m}분`;
+function clockState(R){const d=new Date(NOW()),t=new Date(d);t.setHours(R.h,R.m,0,0);const now=d.getTime(),a=t.getTime()-5*60000,b=t.getTime()+5*60000,lbl=`${R.h>12?'오후 '+(R.h-12):'오전 '+R.h}시${R.m?' '+R.m+'분':''}`;
   return now<a?{can:false,msg:`${lbl}에 다시 와 줘. 지금은 ${hm(now)}이에요.`}:now>b?{can:false,msg:`오늘은 지났어요. 내일 ${lbl}에 봐요.`}:{can:true,msg:`지금 ${hm(now)}. 딱 좋아요.`};}
 function sunState(kind){const t=sunToday(),now=NOW();
   if(kind==='sunset'){const a=t.set-20*60000,b=t.set+40*60000;return now<a?{can:false,msg:`오늘 해 지는 시각은 ${hm(t.set)}이에요. 그때 하늘을 보고 와 줘.`}:now>b?{can:false,msg:`오늘은 해가 졌어요. 내일 ${hm(sunTimes(t.set+864e5).set)}쯤 다시 봐요.`}:{can:true,msg:`해 지는 시각 ${hm(t.set)}`};}
@@ -1376,6 +1436,10 @@ const oilLeft=()=>Math.max(0,oilMax()-oilUsed());
 function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
   let body='';
   if(st)body=`<p class="mok">"${R.ok}"</p>`;
+  else if(R.kind==='pick'){const miss=ridMissed(R.id);
+    if(ridLocked(R))body=`<p class="mw">오늘은 여기까지. 내일 힌트랑 같이 다시 와.</p>`;
+    else{const ord=R.o.map((o,j)=>j).sort(()=>Math.random()-.5);body=(miss?`<p class="rhint">힌트: ${R.hint}</p>`:'')+`<div class="rpick">${ord.map(j=>`<button type="button" class="opt alt" data-pick="${R.id}|${j}">${R.o[j]}</button>`).join('')}</div>`;}}
+  else if(R.kind==='moon'&&ridLocked(R))body=`<p class="mw">오늘은 여기까지. 내일 밤에 다시 올려다봐.</p>`;
   else if(R.kind==='moon'){const s=moonState();body=s.can?`<div class="moons">${MOON.map((m,j)=>`<button type="button" class="moon" data-moon="${R.id}|${j}">${moonSVG(m.f)}<span>${m.nm}</span></button>`).join('')}</div><button class="lnk" type="button" data-cloud="${R.id}">구름에 가려서 안 보여</button>`:`<p class="mw">${s.msg}</p>`;}
   else if(R.kind==='sunset'||R.kind==='sunrise'){const s=sunState(R.kind);body=`<p class="mw">${s.msg}</p><div class="mb"><button class="opt" type="button" data-sun="${R.id}"${s.can?'':' disabled'}>봤어</button></div>`;}
   else if(R.kind==='noon'||R.kind==='dusk2'||R.kind==='early'){const s=R.kind==='noon'?noonState():R.kind==='early'?earlyState(R):starState();body=`<p class="mw">${s.msg}</p><div class="mb"><button class="opt" type="button" data-tsky="${R.id}"${s.can?'':' disabled'}>${R.kind==='dusk2'?'찾았어':R.kind==='early'?'일어났어':'봤어'}</button></div>`;}
@@ -1384,12 +1448,14 @@ function ridCard(R,book){const k=S.met[R.k]?R.k:'soc',st=S.rid&&S.rid[R.id];
       :`<div class="mb"><button class="opt" type="button" data-depart="${R.id}">출발</button></div>`;}
   else if(R.kind==='down')body=`<div class="mb"><button class="opt" type="button" data-down="${R.id}">통에 들어가기</button></div>`;
   else body=`<div class="rin"><input type="text" maxlength="20" placeholder="정답" data-rtx="${R.id}"><button class="opt" type="button" data-rgo="${R.id}">확인</button></div>`;
-  return `<div class="mis rid${st?' done':''}" data-rcard="${R.id}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}</b><span class="rw"><img src="${A('fruit')}" alt="">${book?5:3}</span></div><p class="mt">${R.q}</p>${body}</div>`;}
+  return `<div class="mis rid${st?' done':''}" data-rcard="${R.id}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}</b>${R.hard?'<span class="rhard">도전</span>':''}<span class="rw"><img src="${A('fruit')}" alt="">${ridGain(R,book)}</span></div><p class="mt">${R.q}</p>${body}</div>`;}
 function drawRiddles(){if(S.intro<2)return '';
-  const now=R=>R.kind==='moon'?moonState().can:R.kind==='sunset'||R.kind==='sunrise'?sunState(R.kind).can:R.kind==='clock'?clockState(R).can:R.kind==='noon'?noonState().can:R.kind==='dusk2'?starState().can:R.kind==='early'?earlyState(R).can:true;
+  const now=R=>R.kind==='pick'?!ridLocked(R):R.kind==='moon'?moonState().can&&!ridLocked(R):R.kind==='sunset'||R.kind==='sunrise'?sunState(R.kind).can:R.kind==='clock'?clockState(R).can:R.kind==='noon'?noonState().can:R.kind==='dusk2'?starState().can:R.kind==='early'?earlyState(R).can:true;
   const rank=R=>((S.ridNo||{})[R.id]?2:0)+(now(R)?0:1);
   // answer riddles run on one after another; riddles you do with your body or the sky keep two of their own
-  const open=worldOpen().filter(R=>!ridDone(R.id)),quick=open.filter(R=>R.kind==='ans').slice(0,3),acts=open.filter(R=>R.kind!=='ans').sort((a,b)=>rank(a)-rank(b)),actNow=acts.filter(R=>rank(R)===0).slice(0,2),wait=acts.filter(R=>rank(R)>0).slice(0,4);
+  const open=worldOpen().filter(R=>!ridDone(R.id)),picks=open.filter(R=>R.kind==='pick'),pFree=picks.filter(R=>!ridLocked(R)),pNow=(hardOpen()?[pFree.find(R=>!R.hard),pFree.find(R=>R.hard)].filter(Boolean).concat(pFree):pFree).filter((R,i,L)=>L.indexOf(R)===i).slice(0,2),
+    quick=pNow.concat(open.filter(R=>R.kind==='ans').slice(0,3-pNow.length)),acts=open.filter(R=>R.kind!=='ans'&&R.kind!=='pick').sort((a,b)=>rank(a)-rank(b)),actNow=acts.filter(R=>rank(R)===0).slice(0,2),
+    wait=picks.filter(ridLocked).concat(acts.filter(R=>rank(R)>0)).slice(0,5);
   const om=oilMax(),ou=oilUsed(),ol=oilLeft();
   let h=`<h3 class="bh"><img class="bhi" src="${A('ui_riddle')}" alt="">수수께끼<small>${worldSolved()}개 풀었어요</small></h3>
     <div class="oil" aria-label="오늘 등불 ${ol}/${om}"><span>오늘 등불</span><i>${Array.from({length:10},(_,i)=>`<b class="${i<ou?'u':i<om?'f':'x'}"></b>`).join('')}</i><em>${ol}</em></div>`;
@@ -1398,17 +1464,19 @@ function drawRiddles(){if(S.intro<2)return '';
     return h+bookLine(1);}
   h+=quick.length?quick.map(R=>ridCard(R)).join(''):'';
   if(actNow.length)h+=`<p class="bsh">직접 해 보는 수수께끼</p>`+actNow.map(R=>ridCard(R)).join('');
+  if(!hardOpen()&&pickSolved()>0)h+=`<p class="mw">퍼즐 ${10-pickSolved()}개를 더 풀면 도전 퍼즐 6개가 열려요.</p>`;
   if(wait.length)h+=`<details class="rwait"><summary>때를 기다리는 수수께끼 ${wait.length}개</summary>${wait.map(R=>ridCard(R)).join('')}</details>`;
   if(!open.length)h+=`<p class="mempty">지금 있는 수수께끼를 다 풀었어요. 새 수수께끼가 곧 와요.</p>`;
   h+=bookLine();
   const nx=PETS.find(P=>P.at&&!(S.pets||{})[P.id]);if(nx&&PET_ART)h+=`<p class="mw">${nx.at-worldSolved()}개 더 풀면 새 친구가 와요.</p>`;
   return h;}
 const bookLine=noOil=>PET_ART?`<button class="bkc" type="button" data-openpatch="1"><img src="${BOOK.img}" alt=""><span><b>책 속 암호 <i>${bookSolved()}/${RIDB.length}</i></b><small>${noOil?'등불 없이도 풀 수 있어요. ':''}『${BOOK.nm}』 속 쪽 제목으로 푸는 수수께끼예요.</small></span><em>›</em></button>`:'';
-function ridSolve(R,book){S.rid=S.rid||{};S.rid[R.id]=today();if(!book)S.oil={d:today(),n:oilUsed()+1};const g=book?5:3;S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
+function ridSolve(R,book){const g=ridGain(R,book),wasHard=hardOpen();S.rid=S.rid||{};S.rid[R.id]=today();if(!book)S.oil={d:today(),n:oilUsed()+1};S.fruit+=g;save();hud();bump('fruitChip');sfx.stamp();buzz([20,30,40]);
   const n=worldSolved(),bs=bookSolved(),gifts=[];
   PETS.forEach(P=>{if((S.pets||{})[P.id])return;if((P.at&&!book&&n>=P.at)||(P.book&&bs>=P.book)){S.pets=S.pets||{};S.pets[P.id]=today();gifts.push(P);}});
   DECO.forEach(D=>{if((S.deco||{})[D.id])return;if(D.book&&bs>=D.book){S.deco=S.deco||{};S.deco[D.id]=today();gifts.push(D);}});
   save();ridRedraw(`열매 ${g}개를 받았어요`);
+  if(!wasHard&&hardOpen())setTimeout(()=>ridMsg('퍼즐 10개를 풀었어요. 도전 퍼즐 6개가 열렸어요.'),900);
   if(!PET_ART)return;S.petSeen=S.petSeen||{};gifts.forEach(P=>{S.petSeen[P.id]=1;});save();setTimeout(paintPets,400);
   gifts.forEach(P=>showClear({k:P.k||'soc',tag:P.k?'펫':'정원',title:P.k?`${petName(P)}${jo(P.nm,'이','가')} ${P.home==='patch'?'텃밭으로':'정원으로'} 와요`:`${P.nm}${jo(P.nm,'이','가')} 생겨요`,sub:P.story,gift:0}));}
 const jo=(w,a,b)=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c<=11171&&c%28?a:b;};
@@ -1416,12 +1484,15 @@ const petName=P=>P.id==='cat'?P.nm:`${short(P.k)}의 ${P.nm}`;
 const inPatch=()=>$('patch')&&!$('patch').hidden;
 const ridMsg=t=>{const m=$(inPatch()?'pMsg':'bMsg');if(m)m.textContent=t||'';};
 const ridRedraw=t=>{if(inPatch())drawPatch(t);else drawBoard(t);};
+function ridMiss(R){S.ridMiss=S.ridMiss||{};S.ridMiss[R.id]=today();S.oil={d:today(),n:oilUsed()+1};save();}
 function ridWrong(el,msg){sfx.no&&sfx.no();buzz([40,40,40]);if(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}ridMsg(msg||'아니야. 다시 봐.');}
 function wireRiddles(L){L=L||$('bList');L.querySelectorAll('[data-openpatch]').forEach(b=>b.onclick=()=>{closeBoard();openPatch();});const find=id=>RID.find(R=>R.id===id)||RIDB.find(R=>R.id===id),isB=id=>id[0]==='b';
   L.querySelectorAll('[data-rgo]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.rgo),inp=L.querySelector(`[data-rtx="${R.id}"]`);if(!inp.value.trim())return;
     if(ridOk(R,inp.value))ridSolve(R,isB(R.id));else ridWrong(L.querySelector(`[data-rcard="${R.id}"]`),isB(R.id)?`${R.p}쪽을 다시 봐.`:'아니야. 다시 봐.');});
   L.querySelectorAll('[data-rtx]').forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')L.querySelector(`[data-rgo="${i.dataset.rtx}"]`).click();});
-  L.querySelectorAll('[data-moon]').forEach(b=>b.onclick=()=>{const [id,j]=b.dataset.moon.split('|'),R=find(id);if(moonPick(+j))ridSolve(R);else ridWrong(L.querySelector(`[data-rcard="${id}"]`),'정말? 한 번 더 올려다봐.');});
+  L.querySelectorAll('[data-moon]').forEach(b=>b.onclick=()=>{const [id,j]=b.dataset.moon.split('|'),R=find(id);if(ridLocked(R))return;if(moonPick(+j))ridSolve(R);else{ridMiss(R);ridWrong(L.querySelector(`[data-rcard="${id}"]`));ridRedraw('정말? 오늘은 여기까지. 내일 밤에 다시 올려다봐.');}});
+  L.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const [id,j]=b.dataset.pick.split('|'),R=find(id);if(!R||ridLocked(R)||ridDone(R.id))return;
+    if(+j===R.a)ridSolve(R);else{ridMiss(R);ridWrong(L.querySelector(`[data-rcard="${id}"]`));ridRedraw('아니야. 오늘은 여기까지. 내일 힌트 줄게.');}});
   L.querySelectorAll('[data-cloud]').forEach(b=>b.onclick=()=>{sfx.boop();ridMsg('구름 낀 날도 있지. 다른 저녁에 다시 보자.');});
   L.querySelectorAll('[data-tsky]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.tsky),st=R.kind==='noon'?noonState():R.kind==='early'?earlyState(R):starState();if(st.can)ridSolve(R);});
   L.querySelectorAll('[data-clock]').forEach(b=>b.onclick=()=>{const R=find(b.dataset.clock);if(clockState(R).can)ridSolve(R);});
@@ -1587,7 +1658,7 @@ function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBu
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k)&&!askApp())askSave('clear');},1500);}});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();if(l>=5)recHello();whenFree(()=>{if(!invite(k)&&!askApp())askSave('clear');},1500);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -1728,12 +1799,15 @@ function vnEl(){let el=$('vn');if(el)return el;el=document.createElement('div');
   el.innerHTML=`<img class="vnbg" alt=""><div class="vnshade"></div><div class="vnstage"><img class="vngate" alt="" src="${A('gate_open')}"><div class="vnch" hidden><div class="vnbob">${['basic','talk','happy'].map(f=>`<img data-f="${f}" src="${A('vn_soc_'+f)}" alt="${f==='basic'?'꼬마 소크라테스':''}">`).join('')}</div><img class="vnpot" alt="" src="${A('pot')}"></div></div>
     <div class="vnlow"><button class="vnbox" type="button" aria-label="대사 넘기기"><span class="vntag"><span class="vnface"><img src="${A('soc_happy')}" alt=""><i>?</i></span><b></b></span><p></p></button><div class="vnopts"></div></div>`;
   $('app').appendChild(el);return el;}
-function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;
+let vnX={};   // scenes built on the spot (eternal return)
+function vnShow(id){const el=vnEl(),s=vnX[id]||vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;const k=s.k||'soc',was=el.hidden;
   if(id!=='s0'&&id!=='upd'&&(S.intro||0)<1){S.intro=1;save();}
   el.hidden=false;el.querySelector('.vnbg').src=A('bg_'+timeOfDay());
-  el.classList.toggle('pot',!!s.pot);el.querySelector('.vngate').hidden=!s.gate;
-  const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
-  el.querySelector('.vntag b').textContent=s.voice?'대문 밖 누군가':PH.soc.nm;el.querySelector('.vnface').classList.toggle('q',!!s.voice);
+  el.classList.toggle('pot',!!s.pot);el.classList.toggle('rec',!!s.rec);el.classList.toggle('recdone',!!s.star);el.querySelector('.vngate').hidden=!s.gate;
+  if(el.dataset.k!==k){el.dataset.k=k;el.querySelectorAll('.vnbob img').forEach(m=>{m.src=A('vn_'+k+'_'+m.dataset.f);m.alt=m.dataset.f==='basic'?PH[k].nm:'';});el.querySelector('.vnface img').src=A(k+'_happy');}
+  el.querySelectorAll('.vnstar').forEach(x=>x.remove());if(s.star)vnStars(el);
+  const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden||was){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
+  el.querySelector('.vntag b').innerHTML=s.voice?'대문 밖 누군가':PH[k].nm+(s.rec&&recN(k)?` <i class="rst">★${recN(k)}</i>`:'');el.querySelector('.vnface').classList.toggle('q',!!s.voice);
   const p=el.querySelector('p'),opts=el.querySelector('.vnopts'),face=f=>el.querySelectorAll('.vnbob img').forEach(m=>{m.style.opacity=m.dataset.f===f?1:0;});
   opts.innerHTML='';p.textContent='';face('basic');let i=0;
   const done=()=>{clearInterval(vnT);vnT=null;p.textContent=s.t;face(s.e||'basic');
@@ -1741,16 +1815,36 @@ function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(
     opts.querySelectorAll('button').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);vnPick(s.o[+b.dataset.j]);});};
   // the line types out; while a friend's garden is open on top, it waits
   vnT=setInterval(()=>{if(window.GL&&GL.visitOpen&&GL.visitOpen())return;i++;p.textContent=s.t.slice(0,i);
-    if(!s.voice){if(i%3===0)sfx.talk('soc');face(Math.floor(i/3)%2?'talk':'basic');}if(i>=s.t.length)done();},34);
+    if(!s.voice){if(i%3===0)sfx.talk(k);face(Math.floor(i/3)%2?'talk':'basic');}if(i>=s.t.length)done();},34);
   el.querySelector('.vnbox').onclick=()=>{ac();if(vnT)done();};}
 function vnClose(){clearInterval(vnT);vnT=null;const el=$('vn');if(el)el.hidden=true;}
 const vnOpen=()=>{const el=$('vn');return !!(el&&!el.hidden);};
-function vnPick(o){const next=o[1];if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
+function vnPick(o){const next=o[1];if(String(next).startsWith('rec:')){recPick(next);return;}if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
   if(next==='upd:go'){vnClose();if(window.GL)GL.doUpdate();return;}
   if(next==='upd:no'){vnClose();return;}
   if(next==='load'){vnClose();introLoad();return;}
   if(next==='end'){vnClose();introDone();return;}
   vnShow(next);}
+// eternal return: the philosopher asks Nietzsche's question; yes costs fruit and adds a star
+function vnStars(el){const st=el.querySelector('.vnstage');for(let i=0;i<12;i++){const d=document.createElement('i');d.className='vnstar';d.setAttribute('aria-hidden','true');d.textContent='★';const a=i/12*Math.PI*2;d.style.setProperty('--dx',Math.cos(a)*(110+i%3*30)+'px');d.style.setProperty('--dy',Math.sin(a)*(90+i%2*40)-40+'px');d.style.animationDelay=(i%4)*60+'ms';st.appendChild(d);}}
+let recK=null;
+function recAsk(k){if(!REC[k]||S.lv[k]<5||vnOpen())return;closeBub();recK=k;const n=recN(k),c=recCost(n),can=S.fruit>=c;
+  vnX={'rec:ask':{k,rec:1,e:'basic',t:REC_ASK[k]||REC_ASK.x,o:can?[[`좋아, 한 번 더 · 열매 ${c}개`,'rec:go'],['아직은','rec:no']]:[[`열매 ${c-S.fruit}개 더 모아 올게`,'rec:no']]}};
+  vnShow('rec:ask');}
+function recPick(next){const k=recK;if(!k){vnClose();return;}
+  if(next==='rec:go'){const n=recN(k),c=recCost(n);if(S.fruit<c){vnClose();return;}
+    S.fruit-=c;S.rec=S.rec||{};S.rec[k]=n+1;save();hud();sfx.stage();buzz([30,40,30,40,120]);
+    const a=actors[k];if(a)place(k,a.mode,a.x,a.y);window.GL&&GL.pubSoon&&GL.pubSoon();
+    vnX['rec:star']={k,rec:1,star:1,e:'happy',t:REC_AFTER[k],o:[['한 번 더 시작!','rec:ok']]};vnShow('rec:star');return;}
+  vnClose();recK=null;
+  const back=()=>{openBoard();bt='story';drawBoard();const c=$('bList').querySelector(`[data-card="${k}"]`);if(c)c.scrollIntoView({block:'center'});};
+  if(next==='rec:ok'){const n=recN(k),st=REC[k][n-1];
+    showClear({k,tag:`★${n}`,title:`${short(k)}와 한 번 더 시작했어요`,card:st?['★'+n+' '+st[0],st[1]]:null,sub:n<=3?`이제 ${short(k)} 미션을 하면 열매가 ${misFruit(k)}개 나와요.`:'이야기는 다 들었어요. 별과 발밑의 금빛은 계속 쌓여요.',gift:0},back);hop(k);return;}
+  back();}
+// once per philosopher, the day they reach the top level
+function recHello(){if(S.intro<2)return;const k=KIDS.find(k=>S.lv[k]>=5&&!(S.recSeen||{})[k]&&actors[k]&&actors[k].mode!=='shadow'&&actors[k].mode!=='barrel');if(!k)return;
+  whenFree(()=>{if((S.recSeen||{})[k]||!actors[k])return;S.recSeen=S.recSeen||{};S.recSeen[k]=1;save();
+    say(k,'우리 이제 제일 친한 사이야. 그래서 \'영원회귀\'가 생겼어. 보여 줄까?',['보여 줘','나중에'],n=>{if(n===0){openBoard();bt='story';drawBoard();const c=$('bList').querySelector(`[data-card="${k}"]`);if(c)c.scrollIntoView({block:'center'});}else setTimeout(recHello,4000);});},1800);}
 // bringing back a garden from Google: the old speech bubbles, then back into the meeting
 async function introLoad(){const G=window.GL;place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);
   if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',()=>{closeBub();vnShow('s1');});
@@ -1810,14 +1904,14 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
-  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);
+  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);setTimeout(recHello,6000);
     // newcomers wait until nobody is talking
     const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
-    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 누르면 다른 사람 정원을 구경할 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
+    if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 친구 정원 코드를 넣으면 친구 정원에 놀러 갈 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
-  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.gate();openGate();if(!S.visGone){S.visGone=1;save();hud();}GL.visitRandom();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
+  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.boop();if(!S.visGone){S.visGone=1;save();hud();}GL.visitMenu();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
   $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
@@ -2369,7 +2463,7 @@ const cleanWear = W => { const o = {}; SLOTS.forEach(sl => { const it = ITEMS.fi
 const jong = t => { const c = String(t).trim().slice(-1).charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
 const cut = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 function pubSnap() {
-  const kids = {}; KIDS.forEach(k => { if (S.met[k]) kids[k] = cleanWear(S.wear[k]); });
+  const kids = {}; KIDS.forEach(k => { if (S.met[k]) { kids[k] = cleanWear(S.wear[k]); if (recN(k)) kids[k].r = recN(k); } });
   const pets = Object.keys(PET_AT).filter(id => (S.pets || {})[id]);
   let lean = ''; try { if ((S.leanN || 0) >= LEAN_AT[0]) lean = cut(leanNow().t[0], 30); } catch (e) {}
   return {name: cut(S.lname || '정원사', 10), sc: S.school || '', st: stageOf(S.given), kids, pets, sign: (S.sign || []).slice(0, 3), lean};
@@ -2451,7 +2545,7 @@ function closeVisit() { const el = $('visit'), back = VS && VS.fromBoard; if (el
 function vScene(P) {
   const t = timeOfDay(), kids = Object.keys(P.kids || {}).filter(k => KIDS.includes(k) && SPOTS[k]);
   const pets = (P.pets || []).filter(id => PET_AT[id] && (!PET_AT[id].k || kids.includes(PET_AT[id].k)));
-  const kid = k => { const sp = SPOTS[k]; return `<g class="vtap" data-v="k:${k}" transform="translate(${sp.x} ${sp.y}) scale(${sp.s})"><g class="body">${kidSVG(k, 'awake', cleanWear(P.kids[k]), sideOf(k))}</g></g>`; };
+  const kid = k => { const sp = SPOTS[k]; return `<g class="vtap" data-v="k:${k}" transform="translate(${sp.x} ${sp.y}) scale(${sp.s})">${recRing(vRec(P, k))}<g class="body">${kidSVG(k, 'awake', cleanWear(P.kids[k]), sideOf(k))}</g></g>`; };
   const pet = id => { const sp = PET_AT[id]; return `<g class="vtap" data-v="p:${id}" transform="translate(${sp.x} ${sp.y}) scale(${sp.flip ? -sp.s : sp.s} ${sp.s})"><rect x="-17" y="-40" width="34" height="42" fill="transparent"/><g class="body" pointer-events="none">${petImg(id, 'basic')}</g></g>`; };
   const back = sp => sp && sp.back;
   const sign = (P.sign || []).slice(0, 3);
@@ -2506,6 +2600,7 @@ const needLogin = () => {
   return true;
 };
 const vCode = () => VS ? VS.uid.slice(0, 8) : '';
+const vRec = (P, k) => { const r = ((P.kids || {})[k] || {}).r; return Number.isInteger(r) && r > 0 ? Math.min(r, 99) : 0; };
 function vTap(g) {
   if (!VS) return;
   const v = g.dataset.v, P = VS.P, nm = cut(P.name || '정원사', 10);
@@ -2513,6 +2608,7 @@ function vTap(g) {
   if (v.startsWith('k:')) {
     const k = v.slice(2), W = cleanWear(P.kids[k]), L = [];
     const it = SLOTS.map(sl => ITEMS.find(i => i.id === W[sl])).filter(Boolean)[0];
+    if (vRec(P, k)) L.push(`${nm}님이랑 나, 영원회귀를 ${vRec(P, k)}번 했어. 발밑에 금빛 보이지?`);
     if (it) L.push(`이 ${it.nm}, ${nm}님이 열매 ${it.p}개 주고 사 줬어. 어때, 어울려?`);
     const sg = (P.sign || []).find(x => x.k === k) || (P.sign || [])[0];
     if (sg && !BAD.test(String(sg.a).replace(/\s/g, ''))) { const a = cut(sg.a, 34); L.push(`${nm}님이 팻말에 '${a}'${jong(a) ? '이라고' : '라고'} 써 놨더라. 읽어 봤어?`); }
@@ -2621,6 +2717,25 @@ async function visitRandom() {
   if (!pool.length) { seen.clear(); pool = got.filter(u => u !== mine && (!VS || u !== VS.uid)); }
   if (!pool.length) { toast('아직 놀러 갈 정원이 없어요'); return; }
   visit(pool[Math.floor(Math.random() * pool.length)], seen);
+}
+// the gate: friends first (neighbours, a code), then a stranger's garden
+function visitMenu() {
+  $('app').querySelectorAll('.ward.vmenu').forEach(x => x.remove());
+  const L = (S.nb || []).slice(0, 6), c = myCode();
+  const w = document.createElement('div'); w.className = 'ward vmenu';
+  w.innerHTML = `<div class="wsheet" role="dialog" aria-label="놀러 가기"><div class="whead"><b>놀러 가기</b><button class="icon wx" type="button" aria-label="닫기"><img src="${A('ui_close')}" alt=""></button></div>` +
+    (L.length ? `<p class="mt vmh">이웃 정원</p><div class="vml">${L.map(x => `<button type="button" class="vmn" data-go="${esc(x.u)}"><b>${esc(x.name || '정원사')}</b><span>놀러 가기 ›</span></button>`).join('')}</div>`
+      : `<p class="mw">친구한테 정원 코드를 받으면 바로 놀러 갈 수 있어요. 놀러 간 정원에서 '이웃 +'를 누르면 다음부터 여기 떠요.</p>`) +
+    `<div class="mb"><button class="opt" type="button" data-m="code">코드로 친구 정원 가기</button></div>` +
+    `<div class="mb"><button class="opt alt" type="button" data-m="inv">친구 부르기</button><button class="opt alt" type="button" data-m="rnd">아무 정원 구경</button></div>` +
+    (c ? `<p class="mw vmc">내 정원 코드 <b>${c}</b></p>` : '') + `</div>`;
+  $('app').appendChild(w);
+  const close = () => w.remove(), gate = () => { try { sfx.gate(); openGate(); } catch (e) {} };
+  w.querySelector('.wx').onclick = () => { sfx.boop(); close(); }; w.addEventListener('click', e => { if (e.target === w) close(); });
+  w.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { ac(); close(); gate(); visit(b.dataset.go); });
+  w.querySelector('[data-m="code"]').onclick = () => { sfx.boop(); close(); codeVisit(); };
+  w.querySelector('[data-m="inv"]').onclick = () => { sfx.boop(); close(); invite(); };
+  w.querySelector('[data-m="rnd"]').onclick = () => { ac(); close(); gate(); visitRandom(); };
 }
 // the 나 tab: my sign, and the gardens I follow
 function renderVis(el, mode) {
@@ -2747,7 +2862,7 @@ async function landVisit() {
   visit(uid);
 }
 
-window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, visitMenu, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
