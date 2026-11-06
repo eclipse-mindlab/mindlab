@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="405c694cd2ed"</script>
+<script>window.GARDEN_BUILD="1bb3916a44c1"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -241,6 +241,21 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .card summary{font-family:var(--hand);font-size:15px;cursor:pointer}
 .card p{margin:5px 0 2px;line-height:1.55;word-break:keep-all}
 .card.lock{background:#eee9f5;color:#8b82a8;border-style:dashed}
+.card.gold{background:#fff6d6;border-color:#8a5a12}.card.lock.gold{background:#fbf3dc;color:#a3864a;border-color:#c9a24c}
+.mis.gold{background:linear-gradient(180deg,#fffaf0,#fff3cf);box-shadow:0 3px 0 #000,0 0 0 2px #ffd66b inset}
+.rst{font-style:normal;font-family:var(--hand);font-weight:400;font-size:.86em;color:#b7790c;margin-left:4px;letter-spacing:.5px}
+.mh b .rst{font-size:14px}
+.opt.rec{background:linear-gradient(180deg,#ffe27e,#ffc93c)}.opt.rec img{width:16px;vertical-align:-3px;margin-right:4px}
+.recring{animation:recGlow 2.6s ease-in-out infinite}.recring .rsp{animation:recTw 1.8s ease-in-out infinite}
+@keyframes recGlow{0%,100%{opacity:.8}50%{opacity:1}}
+@keyframes recTw{0%,100%{opacity:.35}50%{opacity:1}}
+.vn.rec .vnshade{background:radial-gradient(ellipse 70% 45% at 50% 62%,rgba(255,214,107,.42),rgba(255,214,107,0) 70%),linear-gradient(180deg,rgba(18,14,36,.35) 0%,rgba(18,14,36,.55) 55%,rgba(18,14,36,.85) 100%)}
+.vn.rec .vnch::after{content:'';position:absolute;left:16%;right:16%;bottom:1%;height:8%;border-radius:50%;border:4px solid #ffd66b;box-shadow:0 0 22px 4px rgba(255,214,107,.75),inset 0 0 14px rgba(255,214,107,.6);opacity:.35;transition:opacity .4s}
+.vn.recdone .vnch::after{opacity:1;animation:vnRing .9s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes vnRing{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.vnstar{position:absolute;left:50%;top:58%;font-style:normal;font-size:22px;color:#ffd66b;text-shadow:0 0 8px rgba(255,214,107,.9),0 1px 0 #000;pointer-events:none;animation:vnStar 1.3s ease-out both}
+@keyframes vnStar{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.recring,.recring .rsp,.vnstar{animation:none}.vnstar{display:none}}
 .rrow{display:grid;grid-template-columns:52px 1fr 30px;align-items:center;gap:8px;font-size:13px}
 .rrow b{font-family:var(--hand);font-weight:400;font-size:17px;text-align:right}
 .lrow{display:grid;grid-template-columns:70px 1fr 26px;align-items:center;gap:8px;font-size:13px;margin-top:6px}.lrow b{font-family:var(--hand);font-weight:400;font-size:16px;text-align:right}.lrow.top span{font-weight:700;color:#8a5a33}.lrow.top .rbar i{background:var(--gold)}.lean .mt{font-family:var(--hand);font-size:21px;margin:6px 0 2px}.lsm{font-size:12px!important;margin-top:8px}
@@ -374,7 +389,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .vnface img{position:absolute;width:76px;left:-23px;top:-12px}.vnface i{display:none;font-style:normal;font-family:var(--hand);font-size:17px}
 .vnface.q img{display:none}.vnface.q i{display:block}
 .vnopts{display:flex;flex-direction:column;gap:10px;min-height:118px}
-.vnopts .opt{width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
+.vnopts .opt{flex:none;width:100%;min-height:54px;font-size:19px;border-width:3px;border-radius:18px;box-shadow:0 4px 0 #000;animation:vnUp .35s ease-out both}
 .vnopts .opt.alt{background:var(--paper)}
 .mustupd{position:absolute;inset:0;z-index:20;background:#1d1838;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:16px;padding:24px 16px calc(30px + env(safe-area-inset-bottom,0px))}
 .mustupd img{width:min(300px,70%);flex:1;min-height:0;object-fit:contain;object-position:50% 100%}
@@ -669,6 +684,28 @@ const CARD={
        ['치즈 한 단지','쾌락을 말한 철학자인데 정작 빵과 물로 살았어요. 친구에게 "치즈 한 단지만 보내 줘. 가끔 호사 좀 부리게"라고 편지를 썼대요.'],
        ['죽음','"죽음은 우리에게 아무것도 아니다. 우리가 있을 때 죽음은 없고, 죽음이 오면 우리는 없다." 두려움을 내려놓는 데서 행복이 시작된다고 봤어요.'],
        ['마지막 편지','죽는 날, 몹시 아팠는데도 친구에게 편지를 썼어요. 함께 나눈 대화를 떠올리면 그 기쁨이 아픔보다 크다고요.']]};
+// eternal return: at the top level you can live the friendship once more for fruit. nothing resets; each round is a gold star.
+// stars 1-3 open a hidden story and +1 mission fruit each; after that only the star and the gold under their feet grow.
+const REC={
+  soc:[['물벼락','아내 크산티페가 잔소리를 퍼붓다가 끝내 물을 끼얹었어요. 소크라테스는 태연하게 말했대요. "천둥이 치더니 결국 비가 오는군."'],
+       ['하지 말라는 목소리','소크라테스는 어릴 때부터 마음속에서 목소리가 들렸대요. 이 목소리는 뭘 하라고는 한 번도 안 하고, 하지 말라고만 했어요. 그가 정치에 나서지 않은 것도 이 목소리가 말려서였대요.'],
+       ['혼자 반대한 날','아테네가 해전에서 이기고도 폭풍 때문에 전사자를 거두지 못하자, 사람들은 장군 여럿을 한꺼번에 재판해 사형시키려 했어요. 그날 회의를 맡은 사람 중 하나였던 소크라테스는 법에 어긋난다며 홀로 반대했어요. 사람들이 위협해도 끝까지 물러서지 않았대요.']],
+  nie:[['공 모양 타자기','눈이 나빠져 펜으로 쓰기 힘들어지자, 니체는 공처럼 생긴 타자기를 샀어요. 친구에게 "우리가 쓰는 도구가 우리 생각에도 함께 작용한다"고 편지를 쳐서 보냈어요. 그런데 타자기는 여행길에 금방 망가졌어요. 니체는 시를 지었대요. "이 타자기는 나를 닮았다. 쇠로 만들었는데 여행만 가면 망가진다."'],
+       ['거절당한 청혼','서른일곱 살의 니체는 스물한 살 루 살로메에게 반해 청혼했다가 거절당했어요. 셋이서 함께 공부하며 살자던 계획도 깨졌어요. 몇 달 뒤 니체는 단 열흘 만에 『차라투스트라는 이렇게 말했다』 1부를 썼어요.'],
+       ['토리노의 말','1889년 토리노 광장에서 마부가 말을 채찍질하는 걸 본 니체가 달려가 말의 목을 끌어안고 울었다고 전해져요. 그날 쓰러진 뒤로 그는 다시는 책을 쓰지 못했어요. 이 장면은 지금도 영화와 그림으로 다시 그려져요.']],
+  dio:[['털 뽑은 닭','플라톤이 사람을 "깃털 없는 두 발 동물"이라고 정의하자, 디오게네스는 닭털을 모조리 뽑아 강의실에 들고 갔어요. "이게 플라톤이 말한 사람이야." 그 뒤로 플라톤은 정의에 "발톱이 넓적한"을 덧붙였대요.'],
+       ['개라는 별명','사람들은 그를 "개"라고 불렀어요. 디오게네스는 오히려 좋아했대요. "나는 뭘 주는 사람한텐 꼬리를 흔들고, 안 주는 사람한텐 짖고, 나쁜 놈은 물어." 그를 따르던 사람들을 부르는 \'견유학파\'라는 이름도 \'개 같은\'이라는 뜻이에요.'],
+       ['같은 날 떠난 두 사람','디오게네스는 아흔 살 가까이 살았어요. 한 기록에는 그가 죽은 날이 알렉산드로스 대왕이 바빌론에서 죽은 날과 같다고 적혀 있어요. 세상을 다 가진 왕과 통 하나뿐인 철학자가 같은 날 떠난 거예요.']],
+  epi:[['열네 살의 질문','열네 살 에피쿠로스는 선생님이 "태초에 혼돈이 있었다"는 시를 읽어 주자 물었어요. "그럼 그 혼돈은 어디서 왔어요?" 선생님이 답을 못 하자, 그는 스스로 철학을 시작했대요.'],
+       ['매달 20일의 잔치','에피쿠로스는 유언에, 매달 20일마다 친구들이 모여 함께 먹으며 자기를 기억해 달라고 남겼어요. 제자들은 그 뒤로 오랫동안 이 날을 지켰어요. 그래서 그들을 "20일의 사람들"이라고 부르기도 했대요.'],
+       ['정원 입구의 글귀','정원 입구에는 이런 글귀가 걸려 있었대요. "손님, 여기 머물러 가세요. 여기서 가장 좋은 건 즐거움이에요." 그런데 들어온 손님이 대접받는 건 보리죽과 물 한 잔이었어요. 에피쿠로스가 말한 즐거움은 그걸로 충분했던 거예요.']]};
+const REC_ASK={nie:'지금 이 삶을 똑같이, 한 번 더,\n끝없이 산다면?\n나는 기꺼이 그러겠어. 너는?',x:'니체가 묻더라. 지금 이 삶을 똑같이\n끝없이 다시 살아도 좋냐고.\n나는 좋아. 너랑 한 번 더 할래?'};
+const REC_AFTER={soc:'좋아. 또 같이 묻고, 또 같이 틀리자.\n이번엔 조금 더 깊게.',nie:'"이게 삶이었나? 좋다, 그럼 한 번 더!"\n내 책에 쓴 말이야. 오늘 진짜로 해 보네.',dio:'통도 그대로, 나도 그대로.\n그래도 한 번 더 살아 볼 만하지.',epi:'좋은 날은 다시 와도 좋은 날이야.\n한 번 더 잔치하자.'};
+const recN=k=>Math.max(0,Math.min(99,((S.rec||{})[k])|0));
+const recCost=n=>50+20*n+5*n*(n+1);   // 50, 80, 120, 170, 230 …
+const misFruit=k=>MIS_FRUIT+Math.min(3,recN(k));
+// gold under the feet: one ring, a second from star 2, sparkles from star 3
+function recRing(n){if(!(n>0))return '';return `<g class="recring">${n>=2?'<ellipse cx="0" cy="0" rx="33" ry="8.5" fill="none" stroke="#ffd66b" stroke-opacity=".7" stroke-width="1.8"/>':''}<ellipse cx="0" cy="0" rx="25" ry="6.4" fill="#ffd66b" fill-opacity=".38" stroke="#e8a92a" stroke-width="2.2"/>${n>=3?'<path class="rsp" d="M-30 -10 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z M31 -14 l1.3 2.8 2.8 1.3 -2.8 1.3 -1.3 2.8 -1.3 -2.8 -2.8 -1.3 2.8 -1.3z" fill="#fff3c4" stroke="#e8a92a" stroke-width=".8"/>':''}</g>`;}
 // wardrobe: everything is bought with fruit, one item per slot.
 // prices: the first two are bought on day one; the lantern (Diogenes' key) by day four; the whole set takes a few weeks.
 const ITEMS=[
@@ -1032,7 +1069,7 @@ const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.cl
 // an actor is someone in the scene with its own x and mode
 function place(k,mode,x,y){let a=actors[k];const sp=spotOf(k,mode);
   if(!a){const g=document.createElementNS(NS,'g');g.dataset.k=k;g.style.cursor='pointer';$(sp.back?'castBack':'cast').appendChild(g);a=actors[k]={g,x,y,mode:null,s:sp.s};g.addEventListener('click',()=>tapKid(k));}
-  const key=mode+JSON.stringify(S.wear[k]||{});a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
+  const rn=KIDS.includes(k)&&mode!=='shadow'&&mode!=='barrel'?recN(k):0,key=mode+JSON.stringify(S.wear[k]||{})+rn;a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`${recRing(rn)}<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
 function walk(k,toX,ms,done,idle,toY,toS){const a=actors[k];const x0=a.x,y0=a.y,s0=a.s,t0=performance.now();a.walking=true;a.idle=!!idle;a.cancel=0;if(toY==null)toY=y0;if(toS==null)toS=s0;
   const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
     a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);setTimeout(paintPets,0);done&&done();}};
@@ -1053,7 +1090,7 @@ function wobble(k){const b=actors[k].g.querySelector('.body');b.classList.remove
 
 // ---------- the speech bubble ----------
 let talking=null,pend=null;
-function nameOf(k){const a=actors[k];return a&&a.mode==='shadow'?'???':a&&a.mode==='barrel'?'통 속의 누군가':PH[k].nm;}
+function nameOf(k){const a=actors[k];return a&&a.mode==='shadow'?'???':a&&a.mode==='barrel'?'통 속의 누군가':PH[k].nm+(KIDS.includes(k)&&recN(k)?` <i class="rst">★${recN(k)}</i>`:'');}
 function say(k,text,opts,cb){closeBub();const a=actors[k];talking=k;const el=document.createElement('div');el.className='bub';el.setAttribute('role','dialog');
   el.innerHTML=`<span class="who">${nameOf(k)}</span><p></p>${opts?`<div class="opts">${opts.map((o,i)=>`<button class="opt${i?' alt':''}" type="button" data-i="${i}">${o}</button>`).join('')}</div>`:'<i class="more" aria-hidden="true"></i>'}`;
   $('app').appendChild(el);
@@ -1136,7 +1173,7 @@ function water(){if(busy||S.intro<2)return;if(pend&&pend.opts)return;if(pend)clo
 function burst(){const fx=$('fx');let s='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2;s+=`<image class="spark" href="${A('fx_spark')}" x="${POT.x-7}" y="${POT.y-97}" width="14" height="14" style="--dx:${Math.cos(a)*60}px;--dy:${Math.sin(a)*60}px"/>`;}fx.innerHTML=s;setTimeout(()=>{fx.innerHTML='';},950);}
 
 function reward(k,fromRect){sfx.stamp();buzz([40,30,60]);
-  for(let i=0;i<MIS_FRUIT;i++)setTimeout(()=>fly(fromRect,'fruitChip',()=>{sfx.fruit();S.fruit++;save();hud();bump('fruitChip');}),300+i*170);
+  for(let i=0,n=misFruit(k);i<n;i++)setTimeout(()=>fly(fromRect,'fruitChip',()=>{sfx.fruit();S.fruit++;save();hud();bump('fruitChip');}),300+i*170);
   for(let i=0;i<MIS_DROP;i++)setTimeout(()=>fly(fromRect,'dropChip',()=>{S.drops++;save();hud();bump('dropChip');paintPlant(false);}),900+i*170);}
 function paintFence(){}
 // ---------- the mission board ----------
@@ -1188,10 +1225,11 @@ function wireMine(){const b=$('bList');b.querySelector('#mBack').onclick=()=>{sf
   b.querySelectorAll('[data-mk]').forEach(x=>x.onclick=()=>{sfx.boop();mineK=x.dataset.mk;drawBoard();});
   const t=b.querySelector('#mineTalk');if(t&&window.GL)GL.renderMine(t);}
 function drawStory(){const ks=KIDS.filter(k=>S.met[k]);if(!ks.length)return '<p class="mempty">아직 만난 철학자가 없어요.</p>';
-  return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100);
-    return `<div class="mis"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}</b><span class="lv">${l}단계</span></div>
-      <div class="xpbar"><i style="width:${pct}%"></i></div><p class="mw">${hi==null?'가장 높은 단계예요':`다음 단계까지 ${hi-x} · 대답 1, 미션 3, 열매 선물 1`}</p>${hi==null?'':`<div class="mb"><button class="opt alt gift" type="button" data-gift="${k}"${giftLeft(k)>0?'':' disabled'}><img src="${A('fruit')}" alt="">${GIFT_P}개 선물하기${giftLeft(k)>0?` · 오늘 ${giftLeft(k)}번`:' · 내일 또'}</button></div>`}
-      <div class="cards">${CARD[k].map((c,i)=>l>=i+2?`<details class="card"><summary>${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock">${i+2}단계에 열리는 이야기</div>`).join('')}</div></div>`;}).join('');}
+  return ks.map(k=>{const l=S.lv[k],x=S.xp[k],lo=LV[l-1],hi=LV[l];const pct=hi==null?100:Math.round((x-lo)/(hi-lo)*100),rn=recN(k),top=hi==null;
+    const recRow=top?`<p class="mw">${rn?`영원회귀 ${rn}번 · 미션 열매 ${misFruit(k)}개`:'가장 친한 사이예요. 열매로 이 우정을 한 번 더 살면, 숨겨 둔 이야기가 열려요. 잃는 건 없어요.'}</p><div class="mb"><button class="opt rec" type="button" data-rec="${k}"><img src="${A('fruit')}" alt="">영원회귀 · ${recCost(rn)}개</button></div>`:'';
+    return `<div class="mis${top&&rn?' gold':''}" data-card="${k}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${short(k)}${rn?`<small class="rst">★${rn}</small>`:''}</b><span class="lv">${l}단계</span></div>
+      <div class="xpbar"><i style="width:${pct}%"></i></div>${top?recRow:`<p class="mw">다음 단계까지 ${hi-x} · 대답 1, 미션 3, 열매 선물 1</p><div class="mb"><button class="opt alt gift" type="button" data-gift="${k}"${giftLeft(k)>0?'':' disabled'}><img src="${A('fruit')}" alt="">${GIFT_P}개 선물하기${giftLeft(k)>0?` · 오늘 ${giftLeft(k)}번`:' · 내일 또'}</button></div>`}
+      <div class="cards">${CARD[k].map((c,i)=>l>=i+2?`<details class="card"><summary>${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock">${i+2}단계에 열리는 이야기</div>`).join('')}${top?REC[k].map((c,i)=>rn>=i+1?`<details class="card gold"><summary>★${i+1} ${c[0]}</summary><p>${c[1]}</p></details>`:`<div class="card lock gold">영원회귀 ★${i+1}에 열리는 이야기</div>`).join(''):''}</div></div>`;}).join('');}
 function drawRace(){const w=weekSum(0),lw=weekSum(1),sd=sameDaySum(),mx=Math.max(w,lw,1);
   const st=lw===0?'지난주 기록이 없어요. 이번 주의 내가 다음 주의 상대가 돼요.':w>lw?'지난주의 나를 넘었어요.':`같은 요일까지 지난주엔 ${sd}개 했어요. ${lw-w+1}개 더 하면 지난주를 넘어요.`;
   return `<div class="mis"><p class="mt">지난주의 나와 겨루기</p>
@@ -1211,6 +1249,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitRandom();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
+    $('bList').querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>{ac();sfx.boop();const k=b.dataset.rec;closeBoard();setTimeout(()=>recAsk(k),120);});
     $('bList').querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const k=b.dataset.gift;ac();if(giftLeft(k)<=0)return;if(S.fruit<GIFT_P){sfx.no&&sfx.no();drawBoard('열매가 모자라요. 미션이나 수수께끼로 모을 수 있어요');return;}
       if(!S.gift||S.gift.d!==today())S.gift={d:today()};S.gift[k]=(S.gift[k]||0)+1;S.fruit-=GIFT_P;S.xp[k]++;save();hud();sfx.fruit();buzz([10,30,10]);const r=b.getBoundingClientRect();heartAt(r.left+r.width/2,r.top);
       if(lvOf(S.xp[k])>S.lv[k]){closeBoard();setTimeout(()=>levelUp(k,()=>{openBoard();bt='story';drawBoard();}),300);}else drawBoard(`${short(k)}${'가'} 좋아해요`);});return;}
@@ -1222,7 +1261,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
     else if(m.st==='doing'&&M.min&&m.start){const leftMs=M.min*60000-(Date.now()-m.start);btn=leftMs>0?`<button class="opt alt" type="button" disabled>${mmss(leftMs)} 남았어요</button>`:`<button class="opt" type="button" data-fin="${k}">다 했어요</button>`;}
     else if(m.st==='doing')btn=`<button class="opt" type="button" data-fin="${k}">했어요</button>`;
     else btn=`<p class="mok">"${M.ok}"</p><button class="opt alt share" type="button" data-share="${k}">자랑하기</button>`;
-    return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${MIS_FRUIT}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
+    return `<div class="mis${m.st==='done'?' done':''}"><div class="mh"><i class="face" style="${faceCSS(k)}"></i><b>${PH[k].nm.replace('꼬마 ','')}${(()=>{const c=(S.misN[k+m.i]||0)+(m.st==='done'?0:1);return c>1?`<small class="nth">${c}번째</small>`:'';})()}</b><span class="rw"><img src="${A('fruit')}" alt="">${misFruit(k)}<img src="${A('drop')}" alt="">${MIS_DROP}</span></div>
       <p class="mt">${M.t}</p><p class="mw">${M.why}</p><div class="mb">${btn}</div>${m.st==='done'?`<img class="mstamp" src="${A('stamp')}" alt="해냄">`:''}</div>`;}).join(''):'<p class="mempty">아직 붙은 미션이 없어요. 철학자를 만나면 생겨요.</p>';
   $('bList').insertAdjacentHTML('beforeend',ridTeaser());
   $('bMsg').textContent=msg||'';
@@ -1616,7 +1655,7 @@ function nextClear(){const it=CQ.shift();if(!it)return;const [o,then]=it;closeBu
     for(let i=0;i<Math.min(o.gift,8);i++)setTimeout(()=>fly(r,'fruitChip',()=>{sfx.fruit();hud();bump('fruitChip');}),i*110);
     el.classList.add('out');setTimeout(()=>{el.remove();clrEl=null;hud();then&&then();nextClear();},340);};}
 function levelUp(k,then){if(!PH[k]||lvOf(S.xp[k])<=S.lv[k])return false;const l=++S.lv[k];save();
-  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();whenFree(()=>{if(!invite(k)&&!askApp())askSave('clear');},1500);}});return true;}
+  showClear({k,tag:`${l}단계`,title:`${short(k)}와 한 단계 더 친해졌어요`,card:CARD[k][l-2],gift:l*2},()=>{if(!levelUp(k,then)){then&&then();if(l>=5)recHello();whenFree(()=>{if(!invite(k)&&!askApp())askSave('clear');},1500);}});return true;}
 function checkRecords(){const st=streak(),w=weekSum(0),lw=weekSum(1),wk=weekDays(0)[0];
   if(st>S.best.streak)S.best.streak=st;if(w>S.best.week)S.best.week=w;
   if(st<S.streakSeen)S.streakSeen=STREAK_AT.filter(n=>n<=st).pop()||0;
@@ -1757,12 +1796,15 @@ function vnEl(){let el=$('vn');if(el)return el;el=document.createElement('div');
   el.innerHTML=`<img class="vnbg" alt=""><div class="vnshade"></div><div class="vnstage"><img class="vngate" alt="" src="${A('gate_open')}"><div class="vnch" hidden><div class="vnbob">${['basic','talk','happy'].map(f=>`<img data-f="${f}" src="${A('vn_soc_'+f)}" alt="${f==='basic'?'꼬마 소크라테스':''}">`).join('')}</div><img class="vnpot" alt="" src="${A('pot')}"></div></div>
     <div class="vnlow"><button class="vnbox" type="button" aria-label="대사 넘기기"><span class="vntag"><span class="vnface"><img src="${A('soc_happy')}" alt=""><i>?</i></span><b></b></span><p></p></button><div class="vnopts"></div></div>`;
   $('app').appendChild(el);return el;}
-function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;
+let vnX={};   // scenes built on the spot (eternal return)
+function vnShow(id){const el=vnEl(),s=vnX[id]||vnScenes()[id];if(!s)return;clearInterval(vnT);vnT=null;const k=s.k||'soc',was=el.hidden;
   if(id!=='s0'&&id!=='upd'&&(S.intro||0)<1){S.intro=1;save();}
   el.hidden=false;el.querySelector('.vnbg').src=A('bg_'+timeOfDay());
-  el.classList.toggle('pot',!!s.pot);el.querySelector('.vngate').hidden=!s.gate;
-  const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
-  el.querySelector('.vntag b').textContent=s.voice?'대문 밖 누군가':PH.soc.nm;el.querySelector('.vnface').classList.toggle('q',!!s.voice);
+  el.classList.toggle('pot',!!s.pot);el.classList.toggle('rec',!!s.rec);el.classList.toggle('recdone',!!s.star);el.querySelector('.vngate').hidden=!s.gate;
+  if(el.dataset.k!==k){el.dataset.k=k;el.querySelectorAll('.vnbob img').forEach(m=>{m.src=A('vn_'+k+'_'+m.dataset.f);m.alt=m.dataset.f==='basic'?PH[k].nm:'';});el.querySelector('.vnface img').src=A(k+'_happy');}
+  el.querySelectorAll('.vnstar').forEach(x=>x.remove());if(s.star)vnStars(el);
+  const ch=el.querySelector('.vnch');if(s.voice)ch.hidden=true;else if(ch.hidden||was){ch.hidden=false;ch.classList.remove('in');void ch.offsetWidth;ch.classList.add('in');}
+  el.querySelector('.vntag b').innerHTML=s.voice?'대문 밖 누군가':PH[k].nm+(s.rec&&recN(k)?` <i class="rst">★${recN(k)}</i>`:'');el.querySelector('.vnface').classList.toggle('q',!!s.voice);
   const p=el.querySelector('p'),opts=el.querySelector('.vnopts'),face=f=>el.querySelectorAll('.vnbob img').forEach(m=>{m.style.opacity=m.dataset.f===f?1:0;});
   opts.innerHTML='';p.textContent='';face('basic');let i=0;
   const done=()=>{clearInterval(vnT);vnT=null;p.textContent=s.t;face(s.e||'basic');
@@ -1770,16 +1812,36 @@ function vnShow(id){const el=vnEl(),s=vnScenes()[id];if(!s)return;clearInterval(
     opts.querySelectorAll('button').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);vnPick(s.o[+b.dataset.j]);});};
   // the line types out; while a friend's garden is open on top, it waits
   vnT=setInterval(()=>{if(window.GL&&GL.visitOpen&&GL.visitOpen())return;i++;p.textContent=s.t.slice(0,i);
-    if(!s.voice){if(i%3===0)sfx.talk('soc');face(Math.floor(i/3)%2?'talk':'basic');}if(i>=s.t.length)done();},34);
+    if(!s.voice){if(i%3===0)sfx.talk(k);face(Math.floor(i/3)%2?'talk':'basic');}if(i>=s.t.length)done();},34);
   el.querySelector('.vnbox').onclick=()=>{ac();if(vnT)done();};}
 function vnClose(){clearInterval(vnT);vnT=null;const el=$('vn');if(el)el.hidden=true;}
 const vnOpen=()=>{const el=$('vn');return !!(el&&!el.hidden);};
-function vnPick(o){const next=o[1];if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
+function vnPick(o){const next=o[1];if(String(next).startsWith('rec:')){recPick(next);return;}if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
   if(next==='upd:go'){vnClose();if(window.GL)GL.doUpdate();return;}
   if(next==='upd:no'){vnClose();return;}
   if(next==='load'){vnClose();introLoad();return;}
   if(next==='end'){vnClose();introDone();return;}
   vnShow(next);}
+// eternal return: the philosopher asks Nietzsche's question; yes costs fruit and adds a star
+function vnStars(el){const st=el.querySelector('.vnstage');for(let i=0;i<12;i++){const d=document.createElement('i');d.className='vnstar';d.setAttribute('aria-hidden','true');d.textContent='★';const a=i/12*Math.PI*2;d.style.setProperty('--dx',Math.cos(a)*(110+i%3*30)+'px');d.style.setProperty('--dy',Math.sin(a)*(90+i%2*40)-40+'px');d.style.animationDelay=(i%4)*60+'ms';st.appendChild(d);}}
+let recK=null;
+function recAsk(k){if(!REC[k]||S.lv[k]<5||vnOpen())return;closeBub();recK=k;const n=recN(k),c=recCost(n),can=S.fruit>=c;
+  vnX={'rec:ask':{k,rec:1,e:'basic',t:REC_ASK[k]||REC_ASK.x,o:can?[[`좋아, 한 번 더 · 열매 ${c}개`,'rec:go'],['아직은','rec:no']]:[[`열매 ${c-S.fruit}개 더 모아 올게`,'rec:no']]}};
+  vnShow('rec:ask');}
+function recPick(next){const k=recK;if(!k){vnClose();return;}
+  if(next==='rec:go'){const n=recN(k),c=recCost(n);if(S.fruit<c){vnClose();return;}
+    S.fruit-=c;S.rec=S.rec||{};S.rec[k]=n+1;save();hud();sfx.stage();buzz([30,40,30,40,120]);
+    const a=actors[k];if(a)place(k,a.mode,a.x,a.y);window.GL&&GL.pubSoon&&GL.pubSoon();
+    vnX['rec:star']={k,rec:1,star:1,e:'happy',t:REC_AFTER[k],o:[['한 번 더 시작!','rec:ok']]};vnShow('rec:star');return;}
+  vnClose();recK=null;
+  const back=()=>{openBoard();bt='story';drawBoard();const c=$('bList').querySelector(`[data-card="${k}"]`);if(c)c.scrollIntoView({block:'center'});};
+  if(next==='rec:ok'){const n=recN(k),st=REC[k][n-1];
+    showClear({k,tag:`★${n}`,title:`${short(k)}와 한 번 더 시작했어요`,card:st?['★'+n+' '+st[0],st[1]]:null,sub:n<=3?`이제 ${short(k)} 미션을 하면 열매가 ${misFruit(k)}개 나와요.`:'이야기는 다 들었어요. 별과 발밑의 금빛은 계속 쌓여요.',gift:0},back);hop(k);return;}
+  back();}
+// once per philosopher, the day they reach the top level
+function recHello(){if(S.intro<2)return;const k=KIDS.find(k=>S.lv[k]>=5&&!(S.recSeen||{})[k]&&actors[k]&&actors[k].mode!=='shadow'&&actors[k].mode!=='barrel');if(!k)return;
+  whenFree(()=>{if((S.recSeen||{})[k]||!actors[k])return;S.recSeen=S.recSeen||{};S.recSeen[k]=1;save();
+    say(k,'우리 이제 제일 친한 사이야. 그래서 \'영원회귀\'가 생겼어. 보여 줄까?',['보여 줘','나중에'],n=>{if(n===0){openBoard();bt='story';drawBoard();const c=$('bList').querySelector(`[data-card="${k}"]`);if(c)c.scrollIntoView({block:'center'});}else setTimeout(recHello,4000);});},1800);}
 // bringing back a garden from Google: the old speech bubbles, then back into the meeting
 async function introLoad(){const G=window.GL;place('soc','awake',SPOTS.soc.x,SPOTS.soc.y);
   if(G.inapp)return G.out('여기서는 구글이 로그인을 막아 둬서 정원을 못 불러와.',()=>{closeBub();vnShow('s1');});
@@ -1839,7 +1901,7 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
-  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);
+  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);setTimeout(recHello,6000);
     // newcomers wait until nobody is talking
     const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
     if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 누르면 다른 사람 정원을 구경할 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
@@ -2398,7 +2460,7 @@ const cleanWear = W => { const o = {}; SLOTS.forEach(sl => { const it = ITEMS.fi
 const jong = t => { const c = String(t).trim().slice(-1).charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
 const cut = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 function pubSnap() {
-  const kids = {}; KIDS.forEach(k => { if (S.met[k]) kids[k] = cleanWear(S.wear[k]); });
+  const kids = {}; KIDS.forEach(k => { if (S.met[k]) { kids[k] = cleanWear(S.wear[k]); if (recN(k)) kids[k].r = recN(k); } });
   const pets = Object.keys(PET_AT).filter(id => (S.pets || {})[id]);
   let lean = ''; try { if ((S.leanN || 0) >= LEAN_AT[0]) lean = cut(leanNow().t[0], 30); } catch (e) {}
   return {name: cut(S.lname || '정원사', 10), sc: S.school || '', st: stageOf(S.given), kids, pets, sign: (S.sign || []).slice(0, 3), lean};
@@ -2480,7 +2542,7 @@ function closeVisit() { const el = $('visit'), back = VS && VS.fromBoard; if (el
 function vScene(P) {
   const t = timeOfDay(), kids = Object.keys(P.kids || {}).filter(k => KIDS.includes(k) && SPOTS[k]);
   const pets = (P.pets || []).filter(id => PET_AT[id] && (!PET_AT[id].k || kids.includes(PET_AT[id].k)));
-  const kid = k => { const sp = SPOTS[k]; return `<g class="vtap" data-v="k:${k}" transform="translate(${sp.x} ${sp.y}) scale(${sp.s})"><g class="body">${kidSVG(k, 'awake', cleanWear(P.kids[k]), sideOf(k))}</g></g>`; };
+  const kid = k => { const sp = SPOTS[k]; return `<g class="vtap" data-v="k:${k}" transform="translate(${sp.x} ${sp.y}) scale(${sp.s})">${recRing(vRec(P, k))}<g class="body">${kidSVG(k, 'awake', cleanWear(P.kids[k]), sideOf(k))}</g></g>`; };
   const pet = id => { const sp = PET_AT[id]; return `<g class="vtap" data-v="p:${id}" transform="translate(${sp.x} ${sp.y}) scale(${sp.flip ? -sp.s : sp.s} ${sp.s})"><rect x="-17" y="-40" width="34" height="42" fill="transparent"/><g class="body" pointer-events="none">${petImg(id, 'basic')}</g></g>`; };
   const back = sp => sp && sp.back;
   const sign = (P.sign || []).slice(0, 3);
@@ -2535,6 +2597,7 @@ const needLogin = () => {
   return true;
 };
 const vCode = () => VS ? VS.uid.slice(0, 8) : '';
+const vRec = (P, k) => { const r = ((P.kids || {})[k] || {}).r; return Number.isInteger(r) && r > 0 ? Math.min(r, 99) : 0; };
 function vTap(g) {
   if (!VS) return;
   const v = g.dataset.v, P = VS.P, nm = cut(P.name || '정원사', 10);
@@ -2542,6 +2605,7 @@ function vTap(g) {
   if (v.startsWith('k:')) {
     const k = v.slice(2), W = cleanWear(P.kids[k]), L = [];
     const it = SLOTS.map(sl => ITEMS.find(i => i.id === W[sl])).filter(Boolean)[0];
+    if (vRec(P, k)) L.push(`${nm}님이랑 나, 영원회귀를 ${vRec(P, k)}번 했어. 발밑에 금빛 보이지?`);
     if (it) L.push(`이 ${it.nm}, ${nm}님이 열매 ${it.p}개 주고 사 줬어. 어때, 어울려?`);
     const sg = (P.sign || []).find(x => x.k === k) || (P.sign || [])[0];
     if (sg && !BAD.test(String(sg.a).replace(/\s/g, ''))) { const a = cut(sg.a, 34); L.push(`${nm}님이 팻말에 '${a}'${jong(a) ? '이라고' : '라고'} 써 놨더라. 읽어 봤어?`); }
