@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="ed3681bc125f"</script>
+<script>window.GARDEN_BUILD="bae80459d951"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -191,10 +191,10 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .cspark{position:absolute;width:9px;height:9px;border-radius:50%;background:#ffcf5a;border:1.5px solid #000;pointer-events:none}
 .clk{--clkh:0}.clkcombo{position:absolute;right:18px;top:calc(66px + env(safe-area-inset-top,0px));font-family:var(--hand);font-weight:400;font-size:22px;color:#ff9db0;pointer-events:none}.clkcombo.pop{animation:cnum .18s ease-out}
 .clkhead .icon{background:#fffaf0;border:2.5px solid #000;border-radius:50%;width:44px;height:44px;display:grid;place-items:center;padding:0}.clkhead .icon img{width:26px;height:26px}
-.wb{position:absolute;bottom:-140px;width:100px;height:132px;z-index:2;background:center/100% 100% no-repeat;font-family:var(--hand);font-size:15px;color:#1b1530;padding:0 13px 40px;word-break:keep-all;line-height:1.2;text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.55);cursor:pointer;display:grid;place-items:center;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.wb{position:absolute;bottom:-140px;width:100px;height:132px;z-index:2;background:center/100% 100% no-repeat;font-family:var(--hand);font-size:15px;color:#1b1530;padding:0 13px 40px;word-break:keep-all;line-height:1.2;text-align:center;cursor:pointer;display:grid;place-items:center}
 .clkstage{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .ctgt.nier{left:2%;transform:none;bottom:0;width:min(34%,150px);opacity:.96}.slab{z-index:1}
-.wb.gold{width:118px;height:156px;font-size:16px;padding-bottom:48px;filter:drop-shadow(0 0 10px rgba(255,214,107,.95)) drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.wb.gold{width:118px;height:156px;font-size:16px;padding-bottom:48px;filter:drop-shadow(0 0 9px rgba(255,214,107,.8))}
 .cboom{position:absolute;width:var(--s,90px);height:var(--s,90px);margin:calc(var(--s,90px)/-2) 0 0 calc(var(--s,90px)/-2);pointer-events:none;z-index:3;background:var(--c,#fff);clip-path:polygon(50% 0,59% 33%,92% 14%,70% 44%,100% 52%,68% 61%,84% 92%,53% 70%,36% 100%,34% 66%,4% 80%,26% 54%,0 38%,32% 34%,22% 6%,44% 28%);animation:cboom .24s ease-out forwards}
 @keyframes cboom{0%{transform:scale(.35) rotate(0);opacity:1}35%{transform:scale(1.05) rotate(8deg);opacity:1}100%{transform:scale(1.15) rotate(12deg);opacity:0}}
 .cchip{position:absolute;border:1.5px solid #000;border-radius:2px 5px 3px 6px;pointer-events:none;z-index:3}
@@ -1626,12 +1626,12 @@ function hitSoc(x,y){const s=$('clkStage').querySelector('.socr img');s.src=A('s
   clkCount('soc');clkNum(true);if(clkN('soc')%10===0){floatWord('모른다는 걸 알았다',sr.width/2,sr.height*.3,'big');[784,988,1319].forEach((f,i)=>tone(f,.18,'triangle',.05,i*.06));hit('heavy');sparks(sr.width/2,sr.height*.3,12,'#ffcf5a');}}
 // Epicurus: worries float up as balloons; pop them. a tap near a balloon counts, and each pop in a row rings a note higher.
 const POP_NOTE=[523,587,659,784,880,1047,1175,1319,1568,1760];
-// a real balloon: egg-shaped body lit from the upper left, a shine, a knot and a wavy string
+// a balloon drawn like the characters: flat colour, one hard-edged shade, a single white shine, a knot and a string
 const balloonBG=(()=>{const memo={};const mix=(h,t,f)=>{const a=parseInt(h.slice(1),16),b=parseInt(t.slice(1),16),c=k=>Math.round(((a>>k)&255)*(1-f)+((b>>k)&255)*f);return `rgb(${c(16)},${c(8)},${c(0)})`;};
-  return col=>memo[col]||(memo[col]=(()=>{const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 132"><defs><radialGradient id="b" cx=".36" cy=".3" r=".78"><stop offset="0" stop-color="${mix(col,'#ffffff',.55)}"/><stop offset=".55" stop-color="${col}"/><stop offset="1" stop-color="${mix(col,'#3a2f55',.38)}"/></radialGradient></defs><path d="M50 101 C43 110 57 117 48 124 C42 128 52 131 50 132" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/><path d="M43 104 L57 104 L52 97 L48 97 Z" fill="${mix(col,'#3a2f55',.3)}" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/><path d="M50 3 C79 3 97 24 97 48 C97 73 76 94 50 98 C24 94 3 73 3 48 C3 24 21 3 50 3Z" fill="url(#b)" stroke="#000" stroke-width="3.2"/><ellipse cx="29" cy="25" rx="8" ry="14" transform="rotate(32 29 25)" fill="#fff" opacity=".75"/><circle cx="23" cy="45" r="3.2" fill="#fff" opacity=".6"/><path d="M80 66 C76 78 66 86 56 89" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/></svg>`;return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;})());})();
-function spawnWorry(){const st=$('clkStage');if(!st||$('clk').hidden||clkK!=='epi'){clearInterval(clkBub);return;}if(st.querySelectorAll('.wb:not(.gone)').length>=9)return;
+  return col=>memo[col]||(memo[col]=(()=>{const dk=mix(col,'#4a3a6a',.22);const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 132"><path d="M50 101 C44 110 56 116 49 123 C44 128 51 130 50 132" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M44 104 L56 104 L52 97 L48 97 Z" fill="${dk}" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/><path d="M50 3 C79 3 97 24 97 48 C97 73 76 94 50 98 C24 94 3 73 3 48 C3 24 21 3 50 3Z" fill="${col}"/><path d="M72 9 C88 19 97 34 97 48 C97 73 76 94 50 98 C36 96 25 90 17 81 C34 88 58 86 74 70 C88 55 86 28 72 9Z" fill="${dk}"/><path d="M22 34 C25 22 34 14 45 11" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/><path d="M50 3 C79 3 97 24 97 48 C97 73 76 94 50 98 C24 94 3 73 3 48 C3 24 21 3 50 3Z" fill="none" stroke="#000" stroke-width="3.4"/></svg>`;return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;})());})();
+function spawnWorry(){const st=$('clkStage');if(!st||$('clk').hidden||clkK!=='epi'){clearInterval(clkBub);return;}if(st.querySelectorAll('.wb:not(.gone)').length>=7)return;
   const C=CLK.epi,gold=Math.random()<1/14,b=document.createElement('div');b.className='wb'+(gold?' gold':'');b.textContent=gold?'걱정 뭉치':C.words[Math.floor(Math.random()*C.words.length)];const R=st.getBoundingClientRect(),w=R.width;
-  b.style.left=(6+Math.random()*(w-126))+'px';{const col=gold?'#ffc93c':['#8fc8ff','#ff9db5','#a9dc84','#ffd76a','#c3a8ff','#ffab7a'][Math.floor(Math.random()*6)];b.style.setProperty('--h',col);b.style.backgroundImage=balloonBG(col);}st.appendChild(b);
+  b.style.left=(6+Math.random()*(w-126))+'px';{const col=gold?'#ffcf5a':['#f4b9c3','#a8d2ec','#f5d47e','#bcdca3','#cdbbef'][Math.floor(Math.random()*5)];b.style.setProperty('--h',col);b.style.backgroundImage=balloonBG(col);}st.appendChild(b);
   const sw=(Math.random()<.5?-1:1)*(8+Math.random()*14),H=R.height+170,dur=gold?3000:3600+Math.random()*1600;
   b._an=b.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${sw}px,-${H*.33}px) rotate(${sw*.25}deg)`},{transform:`translate(${-sw}px,-${H*.66}px) rotate(${-sw*.25}deg)`},{transform:`translate(${sw*.5}px,-${H}px) rotate(0)`}],{duration:dur,easing:'linear'});b._an.onfinish=()=>b.remove();}
 function popWorry(b,tx,ty){const st=$('clkStage'),r=b.getBoundingClientRect(),sr=st.getBoundingClientRect(),x=r.left-sr.left+r.width/2,y=r.top-sr.top+r.height*.37,col=getComputedStyle(b).getPropertyValue('--h').trim()||'#cfe6ff',gold=b.classList.contains('gold'),word=b.textContent;
