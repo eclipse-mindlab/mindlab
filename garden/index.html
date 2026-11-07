@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="6cf3eea911dc"</script>
+<script>window.GARDEN_BUILD="340b4722d2ad"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -2609,10 +2609,11 @@ async function liveBundle() {
     if (!v || v === mine) return;
     let b = fresh;
     if (!b) {
+      // a download that failed waits ten minutes before the next try; one cut short by closing the app simply starts again
       const T = 'eclipse_kid_bundle_try'; let t = {}; try { t = JSON.parse(localStorage.getItem(T) || '{}'); } catch (e) {}
-      if (t.v === v && Date.now() - (t.at || 0) < 864e5) return;
-      try { localStorage.setItem(T, JSON.stringify({v, at: Date.now()})); } catch (e) {}
-      b = await C.download({url: BUNDLE_ZIP, version: v + '-' + Date.now()});
+      if (t.v === v && Date.now() - (t.at || 0) < 6e5) return;
+      try { b = await C.download({url: BUNDLE_ZIP, version: v + '-' + Date.now()}); }
+      catch (e) { try { localStorage.setItem(T, JSON.stringify({v, at: Date.now()})); } catch (x) {} throw e; }
     }
     if (b && b.id) {
       // right after opening, before anyone has touched anything: switch now, so today's questions are the new ones
