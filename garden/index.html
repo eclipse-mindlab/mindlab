@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="b3f75b70b801"</script>
+<script>window.GARDEN_BUILD="6cf3eea911dc"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -2624,8 +2624,8 @@ async function liveBundle() {
 let touched = false, bundleAt = Date.now();
 addEventListener('pointerdown', () => { touched = true; }, {capture: true, once: true});
 liveBundle();
-// a phone that keeps the app open for days checks again when it comes back
-if (NATIVE && plug('App')) plug('App').addListener('appStateChange', s => { if (s && s.isActive && Date.now() - bundleAt > 18e5) { bundleAt = Date.now(); liveBundle(); } });
+// coming back to the app checks again (at most every two minutes); build.json is tiny
+if (NATIVE && plug('App')) plug('App').addListener('appStateChange', s => { if (s && s.isActive && Date.now() - bundleAt > 12e4) { bundleAt = Date.now(); liveBundle(); } });
 // build.json can name the lowest app build that may still run (after a change only the store can deliver)
 async function needVersion(min) {
   const P = plug('App'); if (!NATIVE || !P || !min) return;
