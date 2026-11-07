@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="43f77dc086e0"</script>
+<script>window.GARDEN_BUILD="9e3f3733d9a3"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -179,10 +179,10 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .ct .face{width:34px;height:34px}.ct.on{background:var(--gold)}.ct.lock{opacity:.45;box-shadow:none}.ct.lock .face{filter:grayscale(1) brightness(.6)}
 .ctgt{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none}.ctgt img{display:block;width:100%}
 .ctgt.barrel{bottom:4%;width:min(78%,330px)}.ctgt.socr{bottom:2%;width:min(62%,260px)}.ctgt.epic{bottom:0;width:min(46%,200px);opacity:.95}
-.slab{position:absolute;left:0;right:0;margin:0 auto;top:calc(46% - min(80vw,300px)*4/13);width:min(80%,300px);aspect-ratio:13/8;border:4px solid #000;border-radius:18px;background:linear-gradient(160deg,#d8d2c2,#b9b2a0);box-shadow:0 8px 0 #000,inset 0 -10px 0 rgba(0,0,0,.08);display:grid;place-items:center;pointer-events:none}
-.slab b,.shard b{font-family:var(--hand);font-weight:400;font-size:clamp(22px,7vw,32px);color:#1b1530;text-align:center;padding:0 12px;word-break:keep-all}
-.slab .cracks{position:absolute;inset:0;width:100%;height:100%}
-.shard{position:absolute;border-radius:14px;background:linear-gradient(160deg,#d8d2c2,#b9b2a0);display:grid;place-items:center;pointer-events:none;outline:3px solid #000}
+.slab{position:absolute;left:0;right:0;margin:0 auto;top:calc(46% - min(80vw,300px)*4/13);width:min(80%,300px);aspect-ratio:13/8;background:center/100% 100% no-repeat;filter:drop-shadow(0 7px 0 #000);display:grid;place-items:center;pointer-events:none}
+.slab b,.shard b{font-family:var(--hand);font-weight:400;font-size:clamp(22px,7vw,32px);color:#4a3f2e;text-shadow:0 1.5px 0 rgba(255,250,235,.7),0 -1px 0 rgba(40,30,15,.45);text-align:center;padding:0 12px;word-break:keep-all}
+.slab .cracks{position:absolute;inset:0;width:100%;height:100%;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.shard{position:absolute;background:center/100% 100% no-repeat;display:grid;place-items:center;pointer-events:none}
 .hammer{position:absolute;width:74px;height:74px;transform-origin:30% 90%;pointer-events:none;z-index:3}.hammer svg{width:100%;height:100%}
 .cword{position:absolute;transform:translate(-50%,-50%);font-family:var(--hand);font-size:20px;color:#fffaf0;pointer-events:none;white-space:nowrap;animation:cword 1.1s ease-out forwards;text-shadow:0 2px 0 #000}
 .cword.up{animation-name:cwordup}.cword.q{font-size:26px;color:#ffe9a6}.cword.big{font-size:26px;color:#ffcf5a}.cword.soft{color:#e6f3d6}
@@ -1568,9 +1568,21 @@ function sparks(x,y,n,col){for(let i=0;i<n;i++){const s=document.createElement('
   s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*r}px),calc(-50% + ${Math.sin(a)*r}px)) scale(.3)`,opacity:0}],{duration:450+Math.random()*250,easing:'cubic-bezier(.2,.8,.3,1)'});$('clkStage').appendChild(s);setTimeout(()=>s.remove(),750);}}
 function shake(el,amp){el.animate([{transform:'translate(0,0)'},{transform:`translate(${-amp}px,${amp/2}px)`},{transform:`translate(${amp}px,${-amp/2}px)`},{transform:`translate(${-amp/2}px,0)`},{transform:'translate(0,0)'}],{duration:180});}
 // Nietzsche: a slab with a false belief on it, three blows to break it. the blow lands the instant you tap.
-const SLAB_HP=3;
+const SLAB_HP=3,DS='drop-shadow(0 7px 0 #000)';
+// every slab is a different rough rock: chipped edges, speckles, a lit top edge and a shaded bottom
+function stoneBG(){const R=Math.random,W=260,H=160,m=5,J=(j)=>(R()*2-1)*j,c=()=>8+R()*18,P=[];
+  const [a,b,d,e]=[c(),c(),c(),c()];
+  const run=(x1,y1,x2,y2,n,jx,jy)=>{for(let i=0;i<n;i++){const t=i/n;P.push([x1+(x2-x1)*t+(i?J(jx):0),y1+(y2-y1)*t+(i?J(jy):0)]);}};
+  run(m+a,m+J(2),W-m-b,m+J(2),7,4,3.5);run(W-m-J(2),m+b,W-m-J(2),H-m-d,4,3,5);run(W-m-d,H-m,m+e,H-m,7,4,2.5);run(m+J(2),H-m-e,m+J(2),m+a,4,3,5);
+  const pts=P.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const top=P.slice(0,8).map(p=>`${p[0].toFixed(1)},${(p[1]+6).toFixed(1)}`).join(' '),bot=P.slice(11,19).map(p=>`${p[0].toFixed(1)},${(p[1]-7).toFixed(1)}`).join(' ');
+  const hue=[[219,206,180,170,154,126],[212,204,190,163,153,135],[221,200,172,176,148,118]][Math.floor(R()*3)];
+  let dots='';for(let i=0;i<26;i++){const x=20+R()*(W-40),y=18+R()*(H-36),r=.9+R()*2.4;dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${R()<.7?'#7d715b':'#f4eedf'}" opacity="${(.25+R()*.3).toFixed(2)}"/>`;}
+  let nicks='';for(let i=0;i<3;i++){const q=P[Math.floor(R()*P.length)];nicks+=`<path d="M${q[0].toFixed(1)} ${q[1].toFixed(1)} l${J(9).toFixed(1)} ${(6+R()*6).toFixed(1)} l${J(9).toFixed(1)} ${J(4).toFixed(1)}" fill="none" stroke="#5c523f" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;}
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="rgb(${hue[0]},${hue[1]},${hue[2]})"/><stop offset="1" stop-color="rgb(${hue[3]},${hue[4]},${hue[5]})"/></linearGradient></defs><polygon points="${pts}" fill="url(#g)"/><polyline points="${top}" fill="none" stroke="#fff8e6" stroke-opacity=".6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${bot}" fill="none" stroke="#3b3326" stroke-opacity=".22" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>${dots}${nicks}<polygon points="${pts}" fill="none" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;}
 function newSlab(){const st=$('clkStage'),C=CLK.nie,w=C.words[Math.floor(Math.random()*C.words.length)];
-  const s=document.createElement('div');s.className='slab';s.innerHTML=`<svg class="cracks" viewBox="0 0 260 160" preserveAspectRatio="none"></svg><b>${w}</b>`;st.appendChild(s);clkSlab={el:s,hp:SLAB_HP,word:w};
+  const s=document.createElement('div'),bg=stoneBG();s.className='slab';s.style.backgroundImage=bg;s.innerHTML=`<svg class="cracks" viewBox="0 0 260 160" preserveAspectRatio="none"></svg><b>${w}</b>`;{const ck=s.querySelector('.cracks');ck.style.webkitMaskImage=ck.style.maskImage=bg;}st.appendChild(s);clkSlab={el:s,hp:SLAB_HP,word:w,bg};
   s.animate([{transform:'translateY(-70%) rotate(-5deg)',opacity:0},{transform:'translateY(4%) rotate(1deg)',opacity:1,offset:.7},{transform:'translateY(0) rotate(0)',opacity:1}],{duration:160,easing:'cubic-bezier(.3,1.2,.5,1)'});}
 function hammerAt(x,y){const h=document.createElement('div');h.className='hammer';h.style.left=x+'px';h.style.top=y+'px';h.innerHTML='<svg viewBox="0 0 64 64"><rect x="29" y="22" width="7" height="38" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3"/><rect x="10" y="6" width="44" height="20" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="3.5"/><rect x="14" y="9" width="12" height="5" rx="2" fill="#fff" opacity=".55"/></svg>';
   $('clkStage').appendChild(h);h.animate([{transform:'translate(-20%,-90%) rotate(-48deg)'},{transform:'translate(-20%,-90%) rotate(12deg) scale(1.06)',offset:.18},{transform:'translate(-20%,-90%) rotate(-6deg)',offset:.45},{transform:'translate(-20%,-90%) rotate(-28deg)',opacity:0}],{duration:230,easing:'ease-out'});setTimeout(()=>h.remove(),240);}
@@ -1582,11 +1594,11 @@ function chips(x,y,n,col,spread){const st=$('clkStage');for(let i=0;i<n;i++){con
   c.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:`translate(calc(-50% + ${vx*.55}px),calc(-50% - ${up}px)) rotate(${r*.4}deg)`,opacity:1,offset:.35},{transform:`translate(calc(-50% + ${vx}px),calc(-50% + ${fall}px)) rotate(${r}deg)`,opacity:0}],{duration:d,easing:'cubic-bezier(.2,.6,.6,1)'});setTimeout(()=>c.remove(),d+20);}}
 function hitSlab(x,y){const S_=clkSlab;if(!S_){hammerAt(x,y);return;}hammerAt(x,y);S_.hp--;const r=S_.el.getBoundingClientRect(),sr=$('clkStage').getBoundingClientRect();
   const lvl=SLAB_HP-S_.hp,px=(x-(r.left-sr.left))/r.width*260,py=(y-(r.top-sr.top))/r.height*160;let d='';for(let k=0;k<3+lvl;k++){let ang=Math.random()*Math.PI*2,cx_=px,cy_=py;d+=`M${cx_} ${cy_}`;for(let i=0;i<4+lvl;i++){ang+=Math.random()*.9-.45;const L=16+Math.random()*20;cx_+=Math.cos(ang)*L;cy_+=Math.sin(ang)*L*.75;d+=` L${cx_.toFixed(1)} ${cy_.toFixed(1)}`;}}
-  S_.el.querySelector('.cracks').insertAdjacentHTML('beforeend',`<path d="${d}" fill="none" stroke="#2b2440" stroke-width="${2.4+lvl*.8}" stroke-linecap="round" stroke-linejoin="round"/>`);
+  S_.el.querySelector('.cracks').insertAdjacentHTML('beforeend',`<path d="${d}" fill="none" stroke="#fff6df" stroke-opacity=".55" stroke-width="${2.4+lvl*.8}" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.2 1.6)"/><path d="${d}" fill="none" stroke="#2a2218" stroke-width="${2.4+lvl*.8}" stroke-linecap="round" stroke-linejoin="round"/>`);
   const c=combo(x,y),rate=.94+Math.random()*.12+Math.min(c,15)*.008;
   if(S_.hp>0){
     // the stone gives: pushed in, flashes, springs back tilted a little more each time
-    const tilt=(Math.random()<.5?-1:1)*lvl*1.4;S_.el.animate([{transform:'translate(0,0) scale(1)',filter:'brightness(1.7)'},{transform:`translate(0,7px) scale(.94,.92) rotate(${tilt}deg)`,filter:'brightness(1.25)',offset:.25},{transform:`translate(0,-2px) scale(1.02) rotate(${tilt*.5}deg)`,filter:'brightness(1)',offset:.6},{transform:`rotate(${tilt*.4}deg)`}],{duration:190,easing:'ease-out',fill:'forwards'});
+    const tilt=(Math.random()<.5?-1:1)*lvl*1.4;S_.el.animate([{transform:'translate(0,0) scale(1)',filter:DS+' brightness(1.6)'},{transform:`translate(0,7px) scale(.94,.92) rotate(${tilt}deg)`,filter:DS+' brightness(1.2)',offset:.25},{transform:`translate(0,-2px) scale(1.02) rotate(${tilt*.5}deg)`,filter:DS+' brightness(1)',offset:.6},{transform:`rotate(${tilt*.4}deg)`,filter:DS}],{duration:190,easing:'ease-out',fill:'forwards'});
     play('stone_hit_'+(Math.random()<.5?'a':'b'),.9,false,rate)||(noise(.09,.3,900),tone(90,.12,'square',.06));hit(S_.hp===1?'heavy':'medium');
     impact(x,y,64+lvl*14);chips(x,y,5+lvl*2);shake($('clkStage'),4+lvl*2);const n=$('clkStage').querySelector('.nier img');if(n){n.src=A('nie_talk');clearTimeout(hitSlab.t);hitSlab.t=setTimeout(()=>{n.src=A('nie_basic');},200);}
     return;}
@@ -1594,11 +1606,11 @@ function hitSlab(x,y){const S_=clkSlab;if(!S_){hammerAt(x,y);return;}hammerAt(x,
   clkSlab=null;const el=S_.el;const bw=r.width,bh=r.height,cx=r.left-sr.left,cy=r.top-sr.top;
   play('stone_break',1,false,rate*.97)||(noise(.35,.45,1400),noise(.2,.3,400),tone(70,.25,'sawtooth',.06));hit('break');impact(x,y,150,'#ffe9a6');
   const fl=$('clkFlash');fl.classList.remove('on');void fl.offsetWidth;fl.classList.add('on');
-  el.animate([{filter:'brightness(2.2)',transform:'scale(1.04)'},{filter:'brightness(2.2)',transform:'scale(1.04)'}],{duration:70,fill:'forwards'});
+  el.animate([{filter:DS+' brightness(2)',transform:'scale(1.04)'},{filter:DS+' brightness(2)',transform:'scale(1.04)'}],{duration:70,fill:'forwards'});
   setTimeout(()=>{el.style.visibility='hidden';
     const pts=[[0,0],[.35,0],[.7,0],[1,0],[1,.5],[1,1],[.6,1],[.3,1],[0,1],[0,.45]],ox=(x-cx)/bw,oy=(y-cy)/bh;
     for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],sh=document.createElement('div');sh.className='shard';sh.style.left=cx+'px';sh.style.top=cy+'px';sh.style.width=bw+'px';sh.style.height=bh+'px';
-      sh.style.clipPath=`polygon(${ox*100}% ${oy*100}%,${a[0]*100}% ${a[1]*100}%,${b[0]*100}% ${b[1]*100}%)`;sh.innerHTML=`<b>${S_.word}</b>`;$('clkStage').appendChild(sh);
+      sh.style.backgroundImage=S_.bg;sh.style.clipPath=`polygon(${ox*100}% ${oy*100}%,${a[0]*100}% ${a[1]*100}%,${b[0]*100}% ${b[1]*100}%)`;sh.innerHTML=`<b>${S_.word}</b>`;$('clkStage').appendChild(sh);
       const mx=(a[0]+b[0])/2-ox,my=(a[1]+b[1])/2-oy;sh.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${mx*240}px,${my*160-40}px) rotate(${(Math.random()*2-1)*50}deg)`,opacity:1,offset:.3},{transform:`translate(${mx*340}px,${my*200+320}px) rotate(${(Math.random()*2-1)*160}deg)`,opacity:0}],{duration:650+Math.random()*200,easing:'cubic-bezier(.2,.5,.6,1)'});setTimeout(()=>sh.remove(),900);}
     el.remove();chips(x,y,18,null,160);sparks(x,y,12,'#ffcf5a');shake($('clkStage'),14);
     const n=$('clkStage').querySelector('.nier img');if(n){n.src=A('nie_happy');clearTimeout(hitSlab.t);hitSlab.t=setTimeout(()=>{n.src=A('nie_basic');},700);}
