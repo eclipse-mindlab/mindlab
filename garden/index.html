@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="fe6e1a4c1a75"</script>
+<script>window.GARDEN_BUILD="9790166d68fb"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -173,6 +173,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .clkhead div{display:flex;flex-direction:column}.clkhead span{font-size:14px;color:#c9c2e8;letter-spacing:.02em}.clkhead b{font-family:var(--hand);font-weight:400;font-size:52px;line-height:1.05;color:#ffcf5a;font-variant-numeric:tabular-nums}
 .clkhead b.pop{animation:cnum .18s ease-out}@keyframes cnum{40%{transform:scale(1.12)}}
 .clkhint{margin:4px 16px 0;font-size:14px;color:#a79fd0}
+.clkgoal{margin:8px 16px 0;display:flex;align-items:center;gap:10px;font-size:13px;color:#d9d3f2}.clkgoal .cgbar{flex:1;height:10px;border:2px solid #000;border-radius:999px;background:#2c2448;overflow:hidden}.clkgoal .cgbar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}.clkgoal span{white-space:nowrap}.clkgoal.done .cgbar i{background:#9fd27a}.clkgoal.done span{color:#c8ef9f}.clkgoal.pop{animation:cnum .3s ease-out}
 .clkstage{position:relative;flex:1;overflow:hidden;cursor:pointer}
 .clktabs{display:flex;gap:8px;justify-content:center;padding:10px 12px calc(14px + env(safe-area-inset-bottom,0px))}
 .ct{appearance:none;border:2.5px solid #000;border-radius:16px;background:#fffaf0;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px 5px;min-width:68px;font-family:var(--hand);font-size:14px;cursor:pointer;box-shadow:0 3px 0 #000}
@@ -446,7 +447,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
   <div class="devs"><button class="dev" type="button" id="dev2">시험용 · 해 질 녘</button><button class="dev" type="button" id="dev">시험용 · 하루 넘기기</button></div>
   <div class="ward" id="board" hidden><div class="wsheet" role="dialog" aria-label="미션 게시판"><div class="whead"><b>게시판</b><span class="bsub" id="bSub"></span><button class="icon wx" type="button" id="bClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="bstats" id="bStats"></div><div class="wtabs" id="bTabs"></div><p class="wmsg" id="bMsg"></p><div class="blist" id="bList"></div></div></div>
   <div class="hint" id="hint" hidden aria-hidden="true"></div><button class="appb flt" type="button" id="appBtn" hidden>앱 받기</button><button class="clkbtn visbtn" type="button" id="visBtn" aria-label="놀러 가기" hidden><img src="a/gate_open.webp" alt=""></button><button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
-  <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><p class="clkhint" id="clkHint"></p><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
+  <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><p class="clkhint" id="clkHint"></p><div class="clkgoal" id="clkGoal"><div class="cgbar"><i></i></div><span></span></div><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
   <div class="ward" id="patch" hidden><div class="wsheet" role="dialog" aria-label="텃밭"><div class="whead"><b>텃밭</b><span class="bsub">책에서 온 것들</span><button class="icon wx" type="button" id="pClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div id="pBody" class="blist"></div></div></div>
   <div class="ward" id="ward" hidden><div class="wsheet" role="dialog" aria-label="옷장"><div class="whead"><b>옷장</b><span class="wfruit" id="wFruit"></span><button class="icon wx" type="button" id="wClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="wtabs" id="wTabs"></div><div class="wstage"><svg id="wPrev" viewBox="-52 -126 104 132" aria-hidden="true"></svg></div><p class="wmsg" id="wMsg"></p><div class="wgrid" id="wGrid"></div></div></div>
 </div>
@@ -1548,20 +1549,31 @@ function hit(level){const H=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugi
 function noise(d,v,f){const a=ac();if(!a)return;const n=a.createBuffer(1,a.sampleRate*d,a.sampleRate),c=n.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/c.length,2);
   const s=a.createBufferSource(),bq=a.createBiquadFilter(),g=a.createGain();s.buffer=n;bq.type='bandpass';bq.frequency.value=f||1800;bq.Q.value=.7;g.gain.value=v||.25;s.connect(bq).connect(g).connect(a.destination);s.start();}
 const clkN=k=>((S.clk||{})[k]||0);
-function clkCount(k,by){S.clk=S.clk||{};S.clk[k]=clkN(k)+(by||1);if(++clkSave>=15){clkSave=0;save();}}
+// a goal for each day: enough to take a minute or two of tapping, three fruit for reaching it, and a best combo to beat
+const CLK_GOAL={nie:{n:30,w:'깬 돌판'},dio:{n:300,w:'두드린 수'},soc:{n:300,w:'던진 질문'},epi:{n:120,w:'터뜨린 걱정'}},CLK_PRIZE=3;
+function clkDay(){if(!S.clkDay||S.clkDay.d!==today())S.clkDay={d:today(),n:{},got:{}};return S.clkDay;}
+function clkCount(k,by){S.clk=S.clk||{};S.clk[k]=clkN(k)+(by||1);const D=clkDay(),G=CLK_GOAL[k],was=D.n[k]||0;D.n[k]=was+(by||1);
+  if(G&&!D.got[k]&&D.n[k]>=G.n){D.got[k]=1;clkSave=0;save();clkWin(k);}else if(++clkSave>=15){clkSave=0;save();}
+  if(k===clkK)clkGoalDraw(was<G.n&&D.n[k]>=G.n);}
+function clkGoalDraw(pop){const k=clkK,G=CLK_GOAL[k],D=clkDay(),n=Math.min(D.n[k]||0,G.n),done=!!D.got[k],el=$('clkGoal');if(!el)return;
+  el.classList.toggle('done',done);el.querySelector('i').style.width=(n/G.n*100)+'%';
+  el.querySelector('span').textContent=done?`오늘 목표 완료${(S.clkBest||{})[k]?` · 최고 ${S.clkBest[k]}연타`:''}`:`오늘 ${G.w} ${n} / ${G.n} · 열매 ${CLK_PRIZE}개`;
+  if(pop){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}}
+function clkWin(k){S.fruit+=CLK_PRIZE;save();hud();sfx.stage();hit('heavy');const st=$('clkStage'),w=st.clientWidth,h=st.clientHeight;
+  floatWord(`오늘 목표 달성 · 열매 +${CLK_PRIZE}`,w/2,h*.28,'big');sparks(w/2,h*.28,16,'#ffcf5a');const fl=$('clkFlash');fl.classList.remove('on');void fl.offsetWidth;fl.classList.add('on');}
 function openClk(){if(S.intro<2)return;closeBub();ac();sfx.boop();if(!S.met[clkK])clkK='soc';$('clk').hidden=false;S.clkSeen=1;hud();drawClk();}
 function closeClk(){$('clk').hidden=true;clearInterval(clkBub);$('clkStage').innerHTML='';clkSlab=null;save();sfx.boop();}
 function drawClk(){const C=CLK[clkK];
   $('clkTabs').innerHTML=CLK_ORDER.map(k=>{const on=S.met[k];return `<button type="button" class="ct${k===clkK?' on':''}${on?'':' lock'}" data-ck="${k}"${on?'':' disabled'}><i class="face" style="${faceCSS(k)}"></i><span>${on?CLK[k].tab:'곧 와요'}</span></button>`;}).join('');
   $('clkTabs').querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{if(b.disabled)return;clkK=b.dataset.ck;clkCombo=0;sfx.boop();hit('light');drawClk();});
-  $('clkUnit').textContent=C.unit;$('clkHint').textContent=C.hint;clkNum();
+  $('clkUnit').textContent=C.unit;$('clkHint').textContent=C.hint;clkNum();clkGoalDraw();
   const st=$('clkStage');clearInterval(clkBub);st.innerHTML='';clkSlab=null;clkBub=null;$('clkCombo').hidden=true;clkHits=0;
   if(clkK==='nie'){st.innerHTML=`<div class="ctgt nier"><img src="${A('nie_basic')}" alt=""></div>`;newSlab();}
   else if(clkK==='dio')st.innerHTML=`<div class="ctgt barrel"><img src="${A('dio_barrel')}" alt=""></div>`;
   else if(clkK==='soc')st.innerHTML=`<div class="ctgt socr"><img src="${A('soc_basic')}" alt=""></div>`;
   else{st.innerHTML=`<div class="ctgt epic"><img src="${A('epi_happy')}" alt=""></div>`;clkBub=setInterval(spawnWorry,520);for(let i=0;i<5;i++)setTimeout(spawnWorry,i*140);}}
 function clkNum(pop){const C=CLK[clkK],n=$('clkNum');n.textContent=`${clkN(clkK)?C.sign:''}${clkN(clkK).toLocaleString('ko-KR')}`;if(pop){n.classList.remove('pop');void n.offsetWidth;n.classList.add('pop');}}
-function combo(x,y){const now=Date.now();clkCombo=now-clkLast<420?clkCombo+1:1;clkLast=now;const c=$('clkCombo');if(clkCombo>=5){c.textContent=`${clkCombo} 연타`;c.hidden=false;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');clearTimeout(combo.t);combo.t=setTimeout(()=>{c.hidden=true;},650);}return clkCombo;}
+function combo(x,y){const now=Date.now();clkCombo=now-clkLast<420?clkCombo+1:1;clkLast=now;if(clkCombo>=10&&clkCombo>((S.clkBest||{})[clkK]||0)){S.clkBest=S.clkBest||{};const first=!S.clkBest[clkK];S.clkBest[clkK]=clkCombo;if(!first&&!combo.nb){combo.nb=1;floatWord('최고 연타 경신',$('clkStage').clientWidth/2,$('clkStage').clientHeight*.18,'big');}}if(clkCombo===1)combo.nb=0;const c=$('clkCombo');if(clkCombo>=5){c.textContent=`${clkCombo} 연타`;c.hidden=false;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');clearTimeout(combo.t);combo.t=setTimeout(()=>{c.hidden=true;},650);}return clkCombo;}
 function floatWord(t,x,y,cls){const w=document.createElement('span');w.className='cword '+(cls||'');w.textContent=t;w.style.left=x+'px';w.style.top=y+'px';w.style.setProperty('--dx',(Math.random()*120-60)+'px');$('clkStage').appendChild(w);setTimeout(()=>w.remove(),1100);}
 function sparks(x,y,n,col){for(let i=0;i<n;i++){const s=document.createElement('i');s.className='cspark';s.style.left=x+'px';s.style.top=y+'px';if(col)s.style.background=col;const a=Math.random()*Math.PI*2,r=40+Math.random()*70;
   s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*r}px),calc(-50% + ${Math.sin(a)*r}px)) scale(.3)`,opacity:0}],{duration:450+Math.random()*250,easing:'cubic-bezier(.2,.8,.3,1)'});$('clkStage').appendChild(s);setTimeout(()=>s.remove(),750);}}
