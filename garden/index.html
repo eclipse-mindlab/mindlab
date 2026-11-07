@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="9790166d68fb"</script>
+<script>window.GARDEN_BUILD="4a9081e0f6f4"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -303,6 +303,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .hb{font-family:var(--hand);font-size:12px;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#efe9fb}
 .hb.soc{background:#dbe9ff}.hb.epi{background:#ffe1ec}.hb.dio{background:#e4f3dc}.hb.nie{background:#ffe9c9}
 .ta p{margin:0;font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.ta.ask .aq{font-family:var(--hand);font-size:18px;line-height:1.35;color:var(--ink);margin:2px 0}.ta.ask .who .mw{margin-left:2px;font-size:11.5px}.aqh{margin:0 0 6px;font-family:var(--hand);font-size:17px;color:var(--ink)}
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
@@ -2269,9 +2270,11 @@ async function loadThread(day, aid) {
 }
 // from this question day on, an answer has to say which question it answers (qi); older app builds that ask a different question don't
 const QI_FROM = 6;
+const talkTabs = v => `<div class="tday">${['오늘 질문', '어제 질문', '사람들 질문'].map((t, i) => `<button type="button" class="${v === i ? 'on' : ''}" data-tv="${i}">${t}</button>`).join('')}</div>`;
 async function renderTalk(el) {
+  if (tView === 2) return renderAsk(el);
   const b = tView, day = talkDay(b), [ak, q] = talkQ(b), face = k => `<i class="face" style="background-image:url(${A(k + '_basic')})"></i>`;
-  const tabs = `<div class="tday"><button type="button" class="${b ? '' : 'on'}" data-tv="0">오늘 질문</button><button type="button" class="${b ? 'on' : ''}" data-tv="1">어제 질문</button></div>`;
+  const tabs = talkTabs(b);
   const head = tabs + `<div class="mis"><div class="tq">${face(ak)}<p>${esc(q)}</p></div>${philAnswer(b)}`;
   const wire = () => el.querySelectorAll('[data-tv]').forEach(x => x.onclick = () => { const v = +x.dataset.tv; if (v === tView) return; sfx.boop(); tView = v; talkCache = null; talkBusy = false; renderTalk(el); });
   if (failed) { el.innerHTML = head + '<p class="mw">다른 사람들 답은 인터넷이 될 때 보여요.</p></div>'; wire(); return; }
@@ -2349,6 +2352,97 @@ async function renderTalk(el) {
       try { await F.updateDoc(F.doc(db, 'gardenTalk', day, 'a', id), {rep: F.increment(1)}); } catch (e) {} });
   } catch (e) { el.innerHTML = head + '<p class="mw">다른 사람들 답을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p></div>'; wire(); }
   talkBusy = false;
+}
+// ---- 사람들 질문: anyone who has answered the square twice can put one question a day; others answer it.
+// questions live three days; answers and "나도 궁금해" lift a question up the list; each answer pays the asker one fruit (up to 10)
+const ASK_DAYS = 3, ASK_PAY = 10, ASK_GATE = 2;
+let askCache = null, askBusy = false;
+const askOpen = new Set(), askAns = {};
+const askId = () => me.uid + '_' + today();
+const askSec = x => x && x.seconds != null ? x.seconds * 1000 : +x || 0;
+async function loadAsks() {
+  const since = new Date(Date.now() - ASK_DAYS * 864e5), got = [];
+  (await F.getDocs(F.query(F.collection(db, 'gardenAsk'), F.where('at', '>=', since), F.orderBy('at', 'desc'), F.limit(60)))).forEach(d => got.push({id: d.id, ...d.data()}));
+  const hid = (S.askHid || []), now = Date.now();
+  // answers count double; a question cools off over its three days so new ones get a turn at the top
+  const score = x => ((x.ac || 0) * 2 + (x.likes || 0) + 1) / (1 + (now - askSec(x.at)) / 864e5);
+  const was = {}; (askCache ? askCache.list : []).forEach(x => was[x.id] = x.ac || 0); got.forEach(x => { if (x.id in was && was[x.id] !== (x.ac || 0)) delete askAns[x.id]; });
+  askCache = {t: now, uid: me ? me.uid : '', list: got.filter(x => (x.rep || 0) < 3 && !hid.includes(x.id)).sort((a, b) => score(b) - score(a))};
+}
+async function loadAnswers(qid) {
+  const got = []; (await F.getDocs(F.query(F.collection(db, 'gardenAsk', qid, 'a'), F.limit(60)))).forEach(d => got.push({id: d.id, ...d.data()}));
+  got.sort((a, b) => askSec(a.at) - askSec(b.at)); askAns[qid] = got.filter(x => (x.rep || 0) < 3);
+}
+// fruit for answers my questions got since I last looked
+function askPay() {
+  if (!me || !askCache) return; S.askPaid = S.askPaid || {}; let n = 0;
+  askCache.list.forEach(x => { if (x.uid !== me.uid) return; const due = Math.min(ASK_PAY, x.ac || 0) - (S.askPaid[x.id] || 0); if (due > 0) { n += due; S.askPaid[x.id] = (S.askPaid[x.id] || 0) + due; } });
+  const keep = new Set(askCache.list.map(x => x.id)); Object.keys(S.askPaid).forEach(k => { if (!keep.has(k) && !k.endsWith('_' + today())) delete S.askPaid[k]; });
+  if (n) { S.fruit += n; save(); hud(); sfx.fruit(); toast(`내 질문에 답이 ${n}개 달렸어요 · 열매 +${n}`); } else save();
+}
+async function renderAsk(el) {
+  const wire = () => el.querySelectorAll('[data-tv]').forEach(x => x.onclick = () => { const v = +x.dataset.tv; if (v === tView) return; sfx.boop(); tView = v; talkCache = null; talkBusy = false; askBusy = false; renderTalk(el); });
+  const head = talkTabs(2);
+  if (failed) { el.innerHTML = head + '<p class="mw">사람들 질문은 인터넷이 될 때 보여요.</p>'; wire(); return; }
+  if (!ready) { el.innerHTML = head + '<p class="mw">불러오는 중이에요</p>'; wire(); return; }
+  if (askBusy) return; askBusy = true;
+  try {
+    if (!auth.currentUser) { try { await F.signInAnonymously(auth); } catch (e) {} }
+    if (!askCache || askCache.uid !== (me ? me.uid : '') || Date.now() - askCache.t > 90000) { await loadAsks(); askPay(); }
+    const answered = Object.keys(S.qlog || {}).length, mineToday = me && askCache.list.find(x => x.id === askId()), posted = S.askDay === today() || mineToday;
+    const box = !me ? `<div class="mis"><p class="mw">궁금한 걸 직접 물어볼 수 있어요. 구글로 로그인하면 질문을 올리고 답할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="aIn">구글로 로그인하기</button></div>${LEGAL}</div>`
+      : posted ? '<div class="mis"><p class="mw">오늘 질문을 올렸어요. 답이 하나 달릴 때마다 열매가 하나 들어와요(최대 10개).</p></div>'
+      : answered < ASK_GATE ? `<div class="mis"><p class="mw">'오늘 질문'에 ${ASK_GATE}번 답하면 내 질문을 올릴 수 있어요. (${answered}/${ASK_GATE})</p></div>`
+      : `<div class="mis"><p class="aqh">사람들한테 묻고 싶은 거, 하나만</p><div class="tin"><textarea id="aTx" maxlength="60" placeholder="예) 10년 전의 나한테 딱 한마디 할 수 있다면?"></textarea><small id="aCt">0/60</small><div class="mb"><button class="opt" type="button" id="aGo">질문 올리기</button></div></div><p class="mw">하루에 하나 · 답이 달릴 때마다 열매 +1 · 3일 뒤 내려가요</p></div>`;
+    const myAns = qid => me && (askAns[qid] || []).find(a => a.id === me.uid);
+    const card = x => { const open = askOpen.has(x.id), mine = me && x.uid === me.uid, liked = (S.askLiked || []).includes(x.id), L = askAns[x.id];
+      const body = !open ? '' : !L ? '<div class="th"><p class="mw">불러오는 중이에요</p></div>'
+        : `<div class="th">${L.length ? L.map(a => `<div class="rp"><div class="who">${me && a.id === me.uid ? `<b>${esc(a.name || '')}</b>` : vName(a.name, a.id)}${a.sc && SCHOOL[a.sc] ? `<span class="hb ${a.sc}">${SCHOOL[a.sc].nm}</span>` : ''}${me && (a.id === me.uid || mine) ? `<button class="lnk" type="button" data-adel="${x.id}|${a.id}">지우기</button>` : me ? `<button class="lnk" type="button" data-arep="${x.id}|${a.id}">신고</button>` : ''}</div><p>${esc(a.t)}</p></div>`).join('') : '<p class="mw">아직 답이 없어요. 첫 답을 남겨 보세요.</p>'}
+          ${!me ? '<p class="mw">구글로 로그인하면 답할 수 있어요.</p>' : myAns(x.id) ? '' : `<div class="rin"><input type="text" maxlength="150" placeholder="${mine ? '내 질문에 내가 먼저 답해 보기' : '내 생각은'}" data-atx="${x.id}"><button class="opt" type="button" data-ago="${x.id}">답하기</button></div>`}</div>`;
+      return `<div class="ta ask${mine ? ' mine' : ''}"><div class="who">${mine ? `<b>${esc(x.name || '')}</b><span class="mw">내 질문</span>` : vName(x.name, x.uid)}${x.sc && SCHOOL[x.sc] ? `<span class="hb ${x.sc}">${SCHOOL[x.sc].nm}</span>` : ''}</div><p class="aq">${esc(x.t)}</p>
+        <div class="act"><button class="rbt${open ? ' on' : ''}" type="button" data-aop="${x.id}">답 ${x.ac || 0}</button><span class="sp"></span>${mine ? `<button class="lnk" type="button" data-qdel="${x.id}">지우기</button><span class="mw">궁금해 ${x.likes || 0}</span>` : me ? `<button class="lnk" type="button" data-qrep="${x.id}">신고</button><button class="like${liked ? ' on' : ''}" type="button" data-qlike="${x.id}">나도 궁금해 ${x.likes || 0}</button>` : `<span class="mw">궁금해 ${x.likes || 0}</span>`}</div>${body}</div>`; };
+    el.innerHTML = head + box + (askCache.list.length ? askCache.list.map(card).join('') : '<p class="mempty">아직 올라온 질문이 없어요. 첫 질문의 주인공이 되어 보세요.</p>');
+    wire(); vWire(el);
+    const rer = () => { askBusy = false; renderAsk(el); };
+    askCache.list.forEach(x => { if (askOpen.has(x.id) && !askAns[x.id]) loadAnswers(x.id).catch(() => { askAns[x.id] = []; }).then(() => { if (!askBusy) rer(); }); });
+    const ain = el.querySelector('#aIn'); if (ain) ain.onclick = () => { sfx.boop(); signIn().then(() => { askCache = null; setTimeout(rer, 700); }); };
+    const tx = el.querySelector('#aTx');
+    if (tx) { tx.oninput = () => { el.querySelector('#aCt').textContent = `${tx.value.length}/60`; };
+      el.querySelector('#aGo').onclick = async () => { const t = await cleanText(tx.value, 60); if (!t) return; if (t.length < 5) { $('bMsg').textContent = '질문을 조금 더 길게 써 주세요'; return; }
+        const btn = el.querySelector('#aGo'); btn.disabled = true;
+        const d = {t, sc: S.school || '', name: S.lname, uid: me.uid, ac: 0, likes: 0, rep: 0, at: F.serverTimestamp()};
+        try { await F.setDoc(F.doc(db, 'gardenAsk', askId()), d); S.askDay = today(); save(); sfx.stamp(); buzz([20, 30, 40]);
+          askCache.list.unshift({id: askId(), ...d, at: Date.now()}); askOpen.add(askId()); askAns[askId()] = []; }
+        catch (e) { toast('올리지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+        rer(); }; }
+    el.querySelectorAll('[data-aop]').forEach(x => x.onclick = async () => { const id = x.dataset.aop; sfx.boop();
+      if (askOpen.has(id)) { askOpen.delete(id); return rer(); }
+      askOpen.add(id); rer(); try { await loadAnswers(id); } catch (e) { askAns[id] = []; } rer(); });
+    el.querySelectorAll('[data-ago]').forEach(x => x.onclick = async () => { const qid = x.dataset.ago, inp = el.querySelector(`[data-atx="${qid}"]`);
+      const t = await cleanText(inp.value, 150); if (!t) return; x.disabled = true;
+      const a = {t, sc: S.school || '', name: S.lname, rep: 0, at: F.serverTimestamp()};
+      try { await F.setDoc(F.doc(db, 'gardenAsk', qid, 'a', me.uid), a);
+        const q = askCache.list.find(z => z.id === qid), self = q && q.uid === me.uid;
+        if (!self) { try { await F.updateDoc(F.doc(db, 'gardenAsk', qid), {ac: F.increment(1)}); } catch (e) {} if (q) q.ac = (q.ac || 0) + 1; }
+        (askAns[qid] = askAns[qid] || []).push({id: me.uid, ...a, at: Date.now()}); sfx.boop(); buzz(10); }
+      catch (e) { toast('답하지 못했어요. 잠시 뒤에 다시 해 주세요'); }
+      rer(); });
+    el.querySelectorAll('[data-qlike]').forEach(x => x.onclick = async () => { const id = x.dataset.qlike; S.askLiked = S.askLiked || []; if (S.askLiked.includes(id)) return;
+      S.askLiked.push(id); if (S.askLiked.length > 200) S.askLiked = S.askLiked.slice(-200); save(); sfx.boop(); buzz(8);
+      const q = askCache.list.find(z => z.id === id); if (q) q.likes = (q.likes || 0) + 1; x.classList.add('on'); x.textContent = `나도 궁금해 ${q ? q.likes : ''}`;
+      try { await F.updateDoc(F.doc(db, 'gardenAsk', id), {likes: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-qrep]').forEach(x => x.onclick = async () => { const id = x.dataset.qrep; if (!confirmRep('q' + id)) return;
+      S.askHid = (S.askHid || []).concat(id).slice(-200); save(); askCache.list = askCache.list.filter(z => z.id !== id); toast('신고했어요. 이 질문은 숨겼어요'); rer();
+      try { await F.updateDoc(F.doc(db, 'gardenAsk', id), {rep: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-qdel]').forEach(x => x.onclick = async () => { const id = x.dataset.qdel; if (!confirmRep('x' + id, '한 번 더 누르면 질문이 지워져요')) return;
+      try { await F.deleteDoc(F.doc(db, 'gardenAsk', id)); askCache.list = askCache.list.filter(z => z.id !== id); toast('지웠어요'); } catch (e) { toast('지우지 못했어요'); } rer(); });
+    el.querySelectorAll('[data-arep]').forEach(x => x.onclick = async () => { const [qid, aid] = x.dataset.arep.split('|'); if (!confirmRep('a' + qid + aid)) return;
+      askAns[qid] = (askAns[qid] || []).filter(a => a.id !== aid); toast('신고했어요. 이 답은 숨겼어요'); rer();
+      try { await F.updateDoc(F.doc(db, 'gardenAsk', qid, 'a', aid), {rep: F.increment(1)}); } catch (e) {} });
+    el.querySelectorAll('[data-adel]').forEach(x => x.onclick = async () => { const [qid, aid] = x.dataset.adel.split('|'); if (!confirmRep('d' + qid + aid, '한 번 더 누르면 지워져요')) return;
+      try { await F.deleteDoc(F.doc(db, 'gardenAsk', qid, 'a', aid)); askAns[qid] = (askAns[qid] || []).filter(a => a.id !== aid); toast('지웠어요'); } catch (e) { toast('지우지 못했어요'); } rer(); });
+  } catch (e) { el.innerHTML = head + '<p class="mw">사람들 질문을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p>'; wire(); }
+  askBusy = false;
 }
 // how many replies came in on yesterday's answer since I last looked
 async function newReplies() {

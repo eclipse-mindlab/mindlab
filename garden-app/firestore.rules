@@ -75,6 +75,44 @@ service cloud.firestore {
       allow delete: if request.auth != null && (request.auth.uid == resource.data.uid || request.auth.uid == aid);
     }
 
+    // 사람들 질문: 한 사람이 하루 한 개 (문서 id = uid_날짜). 3일치만 앱이 보여 줌
+    match /gardenAsk/{qid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && qid.matches(request.auth.uid + '_[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}')
+        && request.resource.data.keys().hasOnly(['t', 'sc', 'name', 'uid', 'ac', 'likes', 'rep', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.t is string && request.resource.data.t.size() >= 5 && request.resource.data.t.size() <= 60
+        && !request.resource.data.t.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.sc in ['', 'soc', 'nie', 'dio', 'epi']
+        && request.resource.data.ac == 0 && request.resource.data.likes == 0 && request.resource.data.rep == 0
+        && request.resource.data.at == request.time;
+      allow update: if request.auth != null
+        && ((request.auth.uid != resource.data.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) && request.resource.data.likes == resource.data.likes + 1)
+         || (request.auth.uid != resource.data.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rep']) && request.resource.data.rep == resource.data.rep + 1)
+         || (request.auth.token.firebase.sign_in_provider == 'google.com' && request.auth.uid != resource.data.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ac']) && request.resource.data.ac == resource.data.ac + 1));
+      allow delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
+
+    // 사람들 질문의 답: 질문 하나에 한 사람 한 개. 쓴 사람과 질문 주인이 지울 수 있음
+    match /gardenAsk/{qid}/a/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.resource.data.keys().hasOnly(['t', 'sc', 'name', 'rep', 'at'])
+        && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 150
+        && !request.resource.data.t.lower().matches('.*(씨발|시발|ㅅㅂ|병신|ㅂㅅ|좆|존나|개새|새끼|꺼져|닥쳐|섹스|자살|https?:|www[.]|[.]com|[.]kr|카톡|오픈채팅).*')
+        && request.resource.data.name is string && request.resource.data.name.size() <= 10
+        && !request.resource.data.name.matches('.*(씨발|시발|병신|좆|개새|섹스).*')
+        && request.resource.data.rep == 0;
+      allow update: if request.auth != null && request.auth.uid != uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rep']) && request.resource.data.rep == resource.data.rep + 1;
+      allow delete: if request.auth != null && (request.auth.uid == uid
+        || request.auth.uid == get(/databases/$(database)/documents/gardenAsk/$(qid)).data.uid);
+    }
+
     // 정원 놀러 가기: 주인이 공개한 모습(이름, 옷, 펫, 나무 단계, 팻말에 건 답 3개까지)만 올라감. 로그인한 사람은 누구나 구경
     match /gardenPub/{uid} {
       allow read: if request.auth != null;
