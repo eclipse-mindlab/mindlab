@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="148a3407fb1e"</script>
+<script>window.GARDEN_BUILD="f365bba021d1"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -2275,6 +2275,8 @@ async function loadThread(day, aid) {
   thCache[day + '/' + aid] = got.filter(x => (x.rep || 0) < 3);
 }
 // from this question day on, an answer has to say which question it answers (qi); older app builds that ask a different question don't
+// answers saved by apps from before the question number existed carry no qi. Up to 11-7 most of them answered
+// the same question, so they stay; from 11-8 the list changed, so an answer without a number belongs to the old one.
 const QI_FROM = 6;
 const talkTabs = v => `<div class="tday">${['오늘 질문', '어제 질문', '사람들 질문'].map((t, i) => `<button type="button" class="${v === i ? 'on' : ''}" data-tv="${i}">${t}</button>`).join('')}</div>`;
 async function renderTalk(el) {
@@ -2294,7 +2296,7 @@ async function renderTalk(el) {
       const got = []; (await F.getDocs(F.query(col, F.orderBy('likes', 'desc'), F.limit(40)))).forEach(d => got.push({id: d.id, ...d.data()}));
       let mine = uid ? got.find(x => x.id === uid) || null : null;
       if (uid && !mine) { const d = await F.getDoc(F.doc(db, 'gardenTalk', day, 'a', uid)); if (d.exists()) mine = {id: d.id, ...d.data()}; }
-      const qn = talkQI(b), sameQ = x => x.qi == null ? talkN(b) < QI_FROM : x.qi === qn;
+      const qn = talkQI(b), sameQ = x => x.qi == null ? talkN(b) < TQ3_FROM : x.qi === qn;
       talkCache = {day, uid, t: Date.now(), list: got.filter(x => x.id !== uid && (x.rep || 0) < 3 && sameQ(x)), mine};
     }
     const liked = (S.liked && S.liked[day]) || [], seen = (S.rcSeen || {})[day] || 0;
