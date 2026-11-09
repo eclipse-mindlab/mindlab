@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="feed6290f160"</script>
+<script>window.GARDEN_BUILD="a0283181a55a"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -1155,9 +1155,9 @@ function place(k,mode,x,y){let a=actors[k];const sp=spotOf(k,mode);
   if(!a){const g=document.createElementNS(NS,'g');g.dataset.k=k;g.style.cursor='pointer';$(sp.back?'castBack':'cast').appendChild(g);a=actors[k]={g,x,y,mode:null,s:sp.s};g.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('.lvtag')){e.stopPropagation();sfx.boop();profShow(k);return;}tapKid(k);});}
   const rn=KIDS.includes(k)&&mode!=='shadow'&&mode!=='barrel'?recN(k):0,tag=KIDS.includes(k)&&S.intro>=2&&S.met[k]&&(mode==='awake'||mode==='sleep')?S.lv[k]:0,key=mode+JSON.stringify(S.wear[k]||{})+rn+'|'+tag;a.x=x;a.y=y;if(a.key!==key){a.mode=mode;a.key=key;a.g.innerHTML=`${recRing(rn)}<g class="body">${kidSVG(k,mode,S.wear[k],mode==='shadow'?'t':sideOf(k))}</g>${tag?lvTag(tag):''}`;}a.g.setAttribute('transform',`translate(${x} ${y}) scale(${a.s})`);refreshNote(k);if(typeof paintPets==='function'&&KIDS.includes(k))setTimeout(paintPets,0);return a;}
 function walk(k,toX,ms,done,idle,toY,toS){const a=actors[k];const x0=a.x,y0=a.y,s0=a.s,t0=performance.now();a.walking=true;a.idle=!!idle;a.cancel=0;if(toY==null)toY=y0;if(toS==null)toS=s0;
-  const tg=a.g.querySelector('.lvtag'),tgSet=f=>{if(tg)tg.setAttribute('transform',`translate(0 15) scale(${f} 1)`);};tgSet(toX<x0?-1:1);const _done=done;done=()=>{tgSet(1);_done&&_done();};
-  const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
-    a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);if(p<1)requestAnimationFrame(step);else{a.walking=false;a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);setTimeout(paintPets,0);done&&done();}};
+  const tgSet=f=>{const tg=a.g.querySelector('.lvtag');if(tg)tg.setAttribute('transform',`translate(0 15) scale(${f} 1)`);};
+  const step=t=>{if(a.cancel){a.walking=false;a.cancel=0;tgSet(1);a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);return;}const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;a.x=x0+(toX-x0)*e;a.y=y0+(toY-y0)*e;a.s=s0+(toS-s0)*e;const bob=Math.abs(Math.sin(p*Math.PI*7))*-5;
+    a.g.setAttribute('transform',`translate(${a.x} ${a.y+bob}) scale(${toX<x0?-a.s:a.s} ${a.s})`);tgSet(toX<x0?-1:1);if(p<1)requestAnimationFrame(step);else{a.walking=false;tgSet(1);a.g.setAttribute('transform',`translate(${a.x} ${a.y}) scale(${a.s})`);setTimeout(paintPets,0);done&&done();}};
   requestAnimationFrame(step);}
 const restMode=k=>left(k)<=0?'sleep':'awake';
 // the heart under a philosopher: their friendship level, and the way into their screen
