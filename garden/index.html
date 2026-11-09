@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="a0283181a55a"</script>
+<script>window.GARDEN_BUILD="a1a5f9898a67"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -357,7 +357,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .hb{font-family:var(--hand);font-size:12px;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#efe9fb}
 .hb.soc{background:#dbe9ff}.hb.epi{background:#ffe1ec}.hb.dio{background:#e4f3dc}.hb.nie{background:#ffe9c9}
 .ta p{margin:0;font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
-.ta.ask .aq{font-family:var(--hand);font-size:18px;line-height:1.35;color:var(--ink);margin:2px 0}.ta.ask .who .mw{margin-left:2px;font-size:11.5px}.aqh{margin:0 0 6px;font-family:var(--hand);font-size:17px;color:var(--ink)}.askc .tq p{font-size:17px}.askc .mb{display:flex;gap:8px}.askc .mb .opt{flex:1}.rbt.first{background:var(--gold);border:2px solid #000;border-radius:999px;padding:3px 12px;color:var(--ink)}.askgo{appearance:none;display:block;width:100%;margin:2px 0;padding:10px 12px;border:2px dashed #b9b0d6;border-radius:14px;background:#fbf8ff;font:inherit;font-size:14px;color:#5b4f8a;text-align:left;cursor:pointer}
+.ta.ask .aq{font-family:var(--hand);font-size:17px;line-height:1.42;color:var(--ink);margin:2px 0}.ta.ask .who .mw{margin-left:2px;font-size:11.5px}.aqh{margin:0 0 6px;font-family:var(--hand);font-size:17px;color:var(--ink)}.askc .tq p{font-size:17px}.askc .mb{display:flex;gap:8px}.askc .mb .opt{flex:1}.rbt.first{background:var(--gold);border:2px solid #000;border-radius:999px;padding:3px 12px;color:var(--ink)}.askgo{appearance:none;display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:11px 14px;border:2px solid #000;border-radius:14px;background:#efeaff;box-shadow:0 3px 0 #000;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.askgo:active{transform:translateY(2px);box-shadow:0 1px 0 #000}.askgo span{flex:1;display:flex;flex-direction:column;gap:1px}.askgo b{font-family:var(--hand);font-size:16px;font-weight:400}.askgo small{font-size:12.5px;color:#6d6390}.askgo i{font-style:normal;font-family:var(--hand);font-size:24px;line-height:1;color:#5b3fd0}.ta .act .lnk{text-decoration:none;color:#8d84ab;font-family:inherit;font-size:13px;padding:4px 2px}.ta .who .lnk{text-decoration:none;color:#8d84ab}
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
@@ -2444,7 +2444,7 @@ async function renderTalk(el) {
       : !me ? `<p class="mw">${n ? `${n}명이 답했어요. ` : ''}구글로 로그인하면 답을 남기고, 답글로 이야기할 수 있어요.</p><div class="mb"><button class="opt" type="button" id="tIn">구글로 로그인하고 답하기</button></div>${LEGAL}`
       : m ? (m.qi != null && m.qi !== talkQI(b) ? '<p class="mw">오늘 질문이 바뀌기 전에 답을 남겼어요. 내일 질문에 또 답해 주세요.</p>' : '<p class="mw">오늘 답을 남겼어요. 다른 사람 답에 답글로 이야기해 보세요.</p>')
       : `<div class="tin"><textarea id="tTx" maxlength="150" placeholder="내 생각을 짧게 남겨 주세요"></textarea><small id="tCt">0/150</small><div class="mb"><button class="opt" type="button" id="tGo">남기기</button></div></div>`;
-    el.innerHTML = head + box + '</div>' + (b ? '' : '<button class="askgo" type="button" data-tv="2">사람들이 올린 질문도 보러 가기 ›</button>') + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : (m ? '' : `<p class="mempty">${b ? '어제는 아무도 답하지 않았어요.' : '아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.'}</p>`));
+    el.innerHTML = head + box + '</div>' + (b ? '' : `<button class="askgo" type="button" data-tv="2"><span><b>사람들 질문</b><small>${askCache && askCache.list.length ? `지금 ${askCache.list.length}개 올라와 있어요` : '사람들이 묻는 것에 답해 보기'}</small></span><i>›</i></button>`) + (m ? row(m, true) : '') + (talkCache.list.length ? talkCache.list.map(x => row(x, false)).join('') : (m ? '' : `<p class="mempty">${b ? '어제는 아무도 답하지 않았어요.' : '아직 아무도 답하지 않았어요. 첫 답을 남겨 보세요.'}</p>`));
     wire(); vWire(el);
     const tin = el.querySelector('#tIn'); if (tin) tin.onclick = () => { sfx.boop(); signIn().then(() => { talkCache = null; setTimeout(() => renderTalk(el), 700); }); };
     const tx = el.querySelector('#tTx');
