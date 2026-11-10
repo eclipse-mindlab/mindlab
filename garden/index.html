@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="a1a5f9898a67"</script>
+<script>window.GARDEN_BUILD="dd3cb4cde9d9"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -357,7 +357,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .hb{font-family:var(--hand);font-size:12px;border:1.5px solid #000;border-radius:999px;padding:0 7px;background:#efe9fb}
 .hb.soc{background:#dbe9ff}.hb.epi{background:#ffe1ec}.hb.dio{background:#e4f3dc}.hb.nie{background:#ffe9c9}
 .ta p{margin:0;font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
-.ta.ask .aq{font-family:var(--hand);font-size:17px;line-height:1.42;color:var(--ink);margin:2px 0}.ta.ask .who .mw{margin-left:2px;font-size:11.5px}.aqh{margin:0 0 6px;font-family:var(--hand);font-size:17px;color:var(--ink)}.askc .tq p{font-size:17px}.askc .mb{display:flex;gap:8px}.askc .mb .opt{flex:1}.rbt.first{background:var(--gold);border:2px solid #000;border-radius:999px;padding:3px 12px;color:var(--ink)}.askgo{appearance:none;display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:11px 14px;border:2px solid #000;border-radius:14px;background:#efeaff;box-shadow:0 3px 0 #000;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.askgo:active{transform:translateY(2px);box-shadow:0 1px 0 #000}.askgo span{flex:1;display:flex;flex-direction:column;gap:1px}.askgo b{font-family:var(--hand);font-size:16px;font-weight:400}.askgo small{font-size:12.5px;color:#6d6390}.askgo i{font-style:normal;font-family:var(--hand);font-size:24px;line-height:1;color:#5b3fd0}.ta .act .lnk{text-decoration:none;color:#8d84ab;font-family:inherit;font-size:13px;padding:4px 2px}.ta .who .lnk{text-decoration:none;color:#8d84ab}
+.ta.ask .aq{font-family:var(--hand);font-size:17px;line-height:1.42;color:var(--ink);margin:2px 0}.ta.ask .who .mw{margin-left:2px;font-size:11.5px}.aqh{margin:0 0 6px;font-family:var(--hand);font-size:17px;color:var(--ink)}.askc .tq p{font-size:17px}.askc .mb{display:flex;gap:8px}.askc .mb .opt{flex:1}.rbt.first{background:var(--gold);border:2px solid #000;border-radius:999px;padding:3px 12px;color:var(--ink)}.verl{margin:14px 0 4px;text-align:center;font-size:11px;color:#a49cc0}.askgo{appearance:none;display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:11px 14px;border:2px solid #000;border-radius:14px;background:#efeaff;box-shadow:0 3px 0 #000;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.askgo:active{transform:translateY(2px);box-shadow:0 1px 0 #000}.askgo span{flex:1;display:flex;flex-direction:column;gap:1px}.askgo b{font-family:var(--hand);font-size:16px;font-weight:400}.askgo small{font-size:12.5px;color:#6d6390}.askgo i{font-style:normal;font-family:var(--hand);font-size:24px;line-height:1;color:#5b3fd0}.ta .act .lnk{text-decoration:none;color:#8d84ab;font-family:inherit;font-size:13px;padding:4px 2px}.ta .who .lnk{text-decoration:none;color:#8d84ab}
 .ta .act{display:flex;gap:10px;align-items:center;justify-content:flex-end}
 .like{appearance:none;border:1.5px solid #000;border-radius:999px;background:#fff;padding:2px 10px;font-family:var(--hand);font-size:14px;cursor:pointer;color:var(--ink)}
 .like.on{background:#ffcf5a}
@@ -1328,7 +1328,7 @@ function drawBoard(msg){const ks=KIDS.filter(k=>S.mis[k]&&S.mis[k].st!=='skip'&&
   if(bt==='rid'){$('bList').innerHTML=drawRiddles()||'<p class="mempty">수수께끼는 곧 열려요.</p>';$('bMsg').textContent=msg||'';wireRiddles();return;}
   if((bt==='vsign'||bt==='vnb')&&window.GL){$('bMsg').textContent=msg||'';GL.renderVis($('bList'),bt);return;}
   if(bt==='mine'){$('bList').innerHTML=drawMine();$('bMsg').textContent=msg||'';wireMine();return;}
-  if(bt!=='mis'){$('bList').innerHTML=drawStory()+drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawPets();$('bList').querySelectorAll('[data-prof]').forEach(b=>b.onclick=()=>{sfx.boop();profShow(b.dataset.prof);});$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
+  if(bt!=='mis'){$('bList').innerHTML=drawStory()+drawLean()+drawMineCard()+drawVisCard()+drawSchool()+drawRace()+drawPets()+(window.GL&&GL.verLine?`<p class="verl">${GL.verLine()}</p>`:'');$('bList').querySelectorAll('[data-prof]').forEach(b=>b.onclick=()=>{sfx.boop();profShow(b.dataset.prof);});$('bMsg').textContent=msg||'';const sq=$('bList').querySelector('#sqz');if(sq)sq.onclick=()=>{sfx.boop();closeBoard();sortQuiz(()=>{openBoard();bt='story';drawBoard();});};
     $('bList').querySelectorAll('[data-mine]').forEach(b=>b.onclick=()=>{sfx.boop();mineV=b.dataset.mine;bt='mine';drawBoard();$('bList').scrollTop=0;});
     $('bList').querySelectorAll('[data-vis]').forEach(b=>b.onclick=()=>{sfx.boop();const v=b.dataset.vis;if(v==='go'){closeBoard();GL.visitMenu();return;}if(v==='inv'){GL.invite();return;}if(v==='code'){GL.codeVisit();return;}if(v==='cp'){GL.copyCode();return;}
       if(v==='pub'){S.pubOff=S.pubOff?0:1;save();GL.pubSoon();drawBoard(S.pubOff?'이제 아무도 놀러 올 수 없어요':'이제 손님이 놀러 올 수 있어요');return;}bt=v;drawBoard();$('bList').scrollTop=0;});
@@ -2724,33 +2724,44 @@ async function renderMine(el) {
 const BUNDLE_ZIP = 'https://github.com/eclipse-mindlab/mindlab/releases/download/garden-web/garden-web.zip';
 const BUNDLE_VER = 'https://eclipse-mindlab.github.io/mindlab/garden/build.json';
 let bundleNext = null;
+// what the last update check did, shown at the bottom of the 나 tab so a phone screenshot tells us why an app is not updating
+const UPD = 'eclipse_kid_upd_log'; let nativeVer = '';
+const updLog = s => { try { localStorage.setItem(UPD, JSON.stringify({s, at: Date.now()})); } catch (e) {} };
+if (NATIVE && plug('App')) plug('App').getInfo().then(i => { nativeVer = (i && (i.build || i.version)) || ''; }).catch(() => {});
+function verLine() {
+  let u = null; try { u = JSON.parse(localStorage.getItem(UPD) || 'null'); } catch (e) {}
+  const ago = u ? Math.max(0, Math.round((Date.now() - u.at) / 6e4)) : 0;
+  return esc(`${NATIVE ? `앱 ${nativeVer || '?'} · ` : ''}화면 ${String(window.GARDEN_BUILD || '').slice(0, 6)}${NATIVE ? ` · ${u ? `${u.s} (${ago < 60 ? ago + '분' : Math.round(ago / 60) + '시간'} 전)` : (plug('CapacitorUpdater') ? '확인 전' : '업데이트 없음')}` : ''}`);
+}
 async function liveBundle() {
-  const C = NATIVE && plug('CapacitorUpdater'); if (!C) return;
+  const C = NATIVE && plug('CapacitorUpdater'); if (!C) { if (NATIVE) updLog('업데이트 기능 없음'); return; }
   try { await C.notifyAppReady(); } catch (e) {}
   try {
     const cur = await C.current().catch(() => null), curId = cur && cur.bundle && cur.bundle.id;
-    const j = await (await fetch(BUNDLE_VER + '?t=' + Date.now(), {cache: 'no-store'})).json();
+    updLog('확인 중');
+    let j; try { j = await (await fetch(BUNDLE_VER + '?t=' + Date.now(), {cache: 'no-store'})).json(); } catch (e) { updLog('확인 실패: ' + String(e && e.message || e).slice(0, 40)); return; }
     const v = String((j && j.v) || ''), mine = window.GARDEN_BUILD;
     if (j && j.min) needVersion(+j.min);
     const L = (((await C.list().catch(() => null)) || {}).bundles) || [];
     const fresh = v && v !== mine ? L.find(x => x.id !== curId && x.status === 'success' && String(x.version).startsWith(v + '-')) : null;
     // downloaded copies we no longer need only take space
     for (const x of L) if (x.id !== 'builtin' && x.id !== curId && (!fresh || x.id !== fresh.id)) { try { await C.delete({id: x.id}); } catch (e) {} }
-    if (!v || v === mine) return;
+    if (!v || v === mine) { updLog('최신'); return; }
     let b = fresh;
     if (!b) {
       // a download that failed waits ten minutes before the next try; one cut short by closing the app simply starts again
       const T = 'eclipse_kid_bundle_try'; let t = {}; try { t = JSON.parse(localStorage.getItem(T) || '{}'); } catch (e) {}
       if (t.v === v && Date.now() - (t.at || 0) < 6e5) return;
+      updLog('받는 중 ' + v.slice(0, 6));
       try { b = await C.download({url: BUNDLE_ZIP, version: v + '-' + Date.now()}); }
-      catch (e) { try { localStorage.setItem(T, JSON.stringify({v, at: Date.now()})); } catch (x) {} throw e; }
+      catch (e) { updLog('받기 실패: ' + String(e && e.message || e).slice(0, 60)); try { localStorage.setItem(T, JSON.stringify({v, at: Date.now()})); } catch (x) {} throw e; }
     }
     if (b && b.id) {
       // right after opening, before anyone has touched anything: switch now, so today's questions are the new ones
-      if (!touched && performance.now() < 9000) { try { await C.set({id: b.id}); return; } catch (e) {} }
-      bundleNext = b.id; await C.next({id: b.id});
-    }
-  } catch (e) {}
+      if (!touched && performance.now() < 9000) { updLog('바꾸는 중 ' + v.slice(0, 6)); try { await C.set({id: b.id}); return; } catch (e) { updLog('바꾸기 실패: ' + String(e && e.message || e).slice(0, 60)); } }
+      bundleNext = b.id; await C.next({id: b.id}); updLog('다음 실행 때 ' + v.slice(0, 6));
+    } else updLog('받았지만 비어 있음');
+  } catch (e) { updLog('오류: ' + String(e && e.message || e).slice(0, 60)); }
 }
 let touched = false, bundleAt = Date.now();
 addEventListener('pointerdown', () => { touched = true; }, {capture: true, once: true});
@@ -3187,7 +3198,7 @@ async function landVisit() {
   visit(uid);
 }
 
-window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, visitMenu, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
+window.GL = {reschedule: () => reminders(), render, renderTalk, renderMine, renderVis, visit, visitRandom, visitMenu, invite, codeVisit, copyCode, myCode, ensureCode, pubSoon, closeVisit, visitOpen: () => !!VS, updateInfo, doUpdate, verLine, ask, notifState, timer, onMission: () => { postScore(); push(); reminders(); },
   ready: () => ready, isIn: () => !!me, native: NATIVE,
   login: async () => { if (INAPP) { await signIn(); return false; } await signIn(); for (let i = 0; i < 30 && !me; i++) await new Promise(r => setTimeout(r, 150)); return !!me; },
   beta: () => betaJoin(null),
