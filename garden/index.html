@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="d5055db1e08b"</script>
+<script>window.GARDEN_BUILD="ea20ddb1bccb"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -1280,7 +1280,7 @@ function wiggleBoard(){const b=$('boardInner');if(!b)return;b.classList.remove('
 const faceCSS=k=>`background-image:url(${A(k+'_basic')})`;
 const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
 let boardTick=null;
-function openBoard(){if(S.intro<2)return;closeBub();ac();sfx.boop();postMissions();bt='mis';$('board').hidden=false;drawBoard();clearInterval(boardTick);boardTick=setInterval(()=>{if(!$('board').hidden&&KIDS.some(k=>S.mis[k]&&S.mis[k].st==='doing'&&S.mis[k].start))drawBoard();},1000);}
+function openBoard(){if(S.intro<2)return;closeBub();ac();sfx.boop();postMissions();bt='mis';$('board').hidden=false;drawBoard();clearInterval(boardTick);boardTick=setInterval(()=>{if(!$('board').hidden&&bt==='mis'&&KIDS.some(k=>S.mis[k]&&S.mis[k].st==='doing'&&S.mis[k].start))drawBoard();},1000);}
 function closeBoard(){$('board').hidden=true;clearInterval(boardTick);sfx.boop();paintBoard();present().forEach(refreshNote);}
 let bt='mis';
 function drawSchool(){const k=S.school;
