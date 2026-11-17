@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="5497e806a199"</script>
+<script>window.GARDEN_BUILD="6736f422ea1c"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -2054,20 +2054,40 @@ function eveWho(){return S.school&&S.met[S.school]&&actors[S.school]?S.school:'s
 function eveShow(){if(vnOpen()||eveDone())return;closeBub();const k=eveWho();
   vnX={'eve:ask':{k,night:1,e:'basic',t:'오늘 하루도 끝났네.\n이걸로 충분했어?',o:[['충분했어','eve:full'],['아쉬움이 남아','eve:left'],['오늘은 많이 힘들었어','eve:hard'],['다음에','eve:no']]}};
   vnShow('eve:ask');}
-const EVE_SAY={full:'그럼 됐어. 오늘은 다 산 거야.\n내일에 대한 기대는 여기 내려놓고 자자.',
-  left:'아쉬운 건 내일 해도 돼.\n그래도 기대는 여기 내려놓고 자자.',
-  hard:'그런 날엔 혼자 버티지 않아도 돼. 내일은 누군가에게 기대 봐.\n에피쿠로스도 마지막 날, 친구와 나눈 대화를 떠올리며 견뎠어.'};
+// what the philosopher says back; a different line each night, all from people who looked at the end and came back to life
+const EVE_SAY={
+  full:['그럼 됐어. 오늘은 다 산 거야.\n내일에 대한 기대는 여기 내려놓고 자자.',
+    '아우렐리우스는 매일을 마지막 날처럼 보내는 게 완성된 사람이라고 했어.\n오늘 넌 거기에 가까웠네.',
+    '세네카는 잠들기 전에 "나는 다 살았다"고 말했대.\n내일은 그다음 일이야.',
+    '몽테뉴는 삶의 쓸모가 날수보다 그날을 어떻게 썼느냐에 있다고 했어.\n오늘은 잘 썼네.',
+    '즐겁게 보낸 하루는 이미 네 거야.\n내일 무슨 일이 생겨도 그건 못 가져가. 에피쿠로스 생각이야.',
+    '티베트 승려들은 몇 주 걸려 그린 모래 그림을 다 그리면 쓸어 버린대.\n오늘도 그렇게 잘 그렸어.'],
+  left:['아쉬운 건 내일 해도 돼.\n그래도 기대는 여기 내려놓고 자자.',
+    '얄롬은 살아 보지 못한 삶이 많을수록 죽음이 더 두렵다고 했어.\n그 아쉬움, 내일 하나만 해 봐.',
+    '세네카는 미루는 게 삶을 가장 많이 버리는 일이라고 했어.\n아쉬운 그 일, 내일 아침 첫 일로 해.',
+    '남은 시간이 짧다고 느끼면, 사람은 정말 중요한 것만 고른대.\n그 아쉬움이 너한테 중요한 거야.',
+    '프로이트는 목숨을 걸 수 없는 삶은 빈곤해진다고 봤어.\n아쉬운 그 일, 내일은 조금 걸어 봐.',
+    '도스토옙스키는 사형 직전에 풀려난 날, 1분 1분이 다 행복일 수 있었다고 썼어.\n내일 그 1분을 써 봐.'],
+  hard:['그런 날엔 혼자 버티지 않아도 돼. 내일은 누군가에게 기대 봐.\n에피쿠로스도 마지막 날, 친구와 나눈 대화를 떠올리며 견뎠어.',
+    '에피쿠로스는 행복을 위해 지혜가 마련하는 것 중 가장 큰 게 우정이라고 했어.\n내일 한 사람에게만 연락해 봐.',
+    '세네카는 우리가 현실보다 상상 속에서 더 자주 괴로워한다고 했어.\n오늘 밤은 생각을 내려놓고 그냥 자.',
+    '아우렐리우스는 못 견딜 일이면 오래가지 않고, 오래가는 일이면 견딜 수 있다고 했어.\n오늘은 여기까지만 견디면 돼.']};
+const EVE_MORN=['눈떴네. 우리 아직 살아 있어.\n오늘은 덤으로 받은 하루야.',
+  '좋은 아침. 눈뜬 것부터가 기대 밖의 일이야.',
+  '눈떴네. 하고 싶은 말이 있으면 오늘 해.\n말을 걸 수 있을 때.',
+  '아직 살아 있어.\n오늘 하루는 덤이니까, 아끼지 말고 써.'];
+const evePickLine=a=>a[(S.eveT||0)%a.length];
 function evePick(next){const w=next.slice(4);
   if(w==='no'){vnClose();return;}
-  if(EVE_SAY[w]){vnX['eve:say']={k:eveWho(),night:1,e:w==='hard'?'basic':'happy',t:EVE_SAY[w],o:[['너도 잘 자','eve:end:'+w]]};sfx.boop();vnShow('eve:say');return;}
+  if(EVE_SAY[w]){vnX['eve:say']={k:eveWho(),night:1,e:w==='hard'?'basic':'happy',t:evePickLine(EVE_SAY[w]),o:[['너도 잘 자','eve:end:'+w]]};sfx.boop();vnShow('eve:say');return;}
   if(w.startsWith('end:')){const prev=S.eve||{},d=nowD();if(d.getHours()<4)d.setDate(d.getDate()-1);d.setDate(d.getDate()-1);
-    S.eve={d:nightKey(),w:w.slice(4),n:prev.d===dkey(d)?(prev.n||1)+1:1};save();hud();sfx.stage();buzz([20,60,20]);}
+    S.eve={d:nightKey(),w:w.slice(4),n:prev.d===dkey(d)?(prev.n||1)+1:1};S.eveT=(S.eveT||0)+1;save();hud();sfx.stage();buzz([20,60,20]);}
   vnClose();if(eveDone())toast('오늘 하루 마무리했어요. 내일 만나요.');}
 // the morning after: the day you woke up to is extra, so it comes with a small gift
 function eveMorning(){const h=nowD().getHours();if(S.intro<2||h<4||!S.eve||S.eveMorn===today())return;
   const d=nowD();d.setDate(d.getDate()-1);if(S.eve.d!==dkey(d))return;
   whenFree(()=>{if(S.eveMorn===today())return;const k=eveWho();if(!actors[k])return;S.eveMorn=today();S.fruit+=2;save();hud();bump('fruitChip');
-    const n=S.eve.n||1;say(k,`눈떴네. 우리 아직 살아 있어.\n오늘은 덤으로 받은 하루야.${n>=2?`\n벌써 ${n}일째 잘 자고 일어났네.`:''}\n선물로 열매 2개.`,['고마워']);},2500);}
+    const n=S.eve.n||1;say(k,`${EVE_MORN[((S.eveT||1)-1)%EVE_MORN.length]}${n>=2?`\n벌써 ${n}일째 잘 자고 일어났네.`:''}\n선물로 열매 2개.`,['고마워']);},2500);}
 // once per philosopher, the day they reach the top level
 function recHello(){if(S.intro<2)return;const k=KIDS.find(k=>S.lv[k]>=5&&!(S.recSeen||{})[k]&&actors[k]&&actors[k].mode!=='shadow'&&actors[k].mode!=='barrel');if(!k)return;
   whenFree(()=>{if((S.recSeen||{})[k]||!actors[k])return;S.recSeen=S.recSeen||{};S.recSeen[k]=1;save();
