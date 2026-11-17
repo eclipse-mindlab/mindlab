@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="8e81e3049266"</script>
+<script>window.GARDEN_BUILD="9f035897ff78"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -159,7 +159,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
 .bsh{margin:6px 2px 0;font-family:var(--hand);font-size:15px;color:#5d5478}
 .rwait{border:2px dashed #b8ad95;border-radius:14px;padding:6px 10px;background:#fffaf0}.rwait summary{font-family:var(--hand);font-size:15px;cursor:pointer;color:#5d5478}.rwait[open]{display:flex;flex-direction:column;gap:8px}
 .clkbtn{position:absolute;z-index:6;right:max(14px,env(safe-area-inset-right,0px));top:40%;width:58px;height:58px;border-radius:50%;border:3px solid #000;background:var(--gold);box-shadow:0 4px 0 #000;display:grid;place-items:center;padding:0;cursor:pointer;pointer-events:auto}
-.clkbtn svg{width:36px;height:36px}
+.clkbtn svg{width:36px;height:36px}.vnopts.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vnopts.grid .opt{margin:0}.vnopts.grid .opt:last-child{grid-column:1/-1;background:transparent;border-color:transparent;box-shadow:none;color:#fffaf0;font-size:15px;padding:6px}.evebtn{top:calc(40% + 92px);background:#2a1d4f}.evebtn img{width:38px;height:38px;object-fit:contain}.evebtn::before{content:'오늘 닫기'}
 .clkbtn::before{content:'두드리기';position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;font-family:var(--hand);font-size:12px;color:#fffaf0;text-shadow:0 1px 0 #000,0 0 3px rgba(0,0,0,.6);white-space:nowrap}
 .appb.flt{top:calc(40% - 50px)!important}
 .hint{position:absolute;z-index:5;width:0;height:0;pointer-events:none;border-left:13px solid transparent;border-right:13px solid transparent;border-top:18px solid var(--gold);filter:drop-shadow(0 2px 0 #000) drop-shadow(0 -1px 0 #000);transform:translate(-50%,-100%);animation:hintb 1s ease-in-out infinite}
@@ -501,7 +501,7 @@ body{margin:0;background:#1d1838;color:var(--paper);font-family:var(--read);over
   <button class="doing" type="button" id="doingPill" hidden></button>
   <div class="devs"><button class="dev" type="button" id="dev2">시험용 · 해 질 녘</button><button class="dev" type="button" id="dev">시험용 · 하루 넘기기</button></div>
   <div class="ward" id="board" hidden><div class="wsheet" role="dialog" aria-label="미션 게시판"><div class="whead"><b>게시판</b><span class="bsub" id="bSub"></span><button class="icon wx" type="button" id="bClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="bstats" id="bStats"></div><div class="wtabs" id="bTabs"></div><p class="wmsg" id="bMsg"></p><div class="blist" id="bList"></div></div></div>
-  <div class="hint" id="hint" hidden aria-hidden="true"></div><button class="appb flt" type="button" id="appBtn" hidden>앱 받기</button><button class="clkbtn visbtn" type="button" id="visBtn" aria-label="놀러 가기" hidden><img src="a/gate_open.webp" alt=""></button><button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
+  <div class="hint" id="hint" hidden aria-hidden="true"></div><button class="appb flt" type="button" id="appBtn" hidden>앱 받기</button><button class="clkbtn visbtn" type="button" id="visBtn" aria-label="놀러 가기" hidden><img src="a/gate_open.webp" alt=""></button><button class="clkbtn evebtn" type="button" id="eveBtn" aria-label="오늘 닫기" hidden><img src="a/i_lantern.webp" alt=""></button><button class="clkbtn" type="button" id="clkBtn" aria-label="두드리기" hidden><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="29" y="24" width="8" height="34" rx="3" fill="#8a5a33" stroke="#000" stroke-width="3.5"/><rect x="11" y="9" width="42" height="19" rx="5" fill="#9aa0a8" stroke="#000" stroke-width="4"/><path d="M50 40 l7 -3 M50 47 l8 2 M46 54 l5 5" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></svg></button>
   <div class="clk" id="clk" hidden><div class="clkflash" id="clkFlash"></div><div class="clkhead"><div><span id="clkUnit"></span><b id="clkNum">0</b></div><button class="icon" type="button" id="clkX" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><p class="clkhint" id="clkHint"></p><div class="clkgoal" id="clkGoal"><div class="cgbar"><i></i></div><span></span></div><div class="clkstage" id="clkStage"></div><b class="clkcombo" id="clkCombo" hidden></b><div class="clktabs" id="clkTabs"></div></div>
   <div class="ward" id="patch" hidden><div class="wsheet" role="dialog" aria-label="텃밭"><div class="whead"><b>텃밭</b><span class="bsub">책에서 온 것들</span><button class="icon wx" type="button" id="pClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div id="pBody" class="blist"></div></div></div>
   <div class="ward" id="ward" hidden><div class="wsheet" role="dialog" aria-label="옷장"><div class="whead"><b>옷장</b><span class="wfruit" id="wFruit"></span><button class="icon wx" type="button" id="wClose" aria-label="닫기"><img src="a/ui_close.webp" alt=""></button></div><div class="wtabs" id="wTabs"></div><div class="wstage"><svg id="wPrev" viewBox="-52 -126 104 132" aria-hidden="true"></svg></div><p class="wmsg" id="wMsg"></p><div class="wgrid" id="wGrid"></div></div></div>
@@ -1146,7 +1146,7 @@ function paintSky(){const t=timeOfDay();$('bgimg').setAttribute('href',A('bg_'+t
 function openGate(){const g=$('gateImg');if(!g)return;g.setAttribute('href',A('gate_open'));clearTimeout(openGate.t);openGate.t=setTimeout(()=>g.setAttribute('href',A('gate_closed')),2800);}
 function paintPlant(anim){const st=stageOf(S.given);
   $('plantG').innerHTML=`<rect class="hit" x="${POT.x-50}" y="${POT.y-185}" width="100" height="252" fill="transparent"/><image href="${A('pot')}" x="${POT.x-300*PP}" y="${POT.y-70*PP}" width="${600*PP}" height="${400*PP}"/><g${anim?' class="grow"':''}><g class="sway"><image href="${A('tree_'+st)}" x="${POT.x-300*TP}" y="${POT.y-760*TP}" width="${600*TP}" height="${800*TP}"/></g></g>${S.drops>0&&S.intro>=2?`<ellipse class="ring" cx="${POT.x}" cy="${POT.y+30}" rx="62" ry="44" fill="none" stroke="#7cc8ff" stroke-width="3"/>`:''}`;}
-function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const cb=$('clkBtn');if(cb){cb.hidden=!(S.intro>=2);cb.classList.toggle('new',!S.clkSeen);}}{const vb=$('visBtn');if(vb){vb.hidden=!(S.intro>=2&&window.GL&&GL.visitRandom);vb.classList.toggle('new',!S.visGone);}}{const pb=$('patchBtn');if(pb){pb.hidden=!(PET_ART&&S.intro>=2&&((S.deco||{}).cabbage||(S.pets||{}).cat||(typeof bookSolved==='function'&&bookSolved()>0)||S.patchSeen));pb.classList.toggle('pulse',!S.patchSeen);}}{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
+function hud(){$('dropN').textContent=S.drops;$('fruitN').textContent=S.fruit;$('muteImg').src=A(S.muted?'ui_sound_off':'ui_sound_on');{const cb=$('clkBtn');if(cb){cb.hidden=!(S.intro>=2);cb.classList.toggle('new',!S.clkSeen);}}{const eb=$('eveBtn');if(eb)eb.hidden=!(S.intro>=2&&eveWin()&&!eveDone());}{const vb=$('visBtn');if(vb){vb.hidden=!(S.intro>=2&&window.GL&&GL.visitRandom);vb.classList.toggle('new',!S.visGone);}}{const pb=$('patchBtn');if(pb){pb.hidden=!(PET_ART&&S.intro>=2&&((S.deco||{}).cabbage||(S.pets||{}).cat||(typeof bookSolved==='function'&&bookSolved()>0)||S.patchSeen));pb.classList.toggle('pulse',!S.patchSeen);}}{const ab=$('appBtn');if(ab){ab.hidden=!(window.GL&&GL.offerApp&&!GL.native&&S.intro>=2);ab.classList.toggle('new',!S.appSeen);}}$('mute').setAttribute('aria-label',S.muted?'소리 켜기':'소리 끄기');
   $('wardBtn').classList.toggle('pulse',S.fruit>0&&!S.wardSeen);}
 const bump=id=>{const c=$(id);c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump');};
 
@@ -1949,7 +1949,7 @@ function vnShow(id){const el=vnEl(),s=vnX[id]||vnScenes()[id];if(!s)return;clear
   const p=el.querySelector('p'),opts=el.querySelector('.vnopts'),face=f=>el.querySelectorAll('.vnbob img').forEach(m=>{m.style.opacity=m.dataset.f===f?1:0;});
   opts.innerHTML='';p.textContent='';face('basic');let i=0;
   const done=()=>{clearInterval(vnT);vnT=null;p.textContent=s.t;face(s.e||'basic');
-    opts.innerHTML=s.o.map((o,j)=>`<button type="button" class="opt${j?' alt':''}" data-j="${j}">${o[0]}</button>`).join('');
+    opts.classList.toggle('grid',!!s.grid);opts.innerHTML=s.o.map((o,j)=>`<button type="button" class="opt${j?' alt':''}" data-j="${j}">${o[0]}</button>`).join('');
     opts.querySelectorAll('button').forEach(b=>b.onclick=()=>{ac();sfx.boop();buzz(10);vnPick(s.o[+b.dataset.j]);});};
   // the line types out; while a friend's garden is open on top, it waits
   vnT=setInterval(()=>{if(window.GL&&GL.visitOpen&&GL.visitOpen())return;i++;p.textContent=s.t.slice(0,i);
@@ -1957,7 +1957,7 @@ function vnShow(id){const el=vnEl(),s=vnX[id]||vnScenes()[id];if(!s)return;clear
   el.querySelector('.vnbox').onclick=()=>{ac();if(vnT)done();};}
 function vnClose(){clearInterval(vnT);vnT=null;const el=$('vn');if(el)el.hidden=true;}
 const vnOpen=()=>{const el=$('vn');return !!(el&&!el.hidden);};
-function vnPick(o){const next=o[1];if(String(next).startsWith('rec:')){recPick(next);return;}if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
+function vnPick(o){const next=o[1];if(String(next).startsWith('rec:')){recPick(next);return;}if(String(next).startsWith('eve:')){evePick(next);return;}if(o[2]){S.routine=o[2];save();if(window.GL&&GL.reschedule)GL.reschedule();}
   if(next==='upd:go'){vnClose();if(window.GL)GL.doUpdate();return;}
   if(next==='upd:no'){vnClose();return;}
   if(next==='load'){vnClose();introLoad();return;}
@@ -2046,6 +2046,34 @@ function recPick(next){const k=recK;if(!k){vnClose();return;}
   if(next==='rec:ok'){const n=recN(k),st=REC[k][n-1];
     showClear({k,tag:`★${n}`,title:`${short(k)}와 한 번 더 시작했어요`,card:st?['★'+n+' '+st[0],st[1]]:null,sub:n<=3?`이제 ${short(k)} 미션을 하면 열매가 ${misFruit(k)}개 나와요.`:'이야기는 다 들었어요. 별과 발밑의 금빛은 계속 쌓여요.',gift:0},back);hop(k);return;}
   back();}
+// ---------- closing the day: from 9 p.m. a philosopher asks you to put one thing down before sleep; waking the next morning is a gift ----------
+function eveWin(){const h=nowD().getHours();return h>=21||h<4;}
+function nightKey(){const d=nowD();if(d.getHours()<4)d.setDate(d.getDate()-1);return dkey(d);}
+function eveDone(){return !!(S.eve&&S.eve.d===nightKey());}
+function eveWho(){return S.school&&S.met[S.school]&&actors[S.school]?S.school:'soc';}
+const EVE_PUT={worry:['걱정','epi','내일 일은 내일 걱정해도 늦지 않아. 지금 이 밤엔 아무 일도 일어나지 않았어.'],
+  hate:['미움','nie','강한 사람은 잊어. 오늘 밤만이라도 잊는 연습을 해 봐.'],
+  regret:['후회','soc','후회에서 배울 건 하나면 충분해. 그거 하나만 챙기고 나머지는 두고 가.'],
+  want:['욕심','dio','오늘 없던 걸로도 하루를 잘 살았잖아. 그거면 이미 충분하다는 증거야.']};
+function eveShow(){if(vnOpen()||eveDone())return;closeBub();const k=eveWho();
+  vnX={'eve:put':{k,grid:1,e:'basic',t:'오늘 하루 수고했어.\n자기 전에 하나만 내려놓고 자자. 뭘 내려놓을래?',o:Object.keys(EVE_PUT).map(w=>[EVE_PUT[w][0],'eve:'+w]).concat([['오늘은 그냥 잘래','eve:no']])}};
+  vnShow('eve:put');}
+function evePick(next){const w=next.slice(4);
+  if(w==='no'){vnClose();return;}
+  if(EVE_PUT[w]){const [nm,k,t]=EVE_PUT[w];
+    vnX['eve:say']={k,e:'talk',t,o:[[`${nm}, 여기 두고 갈게`,'eve:end:'+w]]};sfx.boop();vnShow('eve:say');return;}
+  if(w.startsWith('end:')){const put=w.slice(4),prev=S.eve||{},yk=(()=>{const d=nowD();if(d.getHours()<4)d.setDate(d.getDate()-1);d.setDate(d.getDate()-1);return dkey(d);})();
+    S.eve={d:nightKey(),w:put,n:prev.d===yk?(prev.n||1)+1:1};save();hud();
+    vnX['eve:bye']={k:eveWho(),e:'happy',t:'세네카는 잠들기 전에 이렇게 말했대.\n"나는 오늘을 다 살았다. 내일이 주어진다면, 기쁘게 받겠다."\n잘 자.',o:[['잘 자','eve:close']]};sfx.stage();buzz([20,60,20]);vnShow('eve:bye');return;}
+  vnClose();toast('오늘을 닫았어요. 내일 아침에 만나요.');}
+function eveOffer(){if(S.intro<2||!eveWin()||eveDone()||S.eveAsk===nightKey())return;
+  whenFree(()=>{if(!eveWin()||eveDone()||S.eveAsk===nightKey())return;const k=eveWho();if(!actors[k])return;S.eveAsk=nightKey();save();
+    say(k,'오늘을 닫을 시간이야. 자기 전에 하나만 내려놓고 갈래?',['좋아','이따가'],n=>{if(n===0)eveShow();});},1500);}
+// the morning after: the day you woke up to is extra, so it comes with a small gift
+function eveMorning(){const h=nowD().getHours();if(S.intro<2||h<4||h>=14||!S.eve||S.eveMorn===today())return;
+  const d=nowD();d.setDate(d.getDate()-1);if(S.eve.d!==dkey(d))return;
+  whenFree(()=>{if(S.eveMorn===today())return;const k=eveWho();if(!actors[k])return;S.eveMorn=today();S.fruit+=2;save();hud();bump('fruitChip');
+    const n=S.eve.n||1;say(k,`눈떴네. 오늘은 덤으로 받은 하루야.${n>=2?`\n벌써 ${n}일째 하루를 닫고 잤어.`:''}\n선물로 열매 2개.`,['고마워']);},2500);}
 // once per philosopher, the day they reach the top level
 function recHello(){if(S.intro<2)return;const k=KIDS.find(k=>S.lv[k]>=5&&!(S.recSeen||{})[k]&&actors[k]&&actors[k].mode!=='shadow'&&actors[k].mode!=='barrel');if(!k)return;
   whenFree(()=>{if((S.recSeen||{})[k]||!actors[k])return;S.recSeen=S.recSeen||{};S.recSeen[k]=1;save();
@@ -2109,14 +2137,14 @@ function boot(){rollDay();paintPlant(false);hud();intro();setTimeout(petArrivals
   place('dio',S.met.dio?(restMode('dio')):'barrel',SPOTS.dio.x,SPOTS.dio.y);
   ['nie','epi'].forEach(k=>{if(S.met[k])place(k,restMode(k),SPOTS[k].x,SPOTS[k].y);});
   if(!S.met.nie&&growth()>=NIE_AT-1&&S.pd>=DAY_AT.nieShadow)place('nie','shadow',SHADOW.x,SHADOW.y);
-  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);setTimeout(recHello,6000);
+  paintSky();if(S.intro>=2){const talk=S.pd>=2&&S.greetDay!==today();if(talk)setTimeout(greet,1100);setTimeout(askUpdate,2500);setTimeout(recHello,6000);setTimeout(eveMorning,4000);setTimeout(eveOffer,8000);
     // newcomers wait until nobody is talking
     const later=(f,ms)=>setTimeout(function go(){if(pend||clrOn())return setTimeout(go,1500);f();},ms);
     if(!S.school&&KIDS.some(k=>S.lv[k]>=2))whenFree(()=>invite('soc'),talk?9000:3000);later(checkVisitors,talk?2500:1200);if(!S.visTold&&S.pd>=1)whenFree(()=>{if(S.visTold||!window.GL)return;S.visTold=1;save();const k=KIDS.filter(x=>S.met[x]).sort((a,b)=>(S.xp[b]||0)-(S.xp[a]||0))[0]||'soc';say(k,'왼쪽에 \'놀러 가기\' 보여? 친구 정원 코드를 넣으면 친구 정원에 놀러 갈 수 있어.'+(GL.isIn&&GL.isIn()?' 우리 정원에도 손님이 올 수 있고, 싫으면 나 탭에서 끌 수 있어.':' 구글로 로그인하면 우리 정원에도 손님이 와.'));},talk?14000:7000);if(freeToday())later(checkDio,talk?3200:1800);}
   $('plantG').addEventListener('click',water);
   $('scene').addEventListener('click',e=>{if(!e.target.closest('#cast')&&!e.target.closest('#castBack')&&!e.target.closest('#plantG')&&!e.target.closest('#boardG')&&pend&&!pend.opts)pend.advance();});
   $('mute').onclick=()=>{S.muted=!S.muted;save();hud();if(!S.muted){ac();sfx.boop();}crickets(timeOfDay()==='night');};
-  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.boop();if(!S.visGone){S.visGone=1;save();hud();}GL.visitMenu();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
+  $('visBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();sfx.boop();if(!S.visGone){S.visGone=1;save();hud();}GL.visitMenu();};$('wardBtn').onclick=openWard;$('clkBtn').onclick=openClk;$('eveBtn').onclick=()=>{ac();eveShow();};setInterval(()=>{hud();if(eveWin())eveOffer();},60000);$('clkX').onclick=closeClk;$('clkStage').addEventListener('pointerdown',clkTap);$('patchBtn').onclick=openPatch;$('pClose').onclick=closePatch;$('patch').addEventListener('click',e=>{if(e.target.id==='patch')closePatch();});$('appBtn').onclick=()=>{if(!window.GL)return;closeBub();ac();if(S.betaTester&&GL.openStore)GL.openStore();else if(GL.appSheet){sfx.boop();GL.appSheet();}};$('boardG').addEventListener('click',openBoard);$('bClose').onclick=closeBoard;$('board').addEventListener('click',e=>{if(e.target.id==='board')closeBoard();});$('doingPill').onclick=openBoard;$('wClose').onclick=closeWard;$('ward').addEventListener('click',e=>{if(e.target.id==='ward')closeWard();});
   $('dev').onclick=()=>{S.off++;rollDay();closeBub();toast('다음 날 아침이에요');present().forEach(k=>place(k,'awake',actors[k].x,actors[k].y));postMissions();paintSky();greet();};
   $('dev2').onclick=()=>{dusk=!dusk;$('dev2').textContent=dusk?'시험용 · 지금 시간':'시험용 · 해 질 녘';paintSky();};
   window.addEventListener('resize',()=>{const b=document.querySelector('.bub');if(b&&talking&&actors[talking])posBub(b,actors[talking]);});
