@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <style>[hidden]{display:none!important}</style>
-<script>window.GARDEN_BUILD="356cfe4236ff"</script>
+<script>window.GARDEN_BUILD="5497e806a199"</script>
 </head>
 <body>
 <title>소크라텃밭</title>
@@ -2052,13 +2052,14 @@ function nightKey(){const d=nowD();if(d.getHours()<4)d.setDate(d.getDate()-1);re
 function eveDone(){return !!(S.eve&&S.eve.d===nightKey());}
 function eveWho(){return S.school&&S.met[S.school]&&actors[S.school]?S.school:'soc';}
 function eveShow(){if(vnOpen()||eveDone())return;closeBub();const k=eveWho();
-  vnX={'eve:ask':{k,night:1,e:'basic',t:'오늘 하루도 끝났네.\n이걸로 충분했어?',o:[['충분했어','eve:full'],['아쉬움이 남아','eve:left'],['다음에','eve:no']]}};
+  vnX={'eve:ask':{k,night:1,e:'basic',t:'오늘 하루도 끝났네.\n이걸로 충분했어?',o:[['충분했어','eve:full'],['아쉬움이 남아','eve:left'],['오늘은 많이 힘들었어','eve:hard'],['다음에','eve:no']]}};
   vnShow('eve:ask');}
-const EVE_SAY={full:'그럼 됐어. 오늘은 이걸로 다 산 거야.\n내일 눈뜨면, 그건 덤으로 받은 하루야.',
-  left:'아쉬운 건 내일 해도 돼.\n내일 눈뜨면, 그건 덤으로 받은 하루니까.'};
+const EVE_SAY={full:'그럼 됐어. 오늘은 다 산 거야.\n내일에 대한 기대는 여기 내려놓고 자자.',
+  left:'아쉬운 건 내일 해도 돼.\n그래도 기대는 여기 내려놓고 자자.',
+  hard:'그런 날엔 혼자 버티지 않아도 돼. 내일은 누군가에게 기대 봐.\n에피쿠로스도 마지막 날, 친구와 나눈 대화를 떠올리며 견뎠어.'};
 function evePick(next){const w=next.slice(4);
   if(w==='no'){vnClose();return;}
-  if(EVE_SAY[w]){vnX['eve:say']={k:eveWho(),night:1,e:'happy',t:EVE_SAY[w],o:[['너도 잘 자','eve:end:'+w]]};sfx.boop();vnShow('eve:say');return;}
+  if(EVE_SAY[w]){vnX['eve:say']={k:eveWho(),night:1,e:w==='hard'?'basic':'happy',t:EVE_SAY[w],o:[['너도 잘 자','eve:end:'+w]]};sfx.boop();vnShow('eve:say');return;}
   if(w.startsWith('end:')){const prev=S.eve||{},d=nowD();if(d.getHours()<4)d.setDate(d.getDate()-1);d.setDate(d.getDate()-1);
     S.eve={d:nightKey(),w:w.slice(4),n:prev.d===dkey(d)?(prev.n||1)+1:1};save();hud();sfx.stage();buzz([20,60,20]);}
   vnClose();if(eveDone())toast('오늘 하루 마무리했어요. 내일 만나요.');}
@@ -2066,7 +2067,7 @@ function evePick(next){const w=next.slice(4);
 function eveMorning(){const h=nowD().getHours();if(S.intro<2||h<4||!S.eve||S.eveMorn===today())return;
   const d=nowD();d.setDate(d.getDate()-1);if(S.eve.d!==dkey(d))return;
   whenFree(()=>{if(S.eveMorn===today())return;const k=eveWho();if(!actors[k])return;S.eveMorn=today();S.fruit+=2;save();hud();bump('fruitChip');
-    const n=S.eve.n||1;say(k,`눈떴네. 오늘은 덤으로 받은 하루야.${n>=2?`\n벌써 ${n}일째 잘 자고 일어났네.`:''}\n선물로 열매 2개.`,['고마워']);},2500);}
+    const n=S.eve.n||1;say(k,`눈떴네. 우리 아직 살아 있어.\n오늘은 덤으로 받은 하루야.${n>=2?`\n벌써 ${n}일째 잘 자고 일어났네.`:''}\n선물로 열매 2개.`,['고마워']);},2500);}
 // once per philosopher, the day they reach the top level
 function recHello(){if(S.intro<2)return;const k=KIDS.find(k=>S.lv[k]>=5&&!(S.recSeen||{})[k]&&actors[k]&&actors[k].mode!=='shadow'&&actors[k].mode!=='barrel');if(!k)return;
   whenFree(()=>{if((S.recSeen||{})[k]||!actors[k])return;S.recSeen=S.recSeen||{};S.recSeen[k]=1;save();
